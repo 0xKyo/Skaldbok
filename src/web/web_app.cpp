@@ -106,8 +106,8 @@ WebApp::WebApp(WebConfig config, Clock clock)
     : config_(std::move(config)), clock_(std::move(clock)), access_(config_.prefsDir, config_.publicUrl) {
     if (!clock_)
         clock_ = [] { return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count(); };
-    if (!db_.open(config_.dataDir + "/dragonbane.db", &error_)) {
-        error_ = "Cannot open " + config_.dataDir + "/dragonbane.db: " + error_;
+    if (!db_.open(config_.dataDir + "/skaldbok.db", &error_)) {
+        error_ = "Cannot open " + config_.dataDir + "/skaldbok.db: " + error_;
         return;
     }
     packs_ = std::make_unique<PackManager>(config_.dataDir + "/packs/core", config_.prefsDir + "/packs");

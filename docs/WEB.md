@@ -64,7 +64,7 @@ Variables de entorno o argumentos (`--port`, `--host`, `--public-url`, `--prefs`
 | `HOST` | `0.0.0.0` (todas las interfaces; usa `127.0.0.1` para solo esta máquina) |
 | `PUBLIC_URL` | `http://localhost:<puerto>`: la dirección que escriben los jugadores; va dentro de los enlaces |
 | `SKALDBOK_PREFS` | la carpeta del usuario de la app (`%APPDATA%\skaldbok\gm`) |
-| `SKALDBOK_DATA` | la carpeta `data/` con `dragonbane.db` y `packs/core` (se busca junto al ejecutable) |
+| `SKALDBOK_DATA` | la carpeta `data/` con `skaldbok.db` y `packs/core` (se busca junto al ejecutable) |
 | `STATIC_DIR` | la página compilada (`web/` junto al ejecutable, o `web/client/dist`) |
 | `MAX_FAILURES`, `FAILURE_WINDOW_MS` | 20 intentos fallidos por dirección cada 10 minutos, luego se bloquea |
 | `TRUST_PROXY` | `1` si está detrás de un túnel/proxy: toma la dirección real de `X-Forwarded-For` |

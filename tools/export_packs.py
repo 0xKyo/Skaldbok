@@ -1,4 +1,4 @@
-"""Exports the Core content of data/dragonbane.db as a JSON content pack: data/packs/core/.
+"""Exports the Core content of data/skaldbok.db as a JSON content pack: data/packs/core/.
 
 The app loads Core exactly like any homebrew pack (see docs/HOMEBREW.md for the format), so this file is
 also the reference for what a pack looks like. Book text, page images and generic tables stay in the SQLite
@@ -232,4 +232,4 @@ def main(db_path: str) -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv[1] if len(sys.argv) > 1 else str(ROOT / "data" / "dragonbane.db")))
+    sys.exit(main(sys.argv[1] if len(sys.argv) > 1 else str(ROOT / "data" / "skaldbok.db")))

@@ -1,4 +1,4 @@
-"""Builds data/dragonbane.db from the rulebook, bestiary and adventure PDFs."""
+"""Builds data/skaldbok.db from the rulebook, bestiary and adventure PDFs."""
 from __future__ import annotations
 
 import json

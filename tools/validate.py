@@ -1,11 +1,11 @@
-"""Sanity report for data/dragonbane.db.  Usage: python tools/validate.py [db]"""
+"""Sanity report for data/skaldbok.db.  Usage: python tools/validate.py [db]"""
 import re
 import sqlite3
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-db = sys.argv[1] if len(sys.argv) > 1 else str(ROOT / "data" / "dragonbane.db")
+db = sys.argv[1] if len(sys.argv) > 1 else str(ROOT / "data" / "skaldbok.db")
 con = sqlite3.connect(db)
 problems = 0
 

@@ -1,6 +1,6 @@
 // pack_check: validates a homebrew content pack (a folder or a .zip) exactly the way the app does when importing it.
 //
-//   pack_check <folder-or-zip> [--data <folder with dragonbane.db>] [--strict]
+//   pack_check <folder-or-zip> [--data <folder with skaldbok.db>] [--strict]
 //
 // Prints what the pack contains and every problem found. Exit code 0 = the app will import it, 1 = it will refuse it,
 // 2 = it imports but has warnings and --strict was given. Nothing is installed anywhere.
@@ -41,7 +41,7 @@ std::string findData(const std::string& given) {
 #endif
     for (std::string c : candidates) {
         c = normalize(c);
-        if (fileExists(c + "/dragonbane.db")) return c;
+        if (fileExists(c + "/skaldbok.db")) return c;
     }
     return {};
 }
@@ -58,17 +58,17 @@ int main(int argc, char** argv) {
         else if (path.empty()) path = a;
     }
     if (path.empty()) {
-        std::printf("usage: pack_check <folder-or-zip> [--data <folder with dragonbane.db>] [--strict]\n");
+        std::printf("usage: pack_check <folder-or-zip> [--data <folder with skaldbok.db>] [--strict]\n");
         return 64;
     }
     const std::string data = findData(dataArg);
     if (data.empty()) {
-        std::printf("cannot find data/dragonbane.db (use --data <folder>)\n");
+        std::printf("cannot find data/skaldbok.db (use --data <folder>)\n");
         return 64;
     }
     gm::Database db;
     std::string err;
-    if (!db.open(data + "/dragonbane.db", &err)) {
+    if (!db.open(data + "/skaldbok.db", &err)) {
         std::printf("cannot open the database: %s\n", err.c_str());
         return 64;
     }

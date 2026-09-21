@@ -1,5 +1,5 @@
 // The book database, the Core content pack, homebrew packs (loading, validation, importing) and search.
-// Needs data/dragonbane.db and data/packs/core (tools/build_db.py makes both).
+// Needs data/skaldbok.db and data/packs/core (tools/build_db.py makes both).
 #include <set>
 #include <string>
 #include <vector>
@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
     const std::string dataDir = test::dataDir(argc, argv);
     Database db;
     std::string err;
-    if (!db.open(dataDir + "/dragonbane.db", &err)) {
+    if (!db.open(dataDir + "/skaldbok.db", &err)) {
         std::printf("cannot open database: %s\n", err.c_str());
         return 2;
     }

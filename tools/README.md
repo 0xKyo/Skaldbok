@@ -2,7 +2,7 @@
 
 One-off converter: reads the three PDFs in `References/` and writes
 
-* `data/dragonbane.db` (SQLite): the books themselves — page text, headings, every table, full-text index;
+* `data/skaldbok.db` (SQLite): the books themselves — page text, headings, every table, full-text index;
 * `data/packs/core/`: the **Core content pack** (JSON + `images/` with the creature art) that the app loads like any
   homebrew pack — see [`docs/HOMEBREW.md`](../docs/HOMEBREW.md).
 
@@ -10,7 +10,7 @@ The C++ app only reads those; nothing here ships with it.
 
 ```
 pip install -r tools/requirements.txt
-python tools/build_db.py          # rebuilds data/dragonbane.db, data/packs/core/ (via export_packs.py) and its images
+python tools/build_db.py          # rebuilds data/skaldbok.db, data/packs/core/ (via export_packs.py) and its images
 python tools/validate.py          # sanity report (exit code 1 on problems)
 python tools/export_packs.py      # only regenerates data/packs/core/ from the existing database
 python tools/render_pages.py      # optional: page images for the app's built-in original-page viewer (~65 MB)

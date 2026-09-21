@@ -139,7 +139,7 @@ build\release\skaldbok_web.exe --public-url http://mi-direccion
 ## Cómo se arma
 
 ```
-References/*.pdf ──► tools/build_db.py ──► data/dragonbane.db        (texto de los libros, tablas, páginas, índice)
+References/*.pdf ──► tools/build_db.py ──► data/skaldbok.db        (texto de los libros, tablas, páginas, índice)
                                    └─► data/packs/core/          (pack Core: JSON por tipo + images/)
                        (opcional) tools/render_pages.py ──► data/pages/
                                           ▼
@@ -149,7 +149,7 @@ References/*.pdf ──► tools/build_db.py ──► data/dragonbane.db       
 1. **Datos** (una sola vez; Python 3 con PyMuPDF):
    ```
    pip install -r tools/requirements.txt
-   python tools/build_db.py          # genera data/dragonbane.db y el pack data/packs/core
+   python tools/build_db.py          # genera data/skaldbok.db y el pack data/packs/core
    python tools/validate.py          # informe de consistencia
    python tools/render_pages.py      # opcional: páginas para el visor interno (~65 MB)
    ```
@@ -171,7 +171,7 @@ References/*.pdf ──► tools/build_db.py ──► data/dragonbane.db       
 CMake descarga SDL3, Dear ImGui, SQLite, stb_image, nlohmann/json, miniz (zip) y cpp-httplib (servidor web) como archivos fuente y los compila
 estáticamente: el ejecutable es autónomo. `scripts\build.ps1 -Headless` compila solo el núcleo y los tests, sin ventana.
 
-La app busca `data/dragonbane.db` (y `data/packs/core`) junto al ejecutable, uno a tres niveles arriba, en `$SKALDBOK_DATA` o
+La app busca `data/skaldbok.db` (y `data/packs/core`) junto al ejecutable, uno a tres niveles arriba, en `$SKALDBOK_DATA` o
 con `--data <carpeta>`. Los archivos del usuario (ajustes, recientes, encuentro, personajes, packs importados) van a
 `%APPDATA%\skaldbok\gm\` (`--prefs <carpeta>` para cambiarlo).
 

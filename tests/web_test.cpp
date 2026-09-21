@@ -79,7 +79,7 @@ Env makeEnv(const std::string& name, bool realData = false) {
     } else {
         e.data = e.root + "/data";
         copyTree(fixtures + "/data", e.data);
-        makeMiniDb(e.data + "/dragonbane.db");
+        makeMiniDb(e.data + "/skaldbok.db");
     }
     e.config.port = 0;
     e.config.host = "127.0.0.1";
@@ -685,7 +685,7 @@ void behindProxy() {
 }
 
 void realData() {
-    const std::string db = std::string(SKALDBOK_DEV_DATA_DIR) + "/dragonbane.db";
+    const std::string db = std::string(SKALDBOK_DEV_DATA_DIR) + "/skaldbok.db";
     if (!test::exists(db) || !test::exists(std::string(SKALDBOK_DEV_DATA_DIR) + "/packs/core/manifest.json")) {
         std::printf("  (no real data/ here: skipping the check against the books' Core pack)\n");
         return;

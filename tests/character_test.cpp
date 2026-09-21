@@ -44,7 +44,7 @@ int main(int argc, char** argv) {
     const std::string dataDir = test::dataDir(argc, argv);
     Database db;
     std::string err;
-    if (!db.open(dataDir + "/dragonbane.db", &err)) {
+    if (!db.open(dataDir + "/skaldbok.db", &err)) {
         std::printf("cannot open database: %s\n", err.c_str());
         return 2;
     }

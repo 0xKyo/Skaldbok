@@ -108,7 +108,7 @@ int main() {
     cr.ref = "core/monster/bestiary-centaur";
     rich.addItem(rb, cr);
     ScreenItem im = item("image", 0, 300);
-    im.image = "C:/Users/Sebas/Pictures/mapa.png";
+    im.image = "C:/Users/Player/Pictures/mapa.png";
     rich.addItem(rb, im);
     const Board saved = rb;                                       // (a copy: adding a board moves the others in memory)
     rich.addBoard("Second");
@@ -125,7 +125,7 @@ int main() {
     check(n2 && n2->title == "Pistas" && n2->text == n.text && n2->color == 3 && n2->collapsed && n2->x == 10 && n2->w == 260 && n2->h == 180, "a note survives with its text (accents, quotes, newlines)");
     const ScreenItem* cr2 = rb2 ? rb2->find(saved.items[1].id) : nullptr;
     check(cr2 && cr2->type == "creature" && cr2->kind == "monster" && cr2->ref == "core/monster/bestiary-centaur" && cr2->z == saved.items[1].z, "a pinned creature is saved as a reference, not a copy");
-    check(rb2 && rb2->find(saved.items[2].id)->image == "C:/Users/Sebas/Pictures/mapa.png", "an image keeps its path");
+    check(rb2 && rb2->find(saved.items[2].id)->image == "C:/Users/Player/Pictures/mapa.png", "an image keeps its path");
 
     // damaged or hand-edited files
     MasterScreenData tolerant;

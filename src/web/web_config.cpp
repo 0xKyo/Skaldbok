@@ -116,7 +116,7 @@ WebConfig WebConfig::fromEnvironment() {
 #endif
     c.dataDir = data.empty() ? "data" : normalize(data.front());
     for (const std::string& d : data)
-        if (exists(normalize(d) + "/dragonbane.db")) {
+        if (exists(normalize(d) + "/skaldbok.db")) {
             c.dataDir = normalize(d);
             break;
         }

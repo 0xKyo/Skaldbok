@@ -1,4 +1,4 @@
-// Read-only access to data/dragonbane.db: the books themselves (page text, headings, tables, full-text index).
+// Read-only access to data/skaldbok.db: the books themselves (page text, headings, tables, full-text index).
 // Game content (creatures, spells, kin...) is not read from here any more; see content.h.
 #pragma once
 

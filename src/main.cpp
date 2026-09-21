@@ -87,9 +87,9 @@ bool locateData(const Options& o, gm::Paths& out) {
 #endif
     for (std::string c : candidates) {
         c = normalize(c);
-        if (fileExists(c + "/dragonbane.db")) {
+        if (fileExists(c + "/skaldbok.db")) {
             out.dataDir = c;
-            out.dbPath = c + "/dragonbane.db";
+            out.dbPath = c + "/skaldbok.db";
             out.root = parentDir(c);
             return true;
         }
@@ -109,7 +109,7 @@ int main(int argc, char** argv) {
 
     gm::Paths paths;
     if (!locateData(opt, paths)) {
-        fail("Cannot find data/dragonbane.db.\nRun python tools/build_db.py, or start with --data <folder>.");
+        fail("Cannot find data/skaldbok.db.\nRun python tools/build_db.py, or start with --data <folder>.");
         return 2;
     }
     paths.prefDir = normalize(opt.prefDir);

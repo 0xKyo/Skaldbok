@@ -4,12 +4,12 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 
-from dbane import monsters, rules  # noqa: E402
-from dbane.build import ROOT, build  # noqa: E402
+from skaldbok import monsters, rules  # noqa: E402
+from skaldbok.build import ROOT, build  # noqa: E402
 
 if __name__ == "__main__":
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
-    out = args[0] if args else str(ROOT / "data" / "dragonbane.db")
+    out = args[0] if args else str(ROOT / "data" / "skaldbok.db")
     only = None
     for a in sys.argv[1:]:
         if a.startswith("--only="):
