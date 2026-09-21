@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "id": "frostmarch",
+  "name": "Frostmarch Tales",
+  "version": "1.0.0",
+  "author": "Example Author",
+  "description": "A small example pack: a kin, a profession, spells, a creature with art, equipment and a random table.",
+  "sources": [
+    { "key": "frostmarch", "title": "Frostmarch Tales", "short": "Frostmarch" }
+  ]
+}

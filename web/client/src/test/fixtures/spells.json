@@ -1,0 +1,98 @@
+{
+  "type": "spells",
+  "label": "Spells",
+  "entries": [
+    {
+      "key": "frostmarch/spell/frost-nip",
+      "kind": "spell",
+      "name": "Frost Nip",
+      "subtitle": "Elementalism · magic trick",
+      "fields": [
+        {
+          "label": "Requirement",
+          "value": "Word, gesture"
+        },
+        {
+          "label": "Range",
+          "value": "Touch"
+        },
+        {
+          "label": "Duration",
+          "value": "Instant"
+        }
+      ],
+      "body": "A thin rime spreads over a small object or a creature's fingertips. The target is chilled and takes a bane on its next roll that needs a steady hand.",
+      "source": "Homebrew · Frostmarch",
+      "homebrew": true,
+      "page": "p.20"
+    },
+    {
+      "key": "frostmarch/spell/rime-ward",
+      "kind": "spell",
+      "name": "Rime Ward",
+      "subtitle": "Elementalism · spell",
+      "fields": [
+        {
+          "label": "Rank",
+          "value": "1"
+        },
+        {
+          "label": "Requirement",
+          "value": "Word, gesture"
+        },
+        {
+          "label": "Casting time",
+          "value": "Action"
+        },
+        {
+          "label": "Range",
+          "value": "Touch"
+        },
+        {
+          "label": "Duration",
+          "value": "Shift"
+        }
+      ],
+      "body": "You coat a creature in a shimmer of ice. The target gets +2 armor against fire damage and is immune to the effects of natural cold until the spell ends.",
+      "source": "Homebrew · Frostmarch",
+      "homebrew": true,
+      "page": "p.20"
+    },
+    {
+      "key": "frostmarch/spell/blizzard-call",
+      "kind": "spell",
+      "name": "Blizzard Call",
+      "subtitle": "Elementalism · spell",
+      "fields": [
+        {
+          "label": "Rank",
+          "value": "3"
+        },
+        {
+          "label": "Prerequisite",
+          "value": "Rime Ward"
+        },
+        {
+          "label": "Requirement",
+          "value": "Word, gesture, staff"
+        },
+        {
+          "label": "Casting time",
+          "value": "Action"
+        },
+        {
+          "label": "Range",
+          "value": "20 meters"
+        },
+        {
+          "label": "Duration",
+          "value": "Concentration"
+        }
+      ],
+      "body": "A swirling storm of snow fills a sphere 10 meters across. Everyone inside has a bane on attacks and on AWARENESS rolls.\nFire in the area is doused at once.",
+      "source": "Homebrew · Frostmarch",
+      "homebrew": true,
+      "page": "p.21"
+    }
+  ]
+}

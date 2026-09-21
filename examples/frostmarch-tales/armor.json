@@ -1,0 +1,13 @@
+{
+  "armor": [
+    {
+      "name": "Fur Coat",
+      "slot": "armor",
+      "armor_rating": "1",
+      "cost": "5 gold",
+      "supply": "Common",
+      "effect": "Boon on rolls to endure cold. Bane on SWIMMING rolls.",
+      "page": 31
+    }
+  ]
+}

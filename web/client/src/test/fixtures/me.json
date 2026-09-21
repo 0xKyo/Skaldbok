@@ -1,0 +1,522 @@
+{
+  "name": "Brenna",
+  "nickname": "Grimjaw",
+  "player": "Sebastián",
+  "age": {
+    "id": "adult",
+    "label": "Adult"
+  },
+  "kin": {
+    "name": "Human",
+    "description": "Test humans.\n\nAdaptive (WP 3)\nUse another skill in place of the normal one."
+  },
+  "profession": {
+    "name": "Fighter",
+    "description": ""
+  },
+  "school": "",
+  "party": "The Misty Vale party",
+  "attributes": [
+    {
+      "key": "STR",
+      "name": "Strength",
+      "value": 15,
+      "baseChance": 6
+    },
+    {
+      "key": "CON",
+      "name": "Constitution",
+      "value": 13,
+      "baseChance": 6
+    },
+    {
+      "key": "AGL",
+      "name": "Agility",
+      "value": 12,
+      "baseChance": 5
+    },
+    {
+      "key": "INT",
+      "name": "Intelligence",
+      "value": 9,
+      "baseChance": 5
+    },
+    {
+      "key": "WIL",
+      "name": "Willpower",
+      "value": 10,
+      "baseChance": 5
+    },
+    {
+      "key": "CHA",
+      "name": "Charisma",
+      "value": 11,
+      "baseChance": 5
+    }
+  ],
+  "hp": {
+    "current": 10,
+    "max": 13,
+    "bonus": 0
+  },
+  "wp": {
+    "current": 10,
+    "max": 10,
+    "bonus": 0
+  },
+  "conditions": [
+    {
+      "name": "Exhausted",
+      "attribute": "STR",
+      "active": false
+    },
+    {
+      "name": "Angry",
+      "attribute": "INT",
+      "active": false
+    },
+    {
+      "name": "Sickly",
+      "attribute": "CON",
+      "active": false
+    },
+    {
+      "name": "Scared",
+      "attribute": "WIL",
+      "active": false
+    },
+    {
+      "name": "Dazed",
+      "attribute": "AGL",
+      "active": false
+    },
+    {
+      "name": "Disheartened",
+      "attribute": "CHA",
+      "active": false
+    }
+  ],
+  "derived": {
+    "movement": 10,
+    "damageBonus": {
+      "str": "D4",
+      "agl": ""
+    },
+    "encumbrance": {
+      "carried": 3,
+      "limit": 8
+    },
+    "trainedSkills": 10
+  },
+  "skills": [
+    {
+      "name": "Acrobatics",
+      "attribute": "AGL",
+      "category": "core",
+      "level": 5,
+      "base": 5,
+      "trained": false,
+      "marked": false,
+      "key": "core/skill/acrobatics"
+    },
+    {
+      "name": "Awareness",
+      "attribute": "INT",
+      "category": "core",
+      "level": 10,
+      "base": 5,
+      "trained": true,
+      "marked": false,
+      "key": "core/skill/awareness"
+    },
+    {
+      "name": "Evade",
+      "attribute": "AGL",
+      "category": "core",
+      "level": 10,
+      "base": 5,
+      "trained": true,
+      "marked": false,
+      "key": "core/skill/evade"
+    },
+    {
+      "name": "Healing",
+      "attribute": "INT",
+      "category": "core",
+      "level": 10,
+      "base": 5,
+      "trained": true,
+      "marked": false,
+      "key": "core/skill/healing"
+    },
+    {
+      "name": "Ice Lore",
+      "attribute": "INT",
+      "category": "core",
+      "level": 5,
+      "base": 5,
+      "trained": false,
+      "marked": false,
+      "key": "core/skill/ice-lore"
+    },
+    {
+      "name": "Riding",
+      "attribute": "AGL",
+      "category": "core",
+      "level": 10,
+      "base": 5,
+      "trained": true,
+      "marked": false,
+      "key": "core/skill/riding"
+    },
+    {
+      "name": "Swimming",
+      "attribute": "AGL",
+      "category": "core",
+      "level": 10,
+      "base": 5,
+      "trained": true,
+      "marked": false,
+      "key": "core/skill/swimming"
+    },
+    {
+      "name": "Axes",
+      "attribute": "STR",
+      "category": "weapon",
+      "level": 12,
+      "base": 6,
+      "trained": true,
+      "marked": false,
+      "key": "core/skill/axes"
+    },
+    {
+      "name": "Bows",
+      "attribute": "AGL",
+      "category": "weapon",
+      "level": 10,
+      "base": 5,
+      "trained": true,
+      "marked": false,
+      "key": "core/skill/bows"
+    },
+    {
+      "name": "Brawling",
+      "attribute": "STR",
+      "category": "weapon",
+      "level": 12,
+      "base": 6,
+      "trained": true,
+      "marked": false,
+      "key": "core/skill/brawling"
+    },
+    {
+      "name": "Crossbows",
+      "attribute": "AGL",
+      "category": "weapon",
+      "level": 10,
+      "base": 5,
+      "trained": true,
+      "marked": false,
+      "key": "core/skill/crossbows"
+    },
+    {
+      "name": "Swords",
+      "attribute": "STR",
+      "category": "weapon",
+      "level": 12,
+      "base": 6,
+      "trained": true,
+      "marked": false,
+      "key": "core/skill/swords"
+    }
+  ],
+  "abilities": [
+    {
+      "key": "core/ability/adaptive",
+      "kind": "ability",
+      "name": "Adaptive",
+      "subtitle": "Innate ability · Human",
+      "fields": [
+        {
+          "label": "Willpower points",
+          "value": "3"
+        }
+      ],
+      "body": "Use another skill in place of the normal one.",
+      "source": "Rulebook",
+      "homebrew": false,
+      "page": "p.14",
+      "found": true
+    },
+    {
+      "key": "core/ability/veteran",
+      "kind": "ability",
+      "name": "Veteran",
+      "subtitle": "Heroic ability",
+      "fields": [
+        {
+          "label": "Requirement",
+          "value": "Any weapon skill 12"
+        },
+        {
+          "label": "Willpower points",
+          "value": "3"
+        }
+      ],
+      "body": "A hardened fighter.\nSecond paragraph.",
+      "source": "Rulebook",
+      "homebrew": false,
+      "page": "p.36",
+      "found": true
+    }
+  ],
+  "spells": [],
+  "equipment": {
+    "weapons": [
+      {
+        "name": "Morningstar",
+        "count": 1,
+        "note": "",
+        "stats": [
+          {
+            "label": "Grip",
+            "value": "1H"
+          },
+          {
+            "label": "Range",
+            "value": "1"
+          },
+          {
+            "label": "Damage",
+            "value": "D10"
+          },
+          {
+            "label": "Durability",
+            "value": "6"
+          }
+        ],
+        "description": "Test features."
+      },
+      {
+        "name": "Shield, Small",
+        "count": 1,
+        "note": "",
+        "stats": [
+          {
+            "label": "Grip",
+            "value": "1H"
+          },
+          {
+            "label": "Range",
+            "value": "1"
+          },
+          {
+            "label": "Damage",
+            "value": "D6"
+          },
+          {
+            "label": "Durability",
+            "value": "8"
+          }
+        ],
+        "description": ""
+      }
+    ],
+    "armor": {
+      "name": "Chainmail",
+      "count": 1,
+      "note": "",
+      "stats": [
+        {
+          "label": "Armor rating",
+          "value": "4"
+        }
+      ],
+      "description": "Bane on EVADE and SNEAKING rolls."
+    },
+    "helmet": null,
+    "inventory": [
+      {
+        "name": "Torch",
+        "count": 1,
+        "note": "",
+        "stats": [],
+        "description": "Burns for a shift."
+      },
+      {
+        "name": "Flint & Tinder",
+        "count": 1,
+        "note": "",
+        "stats": [],
+        "description": ""
+      },
+      {
+        "name": "Food rations",
+        "count": 1,
+        "note": "",
+        "stats": [],
+        "description": ""
+      }
+    ],
+    "tinyItems": [],
+    "coins": {
+      "gold": 0,
+      "silver": 1,
+      "copper": 0
+    }
+  },
+  "about": {
+    "weakness": "Child of the Wild. I never sleep indoors.",
+    "memento": "",
+    "appearance": "",
+    "notes": "Owes the innkeeper 3 silver."
+  },
+  "updatedAt": "2026-09-20T18:31:18Z",
+  "doc": {
+    "name": "Brenna",
+    "nickname": "Grimjaw",
+    "age": "adult",
+    "weakness": "Child of the Wild. I never sleep indoors.",
+    "memento": "",
+    "appearance": "",
+    "notes": "Owes the innkeeper 3 silver.",
+    "attributes": {
+      "STR": 15,
+      "CON": 13,
+      "AGL": 12,
+      "INT": 9,
+      "WIL": 10,
+      "CHA": 11
+    },
+    "hp": 10,
+    "wp": 10,
+    "hp_bonus": 0,
+    "wp_bonus": 0,
+    "conditions": [],
+    "skills": [
+      {
+        "name": "Awareness",
+        "key": "core/skill/awareness",
+        "attribute": "INT",
+        "level": 10,
+        "trained": true,
+        "marked": false
+      },
+      {
+        "name": "Evade",
+        "key": "core/skill/evade",
+        "attribute": "AGL",
+        "level": 10,
+        "trained": true,
+        "marked": false
+      },
+      {
+        "name": "Healing",
+        "key": "core/skill/healing",
+        "attribute": "INT",
+        "level": 10,
+        "trained": true,
+        "marked": false
+      },
+      {
+        "name": "Riding",
+        "key": "core/skill/riding",
+        "attribute": "AGL",
+        "level": 10,
+        "trained": true,
+        "marked": false
+      },
+      {
+        "name": "Swimming",
+        "key": "core/skill/swimming",
+        "attribute": "AGL",
+        "level": 10,
+        "trained": true,
+        "marked": false
+      },
+      {
+        "name": "Axes",
+        "key": "core/skill/axes",
+        "attribute": "STR",
+        "level": 12,
+        "trained": true,
+        "marked": false
+      },
+      {
+        "name": "Bows",
+        "key": "core/skill/bows",
+        "attribute": "AGL",
+        "level": 10,
+        "trained": true,
+        "marked": false
+      },
+      {
+        "name": "Brawling",
+        "key": "core/skill/brawling",
+        "attribute": "STR",
+        "level": 12,
+        "trained": true,
+        "marked": false
+      },
+      {
+        "name": "Crossbows",
+        "key": "core/skill/crossbows",
+        "attribute": "AGL",
+        "level": 10,
+        "trained": true,
+        "marked": false
+      },
+      {
+        "name": "Swords",
+        "key": "core/skill/swords",
+        "attribute": "STR",
+        "level": 12,
+        "trained": true,
+        "marked": false
+      }
+    ],
+    "abilities": [
+      {
+        "key": "core/ability/adaptive",
+        "name": "Adaptive"
+      },
+      {
+        "key": "core/ability/veteran",
+        "name": "Veteran"
+      }
+    ],
+    "spells": [],
+    "weapons": [
+      {
+        "name": "Morningstar"
+      },
+      {
+        "name": "Shield, Small"
+      }
+    ],
+    "armor": {
+      "name": "Chainmail"
+    },
+    "helmet": null,
+    "inventory": [
+      {
+        "name": "Torch"
+      },
+      {
+        "name": "Flint & Tinder"
+      },
+      {
+        "name": "Food rations"
+      }
+    ],
+    "tiny_items": [],
+    "coins": {
+      "gold": 0,
+      "silver": 1,
+      "copper": 0
+    }
+  },
+  "issues": [],
+  "locked": false,
+  "revision": 3
+}

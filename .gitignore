@@ -1,0 +1,64 @@
+# ---- Copyrighted material: the Dragonbane books are NOT part of this repository.
+# References/ holds the original PDFs; data/ is everything derived from them (database, page images, Core pack).
+# Regenerate data/ from your own copies of the books with tools/build_db.py (see tools/README.md).
+References/
+data/
+
+# ---- Build output
+build/
+dist/
+out/
+*.obj
+*.o
+*.exe
+*.pdb
+*.ilk
+*.exp
+*.lib
+*.a
+*.so
+*.dll
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+compile_commands.json
+Testing/
+.deps/
+
+# ---- Node / web client
+node_modules/
+web/client/dist/
+npm-debug.log*
+*.tsbuildinfo
+coverage/
+
+# ---- Python (tools/)
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# ---- Editors and IDEs
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.swp
+*~
+
+# ---- Operating system
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# ---- Local state, logs and secrets
+*.log
+.env
+.env.*
+*.pem
+*.key
+# per-user files the app writes next to a custom --prefs folder
+web-status.json
+screenshots/

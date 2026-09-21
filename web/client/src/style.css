@@ -1,0 +1,328 @@
+/* The palette of the Dragonbane character sheet: aged cream paper, yellowed parchment, dragon green, the red of the logo and
+   dark-brown ink. Mobile first: players use this at the table on a phone. */
+:root {
+  --paper: #e7dfcc;
+  --paper-edge: #d7c7a5;
+  --cream: #f1e9d3;
+  --parchment: #e9deb9;
+  --parchment-dark: #d9c89b;
+  --ink: #33291f;
+  --brown: #7a4b2a;
+  --muted: #7d6c54;
+  --line: #b9a884;
+  --green: #2f7a68;
+  --green-dark: #1e5a4c;
+  --green-light: #5aa48f;
+  --red: #e2453e;
+  --red-dark: #b0231b;
+  --yellow: #e6c66a;
+  --radius: 10px;
+  --display: 'Cinzel', 'Trajan Pro', 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  color: var(--ink);
+  font: 16px/1.5 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--paper);
+  background-image:
+    radial-gradient(ellipse at top left, rgba(255, 255, 255, 0.55), transparent 55%),
+    radial-gradient(ellipse at bottom right, rgba(160, 120, 60, 0.28), transparent 60%);
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+h1, h2, h3 { margin: 0; line-height: 1.2; font-weight: 700; font-family: var(--display); letter-spacing: 0.03em; }
+h2 { font-size: 1.1rem; color: var(--green-dark); margin-bottom: 0.6rem; text-transform: uppercase; }
+h3 { font-size: 0.95rem; color: var(--brown); margin: 1rem 0 0.4rem; text-transform: uppercase; }
+p { margin: 0 0 0.6em; }
+.muted { color: var(--muted); }
+.gold { color: var(--brown); font-weight: 600; }
+.small { font-size: 0.85rem; }
+
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 12px 40px; }
+
+/* ---- header and tabs ------------------------------------------------------------------------------------- */
+.top { padding: 14px 0 6px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 14px; }
+.wordmark { font-family: var(--display); font-weight: 900; font-size: 1.5rem; letter-spacing: 0.08em; color: var(--red); text-transform: uppercase; line-height: 1; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6); }
+.top .who { color: var(--muted); flex: 1 1 auto; }
+.top .live { font-size: 0.8rem; color: var(--muted); margin-left: auto; }
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--green); margin-right: 6px; }
+.dot.off { background: var(--red); }
+
+.tabs { display: flex; gap: 4px; border-bottom: 2px solid var(--green-dark); margin: 8px 0 16px; position: sticky; top: 0; background: var(--paper); z-index: 5; }
+.tabs button {
+  flex: 1;
+  background: none;
+  color: var(--muted);
+  border: 0;
+  border-bottom: 4px solid transparent;
+  padding: 12px 6px;
+  font: inherit;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.tabs button[aria-selected='true'] { color: var(--green-dark); border-bottom-color: var(--red); }
+.tabs button:focus-visible { outline: 2px solid var(--green); outline-offset: -2px; }
+
+/* ---- generic pieces -------------------------------------------------------------------------------------- */
+.panel { background: var(--cream); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; margin-bottom: 14px; box-shadow: 0 1px 0 rgba(255, 255, 255, 0.7) inset; }
+.grid { display: grid; gap: 10px; }
+.grid.two { grid-template-columns: 1fr; }
+@media (min-width: 640px) {
+  .grid.two { grid-template-columns: 1fr 1fr; }
+}
+
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px; font-size: 0.85rem; color: var(--muted); background: var(--parchment); }
+.chip.on { color: #fff; background: var(--red-dark); border-color: var(--red-dark); }
+.chip.src { color: var(--green-dark); border-color: var(--green-light); }
+.chip.homebrew { color: #6a3f8f; border-color: #b59bd0; }
+.chip.you { color: #fff; background: var(--green); border-color: var(--green-dark); }
+
+/* hit / willpower points on the party page */
+.meter { margin: 6px 0 12px; }
+.meter .head { display: flex; justify-content: space-between; font-size: 0.9rem; }
+.meter .bar { height: 12px; border-radius: 6px; background: var(--parchment-dark); overflow: hidden; margin-top: 3px; }
+.meter .fill { height: 100%; background: var(--green); transition: width 0.4s; }
+.meter.warn .fill { background: var(--yellow); }
+.meter.danger .fill { background: var(--red); }
+.meter.wp .fill { background: var(--green-light); }
+
+table { width: 100%; border-collapse: collapse; }
+th { text-align: left; color: var(--brown); font-weight: 600; font-size: 0.8rem; padding: 4px 6px; border-bottom: 1px solid var(--line); }
+td { padding: 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+/* an entry of the rules: a spell, an ability... */
+details.entry { border: 1px solid var(--line); border-radius: 8px; background: var(--parchment); margin-bottom: 8px; }
+details.entry summary { padding: 10px 12px; cursor: pointer; list-style: none; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
+details.entry summary::-webkit-details-marker { display: none; }
+details.entry summary::before { content: '◆'; color: var(--green); font-size: 0.7rem; }
+details.entry[open] summary::before { color: var(--red); }
+details.entry .name { font-weight: 700; }
+details.entry .sub { color: var(--muted); font-size: 0.85rem; }
+details.entry .body { padding: 0 12px 12px; }
+.fields { display: grid; grid-template-columns: max-content 1fr; gap: 2px 12px; margin: 4px 0 10px; }
+.fields dt { color: var(--brown); font-weight: 600; }
+.fields dd { margin: 0; }
+
+input[type='search'] {
+  width: 100%;
+  background: #fbf6e6;
+  border: 1px solid var(--line);
+  color: var(--ink);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font: inherit;
+}
+input[type='search']:focus-visible { outline: 2px solid var(--green); }
+
+.subtabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
+.subtabs button { background: var(--parchment); color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; font: inherit; cursor: pointer; }
+.subtabs button[aria-pressed='true'] { color: #fff; background: var(--green); border-color: var(--green-dark); }
+
+.toggle { display: inline-flex; gap: 8px; align-items: center; cursor: pointer; color: var(--muted); font-size: 0.9rem; }
+
+.member { display: flex; flex-direction: column; gap: 4px; }
+.member h3 { margin: 0; color: var(--ink); }
+
+.notice { text-align: center; padding: 60px 14px; }
+.notice h1 { margin-bottom: 8px; color: var(--red); }
+.error { color: var(--red-dark); }
+
+/* ---- messages from the GM ---------------------------------------------------------------------------------- */
+.message { margin-bottom: 12px; }
+.message-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }
+.message-text { margin: 0 0 0.4em; overflow-wrap: anywhere; }
+.message-image { display: block; max-width: 100%; max-height: 70vh; border-radius: 8px; margin-bottom: 10px; }
+
+/* ---- the character sheet (page 1 of the printed sheet: the green one) ------------------------------------- */
+.sheet { display: grid; gap: 14px; grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: 'tools' 'issues' 'name' 'ident' 'attrs' 'hp' 'wp' 'dmg' 'skills' 'abil' 'weapons' 'armor' 'helmet' 'inv' 'coins' 'memento' 'tiny' 'appear' 'about'; }
+.sheet > * { min-width: 0; }
+.a-tools { grid-area: tools; } .a-issues { grid-area: issues; } .a-name { grid-area: name; } .a-ident { grid-area: ident; } .a-appear { grid-area: appear; } .a-attrs { grid-area: attrs; }
+.a-dmg { grid-area: dmg; } .a-abil { grid-area: abil; } .a-skills { grid-area: skills; } .a-inv { grid-area: inv; }
+.a-coins { grid-area: coins; } .a-memento { grid-area: memento; } .a-tiny { grid-area: tiny; } .a-armor { grid-area: armor; }
+.a-helmet { grid-area: helmet; } .a-weapons { grid-area: weapons; } .a-wp { grid-area: wp; } .a-hp { grid-area: hp; } .a-about { grid-area: about; }
+@media (min-width: 900px) {
+  .sheet { grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr) minmax(0, 1.1fr); align-items: start;
+    grid-template-areas: 'tools tools tools' 'issues issues issues' 'ident name appear' 'attrs attrs attrs' 'dmg dmg dmg' 'abil skills inv' 'coins skills memento' 'coins skills tiny'
+      'armor helmet wp' 'weapons weapons hp' 'about about about'; }
+}
+
+/* the green ornamented banner that heads every block */
+.banner { position: relative; display: block; background: linear-gradient(#3b8c78, var(--green) 55%, var(--green-dark)); color: #f3ead2; border: 2px solid var(--green-dark);
+  border-radius: 8px; padding: 6px 28px; font-family: var(--display); font-weight: 800; font-size: 0.85rem; letter-spacing: 0.1em; text-transform: uppercase;
+  text-align: center; box-shadow: 0 2px 0 rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.25); }
+.banner::before, .banner::after { content: ''; position: absolute; top: 50%; width: 10px; height: 10px; margin-top: -5px; transform: rotate(45deg);
+  background: var(--yellow); border: 1px solid var(--green-dark); }
+.banner::before { left: 9px; } .banner::after { right: 9px; }
+.banner.red { background: linear-gradient(#e85a52, var(--red) 55%, var(--red-dark)); border-color: var(--red-dark); }
+
+.block { display: grid; gap: 8px; align-content: start; }
+.field-row { display: grid; grid-template-columns: 1fr minmax(4.5rem, auto); gap: 8px; align-items: stretch; }
+.field-row .banner { text-align: left; padding-left: 30px; }
+.field { display: flex; align-items: center; justify-content: center; min-height: 2.1rem; padding: 2px 10px; border: 1px solid var(--line); border-radius: 6px;
+  background: linear-gradient(var(--parchment), #e2d3a8); font-family: var(--display); font-weight: 800; font-size: 1.2rem; color: var(--ink); }
+
+/* underlined "form line" rows */
+.lines { display: grid; }
+.line { display: flex; align-items: baseline; gap: 8px; min-height: 2rem; padding: 3px 2px 1px; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
+.line .k { flex: 0 0 auto; min-width: 4.6rem; font-family: var(--display); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.line .n { flex: 0 0 1.4rem; color: var(--muted); font-size: 0.85rem; }
+.line.empty { color: transparent; }
+
+/* the scroll with the name */
+.scroll { position: relative; text-align: center; padding: 16px 18px 12px; background: linear-gradient(#efe4bf, #ddcb9c); border: 1px solid #b39d68;
+  border-radius: 4px 4px 30px 30px / 4px 4px 14px 14px; box-shadow: 0 2px 0 rgba(0, 0, 0, 0.12); }
+.scroll .the-name { font-family: var(--display); font-weight: 800; font-size: 1.5rem; line-height: 1.15; color: var(--ink); }
+.scroll .the-nick { color: var(--brown); font-style: italic; }
+.scroll .k { display: block; font-family: var(--display); font-size: 0.65rem; letter-spacing: 0.2em; color: var(--muted); }
+
+/* the six attribute gems and their conditions */
+.gems { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px 6px; padding: 12px 6px 8px; border-radius: 14px;
+  background: linear-gradient(#2c7563, #245f51); border: 2px solid var(--green-dark); box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.08); }
+@media (min-width: 640px) { .gems { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+.gem { display: grid; justify-items: center; gap: 4px; }
+.gem .abbr { font-family: var(--display); font-weight: 800; font-size: 0.8rem; letter-spacing: 0.14em; color: #f3ead2; }
+.gem .ring { display: grid; place-items: center; width: 4.2rem; height: 4.2rem; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fbf5e2, #e6d9b3);
+  border: 4px solid #a9c9bd; box-shadow: 0 2px 0 rgba(0, 0, 0, 0.3), inset 0 0 0 2px var(--green-dark); }
+.gem .ring b { font-family: var(--display); font-size: 1.7rem; line-height: 1; color: var(--ink); }
+.gem .base { font-size: 0.7rem; color: #cfe2da; }
+.cond { display: inline-flex; align-items: center; gap: 5px; margin-top: 2px; padding: 2px 8px; border-radius: 999px; background: #17493e; color: #d6e6df;
+  font-family: var(--display); font-weight: 700; font-size: 0.6rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.cond.on { background: var(--red); color: #fff; box-shadow: 0 0 0 2px #fff3; }
+
+/* diamonds: advancement marks and condition boxes */
+.dia { display: inline-block; flex: 0 0 auto; width: 0.7rem; height: 0.7rem; transform: rotate(45deg); border: 1.5px solid var(--brown); background: #fbf5e2; }
+.dia.on { background: var(--red); border-color: var(--red-dark); }
+.cond .dia { width: 0.5rem; height: 0.5rem; border-color: #d6e6df; background: transparent; }
+.cond.on .dia { background: #fff; border-color: #fff; }
+
+/* hit points and willpower points: a big number and a row of circles */
+.points { padding: 10px 10px 12px; border-radius: 12px; color: #fff; border: 3px solid var(--green-dark); background: linear-gradient(#34866f, #2a6e5c); box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2); }
+.points.hp { background: linear-gradient(#e6524a, #c22b23); border-color: var(--red-dark); }
+.points h3 { margin: 0 0 6px; color: #fff; font-size: 0.9rem; letter-spacing: 0.12em; }
+.points .body { display: flex; align-items: center; gap: 12px; }
+.points .now { display: grid; place-items: center; align-content: center; line-height: 1.05; min-width: 3.6rem; min-height: 3.1rem; padding: 4px 8px; border-radius: 8px; background: #fbf5e2; color: var(--ink);
+  font-family: var(--display); font-weight: 900; font-size: 1.5rem; }
+.points .now small { font-size: 0.75rem; font-weight: 600; color: var(--muted); }
+.pips { display: flex; flex-wrap: wrap; gap: 5px; }
+.pip { width: 1.05rem; height: 1.05rem; border-radius: 50%; border: 2px solid #fff; background: #fff; }
+.pip.gone { background: transparent; border-color: rgba(255, 255, 255, 0.55); }
+.points.hp .pip.low:not(.gone) { background: #ffe1a3; }
+
+/* the skills parchment */
+.parchment { padding: 12px 12px 14px; border: 1px solid #b7a26f; border-radius: 12px; background: linear-gradient(#efe4c0, #e4d4a6); box-shadow: 0 2px 0 rgba(0, 0, 0, 0.12), inset 0 0 26px rgba(150, 110, 50, 0.16); }
+.skill-cols { display: grid; gap: 4px 22px; margin-top: 8px; }
+@media (min-width: 900px) { .skill-cols { grid-template-columns: 1fr 1fr; } }
+.skill-head { margin: 10px 0 2px; font-family: var(--display); font-weight: 800; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--brown); }
+.skill { display: flex; align-items: baseline; gap: 8px; padding: 2px 0; }
+.skill .lvl { flex: 0 0 1.9rem; text-align: center; border-bottom: 1.5px solid var(--brown); font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.25; }
+.skill.untrained .lvl { font-weight: 400; color: var(--muted); }
+.skill .attr { color: var(--muted); font-size: 0.75rem; letter-spacing: 0.04em; }
+.skill .dia { align-self: center; }
+
+/* armor, helmet, weapons */
+.gear { display: grid; grid-template-columns: auto 1fr auto; gap: 4px 10px; align-items: center; }
+.rating { grid-row: span 2; display: grid; place-items: center; width: 3.1rem; height: 3.1rem; border-radius: 50% 50% 46% 46%; border: 3px solid #8b8f8a;
+  background: linear-gradient(#f5f1e4, #d9d5c5); font-family: var(--display); font-weight: 900; font-size: 1.3rem; }
+.gear .what { font-family: var(--display); font-weight: 800; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--brown); }
+.gear .name { grid-column: 2 / -1; font-weight: 700; }
+.bane { margin-top: 6px; font-size: 0.8rem; color: var(--muted); }
+.bane b { color: var(--brown); font-family: var(--display); letter-spacing: 0.06em; text-transform: uppercase; }
+.weapon { padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--parchment); }
+.weapon .name { font-weight: 700; }
+.weapon .stats { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 2px; font-size: 0.85rem; }
+.weapon .stats span b { font-family: var(--display); font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--brown); margin-right: 4px; }
+
+.box { min-height: 5.5rem; padding: 8px 10px; border: 1px solid #b7a26f; border-radius: 6px; background: linear-gradient(#efe4c0, #e4d4a6); overflow-wrap: anywhere; }
+.box .k { display: block; margin-bottom: 2px; font-family: var(--display); font-size: 0.65rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+
+.trio { display: grid; gap: 10px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 640px) { .trio { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.field .muted { font-size: 0.85rem; font-weight: 600; }
+.field.error { color: var(--red-dark); }
+
+/* ---- buttons ---------------------------------------------------------------------------------------------- */
+.btn { display: inline-block; padding: 8px 16px; border: 1px solid var(--green-dark); border-radius: 8px; background: linear-gradient(#3b8c78, var(--green)); color: #f3ead2;
+  font: inherit; font-family: var(--display); font-weight: 700; font-size: 0.85rem; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; }
+.btn:disabled { opacity: 0.5; cursor: default; }
+.btn.secondary { background: var(--parchment); color: var(--ink); border-color: var(--line); }
+.btn.small-btn { padding: 4px 10px; font-size: 0.75rem; }
+.btn:focus-visible, .link:focus-visible, .x:focus-visible, .step:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+.link { background: none; border: 0; padding: 0; color: var(--green-dark); text-decoration: underline; font: inherit; cursor: pointer; }
+
+/* ---- editing the sheet ---------------------------------------------------------------------------------- */
+.a-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; }
+.locked-note { color: var(--red-dark); font-weight: 600; }
+.edit { font: inherit; color: var(--ink); background: #fbf6e6; border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px; min-width: 0; width: 100%; }
+.edit:focus-visible { outline: 2px solid var(--green); }
+textarea.edit { resize: vertical; }
+.line .edit { flex: 1 1 auto; }
+.scroll .edit.the-name { text-align: center; font-family: var(--display); font-weight: 800; font-size: 1.3rem; }
+.scroll .edit.the-nick { margin-top: 6px; text-align: center; font-style: italic; }
+.ring-input { width: 100%; height: 100%; padding: 0; border: 0; border-radius: 50%; background: transparent; text-align: center; font-family: var(--display); font-weight: 800; font-size: 1.5rem; -moz-appearance: textfield; }
+.ring-input::-webkit-inner-spin-button { display: none; }
+button.cond { border: 0; cursor: pointer; font: inherit; font-family: var(--display); font-weight: 700; font-size: 0.6rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.edit-row { display: flex; align-items: center; gap: 6px; margin: 4px 0; }
+.edit-row .n { flex: 0 0 1.4rem; color: var(--muted); font-size: 0.85rem; }
+.edit-row .count { flex: 0 0 4rem; width: 4rem; }
+.x { flex: 0 0 auto; width: 1.9rem; height: 1.9rem; border: 1px solid var(--line); border-radius: 50%; background: var(--parchment); color: var(--red-dark); font-size: 1.1rem; line-height: 1; cursor: pointer; }
+.dia-btn { flex: 0 0 auto; width: 2rem; height: 2rem; padding: 0; border: 0; background: none; cursor: pointer; display: grid; place-items: center; }
+.lvl-input { flex: 0 0 3.6rem; width: 3.6rem; text-align: center; padding: 2px 4px; }
+.trained-tick { margin-left: auto; font-size: 0.75rem; color: var(--muted); white-space: nowrap; }
+.editing .skill { align-items: center; flex-wrap: wrap; }
+.skill-group { margin-top: 4px; }
+.field.edit { width: 100%; text-align: center; font-family: var(--display); font-weight: 800; font-size: 1.1rem; }
+
+/* hit and willpower points, when they can be tapped */
+button.pip.tap { padding: 0; cursor: pointer; width: 1.6rem; height: 1.6rem; }
+.points .pips { gap: 6px; }
+.points-edit { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 10px; color: #fff; font-size: 0.8rem; }
+.points-edit input { width: 4rem; padding: 2px 6px; border-radius: 6px; border: 1px solid #fff8; background: #fbf5e2; color: var(--ink); font: inherit; }
+.step { width: 2.2rem; height: 2.2rem; border-radius: 50%; border: 1px solid #fff8; background: #fbf5e2; color: var(--ink); font-size: 1.2rem; cursor: pointer; }
+.flag-note { font-weight: 600; letter-spacing: 0; text-transform: none; }
+.points.flagged { box-shadow: 0 0 0 3px #fff, 0 0 0 6px var(--red-dark); }
+
+/* what breaks the rules is red until the GM says otherwise */
+.a-issues { display: grid; gap: 8px; }
+.issue { padding: 10px 12px; border: 2px solid var(--red); border-radius: 10px; background: #f7dcd3; color: #5a1610; }
+.issue.rejected { border-color: var(--red-dark); background: #f3c9be; }
+.gem.flagged .ring { border-color: var(--red); box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--red); }
+.skill.flagged { color: var(--red-dark); }
+.skill.flagged .lvl, .skill.flagged .lvl-input { color: var(--red-dark); border-color: var(--red); }
+.field.flagged { color: var(--red-dark); border-color: var(--red); background: #f7dcd3; }
+
+/* choosing from the rules */
+.picker { margin: 6px 0; }
+.picker-panel { margin-top: 6px; padding: 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--cream); }
+.picker-panel ul { list-style: none; margin: 6px 0 0; padding: 0; max-height: 14rem; overflow: auto; }
+.picker-panel li button { display: block; width: 100%; text-align: left; padding: 6px 8px; border: 0; border-bottom: 1px solid var(--line); background: none; font: inherit; color: var(--ink); cursor: pointer; }
+.picker-panel li button:hover { background: var(--parchment); }
+
+/* ---- the chat ------------------------------------------------------------------------------------------------ */
+.chat { display: grid; grid-template-rows: minmax(0, 1fr) auto; gap: 10px; height: calc(100vh - 12.5rem); min-height: 22rem; }
+.chat-log { overflow-y: auto; padding: 4px 2px 8px; display: flex; flex-direction: column; gap: 8px; }
+.chat-day { text-align: center; margin: 6px 0 0; }
+.bubble { max-width: 82%; padding: 8px 12px; border-radius: 14px; overflow-wrap: anywhere; }
+.bubble p { margin: 0 0 0.3em; }
+.bubble small { display: block; font-size: 0.7rem; opacity: 0.75; }
+.bubble.mine { align-self: flex-end; background: linear-gradient(#3b8c78, var(--green)); color: #f3ead2; border-bottom-right-radius: 4px; }
+.bubble.theirs { align-self: flex-start; background: #fbf5e2; border: 1px solid var(--line); border-bottom-left-radius: 4px; }
+.bubble .message-image { max-width: 100%; }
+.broadcast { border: 2px solid var(--red); border-radius: 10px; padding: 10px 12px; background: linear-gradient(#f3e3ad, #ebd79b); overflow-wrap: anywhere; }
+.broadcast header { font-family: var(--display); letter-spacing: 0.06em; text-transform: uppercase; color: var(--red-dark); margin-bottom: 4px; }
+.broadcast p { margin: 0 0 0.3em; }
+.composer { display: grid; gap: 8px; }
+.composer textarea { width: 100%; resize: none; font: inherit; color: var(--ink); background: #fbf6e6; border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; }
+.composer-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.composer-row .btn[type='submit'] { margin-left: auto; }

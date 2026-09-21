@@ -1,0 +1,16 @@
+{
+  "kin": [
+    {
+      "id": "frostborn",
+      "name": "Frostborn",
+      "description": [
+        "Frostborn are broad, pale folk of the far northern marches, born in snowbound halls and raised on stories of the long winter.",
+        "They shrug off cold that would kill other kin, and hold grudges as long as the ice."
+      ],
+      "movement": 9,
+      "innate_abilities": ["Winter's Hide"],
+      "names": ["Skjold", "Hrimna", "Vetrolf", "Isadora", "Kolbein", "Yrsa"],
+      "page": 12
+    }
+  ]
+}

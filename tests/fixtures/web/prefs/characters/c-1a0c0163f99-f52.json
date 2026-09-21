@@ -1,0 +1,163 @@
+{
+  "format": 1,
+  "id": "c-1a0c0163f99-f52",
+  "name": "Brenna",
+  "nickname": "Grimjaw",
+  "player": "Sebastián",
+  "age": "adult",
+  "kin": {
+    "key": "core/kin/human",
+    "name": "Human"
+  },
+  "profession": {
+    "key": "core/profession/fighter",
+    "name": "Fighter"
+  },
+  "school": "",
+  "attributes": {
+    "STR": 15,
+    "CON": 13,
+    "AGL": 12,
+    "INT": 9,
+    "WIL": 10,
+    "CHA": 11
+  },
+  "hp": 10,
+  "wp": 10,
+  "hp_bonus": 0,
+  "wp_bonus": 0,
+  "conditions": [],
+  "skills": [
+    {
+      "key": "core/skill/axes",
+      "name": "Axes",
+      "attribute": "STR",
+      "level": 12,
+      "trained": true,
+      "marked": false
+    },
+    {
+      "key": "core/skill/bows",
+      "name": "Bows",
+      "attribute": "AGL",
+      "level": 10,
+      "trained": true,
+      "marked": false
+    },
+    {
+      "key": "core/skill/brawling",
+      "name": "Brawling",
+      "attribute": "STR",
+      "level": 12,
+      "trained": true,
+      "marked": false
+    },
+    {
+      "key": "core/skill/crossbows",
+      "name": "Crossbows",
+      "attribute": "AGL",
+      "level": 10,
+      "trained": true,
+      "marked": false
+    },
+    {
+      "key": "core/skill/evade",
+      "name": "Evade",
+      "attribute": "AGL",
+      "level": 10,
+      "trained": true,
+      "marked": false
+    },
+    {
+      "key": "core/skill/swords",
+      "name": "Swords",
+      "attribute": "STR",
+      "level": 12,
+      "trained": true,
+      "marked": false
+    },
+    {
+      "key": "core/skill/awareness",
+      "name": "Awareness",
+      "attribute": "INT",
+      "level": 10,
+      "trained": true,
+      "marked": false
+    },
+    {
+      "key": "core/skill/healing",
+      "name": "Healing",
+      "attribute": "INT",
+      "level": 10,
+      "trained": true,
+      "marked": false
+    },
+    {
+      "key": "core/skill/riding",
+      "name": "Riding",
+      "attribute": "AGL",
+      "level": 10,
+      "trained": true,
+      "marked": false
+    },
+    {
+      "key": "core/skill/swimming",
+      "name": "Swimming",
+      "attribute": "AGL",
+      "level": 10,
+      "trained": true,
+      "marked": false
+    }
+  ],
+  "abilities": [
+    {
+      "key": "core/ability/adaptive",
+      "name": "Adaptive"
+    },
+    {
+      "key": "core/ability/veteran",
+      "name": "Veteran"
+    }
+  ],
+  "spells": [],
+  "weapons": [
+    {
+      "name": "Morningstar",
+      "key": "core/weapon/morningstar"
+    },
+    {
+      "name": "Shield, Small",
+      "key": "core/weapon/shield-small"
+    }
+  ],
+  "armor": {
+    "name": "Chainmail",
+    "key": "core/armor/chainmail"
+  },
+  "helmet": null,
+  "inventory": [
+    {
+      "name": "Torch",
+      "key": "core/gear/torch"
+    },
+    {
+      "name": "Flint & Tinder",
+      "key": "core/gear/flint-and-tinder"
+    },
+    {
+      "name": "Food rations"
+    }
+  ],
+  "tiny_items": [],
+  "coins": {
+    "gold": 0,
+    "silver": 1,
+    "copper": 0
+  },
+  "weakness": "Child of the Wild. I never sleep indoors.",
+  "memento": "",
+  "appearance": "",
+  "notes": "Owes the innkeeper 3 silver.",
+  "created_at": "2026-09-20T18:31:18Z",
+  "updated_at": "2026-09-20T18:31:18Z"
+}

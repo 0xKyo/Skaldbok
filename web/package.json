@@ -1,0 +1,11 @@
+{
+  "name": "skaldbok-web",
+  "private": true,
+  "description": "The players' web page: a Vue 3 client. The server is C++ (skaldbok_web, built with the rest of the project).",
+  "workspaces": ["client"],
+  "scripts": {
+    "build": "npm run build --workspace client",
+    "dev": "npm run dev --workspace client",
+    "test": "npm run test --workspace client"
+  }
+}

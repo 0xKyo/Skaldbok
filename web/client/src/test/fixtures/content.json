@@ -1,0 +1,58 @@
+{
+  "types": [
+    {
+      "id": "spells",
+      "label": "Spells",
+      "count": 3
+    },
+    {
+      "id": "abilities",
+      "label": "Abilities",
+      "count": 4
+    },
+    {
+      "id": "skills",
+      "label": "Skills",
+      "count": 14
+    },
+    {
+      "id": "kin",
+      "label": "Kin",
+      "count": 2
+    },
+    {
+      "id": "professions",
+      "label": "Professions",
+      "count": 1
+    },
+    {
+      "id": "weapons",
+      "label": "Weapons",
+      "count": 3
+    },
+    {
+      "id": "armor",
+      "label": "Armor",
+      "count": 2
+    },
+    {
+      "id": "gear",
+      "label": "Gear",
+      "count": 3
+    }
+  ],
+  "packs": [
+    {
+      "id": "core",
+      "name": "Test Core",
+      "version": "0.0.1",
+      "core": true
+    },
+    {
+      "id": "frostmarch",
+      "name": "Frostmarch Tales",
+      "version": "1.0.0",
+      "core": false
+    }
+  ]
+}

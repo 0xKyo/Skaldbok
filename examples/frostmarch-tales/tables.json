@@ -1,0 +1,17 @@
+{
+  "tables": [
+    {
+      "name": "Frostmarch Weather",
+      "dice": "D6",
+      "columns": ["WEATHER", "EFFECT"],
+      "rows": [
+        { "roll": "1", "cells": ["Whiteout", "Travel is impossible; everyone outside takes a bane on all rolls."] },
+        { "roll": "2", "cells": ["Blizzard", "Movement is halved. A WIL roll is needed each shift to keep going."] },
+        { "roll": "3-4", "cells": ["Snowfall", "Tracks are covered. Bane on tracking."] },
+        { "roll": "5", "cells": ["Bitter cold", "Anyone without furs or a fire takes a point of damage each shift."] },
+        { "roll": "6", "cells": ["Clear and bright", "A rare good day. Boon on rolls to travel."] }
+      ],
+      "page": 45
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "messages": [
+    {
+      "id": "m-000000000001-aaaaaa",
+      "at": "2026-09-20T18:10:00Z",
+      "from": "gm",
+      "kind": "message",
+      "to": "",
+      "text": "You recognise the <b>symbol</b>.",
+      "image": "/chat/m-000000000001-aaaaaa/image"
+    },
+    {
+      "id": "m-000000000002-bbbbbb",
+      "at": "2026-09-20T18:12:00Z",
+      "from": "player",
+      "kind": "message",
+      "to": "",
+      "text": "Is it a cult mark?\nOr just graffiti?",
+      "image": null
+    },
+    {
+      "id": "m-000000000003-cccccc",
+      "at": "2026-09-20T18:30:00Z",
+      "from": "gm",
+      "kind": "broadcast",
+      "to": "The Misty Vale party",
+      "text": "The bridge is out.\nYou will have to swim.",
+      "image": null
+    }
+  ],
+  "gmRead": "m-000000000002-bbbbbb",
+  "playerRead": "m-000000000001-aaaaaa"
+}
