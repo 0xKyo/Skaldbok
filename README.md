@@ -1,3 +1,5 @@
+[![Support me on Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/T2M427FAPU)
+
 # Skaldbok
 
 **Skaldbok** (de *skald*, el bardo nórdico, y *bok*, libro: el libro del narrador) es una herramienta libre para dirigir partidas de
