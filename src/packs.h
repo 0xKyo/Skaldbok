@@ -25,18 +25,24 @@ public:
     const std::string& coreDir() const { return coreDir_; }
     const std::string& userDir() const { return userDir_; }
 
-    // Core first, then every installed homebrew pack (folder name = pack id). Ids in `disabled` are not loaded.
+    // Core first (the books: rules, tables, creatures, spells...; the base every other pack builds on), then every installed homebrew pack
+    // (folder name = pack id). Ids in `disabled` are not loaded; Core cannot be switched off.
     std::vector<PackSpec> specs(const std::set<std::string>& disabled) const;
 
     // Installs the pack found at `path`: a folder with a manifest.json (or a folder holding exactly one such
-    // folder) or a .zip of one. The pack is checked first; nothing is installed if it does not load.
-    ImportResult import(const std::string& path, Database& db);
+    // folder) or a .zip of one. The pack is checked first (after Core, as the app loads it); nothing is installed if it does not load.
+    ImportResult import(const std::string& path);
 
     bool remove(const std::string& packId, std::string* error);
 
 private:
     std::string coreDir_, userDir_;
 };
+
+// A short text that changes whenever anything a pack is read from does: which packs there are and whether they are on, their manifest
+// and JSON files, and (homebrew only, Core's art comes with its files) the pictures. Two equal signatures mean nothing needs reloading.
+// Cheap: file dates and sizes only, nothing is opened.
+std::string packSignature(const std::vector<PackSpec>& specs);
 
 // Helpers shared with tests.
 bool removeTree(const std::string& dir);

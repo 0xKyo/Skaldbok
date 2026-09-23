@@ -40,7 +40,7 @@ public:
     void update() override {
         std::string path;
         if (!dialog_.poll(path) || path.empty()) return;
-        const ImportResult r = host_.packManager().import(path, host_.db());
+        const ImportResult r = host_.packManager().import(path);
         result_ = r;
         haveResult_ = true;
         if (r.ok) {
@@ -182,7 +182,7 @@ private:
             } else if (!p.enabled) {
                 ImGui::TextColored(kGrey, "Off: nothing of it is loaded.");
             } else {
-                std::string counts;
+                std::string counts = p.rules > 0 ? std::to_string(p.rules) + " rules" : std::string();
                 static const struct {
                     Kind kind;
                     const char* name;

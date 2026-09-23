@@ -76,6 +76,7 @@ void TextureCache::clear() {
     for (auto& [_, s] : slots_) SDL_DestroyTexture(s.tex.tex);
     slots_.clear();
     order_.clear();
+    failed_.clear();                            // a picture that was missing may have been added since
 }
 
 }  // namespace gm

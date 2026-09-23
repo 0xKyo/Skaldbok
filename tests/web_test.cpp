@@ -1,13 +1,12 @@
 // The players' web server: authentication, what a player is shown (and what not), live updates, tokens, and real HTTP.
 // Ported from the first Express version of the server; the expectations are the same. The fixtures are files written by
-// the real GM app (tests/fixtures/web/prefs) and a tiny invented stand-in for the Core pack, so this runs without the books.
+// the real GM app (tests/fixtures/web/prefs) and a tiny invented stand-in for the Core pack (the two books and a few cards), so this runs without the books.
 #include <algorithm>
 #include <string>
 #include <vector>
 
 #include <SDL3/SDL.h>
 #include <httplib.h>
-#include <sqlite3.h>
 
 #include "fsutil.h"
 #include "jsonutil.h"
@@ -45,19 +44,6 @@ void copyTree(const std::string& from, const std::string& to) {
     }
 }
 
-// The smallest database the content loader accepts: the two books, and no tables.
-void makeMiniDb(const std::string& path) {
-    sqlite3* db = nullptr;
-    sqlite3_open(path.c_str(), &db);
-    sqlite3_exec(db,
-                 "CREATE TABLE sources(id INTEGER PRIMARY KEY, key TEXT, title TEXT, file TEXT, page_offset INTEGER);"
-                 "INSERT INTO sources VALUES (1,'rulebook','Test Rulebook','Source/a.pdf',4),(2,'bestiary','Test Bestiary','Source/b.pdf',4);"
-                 "CREATE TABLE game_tables(id INTEGER PRIMARY KEY, source_id INT, section_id INT, monster_id INT, title TEXT, dice TEXT, columns TEXT, page INT, printed_page INT, pdf_link TEXT);"
-                 "CREATE TABLE game_table_rows(id INTEGER PRIMARY KEY, table_id INT, ord INT, roll_min INT, roll_max INT, roll_text TEXT, cells TEXT);",
-                 nullptr, nullptr, nullptr);
-    sqlite3_close(db);
-}
-
 struct Env {
     std::string root, prefs, data;
     WebConfig config;
@@ -78,8 +64,7 @@ Env makeEnv(const std::string& name, bool realData = false) {
         e.data = SKALDBOK_DEV_DATA_DIR;
     } else {
         e.data = e.root + "/data";
-        copyTree(fixtures + "/data", e.data);
-        makeMiniDb(e.data + "/skaldbok.db");
+        copyTree(fixtures + "/data", e.data);                 // a tiny Core: the two books and a few cards
     }
     e.config.port = 0;
     e.config.host = "127.0.0.1";
@@ -685,8 +670,7 @@ void behindProxy() {
 }
 
 void realData() {
-    const std::string db = std::string(SKALDBOK_DEV_DATA_DIR) + "/skaldbok.db";
-    if (!test::exists(db) || !test::exists(std::string(SKALDBOK_DEV_DATA_DIR) + "/packs/core/manifest.json")) {
+    if (!looksLikePack(std::string(SKALDBOK_DEV_DATA_DIR) + "/packs/core")) {
         std::printf("  (no real data/ here: skipping the check against the books' Core pack)\n");
         return;
     }

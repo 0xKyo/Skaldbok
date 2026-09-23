@@ -1,8 +1,8 @@
 # ---- Copyrighted material: the Dragonbane books are NOT part of this repository.
-# References/ holds the original PDFs; data/ is everything derived from them (database, page images, Core pack).
-# Regenerate data/ from your own copies of the books with tools/build_db.py (see tools/README.md).
-References/
-data/
+# References/ holds the original PDFs; the root data/ is everything derived from them (the Core pack, page images).
+# (Anchored to the root: tests/fixtures/web/data/ is a tiny invented stand-in and is part of the repository.)
+/References/
+/data/
 
 # ---- Build output
 build/

@@ -23,10 +23,11 @@ ImVec4 tagColor(size_t index);                      // one accent per filter chi
 std::string lowered(std::string s);
 
 void sourceBadge(Host& host, int sourceId);
-// "Original: Rulebook p.18" (opens the page), or for a source without a PDF the source and page as plain text.
+// "Original: Rulebook p.18", small grey text (not a link: the app never ships or opens the books' own PDFs).
 void pageLink(Host& host, int sourceId, const PageRef& ref, const std::string& pageNote);
-void detailHeader(Host& host, const std::string& title, const std::string& subtitle, int sourceId, const PageRef& ref,
-                  const std::string& pageNote);
+// Title, source badge and subtitle, with a "Pin" button (top right, if a Master Screen is available). The page
+// reference is not part of the header any more - call pageLink() again at the bottom of the page instead.
+void detailHeader(Host& host, const std::string& title, const std::string& subtitle, int sourceId);
 // A rounded, filled backdrop behind whatever is drawn between begin() and end() (a group's size is not known before it is drawn).
 // Not to be used inside a table: both split the window's draw list.
 class Backdrop {
@@ -53,7 +54,11 @@ void entryTooltip(const Entry* e);                                             /
 // A popup with a filter box listing entries of the given kinds; sets `out` and returns true when one is chosen.
 bool pickEntry(const ContentStore& cs, const char* popup, std::initializer_list<Kind> kinds, const Entry*& out);
 
-void paragraphs(const std::string& text);           // "✦Requirement: Gesture" gets a coloured label; the rest is wrapped text
+// A read-only piece of text that can be selected and copied (Ctrl+C) like a normal text field, but reads as plain wrapped
+// text: no border, no background. `id` must be stable across frames while this exact text is on screen (e.g. a fixed
+// string, or one built from a stable index) so a selection made by dragging survives from frame to frame.
+void copyableText(const char* id, const std::string& text, float wrapWidth = 0);
+void paragraphs(const std::string& text, const char* id = "p");   // "✦Requirement: Gesture" gets a coloured label; the rest is copyable, wrapped text
 void highlighted(const std::string& snippet);       // a search snippet with \x01 ... \x02 marking the hits
 void fieldsTable(const std::vector<Field>& fields, const char* id);
 void tableGrid(const DataTable& t, int highlightRow);

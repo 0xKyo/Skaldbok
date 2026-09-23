@@ -1,0 +1,6 @@
+{
+  "abilities": [
+    { "id": "adaptive", "name": "Adaptive", "source": "rulebook", "type": "kin", "kin": "Human", "wp_cost": "3", "description": "Use another skill in place of the normal one.", "page": 18 },
+    { "id": "veteran", "name": "Veteran", "source": "rulebook", "type": "heroic", "requirement": "Any weapon skill 12", "wp_cost": "3", "description": ["A hardened fighter.", "Second paragraph."], "page": 40 }
+  ]
+}

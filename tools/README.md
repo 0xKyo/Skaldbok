@@ -1,19 +1,24 @@
-# Dragonbane data extraction
+# Dragonbane data extraction (how the data was first made)
+
+> **The app no longer reads a database.** Its data is one content pack, `data/packs/core` (the books' rules and tables, the adventure,
+> creatures, spells, kin...), loaded like any homebrew pack — see
+> [`docs/HOMEBREW.md`](../docs/HOMEBREW.md). These scripts are the original PDF extraction: they wrote an intermediate
+> `data/skaldbok.db` and part of the Core pack from it. The rules and tables (`rules.json`) were taken from that database once and are kept as JSON from then on,
+> so nothing here is needed to run the app (and the scripts do not write `rules.json`). **Do not run `build_db.py` / `export_packs.py` on
+> an existing `data/`**: they regenerate `data/packs/core/` (and bring back its `manifest.json`), overwriting what is edited by hand now.
 
 One-off converter: reads the three PDFs in `References/` and writes
 
 * `data/skaldbok.db` (SQLite): the books themselves — page text, headings, every table, full-text index;
-* `data/packs/core/`: the **Core content pack** (JSON + `images/` with the creature art) that the app loads like any
-  homebrew pack — see [`docs/HOMEBREW.md`](../docs/HOMEBREW.md).
+* `data/packs/core/`: the **Core content pack** (JSON + `images/` with the creature art).
 
-The C++ app only reads those; nothing here ships with it.
+Nothing here ships with the app.
 
 ```
 pip install -r tools/requirements.txt
 python tools/build_db.py          # rebuilds data/skaldbok.db, data/packs/core/ (via export_packs.py) and its images
 python tools/validate.py          # sanity report (exit code 1 on problems)
 python tools/export_packs.py      # only regenerates data/packs/core/ from the existing database
-python tools/render_pages.py      # optional: page images for the app's built-in original-page viewer (~65 MB)
 ```
 
 ## What is in the database
@@ -23,15 +28,15 @@ and `pdf_link` (`References/<file>.pdf#page=N`) to open the original.
 
 | Table | Content |
 |---|---|
-| `sources`, `pages`, `sections` | Book text in reading order, structured by the PDF bookmarks (kept in the database; the app no longer shows it: only tables, pages and the search over tables use it) |
+| `sources`, `pages`, `sections` | Book text in reading order, structured by the PDF bookmarks (the app takes the rules text and tables from Core's `rules.json` now) |
 | `game_tables`, `game_table_rows` | Every table (dice tables validated to cover 1..N; plain tables by column) |
 | `monsters`, `monster_statblocks`, `monster_attacks`, `monster_abilities` | Creatures/NPCs of all three books, kept apart by source; attack tables row by row; `image` = art |
 | `abilities`, `kin`, `professions`, `skills`, `spells`, `conditions` | Rulebook rules, typed |
 | `weapons`, `armor`, `gear_items` | Rulebook equipment, typed |
 | `search_index` | FTS5 over everything (`SELECT * FROM search_index WHERE search_index MATCH 'centaur'`) |
 
-The app reads **book text, tables and pages** from the database; creatures, spells, abilities, skills, kin, professions and
-equipment come from the Core pack, exported from the typed tables above by `export_packs.py`.
+The app reads none of it any more: rules and tables are in Core's `rules.json`, and creatures, spells, abilities, skills, kin,
+professions and equipment in the Core pack (exported from the typed tables above by `export_packs.py`).
 
 ```sql
 -- the attacks of the Centaur from the Bestiary, with a link to the original page

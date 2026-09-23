@@ -1,0 +1,5 @@
+{
+  "armor": [
+    { "id": "chainmail", "name": "Chainmail", "slot": "armor", "armor_rating": "4", "cost": "50 gold", "effect": "Bane on EVADE and SNEAKING rolls." }
+  ]
+}

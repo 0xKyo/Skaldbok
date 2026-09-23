@@ -21,7 +21,10 @@ public:
     const char* summary() const override { return "Creature stat blocks, art and attack tables; add them to the encounter or send their picture to the players."; }
     const char* group() const override { return "Reference"; }
     int badge() const override { return static_cast<int>(list_.all.size()); }
-    bool handles(Kind k) const override { return k == Kind::Monster; }
+    bool handles(Kind k, int) const override { return k == Kind::Monster; }
+    // The Bestiary chapter of Rules moved here as an "Intro" tab (see draw Full below), so this owns its whole area
+    // instead of sharing the shell's generic list+detail split.
+    Layout layout() const override { return Layout::Full; }
 
     bool findByName(const std::string& want, Selection& out) const override {
         for (const ListItem& it : list_.all)
@@ -40,6 +43,63 @@ public:
     void onSelect(const Selection& s) override {
         list_.ensureVisible(host_, s);
         load(s.id);
+        jumpToCreatures_ = true;   // a specific creature was reached (search, a link...): show it, not the intro
+    }
+
+    // A category with its own intro (the Bestiary chapter of Rules) is split into two tabs, like Skills/Abilities;
+    // one with no intro (a homebrew-only creatures.json, say) just shows the list and detail, no tab bar for nothing.
+    void drawFull() override {
+        const Intro& intro = host_.content().introOf(Kind::Monster);
+        if (intro.empty()) {
+            drawListDetail();
+            return;
+        }
+        if (!ImGui::BeginTabBar("##creaturestabs")) return;
+        if (ImGui::BeginTabItem("Intro")) {
+            drawIntroTab(intro);
+            ImGui::EndTabItem();
+        }
+        const ImGuiTabItemFlags flags = jumpToCreatures_ ? ImGuiTabItemFlags_SetSelected : 0;
+        jumpToCreatures_ = false;
+        if (ImGui::BeginTabItem("Creatures", nullptr, flags)) {
+            drawListDetail();
+            ImGui::EndTabItem();
+        }
+        ImGui::EndTabBar();
+    }
+
+    void drawIntroTab(const Intro& intro) {
+        ImGui::BeginChild("##cintro", ImVec2(0, 0));
+        if (!intro.body.empty()) paragraphs(intro.body, "introbody");
+        for (size_t i = 0; i < intro.sections.size(); ++i) {
+            const RuleNode::Section& sec = intro.sections[i];
+            ImGui::Spacing();
+            bigText(sec.title.c_str(), 1.1f, kGold);
+            paragraphs(sec.body, ("introsec" + std::to_string(i)).c_str());
+        }
+        for (size_t i = 0; i < intro.tables.size(); ++i) {
+            ImGui::PushID(static_cast<int>(i));
+            ImGui::Spacing();
+            bigText(intro.tables[i].title.c_str(), 1.1f, kAccent);
+            tableGrid(intro.tables[i], -1);
+            ImGui::PopID();
+        }
+        ImGui::EndChild();
+    }
+
+    // What Layout::ListDetail would otherwise give it for free from the shell: a filterable list on the left, the
+    // selected creature on the right.
+    void drawListDetail() {
+        const float listW = std::clamp(ImGui::GetContentRegionAvail().x * 0.3f, U(280.0f), U(420.0f));
+        ImGui::BeginChild("##clist", ImVec2(listW, 0), ImGuiChildFlags_Borders);
+        drawList();
+        ImGui::EndChild();
+        ImGui::SameLine();
+        ImGui::BeginChild("##cdetail", ImVec2(0, 0), ImGuiChildFlags_Borders | ImGuiChildFlags_AlwaysUseWindowPadding);
+        const Selection* sel = host_.selection();
+        if (sel && sel->kind == Kind::Monster) drawSelection(*sel);
+        else ImGui::TextColored(kGrey, "Pick a creature from the list.");
+        ImGui::EndChild();
     }
 
     void drawList() override {
@@ -53,7 +113,7 @@ public:
         const Monster& m = *mp;
         std::string sub = m.kind == "npc" ? "NPC" : m.kind == "animal" ? "animal" : "creature";
         if (!m.category.empty()) sub += " · " + m.category;
-        detailHeader(host_, m.name, sub, m.sourceId, m.ref, m.pageNote);
+        detailHeader(host_, m.name, sub, m.sourceId);
         if (!versions_.empty()) {
             ImGui::TextColored(kGrey, "Also in:");
             for (const ListItem& v : versions_) {
@@ -116,24 +176,27 @@ public:
         if (!m.abilities.empty()) {
             ImGui::Spacing();
             bigText("Abilities", 1.15f, kAccent);
-            for (const NamedText& a : m.abilities) {
+            ImGui::PushID("abilities");
+            for (size_t i = 0; i < m.abilities.size(); ++i) {
+                const NamedText& a = m.abilities[i];
                 ImGui::TextColored(kGold, "%s%s", a.kind == "pc_ability" ? "PC ability: " : "", a.name.c_str());
                 ImGui::SameLine(0, 6);
-                ImGui::TextWrapped("%s", a.text.c_str());
+                copyableText(("##a" + std::to_string(i)).c_str(), a.text);
             }
+            ImGui::PopID();
         }
         if (!m.quote.empty() || !m.description.empty()) {
             ImGui::Spacing();
             ImGui::Separator();
             if (!m.quote.empty()) {
                 ImGui::PushStyleColor(ImGuiCol_Text, kGrey);
-                paragraphs(m.quote);
+                paragraphs(m.quote, "quote");
                 ImGui::PopStyleColor();
             }
-            if (!m.description.empty()) paragraphs(m.description);
+            if (!m.description.empty()) paragraphs(m.description, "desc");
         }
-        if (!m.randomEncounter.empty() && ImGui::CollapsingHeader("Random encounter", ImGuiTreeNodeFlags_DefaultOpen)) paragraphs(m.randomEncounter);
-        if (!m.adventureSeed.empty() && ImGui::CollapsingHeader("Adventure seed", ImGuiTreeNodeFlags_DefaultOpen)) paragraphs(m.adventureSeed);
+        if (!m.randomEncounter.empty() && ImGui::CollapsingHeader("Random encounter", ImGuiTreeNodeFlags_DefaultOpen)) paragraphs(m.randomEncounter, "encounter");
+        if (!m.adventureSeed.empty() && ImGui::CollapsingHeader("Adventure seed", ImGuiTreeNodeFlags_DefaultOpen)) paragraphs(m.adventureSeed, "seed");
         if (!m.tables.empty()) {
             ImGui::Spacing();
             ImGui::TextColored(kGrey, "Related tables:");
@@ -142,6 +205,8 @@ public:
                 if (ImGui::SmallButton(t.title.c_str())) host_.goTo(Kind::Table, t.id);
             }
         }
+        ImGui::Spacing();
+        pageLink(host_, m.sourceId, m.ref, m.pageNote);
     }
 
 private:
@@ -170,6 +235,7 @@ private:
     int loaded_ = 0;
     int rolledAttack_ = -1, rolledValue_ = 0;
     std::vector<ListItem> versions_, refCreatures_;
+    bool jumpToCreatures_ = false;   // force the "Creatures" tab open once, right after onSelect() reaches a specific one
 };
 
 }  // namespace

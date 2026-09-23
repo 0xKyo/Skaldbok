@@ -139,42 +139,99 @@ std::string joinList(const std::vector<std::string>& v, const char* sep) {
     return out;
 }
 
-const char* const kFiles[] = {"spells", "abilities", "skills", "kin", "professions", "weapons", "armor", "gear", "tables", "creatures"};
+// What a pack says about itself (besides its data): these keys, in manifest.json or at the top of a data file.
+bool hasHeaderKeys(const json& o) {
+    for (const char* k : {"id", "name", "version", "author", "description", "sources"})
+        if (o.contains(k)) return true;
+    return false;
+}
+
+std::string folderNameOf(std::string dir) {
+    for (char& c : dir)
+        if (c == '\\') c = '/';
+    while (dir.size() > 1 && dir.back() == '/') dir.pop_back();
+    const size_t slash = dir.find_last_of('/');
+    return slash == std::string::npos ? dir : dir.substr(slash + 1);
+}
 
 }  // namespace
 
 // ------------------------------------------------------------------------------------- manifest
 
-bool readManifest(const std::string& dir, PackInfo& out) {
+const std::vector<std::string>& packDataFiles() {
+    static const std::vector<std::string> files = {"rules", "spells", "abilities", "skills", "kin", "professions", "weapons", "armor", "gear", "tables", "creatures"};
+    return files;
+}
+
+bool looksLikePack(const std::string& dir) {
+    if (isFile(dir + "/manifest.json")) return true;
+    for (const std::string& f : packDataFiles())
+        if (isFile(dir + "/" + f + ".json")) return true;
+    return false;
+}
+
+// A pack describes itself in its manifest.json or, when it has none, in the header at the top of the first of its data files that has
+// one ({"name": "...", "sources": [...], "rules": [...]}); its id is then the name of its folder. `meta` gets that description.
+static bool readMeta(const std::string& dir, PackInfo& out, json& meta) {
     out.dir = dir;
+    meta = json::object();
     std::string text, err;
-    if (!readTextFile(dir + "/manifest.json", text, &err)) {
-        out.error = "manifest.json: " + err;
+    const bool hasManifest = isFile(dir + "/manifest.json");
+    if (hasManifest) {
+        if (!readTextFile(dir + "/manifest.json", text, &err)) {
+            out.error = "manifest.json: " + err;
+            return false;
+        }
+        if (!jsonParse(text, meta, &err)) {
+            out.error = "manifest.json: " + err;
+            return false;
+        }
+        if (!meta.is_object()) {
+            out.error = "manifest.json must be a JSON object";
+            return false;
+        }
+    } else {
+        bool anyFile = false;
+        for (const std::string& f : packDataFiles()) {
+            const std::string path = dir + "/" + f + ".json";
+            if (!isFile(path)) continue;
+            anyFile = true;
+            json j;
+            if (!readTextFile(path, text, &err) || !jsonParse(text, j, &err)) {
+                out.error = f + ".json: " + err;
+                return false;
+            }
+            if (j.is_object() && hasHeaderKeys(j)) {
+                meta = j;
+                break;
+            }
+        }
+        if (!anyFile) {
+            out.error = "manifest.json: not found, and the folder has no data file either (rules.json, spells.json...)";
+            return false;
+        }
+    }
+    if (jsonInt(meta, "format", kFormat) > kFormat) {
+        out.error = "made for a newer version of the app (pack format " + std::to_string(jsonInt(meta, "format")) + ")";
         return false;
     }
-    json m;
-    if (!jsonParse(text, m, &err)) {
-        out.error = "manifest.json: " + err;
-        return false;
-    }
-    if (!m.is_object()) {
-        out.error = "manifest.json must be a JSON object";
-        return false;
-    }
-    if (jsonInt(m, "format", kFormat) > kFormat) {
-        out.error = "made for a newer version of the app (pack format " + std::to_string(jsonInt(m, "format")) + ")";
-        return false;
-    }
-    out.id = jsonStr(m, "id");
+    out.id = jsonStr(meta, "id");
+    if (out.id.empty() && !hasManifest) out.id = folderNameOf(dir);
     if (!validPackId(out.id)) {
-        out.error = "manifest.json: \"id\" must be lowercase letters, digits, - or _ (like \"my-tome\")";
+        out.error = hasManifest ? "manifest.json: \"id\" must be lowercase letters, digits, - or _ (like \"my-tome\")"
+                                : "manifest.json: there is none, and the folder name \"" + out.id + "\" is not a valid pack id (lowercase letters, digits, - or _)";
         return false;
     }
-    out.name = jsonStr(m, "name", out.id);
-    out.version = jsonStr(m, "version");
-    out.author = jsonStr(m, "author");
-    out.description = jsonStr(m, "description");
+    out.name = jsonStr(meta, "name", out.id);
+    out.version = jsonStr(meta, "version");
+    out.author = jsonStr(meta, "author");
+    out.description = jsonStr(meta, "description");
     return true;
+}
+
+bool readManifest(const std::string& dir, PackInfo& out) {
+    json meta;
+    return readMeta(dir, out, meta);
 }
 
 // ------------------------------------------------------------------------------------- loading
@@ -186,6 +243,7 @@ struct ContentStore::Loader {
     std::map<std::string, int> srcByKey;
     int firstSource = 0;
     std::set<std::string> usedIds[kKindCount];
+    std::set<std::string> usedRuleIds;
 
     Loader(ContentStore& store, PackInfo& pack, json man) : st(store), pk(pack), manifest(std::move(man)) {}
 
@@ -210,21 +268,58 @@ struct ContentStore::Loader {
         if (!firstSource) firstSource = s.id;
     }
 
+    // A book: a source with its PDF, its page count and the number printed on each page ("printed_pages", one per physical page).
+    void addBook(const json& o) {
+        SourceInfo s;
+        s.id = st.sources_.empty() ? 1 : st.sources_.back().id + 1;
+        s.key = jsonStr(o, "key");
+        s.packId = pk.id;
+        s.title = jsonStr(o, "title", s.key);
+        s.label = jsonStr(o, "short", s.title);
+        s.book = true;
+        s.color = s.key == "rulebook" ? 0x4DC7B3u : s.key == "bestiary" ? 0xEE9E40u : s.key == "adventure" ? 0xB38CF2u : colorFor(s.key);
+        s.file = jsonStr(o, "file");
+        s.pages = jsonInt(o, "pages");
+        if (const json* printed = jsonFind(o, "printed_pages"); printed && printed->is_array()) {
+            // every page's number, written out
+            for (const json& n : *printed) s.printedPages.push_back(n.is_number_integer() ? n.get<int>() : 0);
+        } else if (const int offset = jsonInt(o, "page_offset"); offset > 0) {
+            // the usual case: the number printed on a page is its PDF page minus a fixed offset, from the first numbered page on
+            // ("first_numbered_page", by default the one after the offset), except the pages listed in "unnumbered_pages"
+            const int first = std::max(1, jsonInt(o, "first_numbered_page", offset + 1));
+            std::set<int> skip;
+            if (const json* un = jsonFind(o, "unnumbered_pages"); un && un->is_array())
+                for (const json& n : *un)
+                    if (n.is_number_integer()) skip.insert(n.get<int>());
+            for (int p = 1; p <= s.pages; ++p) s.printedPages.push_back(p >= first && !skip.count(p) ? p - offset : 0);
+        }
+        s.pages = std::max(s.pages, static_cast<int>(s.printedPages.size()));
+        st.sources_.push_back(std::move(s));
+    }
+
     void setupSources() {
         const json* list = jsonFind(manifest, "sources");
         if (pk.core) {
-            // the Core books already exist (from the database); the manifest may rename their badges
+            // The books belong to the built-in packs: the first one that declares a book (with its PDF) creates it, the next ones
+            // only rename its badge. Every built-in pack can then refer to any book.
+            if (list && list->is_array())
+                for (const json& o : *list) {
+                    const std::string key = jsonStr(o, "key"), shortName = jsonStr(o, "short");
+                    if (key.empty()) continue;
+                    SourceInfo* have = nullptr;
+                    for (SourceInfo& s : st.sources_)
+                        if (s.book && s.key == key) have = &s;
+                    if (have) {
+                        if (!shortName.empty()) have->label = shortName;
+                    } else if (!jsonStr(o, "file").empty()) {
+                        addBook(o);
+                    }
+                }
             for (const SourceInfo& s : st.sources_)
                 if (s.book) {
                     srcByKey[s.key] = s.id;
                     pk.sourceIds.push_back(s.id);
                     if (!firstSource) firstSource = s.id;
-                }
-            if (list && list->is_array())
-                for (const json& o : *list) {
-                    const std::string key = jsonStr(o, "key"), shortName = jsonStr(o, "short");
-                    for (SourceInfo& s : st.sources_)
-                        if (s.book && s.key == key && !shortName.empty()) s.label = shortName;
                 }
             return;
         }
@@ -248,25 +343,27 @@ struct ContentStore::Loader {
     }
 
     // "<pack>/<kind>/<id>"; ids are unique inside a pack and kind.
-    std::string makeKey(Kind k, const json& o, const std::string& name) {
+    std::string keyIn(const char* kind, std::set<std::string>& used, const json& o, const std::string& name) {
         std::string id = slugOf(jsonStr(o, "id"));
         if (id.empty()) id = slugOf(name);
         if (id.empty()) id = "entry";
         std::string cand = id;
-        for (int n = 2; !usedIds[static_cast<int>(k)].insert(cand).second; ++n) cand = id + "-" + std::to_string(n);
-        if (cand != id && !jsonStr(o, "id").empty()) warn(std::string(kindKey(k)) + " \"" + name + "\": id \"" + id + "\" is used twice");
-        return pk.id + "/" + kindKey(k) + "/" + cand;
+        for (int n = 2; !used.insert(cand).second; ++n) cand = id + "-" + std::to_string(n);
+        if (cand != id && !jsonStr(o, "id").empty()) warn(std::string(kind) + " \"" + name + "\": id \"" + id + "\" is used twice");
+        return pk.id + "/" + kind + "/" + cand;
     }
 
+    std::string makeKey(Kind k, const json& o, const std::string& name) { return keyIn(kindKey(k), usedIds[static_cast<int>(k)], o, name); }
+
     void pageInfo(const json& o, int sourceId, PageRef& ref, std::string& note) {
-        const int page = jsonInt(o, "page"), printed = jsonInt(o, "printed_page");
+        const int page = jsonInt(o, "page");
         const SourceInfo* si = st.source(sourceId);
         if (si && si->book && page > 0) {
             ref.sourceId = sourceId;
-            ref.page = page;
-            ref.printed = printed;
-        } else if (printed > 0 || page > 0) {
-            note = "p." + std::to_string(printed > 0 ? printed : page);
+            ref.page = page;                                       // the physical page of the PDF: the one thing an entry says about its page
+            ref.printed = st.printedPage(sourceId, page);          // the number printed on it comes from the book's header
+        } else if (page > 0) {
+            note = "p." + std::to_string(page);                    // a source without a PDF: the page is only shown
         }
     }
 
@@ -283,13 +380,61 @@ struct ContentStore::Loader {
         }
     }
 
+    // "tables": tables that belong to the card (a kin's first names), shown when it is opened
+    void fillCardTables(Kind k, const json& o, const std::string& name, Entry& e) {
+        e.tables.clear();          // a replaced card starts over: any table it had is gone unless this JSON writes its own
+        const json* tables = jsonFind(o, "tables");
+        if (!tables || !tables->is_array()) return;
+        int index = 0;
+        for (const json& t : *tables) {
+            ++index;
+            const std::string tableName = t.is_object() ? trimmed(jsonStr(t, "name")) : std::string();
+            if (tableName.empty()) {
+                warn(std::string(kindKey(k)) + " \"" + name + "\": table #" + std::to_string(index) + " has no \"name\", skipped");
+                continue;
+            }
+            DataTable table;
+            table.key = e.key + "#" + std::to_string(index);
+            table.title = tableName;
+            table.sourceId = jsonStr(t, "source").empty() ? e.sourceId : sourceFor(t, "table \"" + tableName + "\"");
+            fillTable(t, table);
+            table.browse = false;
+            e.tables.push_back(std::move(table));
+        }
+    }
+
     Entry& push(Kind k, const json& o, const std::string& name) {
+        // "replaces" (a full "<pack>/<kind>/<id>" key, as "see" uses): a homebrew card can override one from an earlier pack
+        // in place, exactly like a rule can - same id and key, its own text and picture, "Changed by <pack>" on the card.
+        if (const std::string target = jsonStr(o, "replaces"); !target.empty()) {
+            const auto& byKey = st.byKey_[static_cast<int>(k)];
+            const auto found = byKey.find(target);
+            if (found == byKey.end()) {
+                warn(std::string(kindKey(k)) + " \"" + name + "\": replaces \"" + target + "\", which is not loaded (skipped)");
+            } else {
+                Entry& e = st.entries_[static_cast<int>(k)][static_cast<size_t>(found->second) - 1];
+                e.title = name;
+                e.sourceId = sourceFor(o, std::string(kindKey(k)) + " \"" + name + "\"");
+                pageInfo(o, e.sourceId, e.ref, e.pageNote);
+                if (const std::string image = jsonStr(o, "image"); !image.empty()) e.image = pk.dir + "/" + image;
+                // the caller (kin(), profession()...) rebuilds these from scratch next, exactly as it would for a new card
+                e.fields.clear();
+                e.props.clear();
+                e.lists.clear();
+                fillCardTables(k, o, name, e);
+                e.editedBy = pk.name;
+                ++pk.counts[static_cast<int>(k)];
+                return e;
+            }
+        }
         Entry e;
         e.kind = k;
         e.key = makeKey(k, o, name);
         e.sourceId = sourceFor(o, std::string(kindKey(k)) + " \"" + name + "\"");
         e.title = name;
         pageInfo(o, e.sourceId, e.ref, e.pageNote);
+        if (const std::string image = jsonStr(o, "image"); !image.empty()) e.image = pk.dir + "/" + image;
+        fillCardTables(k, o, name, e);
         auto& v = st.entries_[static_cast<int>(k)];
         e.id = static_cast<int>(v.size()) + 1;
         st.byKey_[static_cast<int>(k)][e.key] = e.id;
@@ -316,6 +461,50 @@ struct ContentStore::Loader {
             pk.error = file + ".json: made for a newer version of the app";
             return false;
         }
+        // A data file's own general text, shown above its mosaic (docs/HOMEBREW.md): {"intro": "...", "<file>": [...]}, or with its
+        // own named sections like a rule: {"intro": {"body": "...", "sections": [{"name","body"}]}, ...}. A later pack's non-empty
+        // intro for the same kind replaces an earlier one, like a rule's "replaces".
+        static const std::map<std::string, Kind> kIntroKind = {{"spells", Kind::Spell},   {"abilities", Kind::Ability}, {"skills", Kind::Skill},
+                                                                 {"kin", Kind::Kin},       {"professions", Kind::Profession},
+                                                                 {"weapons", Kind::Weapon}, {"armor", Kind::Armor},       {"gear", Kind::Gear},
+                                                                 {"creatures", Kind::Monster}};
+        if (root.is_object())
+            if (const auto it = kIntroKind.find(file); it != kIntroKind.end())
+                if (const json* iv = jsonFind(root, "intro")) {
+                    Intro in;
+                    if (iv->is_string()) in.body = trimmed(iv->get<std::string>());
+                    else if (iv->is_object()) {
+                        in.body = trimmed(jsonStr(*iv, "body"));
+                        if (const json* secs = jsonFind(*iv, "sections"); secs && secs->is_array())
+                            for (const json& sec : *secs) {
+                                const std::string secName = trimmed(jsonStr(sec, "name"));
+                                if (secName.empty()) continue;
+                                RuleNode::Section s;
+                                s.title = secName;
+                                if (const json* b = jsonFind(sec, "body")) s.body = trimmed(jsonText(*b));
+                                in.sections.push_back(std::move(s));
+                            }
+                        if (const json* tabs = jsonFind(*iv, "tables"); tabs && tabs->is_array()) {
+                            int index = 0;
+                            for (const json& t : *tabs) {
+                                ++index;
+                                const std::string tableName = t.is_object() ? trimmed(jsonStr(t, "name")) : std::string();
+                                if (tableName.empty()) {
+                                    warn(file + ".json intro: table #" + std::to_string(index) + " has no \"name\", skipped");
+                                    continue;
+                                }
+                                DataTable table;
+                                table.key = "intro/" + file + "#" + std::to_string(index);
+                                table.title = tableName;
+                                table.sourceId = sourceFor(t, file + ".json intro, table \"" + tableName + "\"");
+                                fillTable(t, table);
+                                table.browse = false;
+                                in.tables.push_back(std::move(table));
+                            }
+                        }
+                    }
+                    if (!in.empty()) st.intros_[static_cast<int>(it->second)] = std::move(in);
+                }
         const json* arr = root.is_array() ? &root : jsonFind(root, file.c_str());
         if (!arr || !arr->is_array()) {
             pk.error = file + ".json: expected a list (either the whole file or under \"" + file + "\")";
@@ -396,6 +585,10 @@ struct ContentStore::Loader {
         e.props["movement"] = movement > 0 ? std::to_string(movement) : "";
         e.lists["innate_abilities"] = jsonStrings(o, "innate_abilities");
         e.lists["names"] = jsonStrings(o, "names");
+        // a kin written with its table of first names does not repeat them in a list: the first column of the first table is the list
+        if (e.lists["names"].empty() && !e.tables.empty())
+            for (const TableRow& r : e.tables.front().rows)
+                if (!r.cells.empty()) e.lists["names"].push_back(r.cells.front());
     }
 
     void profession(const json& o, const std::string& name) {
@@ -433,6 +626,17 @@ struct ContentStore::Loader {
         addField(e.fields, "Heroic ability", heroic.empty() ? jsonStr(o, "heroic_ability") : joinList(heroic, " or "));
         e.lists["starting_gear"] = jsonStrings(o, "starting_gear");
         e.lists["nicknames"] = jsonStrings(o, "nicknames");
+        // a profession written with its own Gear / Nickname tables does not repeat them as lists: each set (a table row) is one entry
+        if (e.list("starting_gear").empty())
+            for (const DataTable& t : e.tables)
+                if (t.title == name + ": Gear")
+                    for (const TableRow& r : t.rows)
+                        if (!r.cells.empty()) e.lists["starting_gear"].push_back(r.cells.front());
+        if (e.list("nicknames").empty())
+            for (const DataTable& t : e.tables)
+                if (t.title == name + ": Nickname")
+                    for (const TableRow& r : t.rows)
+                        if (!r.cells.empty()) e.lists["nicknames"].push_back(r.cells.front());
         if (const json* mg = jsonFind(o, "magic"); mg && mg->is_object()) {
             e.props["magic"] = "1";
             e.props["magic.spells"] = std::to_string(jsonInt(*mg, "spells", 3));
@@ -580,11 +784,26 @@ struct ContentStore::Loader {
 
     // ---- tables ------------------------------------------------------------------------------------
 
-    void table(const json& o, const std::string& name) {
+    void table(const json& o, const std::string& name) { addTable(o, name, 0, 0); }
+
+    // `ruleId`: the rule the table is written inside of (its "tables"), 0 for a table of tables.json; `inheritedSource`: that rule's source.
+    void addTable(const json& o, const std::string& name, int ruleId, int inheritedSource) {
         DataTable t;
         t.key = makeKey(Kind::Table, o, name);
         t.title = name;
-        t.sourceId = sourceFor(o, "table \"" + name + "\"");
+        t.rule = ruleId;
+        t.sourceId = jsonStr(o, "source").empty() && inheritedSource ? inheritedSource : sourceFor(o, "table \"" + name + "\"");
+        fillTable(o, t);
+        t.id = kPackTableBase + static_cast<int>(st.tables_.size()) + 1;
+        st.byKey_[static_cast<int>(Kind::Table)][t.key] = t.id;
+        // a key this table had before the books' tables became part of Core ("#12"): saved boards and recents still find it
+        if (const std::string legacy = jsonStr(o, "legacy_key"); !legacy.empty()) st.byKey_[static_cast<int>(Kind::Table)][legacy] = t.id;
+        st.tables_.push_back(std::move(t));
+        ++pk.counts[static_cast<int>(Kind::Table)];
+    }
+
+    // What a table says about itself and its rows (its key, title, source and place are set by the caller).
+    void fillTable(const json& o, DataTable& t) {
         t.role = lowerCopy(jsonStr(o, "role"));
         t.browse = jsonBool(o, "browse", true);
         t.dice = normalizeDice(jsonStr(o, "dice"));
@@ -613,10 +832,111 @@ struct ContentStore::Loader {
                 t.rows.push_back(std::move(row));
             }
         if (t.columns.empty() && !t.rows.empty()) t.columns.assign(t.rows.front().cells.size(), "");
-        t.id = kPackTableBase + static_cast<int>(st.tables_.size()) + 1;
-        st.byKey_[static_cast<int>(Kind::Table)][t.key] = t.id;
-        st.tables_.push_back(std::move(t));
-        ++pk.counts[static_cast<int>(Kind::Table)];
+    }
+
+    // ---- rules -------------------------------------------------------------------------------------
+    // Rules are written as a tree: a rule lists its "children" inside itself, and a child without its own "source" has its parent's.
+    // A rule at the top of the file goes to the top of the tree, or under "parent" (an id of this pack, or the full key
+    // "<pack>/rule/<id>" of a rule an earlier pack loaded) so a homerule can hang from a rule of the book. With "replaces" (a full
+    // key, or an id of this pack) a rule takes the place of that one instead: same spot in the tree, new title and text (its
+    // children, if it has any, are added below), and the tree says which pack changed it.
+    static constexpr int kMaxRuleDepth = 24;
+
+    std::string ruleKeyOf(const std::string& ref) const {
+        const std::string slug = ref.contains('/') ? ref : slugOf(ref);
+        return slug.contains('/') ? slug : pk.id + "/rule/" + slug;
+    }
+
+    void rule(const json& o, const std::string& name) { addRule(o, name, 0, 0, 1); }
+
+    // `parentId`: the rule this one is written inside of (0 at the top of the file); `inheritedSource`: that rule's source.
+    void addRule(const json& o, const std::string& name, int parentId, int inheritedSource, int depth) {
+        if (depth > kMaxRuleDepth) {
+            warn("rule \"" + name + "\": written more than " + std::to_string(kMaxRuleDepth) + " levels deep (skipped)");
+            return;
+        }
+        RuleNode n;
+        n.title = name;
+        if (const json* body = jsonFind(o, "body")) n.body = trimmed(jsonText(*body));
+        n.sourceId = jsonStr(o, "source").empty() && inheritedSource ? inheritedSource : sourceFor(o, "rule \"" + name + "\"");
+        pageInfo(o, n.sourceId, n.ref, n.pageNote);
+        // "see": what this rule points to in other data (a category, an entry key, a rule key); any other key is data for the program
+        if (const json* see = jsonFind(o, "see")) {
+            if (see->is_string()) n.see.push_back(see->get<std::string>());
+            else if (see->is_array())
+                for (const json& s : *see)
+                    if (s.is_string()) n.see.push_back(s.get<std::string>());
+        }
+        static const std::set<std::string> known = {"id", "name", "body", "source", "page", "parent", "replaces", "see", "tables", "sections", "children"};
+        // "sections": extra named parts of the same page ("Mages", "Starting Scores"...): {"name", "body"}, shown after the main body.
+        if (const json* sections = jsonFind(o, "sections"); sections && sections->is_array())
+            for (const json& sec : *sections) {
+                const std::string secName = trimmed(jsonStr(sec, "name"));
+                if (secName.empty()) {
+                    warn("rule \"" + name + "\": a section has no \"name\", skipped");
+                    continue;
+                }
+                RuleNode::Section s;
+                s.title = secName;
+                if (const json* b = jsonFind(sec, "body")) s.body = trimmed(jsonText(*b));
+                n.sections.push_back(std::move(s));
+            }
+        for (auto it = o.begin(); it != o.end(); ++it)
+            if (!known.count(it.key())) n.props[it.key()] = it.value().is_string() ? it.value().get<std::string>() : it.value().dump();
+        int self = 0;
+        if (const std::string target = jsonStr(o, "replaces"); !target.empty()) {
+            const auto it = st.ruleByKey_.find(ruleKeyOf(target));
+            if (it == st.ruleByKey_.end()) {
+                warn("rule \"" + name + "\": replaces \"" + target + "\", which is not loaded (skipped)");
+                return;
+            }
+            self = it->second;
+            RuleNode& old = st.rules_[static_cast<size_t>(self) - 1];
+            old.title = n.title;
+            old.body = n.body;
+            old.sourceId = n.sourceId;
+            old.ref = n.ref;
+            old.pageNote = n.pageNote;
+            if (!n.see.empty()) old.see = n.see;
+            if (!n.sections.empty()) old.sections = n.sections;
+            for (const auto& [key, value] : n.props) old.props[key] = value;
+            old.editedBy = pk.name;
+        } else {
+            n.key = keyIn("rule", usedRuleIds, o, name);
+            if (parentId) {
+                n.parent = parentId;
+            } else if (const std::string parent = jsonStr(o, "parent"); !parent.empty()) {
+                const auto it = st.ruleByKey_.find(ruleKeyOf(parent));
+                if (it != st.ruleByKey_.end()) n.parent = it->second;
+                else warn("rule \"" + name + "\": parent \"" + parent + "\" is not loaded before it (put at the top)");
+            }
+            if (n.parent) n.level = st.rules_[static_cast<size_t>(n.parent) - 1].level + 1;
+            n.id = self = static_cast<int>(st.rules_.size()) + 1;
+            st.ruleByKey_[n.key] = n.id;
+            st.rules_.push_back(std::move(n));
+        }
+        ++pk.rules;
+        if (const json* tables = jsonFind(o, "tables"); tables && tables->is_array()) {
+            int index = 0;
+            for (const json& t : *tables) {
+                ++index;
+                const std::string tableName = t.is_object() ? trimmed(jsonStr(t, "name")) : std::string();
+                if (tableName.empty()) warn("rule \"" + name + "\": table #" + std::to_string(index) + " has no \"name\", skipped");
+                else addTable(t, tableName, self, st.rules_[static_cast<size_t>(self) - 1].sourceId);
+            }
+        }
+        const json* kids = jsonFind(o, "children");
+        if (!kids || !kids->is_array()) return;
+        int index = 0;
+        for (const json& c : *kids) {
+            const std::string childName = c.is_object() ? trimmed(jsonStr(c, "name")) : std::string();
+            if (childName.empty()) {
+                warn("rule \"" + name + "\": child #" + std::to_string(++index) + " has no \"name\", skipped");
+                continue;
+            }
+            ++index;
+            addRule(c, childName, self, st.rules_[static_cast<size_t>(self) - 1].sourceId, depth + 1);
+        }
     }
 
     // ------------------------------------------------------------------------------------------------
@@ -630,7 +950,8 @@ struct ContentStore::Loader {
         const Step steps[] = {{"spells", &Loader::spell},   {"abilities", &Loader::ability}, {"skills", &Loader::skill},
                               {"kin", &Loader::kin},        {"professions", &Loader::profession},
                               {"weapons", &Loader::weapon}, {"armor", &Loader::armor},     {"gear", &Loader::gear},
-                              {"tables", &Loader::table},   {"creatures", &Loader::creature}};
+                              {"tables", &Loader::table},   {"creatures", &Loader::creature},
+                              {"rules", &Loader::rule}};   // last: it may replace a rule an earlier pack loaded, and a broken pack must not have touched those
         for (const Step& s : steps) {
             if (!eachObject(s.file, [&](const json& o, const std::string& n) { (this->*s.fn)(o, n); })) return;
         }
@@ -642,35 +963,28 @@ void ContentStore::clear() {
     packs_.clear();
     sources_.clear();
     for (auto& v : entries_) v.clear();
+    for (auto& in : intros_) in = Intro();
     for (auto& m : byKey_) m.clear();
     monsters_.clear();
     tables_.clear();
+    rules_.clear();
+    ruleByKey_.clear();
+    tablesOfRule_.clear();
     if (index_) sqlite3_close(index_);
     index_ = nullptr;
 }
 
 ContentStore::~ContentStore() { clear(); }
 
-void ContentStore::load(Database& db, const std::vector<PackSpec>& specs) {
+void ContentStore::load(const std::vector<PackSpec>& specs) {
     clear();
-    for (const Source& s : db.sources()) {
-        SourceInfo si;
-        si.id = s.id;
-        si.key = s.key;
-        si.packId = "core";
-        si.title = s.title;
-        si.label = s.key;
-        if (!si.label.empty()) si.label[0] = static_cast<char>(std::toupper(static_cast<unsigned char>(si.label[0])));
-        si.book = true;
-        si.color = s.key == "rulebook" ? 0x4DC7B3u : s.key == "bestiary" ? 0xEE9E40u : s.key == "adventure" ? 0xB38CF2u : colorFor(s.key);
-        sources_.push_back(si);
-    }
     std::set<std::string> seen;
     for (const PackSpec& spec : specs) {
         PackInfo pk;
         pk.core = spec.core;
         pk.enabled = spec.enabled;
-        if (!readManifest(spec.dir, pk)) {
+        json meta;
+        if (!readMeta(spec.dir, pk, meta)) {
             if (pk.id.empty()) pk.id = spec.dir;
             if (pk.name.empty()) pk.name = pk.id;
             packs_.push_back(std::move(pk));
@@ -685,50 +999,131 @@ void ContentStore::load(Database& db, const std::vector<PackSpec>& specs) {
             // load into the shared vectors; if the pack turns out to be broken, roll everything it added back
             size_t before[kKindCount];
             for (int k = 0; k < kKindCount; ++k) before[k] = entries_[k].size();
-            const size_t monBefore = monsters_.size(), tabBefore = tables_.size(), srcBefore = sources_.size();
-            std::string text, err;
-            json manifest;
-            readTextFile(spec.dir + "/manifest.json", text, &err);
-            jsonParse(text, manifest, &err);
-            Loader loader(*this, pk, manifest);
+            const size_t monBefore = monsters_.size(), tabBefore = tables_.size(), srcBefore = sources_.size(), rulesBefore = rules_.size();
+            Loader loader(*this, pk, meta);
             loader.run();
             if (!pk.loaded) {
                 for (int k = 0; k < kKindCount; ++k) {
                     entries_[k].resize(before[k]);
                     pk.counts[k] = 0;
                 }
+                pk.rules = 0;
                 monsters_.resize(monBefore);
                 tables_.resize(tabBefore);
                 sources_.resize(srcBefore);
+                rules_.resize(rulesBefore);
                 pk.sourceIds.clear();
                 const std::string prefix = pk.id + "/";
                 for (auto& m : byKey_)
                     for (auto it = m.begin(); it != m.end();) it = it->first.starts_with(prefix) ? m.erase(it) : std::next(it);
+                for (auto it = ruleByKey_.begin(); it != ruleByKey_.end();) it = it->first.starts_with(prefix) ? ruleByKey_.erase(it) : std::next(it);
             }
         }
         packs_.push_back(std::move(pk));
     }
-    resolveLinks(db);
+    placeTables();
+    resolveLinks();
+    checkRuleLinks();
     buildIndex();
 }
 
-// Things that need every pack loaded: creature -> related book tables, kin -> their innate abilities' text.
-void ContentStore::resolveLinks(Database& db) {
-    std::map<std::string, int> dbTables;
-    for (const ListItem& t : db.listTables()) dbTables.emplace(std::to_string(t.sourceId) + "|" + t.name, t.id);
+SeeTarget ContentStore::seeTarget(const std::string& ref) const {
+    static const struct {
+        const char* word;
+        Kind kind;
+        const char* label;
+    } categories[] = {{"kin", Kind::Kin, "Kin"},           {"professions", Kind::Profession, "Professions"}, {"skills", Kind::Skill, "Skills"},
+                      {"abilities", Kind::Ability, "Abilities"}, {"spells", Kind::Spell, "Spells"},        {"weapons", Kind::Weapon, "Weapons"},
+                      {"armor", Kind::Armor, "Armor"},     {"gear", Kind::Gear, "Gear"},                     {"creatures", Kind::Monster, "Creatures"}};
+    SeeTarget t;
+    for (const auto& c : categories)
+        if (ref == c.word) {
+            t.type = SeeTarget::Type::Category;
+            t.kind = c.kind;
+            t.label = std::string(c.label) + " (" + std::to_string(count(c.kind)) + ")";
+            return t;
+        }
+    const size_t a = ref.find('/'), b = a == std::string::npos ? a : ref.find('/', a + 1);      // "<pack>/<kind>/<id>"
+    if (b == std::string::npos) return t;
+    const std::string what = ref.substr(a + 1, b - a - 1);
+    if (what == "rule") {
+        if (const int id = ruleByKey(ref)) {
+            t.type = SeeTarget::Type::Rule;
+            t.id = id;
+            t.label = rule(id)->title;
+        }
+        return t;
+    }
+    Kind k;
+    if (!kindFromKey(what, k)) return t;
+    if (const int id = idByKey(k, ref)) {
+        t.type = SeeTarget::Type::Entry;
+        t.kind = k;
+        t.id = id;
+        t.label = titleOf(k, id);
+    }
+    return t;
+}
+
+// A rule that points to something that is not there is a mistake worth a warning (the pack still loads).
+void ContentStore::checkRuleLinks() {
+    for (const RuleNode& r : rules_)
+        for (const std::string& ref : r.see) {
+            if (seeTarget(ref).type != SeeTarget::Type::None) continue;
+            const std::string packId = r.key.substr(0, r.key.find('/'));
+            for (PackInfo& p : packs_)
+                if (p.id == packId && p.warnings.size() < kMaxWarnings) p.warnings.push_back("rule \"" + r.title + "\": it says to see \"" + ref + "\", which is not there");
+        }
+}
+
+// Every browsable table is shown inside a rule. Those written in a rule's "tables" already are; those of a pack's tables.json get a rule
+// of their own per pack, "Tables · <pack>", at the end of the tree.
+void ContentStore::placeTables() {
+    std::map<std::string, int> homeOf;                       // pack id -> the rule that holds its loose tables
+    for (DataTable& t : tables_) {
+        if (!t.rule && t.browse) {
+            const std::string packId = t.key.substr(0, t.key.find('/'));
+            auto home = homeOf.find(packId);
+            if (home == homeOf.end()) {
+                const PackInfo* pk = pack(packId);
+                RuleNode n;
+                n.key = packId + "/rule/other-tables";
+                for (int i = 2; ruleByKey_.count(n.key); ++i) n.key = packId + "/rule/other-tables-" + std::to_string(i);
+                n.title = "Tables · " + (pk ? pk->name : packId);
+                n.sourceId = t.sourceId;
+                n.id = static_cast<int>(rules_.size()) + 1;
+                ruleByKey_[n.key] = n.id;
+                home = homeOf.emplace(packId, n.id).first;
+                rules_.push_back(std::move(n));
+            }
+            t.rule = home->second;
+        }
+        if (t.rule) tablesOfRule_[t.rule].push_back(t.id);
+    }
+}
+
+const std::vector<int>& ContentStore::tablesOfRule(int ruleId) const {
+    static const std::vector<int> none;
+    const auto it = tablesOfRule_.find(ruleId);
+    return it == tablesOfRule_.end() ? none : it->second;
+}
+
+// Things that need every pack loaded: creature -> related tables, kin -> their innate abilities' text.
+void ContentStore::resolveLinks() {
+    std::map<std::string, int> byTitle;                      // "<source>|<title>" and "<title>": the first table with that title
+    for (const DataTable& t : tables_) {
+        byTitle.emplace(std::to_string(t.sourceId) + "|" + lowerCopy(t.title), t.id);
+        byTitle.emplace(lowerCopy(t.title), t.id);
+    }
     for (Monster& m : monsters_) {
         std::vector<TableRef> resolved;
         for (const TableRef& t : m.tables) {
-            auto it = dbTables.find(std::to_string(m.sourceId) + "|" + t.title);
-            if (it != dbTables.end()) {
-                resolved.push_back({it->second, t.title});
-                continue;
-            }
-            for (const DataTable& pt : tables_)
-                if (lowerCopy(pt.title) == lowerCopy(t.title)) {
-                    resolved.push_back({pt.id, pt.title});
-                    break;
-                }
+            // the creature's own table first ("Goblin: First Name" for "First Name"), then any table with that title
+            const std::string own = std::to_string(m.sourceId) + "|" + lowerCopy(m.name + ": " + t.title);
+            auto it = byTitle.find(own);
+            if (it == byTitle.end()) it = byTitle.find(std::to_string(m.sourceId) + "|" + lowerCopy(t.title));
+            if (it == byTitle.end()) it = byTitle.find(lowerCopy(t.title));
+            if (it != byTitle.end()) resolved.push_back({it->second, t.title});
         }
         m.tables = std::move(resolved);
     }
@@ -764,7 +1159,34 @@ int ContentStore::sourceId(const std::string& packId, const std::string& key) co
     return 0;
 }
 
+int ContentStore::bookId(const std::string& key) const {
+    for (const SourceInfo& s : sources_)
+        if (s.book && s.key == key) return s.id;
+    return 0;
+}
+
+int ContentStore::pageCount(int sourceId) const {
+    const SourceInfo* s = source(sourceId);
+    return s && s->book ? s->pages : 0;
+}
+
+int ContentStore::printedPage(int sourceId, int page) const {
+    const SourceInfo* s = source(sourceId);
+    return s && page >= 1 && page <= static_cast<int>(s->printedPages.size()) ? s->printedPages[static_cast<size_t>(page) - 1] : 0;
+}
+
+const RuleNode* ContentStore::rule(int id) const {
+    return id >= 1 && id <= static_cast<int>(rules_.size()) ? &rules_[static_cast<size_t>(id) - 1] : nullptr;
+}
+
+int ContentStore::ruleByKey(const std::string& key) const {
+    const auto it = ruleByKey_.find(key);
+    return it == ruleByKey_.end() ? 0 : it->second;
+}
+
 const std::vector<Entry>& ContentStore::entries(Kind k) const { return entries_[static_cast<int>(k)]; }
+
+const Intro& ContentStore::introOf(Kind k) const { return intros_[static_cast<int>(k)]; }
 
 const Entry* ContentStore::entry(Kind k, int id) const {
     const auto& v = entries_[static_cast<int>(k)];
@@ -844,7 +1266,6 @@ const DataTable* ContentStore::tableByRole(const std::string& role) const {
 }
 
 std::string ContentStore::keyOf(Kind k, int id) const {
-    if (k == Kind::Table && id < kPackTableBase) return "#" + std::to_string(id);
     if (k == Kind::Monster) {
         const Monster* m = monster(id);
         return m ? m->key : std::string();
@@ -858,8 +1279,7 @@ std::string ContentStore::keyOf(Kind k, int id) const {
 }
 
 int ContentStore::idByKey(Kind k, const std::string& key) const {
-    if (!key.empty() && key[0] == '#') return std::atoi(key.c_str() + 1);
-    const auto& m = byKey_[static_cast<int>(k)];
+    const auto& m = byKey_[static_cast<int>(k)];                             // (a table's old "#12" key is an alias in here)
     auto it = m.find(key);
     return it == m.end() ? 0 : it->second;
 }
@@ -905,7 +1325,13 @@ void ContentStore::buildIndex() {
         for (const Entry& e : entries_[k]) {
             std::string body = e.subtitle + "\n";
             for (const Field& f : e.fields) body += f.label + ": " + f.value + "\n";
-            add(e.kind, e.id, e.title, body + e.body, e.sourceId, e.ref.page);
+            std::string tables;                                          // the card's own tables are searched with it
+            for (const DataTable& t : e.tables) {
+                tables += "\n" + t.title + "\n";
+                for (const TableRow& r : t.rows)
+                    for (const std::string& c : r.cells) tables += c + " ";
+            }
+            add(e.kind, e.id, e.title, body + e.body + tables, e.sourceId, e.ref.page);
         }
     for (const Monster& m : monsters_) {
         std::string body = m.category + "\n" + m.quote + "\n" + m.description + "\n";
@@ -952,18 +1378,6 @@ std::vector<Hit> ContentStore::search(const std::string& userText, int limit, co
         h.exact = q.i(6) != 0;
         out.push_back(std::move(h));
     }
-    return out;
-}
-
-std::vector<Hit> mergeHits(std::vector<Hit> content, std::vector<Hit> book, size_t limit) {
-    std::vector<Hit> out;
-    for (auto* list : {&content, &book})
-        for (Hit& h : *list)
-            if (h.exact) out.push_back(h);
-    for (auto* list : {&content, &book})
-        for (Hit& h : *list)
-            if (!h.exact) out.push_back(h);
-    if (out.size() > limit) out.resize(limit);
     return out;
 }
 

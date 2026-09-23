@@ -734,6 +734,13 @@ private:
         fieldsTable(e->fields, "##fields");
         ImGui::Spacing();
         paragraphs(e->body);
+        for (size_t i = 0; i < e->tables.size(); ++i) {                    // the card's own tables (a kin's first names)
+            ImGui::PushID(static_cast<int>(i));
+            ImGui::Spacing();
+            bigText(e->tables[i].title.c_str(), 1.1f, kAccent);
+            tableGrid(e->tables[i], -1);
+            ImGui::PopID();
+        }
         pageLink(host_, e->sourceId, e->ref, e->pageNote);
     }
 
@@ -765,11 +772,14 @@ private:
         if (!m.abilities.empty()) {
             ImGui::Spacing();
             bigText("Abilities", 1.1f, kAccent);
-            for (const NamedText& a : m.abilities) {
+            ImGui::PushID("abilities");
+            for (size_t i = 0; i < m.abilities.size(); ++i) {
+                const NamedText& a = m.abilities[i];
                 ImGui::TextColored(kGold, "%s", a.name.c_str());
                 ImGui::SameLine(0, 6);
-                ImGui::TextWrapped("%s", a.text.c_str());
+                copyableText(("##a" + std::to_string(i)).c_str(), a.text);
             }
+            ImGui::PopID();
         }
         if (!m.description.empty()) {
             ImGui::Separator();
@@ -781,11 +791,9 @@ private:
         auto found = tables_.find(it.id);
         if (found == tables_.end()) {
             TableView v;
-            if (const DataTable* t = id >= kPackTableBase ? host_.content().packTable(id) : nullptr) {
+            if (const DataTable* t = host_.content().packTable(id)) {
                 v.table = *t;
                 v.ok = true;
-            } else if (id < kPackTableBase) {
-                v.ok = host_.db().table(id, v.table);
             }
             found = tables_.emplace(it.id, std::move(v)).first;
         }
@@ -998,7 +1006,7 @@ private:
         ImGui::InputTextWithHint("##pinfilter", "Search creatures, spells, tables, rules…", pinFilter_, sizeof pinFilter_);
         if (pinQuery_ != pinFilter_) {
             pinQuery_ = pinFilter_;
-            pinHits_ = pinQuery_.size() < 2 ? std::vector<Hit>{} : mergeHits(host_.content().search(pinQuery_, 16), host_.db().search(pinQuery_, 16), 16);
+            pinHits_ = pinQuery_.size() < 2 ? std::vector<Hit>{} : host_.content().search(pinQuery_, 16);
         }
         if (pinQuery_.size() < 2) {
             if (!host_.characters().all().empty()) ImGui::TextColored(kAccent, "Characters");

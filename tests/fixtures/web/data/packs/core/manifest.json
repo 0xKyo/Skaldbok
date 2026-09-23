@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "id": "core",
+  "name": "Test Core",
+  "version": "0.0.1",
+  "description": "A tiny invented stand-in for the Core pack (the two books and a few cards), so the web tests run without the books.",
+  "sources": [
+    { "key": "rulebook", "title": "Test Rulebook", "short": "Rulebook", "file": "Source/a.pdf", "pages": 60, "page_offset": 4 },
+    { "key": "bestiary", "title": "Test Bestiary", "short": "Bestiary", "file": "Source/b.pdf", "pages": 60, "page_offset": 4 }
+  ]
+}

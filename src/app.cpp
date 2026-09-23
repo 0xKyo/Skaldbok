@@ -6,6 +6,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <utility>
 
 #include <SDL3/SDL.h>
 #include <imgui.h>
@@ -28,8 +29,8 @@ double nowSeconds() { return static_cast<double>(SDL_GetTicks()) / 1000.0; }
 
 // ------------------------------------------------------------------------------------- setup
 
-App::App(SDL_Window* window, SDL_Renderer* renderer, Database& db, Paths paths)
-    : window_(window), renderer_(renderer), db_(db), paths_(std::move(paths)), textures_(renderer) {
+App::App(SDL_Window* window, SDL_Renderer* renderer, Paths paths)
+    : window_(window), renderer_(renderer), paths_(std::move(paths)), textures_(renderer) {
     // the per-user folder: --prefs <dir> for tests, otherwise the system's
     std::string prefDir = paths_.prefDir;
     if (prefDir.empty()) {
@@ -74,25 +75,40 @@ App::~App() {
     if (gearIcon_) SDL_DestroyTexture(gearIcon_);
 }
 
-void App::loadContent() { content_.load(db_, packs_->specs(settings_.disabledPacks())); }
+void App::loadContent() {
+    const std::vector<PackSpec> specs = packs_->specs(settings_.disabledPacks());
+    packSig_ = packSignature(specs);                       // taken before reading: a file that changes meanwhile is noticed next time
+    pendingSig_.clear();
+    content_.load(specs);
+}
 
 // Packs were imported, removed or switched, or a module was: read everything again and tell the modules.
 void App::reloadContent() {
     reloadRequested_ = false;
+    const bool fromDisk = std::exchange(reloadFromDisk_, false);
     Selection old = sel_;
     const std::string oldKey = hasSel_ ? content_.keyOf(old.kind, old.id) : std::string();
     loadContent();
+    textures_.clear();                                     // art may have been replaced or added
     history_.clear();
     historyPos_ = -1;
     if (hasSel_) {                                         // the same entry may have a new handle now, or be gone
         const int id = oldKey.empty() ? 0 : content_.idByKey(old.kind, oldKey);
-        if (id && handlerFor(old.kind)) sel_.id = id;
+        if (id && handlerFor(old.kind, id)) sel_.id = id;
         else hasSel_ = false;
     }
     for (const auto& m : modules_) m->onContentChanged();
     if (hasSel_)
-        if (Module* h = handlerFor(sel_.kind)) h->onSelect(sel_);
+        if (Module* h = handlerFor(sel_.kind, sel_.id)) h->onSelect(sel_);
     if (active_ && !isOn(*active_)) showModule("search");
+    if (fromDisk) {
+        for (const PackInfo& p : content_.packs())
+            if (!p.error.empty()) {
+                notify("Pack " + (p.name.empty() ? p.dir : p.name) + ": " + p.error.substr(0, 140));
+                return;
+            }
+        notify("Content reloaded");
+    }
 }
 
 Module* App::moduleById(const std::string& id) const {
@@ -128,9 +144,9 @@ void App::toggleSettings() {
     }
 }
 
-Module* App::handlerFor(Kind k) const {
+Module* App::handlerFor(Kind k, int id) const {
     for (const auto& m : modules_)
-        if (isOn(*m) && m->handles(k)) return m.get();
+        if (isOn(*m) && m->handles(k, id)) return m.get();
     return nullptr;
 }
 
@@ -139,7 +155,7 @@ bool App::kindAvailable(Kind k) const { return handlerFor(k) != nullptr; }
 // -------------------------------------------------------------------------------- navigation
 
 void App::navigate(Kind kind, int id, bool pushHistory) {
-    Module* h = handlerFor(kind);
+    Module* h = handlerFor(kind, id);
     if (!h) {
         notify(std::string("The module that shows ") + kindLabel(kind) + " entries is switched off (Settings > Modules)");
         return;
@@ -216,56 +232,8 @@ std::string App::nameOf(const Recent& r) {
     if (it != nameCache_.end()) return it->second;
     std::string name;
     const int id = content_.idByKey(r.kind, r.key);
-    if (id) {
-        if (r.kind == Kind::Table && id < kPackTableBase) {
-            DataTable t;
-            if (db_.table(id, t)) name = t.title;
-        } else {
-            name = content_.titleOf(r.kind, id);
-        }
-    }
+    if (id) name = content_.titleOf(r.kind, id);
     return nameCache_[cacheKey] = name;
-}
-
-// ------------------------------------------------------------------------------- PDF links
-
-std::string App::pdfPath(int sourceId) const {
-    const Source* s = db_.source(sourceId);
-    return s ? paths_.root + "/" + s->file : std::string();
-}
-
-std::string App::pdfUrl(const PageRef& r) const {
-    std::string url = "file:///";
-    for (char c : pdfPath(r.sourceId)) {
-        if (c == '\\') url += '/';
-        else if (c == ' ') url += "%20";
-        else url += c;
-    }
-    return url + "#page=" + std::to_string(r.page);
-}
-
-std::string App::pageImagePath(const PageRef& r) const {
-    const Source* s = db_.source(r.sourceId);
-    return s ? paths_.dataDir + "/pages/" + s->key + "/" + std::to_string(r.page) + ".jpg" : std::string();
-}
-
-// The original page: in our own viewer when the pre-rendered image exists, otherwise in the system's PDF viewer.
-void App::openPage(const PageRef& r) {
-    if (!r.valid()) return;
-    SDL_PathInfo info;
-    if (SDL_GetPathInfo(pageImagePath(r).c_str(), &info) && info.type == SDL_PATHTYPE_FILE) {
-        showPage(r);
-        return;
-    }
-    if (SDL_OpenURL(pdfUrl(r).c_str())) notify("Opening the original PDF at page " + std::to_string(r.page));
-    else notify("Could not open the PDF viewer: " + std::string(SDL_GetError()));
-}
-
-void App::showPage(const PageRef& r) {
-    viewerPage_ = r;
-    viewerPage_.printed = db_.printedPage(r.sourceId, r.page);
-    viewerOpen_ = true;
-    viewerScrollTop_ = true;
 }
 
 void App::notify(const std::string& text) {
@@ -297,6 +265,14 @@ bool App::pollExternal() {
     if (now < nextPoll_) return false;
     nextPoll_ = now + 0.3;
     bool any = false;
+    if (now >= nextPackPoll_) {                                    // a pack's files were edited: read them again once the edit is over
+        nextPackPoll_ = now + 0.6;
+        const std::string sig = packSignature(packs_->specs(settings_.disabledPacks()));
+        if (sig == packSig_) pendingSig_.clear();
+        else if (sig == pendingSig_) {
+            reloadRequested_ = reloadFromDisk_ = any = true;
+        } else pendingSig_ = sig;
+    }
     if (!characters_.poll().empty()) any = true;
     if (!parties_.poll().empty()) any = true;
     for (const std::string& id : messages_.poll()) {               // a conversation changed: tell the GM if the player wrote
@@ -332,7 +308,7 @@ bool App::wantsRedraw() const {
 
 void App::applyStartup(const StartupOptions& o) {
     if (!o.importPath.empty()) {
-        const ImportResult r = packs_->import(o.importPath, db_);
+        const ImportResult r = packs_->import(o.importPath);
         std::printf("%s\n", r.message.c_str());
         for (const std::string& w : r.warnings) std::printf("  warning: %s\n", w.c_str());
         if (r.ok) settings_.setPackEnabled(r.packId, true);
@@ -352,14 +328,6 @@ void App::applyStartup(const StartupOptions& o) {
             if (isOn(*m) && m->findByName(want, found)) done = true;
         }
         if (done) navigate(found.kind, found.id, true);
-    }
-    if (o.page > 0 && hasSel_ && sel_.kind == Kind::Monster) {
-        if (const Monster* m = content_.monster(sel_.id))
-            if (m->ref.valid()) {
-                PageRef r = m->ref;
-                r.page = o.page;
-                showPage(r);
-            }
     }
     if (!o.search.empty())
         if (ISearch* s = serviceOf<ISearch>(*this)) {
@@ -706,81 +674,6 @@ void App::drawWelcome() {
     ImGui::TextColored(kGrey, "Settings (the gear, top right): modules on and off, homebrew content and the players' web page.");
 }
 
-// The original page, shown inside the app so the GM can check a ruling against the printed book.
-void App::drawViewer(float w, float h) {
-    if (!viewerOpen_) return;
-    ImGuiIO& io = ImGui::GetIO();
-    const Source* src = db_.source(viewerPage_.sourceId);
-    const int pages = db_.pageCount(viewerPage_.sourceId);
-    auto step = [&](int delta) {
-        PageRef r = viewerPage_;
-        r.page = std::clamp(r.page + delta, 1, std::max(1, pages));
-        showPage(r);
-    };
-    if (!io.WantTextInput) {
-        if (ImGui::IsKeyPressed(ImGuiKey_Escape, false)) viewerOpen_ = false;
-        if (ImGui::IsKeyPressed(ImGuiKey_LeftArrow) && !io.KeyAlt) step(-1);
-        if (ImGui::IsKeyPressed(ImGuiKey_RightArrow) && !io.KeyAlt) step(1);
-    }
-    if (!viewerOpen_) return;
-
-    ImGui::SetNextWindowPos(ImVec2(w * 0.5f, h * 0.5f), ImGuiCond_Always, ImVec2(0.5f, 0.5f));
-    ImGui::SetNextWindowSize(ImVec2(w - U(60), h - U(50)));
-    ImGui::PushStyleColor(ImGuiCol_WindowBg, ImGui::GetStyle().Colors[ImGuiCol_PopupBg]);
-    ImGui::PushStyleColor(ImGuiCol_Border, kAccentDim);
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 1.5f);
-    ImGui::Begin("##viewer", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
-    ImGui::AlignTextToFramePadding();
-    ImGui::PushStyleColor(ImGuiCol_Text, sourceColor(content_, viewerPage_.sourceId));
-    ImGui::TextUnformatted(src ? src->title.c_str() : "?");
-    ImGui::PopStyleColor();
-    ImGui::SameLine();
-    if (viewerPage_.printed > 0) ImGui::Text("· page %d  (pdf p.%d of %d)", viewerPage_.printed, viewerPage_.page, pages);
-    else ImGui::Text("· pdf page %d of %d", viewerPage_.page, pages);
-    ImGui::SameLine(0, 24);
-    ImGui::BeginDisabled(viewerPage_.page <= 1);
-    if (ImGui::Button("< Prev")) step(-1);
-    ImGui::EndDisabled();
-    ImGui::SameLine();
-    ImGui::BeginDisabled(viewerPage_.page >= pages);
-    if (ImGui::Button("Next >")) step(1);
-    ImGui::EndDisabled();
-    ImGui::SameLine(0, 16);
-    if (ImGui::Button("Fit")) viewerZoom_ = 0.0f;
-    ImGui::SameLine();
-    if (ImGui::Button("100%")) viewerZoom_ = 1.0f;
-    ImGui::SameLine();
-    if (ImGui::Button("150%")) viewerZoom_ = 1.5f;
-    ImGui::SameLine(0, 16);
-    if (ImGui::Button("Open PDF")) {
-        if (SDL_OpenURL(pdfUrl(viewerPage_).c_str())) notify("Opening the PDF at page " + std::to_string(viewerPage_.page));
-        else notify("Could not open the PDF viewer: " + std::string(SDL_GetError()));
-    }
-    ImGui::SameLine(0, 16);
-    if (ImGui::Button("Close  (Esc)")) viewerOpen_ = false;
-
-    ImGui::BeginChild("##pageimg", ImVec2(0, 0), ImGuiChildFlags_None, ImGuiWindowFlags_HorizontalScrollbar);
-    if (viewerScrollTop_) {
-        ImGui::SetScrollY(0);
-        viewerScrollTop_ = false;
-    }
-    const TextureCache::Tex* tex = textures_.get(pageImagePath(viewerPage_));
-    if (!tex) {
-        ImGui::TextWrapped("No image of this page yet. Run  python tools/render_pages.py  to create them, or use Open PDF.");
-    } else {
-        const float avail = ImGui::GetContentRegionAvail().x;
-        const float width = viewerZoom_ <= 0.0f ? std::min(avail, static_cast<float>(tex->w) * 1.3f)
-                                                : static_cast<float>(tex->w) * viewerZoom_ * ImGui::GetFontSize() / 16.0f;
-        const float height = width * static_cast<float>(tex->h) / static_cast<float>(tex->w);
-        if (viewerZoom_ <= 0.0f && avail > width) ImGui::SetCursorPosX((avail - width) * 0.5f);
-        ImGui::Image(reinterpret_cast<ImTextureID>(tex->tex), ImVec2(width, height));
-    }
-    ImGui::EndChild();
-    ImGui::End();
-    ImGui::PopStyleVar();
-    ImGui::PopStyleColor(2);
-}
-
 void App::frame(float width, float height) {
     if (reloadRequested_) reloadContent();
     ImGuiIO& io = ImGui::GetIO();
@@ -795,7 +688,7 @@ void App::frame(float width, float height) {
         focusSearch_ = true;
         showModule("search");
     }
-    if (ImGui::IsKeyPressed(ImGuiKey_Escape, false) && !io.WantTextInput && !viewerOpen_ && active_ && std::string(active_->id()) == "settings") toggleSettings();
+    if (ImGui::IsKeyPressed(ImGuiKey_Escape, false) && !io.WantTextInput && active_ && std::string(active_->id()) == "settings") toggleSettings();
     if (io.KeyAlt && ImGui::IsKeyPressed(ImGuiKey_LeftArrow, false)) goBack();
     if (io.KeyAlt && ImGui::IsKeyPressed(ImGuiKey_RightArrow, false)) goForward();
     if (io.KeyCtrl) {
@@ -836,7 +729,7 @@ void App::frame(float width, float height) {
         ImGui::BeginChild("##detail", ImVec2(0, bodyH), ImGuiChildFlags_Borders | ImGuiChildFlags_AlwaysUseWindowPadding);
         if (m->ownsDetail()) {
             m->drawDetail();
-        } else if (Module* h = hasSel_ ? handlerFor(sel_.kind) : nullptr) {
+        } else if (Module* h = hasSel_ ? handlerFor(sel_.kind, sel_.id) : nullptr) {
             h->drawSelection(sel_);
         } else {
             drawWelcome();
@@ -848,7 +741,6 @@ void App::frame(float width, float height) {
     drawDiceBar();
     ImGui::EndChild();
     ImGui::End();
-    drawViewer(width, height);
 
     if (nowSeconds() < toastUntil_ && !toast_.empty()) {
         ImGui::SetNextWindowPos(ImVec2(20, height - diceH - 20), ImGuiCond_Always, ImVec2(0, 1));

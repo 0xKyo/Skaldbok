@@ -38,7 +38,6 @@ Options parseArgs(int argc, char** argv) {
         else if (a == "--select") o.startup.select = next();
         else if (a == "--search") o.startup.search = next();
         else if (a == "--roll") o.startup.demoRoll = true;
-        else if (a == "--page") o.startup.page = std::atoi(next().c_str());
         else if (a == "--prefs") o.prefDir = next();
         else if (a == "--demo-encounter") o.startup.demoEncounter = true;
         else if (a == "--demo-character") o.startup.demoCharacter = true;
@@ -51,11 +50,6 @@ Options parseArgs(int argc, char** argv) {
         else if (a == "--size") std::sscanf(next().c_str(), "%dx%d", &o.width, &o.height);
     }
     return o;
-}
-
-bool fileExists(const std::string& p) {
-    SDL_PathInfo info;
-    return SDL_GetPathInfo(p.c_str(), &info) && info.type == SDL_PATHTYPE_FILE;
 }
 
 std::string normalize(std::string p) {
@@ -87,9 +81,8 @@ bool locateData(const Options& o, gm::Paths& out) {
 #endif
     for (std::string c : candidates) {
         c = normalize(c);
-        if (fileExists(c + "/skaldbok.db")) {
+        if (gm::looksLikePack(c + "/packs/core")) {
             out.dataDir = c;
-            out.dbPath = c + "/skaldbok.db";
             out.root = parentDir(c);
             return true;
         }
@@ -109,20 +102,10 @@ int main(int argc, char** argv) {
 
     gm::Paths paths;
     if (!locateData(opt, paths)) {
-        fail("Cannot find data/skaldbok.db.\nRun python tools/build_db.py, or start with --data <folder>.");
+        fail("Cannot find the Core content pack (data/packs/core).\nStart with --data <folder>, or set SKALDBOK_DATA.");
         return 2;
     }
     paths.prefDir = normalize(opt.prefDir);
-    if (!fileExists(paths.coreDir() + "/manifest.json")) {
-        fail("Cannot find the Core content pack (data/packs/core).\nRun python tools/build_db.py (or python tools/export_packs.py).");
-        return 2;
-    }
-    gm::Database db;
-    std::string err;
-    if (!db.open(paths.dbPath, &err)) {
-        fail("Cannot open " + paths.dbPath + ":\n" + err);
-        return 2;
-    }
 
     if (opt.software) SDL_SetHint(SDL_HINT_RENDER_DRIVER, "software");
     if (!SDL_Init(SDL_INIT_VIDEO)) {
@@ -150,7 +133,7 @@ int main(int argc, char** argv) {
 
     int exitCode = 0;
     {
-        gm::App app(window, renderer, db, paths);
+        gm::App app(window, renderer, paths);
         const float scale = SDL_GetWindowDisplayScale(window);
         ImGui::GetStyle().ScaleAllSizes(scale > 0 ? scale : 1.0f);
         ImGui::GetStyle().FontScaleDpi = scale > 0 ? scale : 1.0f;

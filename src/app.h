@@ -26,25 +26,24 @@ struct StartupOptions {
     bool demoParty = false;           // make a sample party of three characters (screenshots only)
     bool demoScreen = false;          // fill the Master Screen with a sample board (screenshots only)
     int newCharacter = -1;            // open the creator at this step (0 = the first), pre-filled with a sample from step 1 on
-    int page = 0;                     // open the page viewer on this physical page of the selected creature's book
 };
 
 class App : public Host {
 public:
-    App(SDL_Window* window, SDL_Renderer* renderer, Database& db, Paths paths);
+    App(SDL_Window* window, SDL_Renderer* renderer, Paths paths);
     ~App() override;
 
     void applyStartup(const StartupOptions& o);
     void frame(float width, float height);    // build the whole UI for one frame
     bool wantsRedraw() const;                 // something is animating or in flight
-    // Looks at the files another program (the players' web server) writes: sheets, parties, the chat and the change log. True if
-    // something changed, so the caller draws again. Cheap, and limited to a few times a second.
+    // Looks at the files another program (the players' web server) writes: sheets, parties, the chat and the change log, and at the
+    // content packs, which are read again when their files are edited (homebrew being written, Core being rebuilt). True if something
+    // changed, so the caller draws again. Cheap, and limited to a few times a second.
     bool pollExternal();
     void dropFile(const std::string& path, float x, float y);   // a file dropped on the window: an image is pinned to the Master Screen
 
     // ---- Host ---------------------------------------------------------------------------------------
     const Paths& paths() const override { return paths_; }
-    Database& db() override { return db_; }
     ContentStore& content() override { return content_; }
     Settings& settings() override { return settings_; }
     TextureCache& textures() override { return textures_; }
@@ -66,8 +65,6 @@ public:
     void rollExpression(const std::string& text, const std::string& label) override;
     bool sourceShown(int sourceId) const override { return !sourcesOff_.count(sourceId); }
     int sourceRevision() const override { return sourceRev_; }
-    void openPage(const PageRef& r) override;
-    std::string pdfPath(int sourceId) const override;
 
 private:
     struct Recent {
@@ -81,16 +78,13 @@ private:
     void navigate(Kind kind, int id, bool pushHistory);
     void goBack();
     void goForward();
-    Module* handlerFor(Kind k) const;
+    Module* handlerFor(Kind k, int id = -1) const;
     Module* moduleById(const std::string& id) const;
     bool isOn(const Module& m) const { return moduleIsOn(const_cast<App&>(*this), m); }
     void noteRecent(const Selection& s);
     void loadRecents();
     void saveRecents() const;
     std::string nameOf(const Recent& r);
-    std::string pageImagePath(const PageRef& r) const;
-    std::string pdfUrl(const PageRef& r) const;
-    void showPage(const PageRef& r);
 
     // ---- drawing (ui.cpp)
     void setupStyle();
@@ -101,12 +95,10 @@ private:
     void drawSourceChips();
     void drawDiceBar();
     void drawWelcome();
-    void drawViewer(float w, float h);
 
     // ---- state
     SDL_Window* window_;
     SDL_Renderer* renderer_;
-    Database& db_;
     Paths paths_;
     Settings settings_;
     ContentStore content_;
@@ -117,6 +109,10 @@ private:
     ChangeLog changes_;
     std::map<std::string, int> unreadSeen_;   // per character: unread messages from the player the last time we looked
     double nextPoll_ = 0;
+    double nextPackPoll_ = 0;
+    std::string packSig_;                     // packSignature() of what is loaded now
+    std::string pendingSig_;                  // a newer one seen once: it is loaded when it holds still for a look (a save may be in progress)
+    bool reloadFromDisk_ = false;             // the pending reload comes from edited files, not from the app itself
     TextureCache textures_;
     Dice dice_;
     bool reloadRequested_ = false;
@@ -141,12 +137,6 @@ private:
     char diceExpr_[40] = "1d20";
     std::deque<DiceRoll> rolls_;
     double rollFlashUntil_ = 0;
-
-    // in-app viewer of the original pages (needs data/pages/, see tools/render_pages.py)
-    bool viewerOpen_ = false;
-    PageRef viewerPage_;
-    float viewerZoom_ = 0.0f;                 // 0 = fit to width
-    bool viewerScrollTop_ = false;
 
     bool focusSearch_ = false;
     std::string toast_;

@@ -6,7 +6,6 @@
 #include "character.h"
 #include "content.h"
 #include "creation.h"
-#include "db.h"
 #include "dice.h"
 #include "packs.h"
 #include "party.h"
@@ -42,15 +41,10 @@ bool problemMentions(const std::vector<std::string>& p, const std::string& what)
 
 int main(int argc, char** argv) {
     const std::string dataDir = test::dataDir(argc, argv);
-    Database db;
     std::string err;
-    if (!db.open(dataDir + "/skaldbok.db", &err)) {
-        std::printf("cannot open database: %s\n", err.c_str());
-        return 2;
-    }
     ContentStore content;
-    content.load(db, {PackSpec{dataDir + "/packs/core", true, true},
-                      PackSpec{test::sourceDir() + "/examples/frostmarch-tales", false, true}});
+    content.load({PackSpec{dataDir + "/packs/core", true, true},
+                  PackSpec{test::sourceDir() + "/examples/frostmarch-tales", false, true}});
     Dice dice;
 
     // -------------------------------------------------------------------------------- the numbers

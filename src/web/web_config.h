@@ -9,7 +9,7 @@ struct WebConfig {
     int port = 8080;
     std::string host = "0.0.0.0";
     std::string prefsDir;                 // the GM app's per-user folder: characters/, parties/, packs/, settings.json
-    std::string dataDir;                  // data/: skaldbok.db and packs/core
+    std::string dataDir;                  // data/: packs/core
     std::string publicUrl;                // the address players type; written to web-access.json for the GM app's links
     std::string staticDir;                // the built Vue client
     int maxFailures = 20;                 // failed token attempts allowed per address in the window

@@ -94,7 +94,7 @@ int main(int argc, char** argv) {
 
     gm::WebApp app(config);
     if (!app.ok()) {
-        std::fprintf(stderr, "%s\nRun python tools/build_db.py first, or point --data at the folder with skaldbok.db.\n", app.error().c_str());
+        std::fprintf(stderr, "%s\nPoint --data at the data folder (it holds packs/core).\n", app.error().c_str());
         return 2;
     }
     const std::vector<gm::Character> characters = app.characters();

@@ -21,7 +21,7 @@ public:
     void runQuery() override {
         last_ = buf_;
         hits_.clear();
-        for (Hit& h : mergeHits(host_.content().search(last_, 80), host_.db().search(last_, 80), 80))
+        for (Hit& h : host_.content().search(last_, 80))
             if (host_.kindAvailable(h.kind)) hits_.push_back(std::move(h));       // hits of a module that is off are hidden
     }
 

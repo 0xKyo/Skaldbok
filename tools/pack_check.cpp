@@ -1,6 +1,6 @@
 // pack_check: validates a homebrew content pack (a folder or a .zip) exactly the way the app does when importing it.
 //
-//   pack_check <folder-or-zip> [--data <folder with skaldbok.db>] [--strict]
+//   pack_check <folder-or-zip> [--data <the data folder>] [--strict]
 //
 // Prints what the pack contains and every problem found. Exit code 0 = the app will import it, 1 = it will refuse it,
 // 2 = it imports but has warnings and --strict was given. Nothing is installed anywhere.
@@ -23,11 +23,6 @@ std::string normalize(std::string p) {
     return p;
 }
 
-bool fileExists(const std::string& p) {
-    SDL_PathInfo info;
-    return SDL_GetPathInfo(p.c_str(), &info) && info.type == SDL_PATHTYPE_FILE;
-}
-
 std::string findData(const std::string& given) {
     std::vector<std::string> candidates;
     if (!given.empty()) candidates.push_back(given);
@@ -41,7 +36,7 @@ std::string findData(const std::string& given) {
 #endif
     for (std::string c : candidates) {
         c = normalize(c);
-        if (fileExists(c + "/skaldbok.db")) return c;
+        if (gm::looksLikePack(c + "/packs/core")) return c;
     }
     return {};
 }
@@ -58,34 +53,27 @@ int main(int argc, char** argv) {
         else if (path.empty()) path = a;
     }
     if (path.empty()) {
-        std::printf("usage: pack_check <folder-or-zip> [--data <folder with skaldbok.db>] [--strict]\n");
+        std::printf("usage: pack_check <folder-or-zip> [--data <the data folder>] [--strict]\n");
         return 64;
     }
     const std::string data = findData(dataArg);
     if (data.empty()) {
-        std::printf("cannot find data/skaldbok.db (use --data <folder>)\n");
+        std::printf("cannot find data/packs/core (use --data <folder>)\n");
         return 64;
     }
-    gm::Database db;
-    std::string err;
-    if (!db.open(data + "/skaldbok.db", &err)) {
-        std::printf("cannot open the database: %s\n", err.c_str());
-        return 64;
-    }
-
     // import into a throw-away folder: that is the app's own code path
     std::string tmp = SDL_GetBasePath() ? normalize(SDL_GetBasePath()) : std::string(".");
     tmp += "/pack-check-tmp";
     gm::removeTree(tmp);
     gm::PackManager pm(data + "/packs/core", tmp);
-    const gm::ImportResult r = pm.import(path, db);
+    const gm::ImportResult r = pm.import(path);
     if (!r.ok) {
         std::printf("REFUSED: %s\n", r.message.c_str());
         gm::removeTree(tmp);
         return 1;
     }
     gm::ContentStore store;
-    store.load(db, pm.specs({}));
+    store.load(pm.specs({}));
     if (const gm::PackInfo* p = store.pack(r.packId)) {
         std::printf("OK  %s (id \"%s\")%s%s\n", p->name.c_str(), p->id.c_str(), p->version.empty() ? "" : "  v", p->version.c_str());
         static const struct {
@@ -96,6 +84,7 @@ int main(int argc, char** argv) {
                      {gm::Kind::Gear, "gear items"},   {gm::Kind::Table, "tables"}};
         for (const auto& n : names)
             if (p->counts[static_cast<int>(n.kind)] > 0) std::printf("    %3d %s\n", p->counts[static_cast<int>(n.kind)], n.name);
+        if (p->rules > 0) std::printf("    %3d rules\n", p->rules);
         for (int sid : p->sourceIds)
             if (const gm::SourceInfo* s = store.source(sid)) std::printf("    source: %s\n", s->label.c_str());
         for (const std::string& w : p->warnings) std::printf("  warning: %s\n", w.c_str());

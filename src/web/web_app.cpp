@@ -75,9 +75,6 @@ json chatView(const Thread& t) {
     return {{"messages", list}, {"gmRead", t.gmRead}, {"playerRead", t.playerRead}};
 }
 
-// The type files a pack may have: a change to any of them makes the content load again.
-const char* const kPackFiles[] = {"manifest", "spells", "abilities", "skills", "kin", "professions", "weapons", "armor", "gear", "tables", "creatures"};
-
 }  // namespace
 
 template <class T>
@@ -106,8 +103,8 @@ WebApp::WebApp(WebConfig config, Clock clock)
     : config_(std::move(config)), clock_(std::move(clock)), access_(config_.prefsDir, config_.publicUrl) {
     if (!clock_)
         clock_ = [] { return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count(); };
-    if (!db_.open(config_.dataDir + "/skaldbok.db", &error_)) {
-        error_ = "Cannot open " + config_.dataDir + "/skaldbok.db: " + error_;
+    if (!looksLikePack(config_.dataDir + "/packs/core")) {
+        error_ = "Cannot find the Core pack (" + config_.dataDir + "/packs/core)";
         return;
     }
     packs_ = std::make_unique<PackManager>(config_.dataDir + "/packs/core", config_.prefsDir + "/packs");
@@ -124,17 +121,10 @@ void WebApp::reloadContentIfChanged() {
     Settings settings;
     settings.open(config_.prefsDir + "/settings.json");
     const std::vector<PackSpec> specs = packs_->specs(settings.disabledPacks());
-    std::string sig;
-    for (const PackSpec& s : specs) {
-        sig += s.dir + (s.enabled ? "+" : "-");
-        for (const char* f : kPackFiles) {
-            SDL_PathInfo info;
-            if (pathInfo(s.dir + "/" + f + ".json", info)) sig += std::string(f) + std::to_string(info.modify_time) + ":" + std::to_string(info.size) + ";";
-        }
-    }
+    const std::string sig = packSignature(specs);
     if (sig == contentSignature_) return;
     contentSignature_ = sig;
-    content_.load(db_, specs);                           // Core and the enabled packs, exactly as the GM app sees them
+    content_.load(specs);                                // Core and the enabled packs, exactly as the GM app sees them
 }
 
 void WebApp::refresh(long long now) {

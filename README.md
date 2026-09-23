@@ -17,41 +17,51 @@ Cada fila es un **módulo** (Settings › Modules los enciende y apaga; el menú
 
 | Módulo | |
 |---|---|
-| **Search** (siempre activo) | Búsqueda de texto completo sobre criaturas, reglas, tablas de los libros y todos los packs; `Ctrl+K`. |
+| **Search** (siempre activo) | Búsqueda de texto completo sobre criaturas, hechizos, reglas y tablas de los libros y de todos los packs; `Ctrl+K`. |
 | **Encounter** | Iniciativa con cartas 1–10, PV, condiciones, notas y tirada de ataque de cada criatura. Se guarda solo. Acepta criaturas y **personajes** (sus PV se mantienen sincronizados con la ficha). |
 | **Characters** | Fichas de jugadores y **creador de personajes** paso a paso según el libro (ver más abajo). |
 | **Party** | Agrupa personajes que juegan juntos (agregar/quitar, estado de todos de un vistazo, "Add the party to the encounter", *Message the party…*). |
 | **Messages** | **Chat real** con cada jugador (ellos escriben desde su página web y vos ves los mensajes al instante, con contador de no leídos) y **broadcast** a una party o a todos, que a los jugadores les llega con un estilo propio. Texto e imágenes en las dos direcciones. Los jugadores solo hablan con el máster, nunca entre ellos. |
 | **Master Screen** | Un lienzo infinito personal del máster: fijás criaturas, hechizos, tablas, personajes, la party, notas e imágenes, y los movés, agrandás y cerrás; varios tableros con pestañas (ver más abajo). |
 | **Web** *(en Settings)* | Arranca solo, junto con la app, el servidor web de los jugadores; muestra su estado, la dirección en tu red y el enlace personal de cada personaje (copiar / enviarlo en un mensaje). |
-| **Creatures** | Criaturas de los tres libros y del homebrew: ilustración, statblock, tabla de *Monster Attacks* con botón de tirada, habilidades, encuentro aleatorio y semilla de aventura. |
-| **Spells · Abilities · Skills · Kin · Professions · Equipment** | Mosaicos de tarjetas con todos los datos (requisitos, alcance, texto entero, enlace al original). Todas las tarjetas de un mosaico tienen el mismo tamaño; si un texto no entra se recorta y, al hacer clic, esa tarjeta crece hacia abajo sin reacomodar el resto. Filtros por texto y por escuela/tipo/categoría (las escuelas o categorías que traiga un pack aparecen solas). |
-| **Tables** | 104 tablas del libro más las de los packs; las de dado tienen botón *Roll* que resalta el resultado. |
-| **Rules** | Lo que queda del texto del Rulebook y el Bestiary cuando criaturas, hechizos, habilidades, razas, profesiones y tablas ya tienen su página (sin la aventura, el índice ni el contenido). Árbol de capítulos, filtro por texto y enlace a la página original: sirve para revisar qué se queda y qué se va. |
+| **Creatures** | Criaturas de los tres libros y del homebrew: ilustración, statblock, tabla de *Monster Attacks* con botón de tirada, habilidades, encuentro aleatorio y semilla de aventura. Si hay algo que explicar sobre qué son los monstruos y cómo funcionan (el capítulo Bestiary del libro), aparece como pestaña **Intro** aparte de la pestaña con la lista. |
+| **Spells · Abilities · Skills** | Mosaicos de tarjetas con todos los datos (requisitos, alcance, texto entero, enlace al original). Cada uno tiene además su propia pestaña **Intro**: la explicación general de esa categoría (magia y sus escuelas, cómo tirar los dados, aptitudes heroicas...), separada de la pestaña con las tarjetas. Abilities además tiene **Generate Ability** y **Edit** en cada tarjeta (nombre, Heroic o Innate, requisito, Willpower, descripción). |
+| **Kin · Professions** | Mosaicos de tarjetas, igual que los anteriores (sin pestaña Intro por ahora). Kin además tiene **Generate Kin** (creás un kin propio: nombre, movimiento, descripción, nombres e imagen, y elegís sus aptitudes innatas de una lista, con opción de crear una nueva ahí mismo) y **Edit** en cada tarjeta (la del libro incluida: tu versión la reemplaza en todos lados, sin tocar el original). Generate Kin/Ability y Edit guardan en el mismo pack propio de homebrew, `custom`. |
+| **Gear** | Armas, armaduras y equipo: no tienen mosaico de tarjetas propio, son las tablas del libro (Armor & Helmets, Melee/Ranged Weapons, Trade Goods...) en una sola página, con qué significa cada columna. |
+| **Rules** | Las reglas de los libros que quedan cuando criaturas, hechizos, habilidades, razas, profesiones y equipo ya tienen su propia página (Rolling Dice, Combat & Damage, Character Creation...) **con sus tablas dentro de la sección a la que corresponden** (las de dado con botón *Roll* que resalta el resultado, y *Pin* para el Master Screen), la aventura *The Misty Vale* completa en su propia sección (**Adventures**: capítulos, ubicaciones numeradas y sus tablas), más las **homerules** de los packs que las traigan. **Character Creation** reúne los 13 pasos del libro para crear un personaje, numerados y con enlaces (*See also*) a Kin, Professions, Skills... de donde salen las opciones. Árbol de capítulos, filtro por texto (también por título de tabla) y enlace a la página original. Una tabla que salga en una búsqueda o en el enlace de una criatura abre su sección. Viene del pack Core, de su `rules.json` (ver más abajo). |
 | **Settings** (siempre activo) | Se abre con el **engranaje** de arriba a la derecha (otra vez el engranaje, o `Esc`, vuelve). Pestañas: **General** (módulos, packs de contenido: importar/apagar/quitar homebrew, dónde se guarda cada cosa) y **Web**. |
 
 Además: **dados** en la barra inferior (D4–D20 y expresiones como `2D8+3`), botón *Original: libro p.N* en cada ficha
-(con las páginas prerenderizadas se ve dentro de la app; si no, abre el PDF), **recientes** en la pantalla de inicio y filtro
+(abre tu propio PDF en su página, en el lector del sistema; la app no muestra ni distribuye páginas del libro), **recientes** en la pantalla de inicio y filtro
 de fuentes en la barra superior (cada libro, y un menú *Homebrew* con una entrada por fuente).
 
 El ícono del engranaje es el de *settings* de [Material Icons](https://github.com/google/material-design-icons) (Apache 2.0; licencia en
 `assets/icons/`), un PNG blanco con transparencia (`tools/make_icons.py` lo genera y lo incrusta en la app), teñido según el estado.
 
-Atajos: `Ctrl+K` buscar · `Alt+←/→` atrás y adelante · `↑/↓` moverse por una lista · `Ctrl +/−/0` tamaño del texto · `Esc` cierra el visor.
+Atajos: `Ctrl+K` buscar · `Alt+←/→` atrás y adelante · `↑/↓` moverse por una lista · `Ctrl +/−/0` tamaño del texto.
 
 ## Contenido y homebrew
 
-Todo lo que no son las reglas base —criaturas, hechizos, aptitudes, habilidades, razas, profesiones, equipo, tablas— vive en
-**packs**: una carpeta (o un `.zip`) con un `manifest.json` y **un JSON por tipo** (`creatures.json`, `spells.json`, …) más
-`images/` para el arte. El contenido de los libros es el pack **Core** (`data/packs/core`, generado desde los PDF) y se carga
-exactamente igual que cualquier homebrew.
+Todo el contenido —reglas, criaturas, hechizos, aptitudes, habilidades, razas, profesiones, equipo, tablas— vive en
+**packs**: una carpeta (o un `.zip`) con **un JSON por tipo** (`rules.json`, `creatures.json`, `spells.json`, …), más `images/` para el
+arte. El `manifest.json` es **opcional**: sin él, el `id` es el nombre de la carpeta y el nombre, los libros y demás datos del pack van
+en la cabecera de su primer JSON (los de Core están en la de `rules.json`). El contenido de los libros es un solo pack incorporado,
+**Core** (`data/packs/core`), que se abre primero y es la base de los demás: en `rules.json` van las reglas genéricas (sin categoría
+propia) y sus tablas, la aventura incluida, y en los otros JSON las criaturas, hechizos, razas, profesiones... Una categoría que crece
+mucho puede pasar a su propio JSON.
 
-* **Importar**: Settings › Content packs › *Import a pack folder…* o *Import a .zip…*. El pack se valida antes de instalarse
+* **Homerules**: un pack de homerules es un pack común con un `rules.json`, escrito como un **árbol anidado** (cada regla lista sus
+  `"children"`). Sus reglas pueden colgar de una regla de Core (`"parent"`) o **reemplazarla** (`"replaces"`): la regla
+  conserva su lugar en el árbol, muestra la fuente *Homebrew · <nombre>* y
+  dice *"Changed by <pack>"*, así que se ve siempre qué es del libro y qué es de la casa. Apagar el pack la devuelve a como era.
+* **Importar**: Settings › Content packs › *Import a pack folder…* o *Import a .zip…* (un pack que se importa lleva su `manifest.json`, porque el `id` no se puede deducir de una carpeta temporal). El pack se valida antes de instalarse
   (si algo está mal, se rechaza con el archivo y la posición del error) y se copia a la carpeta del usuario.
 * Lo importado **se suma** al Core y **conserva su fuente**: *Homebrew · <nombre>*, con su color, su filtro y su etiqueta en cada tarjeta.
 * Cada pack se puede **apagar** sin borrarlo, **actualizar** (importar otra vez con el mismo `id`) o **quitar**.
 * Las criaturas de un pack se incluyen en la búsqueda, el encuentro y el creador de personajes; una raza, profesión, habilidad
   o hechizo homebrew se puede elegir al crear un personaje.
+* **En vivo**: la app vigila los archivos de los packs (Core y los importados). Si editás un JSON, el `manifest.json` o las imágenes de un pack
+  mientras la app está abierta, lo relee sola en un segundo y avisa ("Content reloaded", o el error del archivo si quedó mal escrito).
 * `pack_check <carpeta|zip>` valida un pack desde una terminal con el mismo código de la app.
 
 Formato completo, con todos los campos de cada tipo: [`docs/HOMEBREW.md`](docs/HOMEBREW.md). Un ejemplo listo para importar:
@@ -139,20 +149,13 @@ build\release\skaldbok_web.exe --public-url http://mi-direccion
 ## Cómo se arma
 
 ```
-References/*.pdf ──► tools/build_db.py ──► data/skaldbok.db        (texto de los libros, tablas, páginas, índice)
-                                   └─► data/packs/core/          (pack Core: JSON por tipo + images/)
-                       (opcional) tools/render_pages.py ──► data/pages/
-                                          ▼
-                  skaldbok  (C++ / SDL3 / Dear ImGui)  ◄── packs de homebrew importados (carpeta del usuario)
+data/packs/core/    (pack Core, la base: reglas y tablas de los libros, la aventura, criaturas, hechizos, razas... + images/)
+                          ▼
+   skaldbok  (C++ / SDL3 / Dear ImGui)  ◄── packs de homebrew y de homerules (carpeta del usuario)
 ```
 
-1. **Datos** (una sola vez; Python 3 con PyMuPDF):
-   ```
-   pip install -r tools/requirements.txt
-   python tools/build_db.py          # genera data/skaldbok.db y el pack data/packs/core
-   python tools/validate.py          # informe de consistencia
-   python tools/render_pages.py      # opcional: páginas para el visor interno (~65 MB)
-   ```
+1. **Datos**: `data/packs/core` (la app ya no lee ninguna base de datos). Salen de tu copia de los libros; `tools/`
+   guarda los scripts de Python con los que se extrajeron por primera vez (ver `tools/README.md`).
 2. **App en Windows** (Visual Studio con el workload de C++):
    ```
    powershell -ExecutionPolicy Bypass -File scripts\build.ps1 -Test
@@ -171,7 +174,7 @@ References/*.pdf ──► tools/build_db.py ──► data/skaldbok.db        (
 CMake descarga SDL3, Dear ImGui, SQLite, stb_image, nlohmann/json, miniz (zip) y cpp-httplib (servidor web) como archivos fuente y los compila
 estáticamente: el ejecutable es autónomo. `scripts\build.ps1 -Headless` compila solo el núcleo y los tests, sin ventana.
 
-La app busca `data/skaldbok.db` (y `data/packs/core`) junto al ejecutable, uno a tres niveles arriba, en `$SKALDBOK_DATA` o
+La app busca `data/` (con `packs/core`) junto al ejecutable, uno a tres niveles arriba, en `$SKALDBOK_DATA` o
 con `--data <carpeta>`. Los archivos del usuario (ajustes, recientes, encuentro, personajes, packs importados) van a
 `%APPDATA%\skaldbok\gm\` (`--prefs <carpeta>` para cambiarlo).
 
@@ -192,7 +195,7 @@ src/modules/    un archivo por módulo (search, master_screen, encounter, charac
 src/web/        el servidor de jugadores: app sin sockets (web_app), vistas JSON (web_views), tokens (web_access), HTTP (web_server)
 web/client/     la página de los jugadores (Vue 3 + Vite); se compila con npm y la sirve skaldbok_web
 src/module.h    el contrato Module / Host y los servicios opcionales entre módulos (IEncounterSink, IMessenger, ...)
-src/app.cpp     el shell: navegación, historial, filtro de fuentes, dados, visor de páginas
+src/app.cpp     el shell: navegación, historial, filtro de fuentes, dados
 tests/          ctest sin ventana: contenido y packs, personajes y parties, encuentro, Master Screen, chat, edición de hojas (dos escritores sobre un archivo)
                 y la web de jugadores (autenticación, privacidad, HTTP real); las pruebas de la página están en web/client (npm test)
 tools/          conversor PDF → SQLite + pack Core en Python, y pack_check

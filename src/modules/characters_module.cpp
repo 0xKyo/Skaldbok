@@ -62,7 +62,7 @@ public:
         host_.showModule("characters");
     }
 
-    void onContentChanged() override {}
+    void onContentChanged() override { bookTables_.clear(); }
 
     void update() override {
         std::string path;
@@ -408,14 +408,15 @@ private:
         return t;
     }
 
-    // The book rolls kin and profession on tables that live in the database (D12 / D10).
+    // The book rolls kin and profession on tables of the Rulebook (D12 / D10), which live in Core.
     const DataTable* bookTable(const char* title) {
         auto it = bookTables_.find(title);
         if (it == bookTables_.end()) {
             DataTable t;
-            for (const ListItem& li : host_.db().listTables())
-                if (li.name == title && li.sourceId == host_.db().sourceIdByKey("rulebook")) {
-                    host_.db().table(li.id, t);
+            const int rulebook = host_.content().bookId("rulebook");
+            for (const DataTable& pt : host_.content().packTables())
+                if (pt.title == title && pt.sourceId == rulebook) {
+                    t = pt;
                     break;
                 }
             it = bookTables_.emplace(title, std::move(t)).first;

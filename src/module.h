@@ -13,7 +13,6 @@
 #include "changelog.h"
 #include "character.h"
 #include "content.h"
-#include "db.h"
 #include "dice.h"
 #include "messages.h"
 #include "packs.h"
@@ -34,7 +33,6 @@ struct Selection {
 struct Paths {
     std::string root;        // project root: holds data/ and References/
     std::string dataDir;
-    std::string dbPath;
     std::string prefDir;     // per-user files, ends with '/': settings, recents, encounter, characters, imported packs
     std::string coreDir() const { return dataDir + "/packs/core"; }
     std::string userPacksDir() const { return prefDir + "packs"; }
@@ -117,7 +115,13 @@ public:
     virtual Layout layout() const { return Layout::ListDetail; }
     virtual int badge() const { return -1; }             // the number next to the label, -1 = none
 
-    virtual bool handles(Kind) const { return false; }   // this module shows entries of that kind
+    // This module shows entries of that kind; `id` is given when routing a specific one (goTo, a reload's carried-over selection),
+    // -1 for a general "does anything show this kind at all" query (kindAvailable). A module that splits one Kind across several
+    // instances (Rules and Adventures both show Kind::Table) must check `id` to claim only the ones that are really its own.
+    virtual bool handles(Kind, int id = -1) const {
+        (void)id;
+        return false;
+    }
     virtual bool findByName(const std::string& lowerName, Selection&) const { (void)lowerName; return false; }
 
     virtual void onContentChanged() {}                   // packs were loaded, imported, removed or switched
@@ -142,7 +146,6 @@ public:
     virtual ~Host() = default;
 
     virtual const Paths& paths() const = 0;
-    virtual Database& db() = 0;
     virtual ContentStore& content() = 0;
     virtual Settings& settings() = 0;
     virtual TextureCache& textures() = 0;
@@ -167,8 +170,6 @@ public:
 
     virtual bool sourceShown(int sourceId) const = 0;
     virtual int sourceRevision() const = 0;              // changes whenever the source filter does
-    virtual void openPage(const PageRef& r) = 0;         // the original book page
-    virtual std::string pdfPath(int sourceId) const = 0;
 };
 
 // Whether a module is switched on (required modules always are).

@@ -17,10 +17,9 @@ endif()
 
 include(cmake/Dependencies.cmake)
 
-# ---- everything that is not drawing: books, content packs, characters, rules, messages ----------------
+# ---- everything that is not drawing: content packs (rules, books, tables), characters, messages ----------------
 add_library(gm_core STATIC
   src/model.cpp
-  src/db.cpp
   src/content.cpp
   src/packs.cpp
   src/settings.cpp
@@ -62,8 +61,8 @@ add_executable(skaldbok
   src/modules/search_module.cpp
   src/modules/master_screen_module.cpp
   src/modules/creatures_module.cpp
+  src/modules/gear_module.cpp
   src/modules/compendium_module.cpp
-  src/modules/tables_module.cpp
   src/modules/rules_module.cpp
   src/modules/encounter_module.cpp
   src/modules/characters_module.cpp

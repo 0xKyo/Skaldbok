@@ -191,17 +191,34 @@ PackManager::PackManager(std::string coreDir, std::string userDir) : coreDir_(no
 
 std::vector<PackSpec> PackManager::specs(const std::set<std::string>& disabled) const {
     std::vector<PackSpec> out;
-    if (!coreDir_.empty()) out.push_back({coreDir_, true, true});
+    if (!coreDir_.empty()) out.push_back({coreDir_, true, true});             // the base: it opens first and the others build on it
     if (userDir_.empty()) return out;
     for (const std::string& name : listDir(userDir_)) {
         if (name.empty() || name[0] == '.') continue;
         const std::string dir = userDir_ + "/" + name;
-        if (isDir(dir) && isFileAt(dir + "/manifest.json")) out.push_back({dir, false, disabled.count(name) == 0});
+        if (isDir(dir) && looksLikePack(dir)) out.push_back({dir, false, disabled.count(name) == 0});
     }
     return out;
 }
 
-ImportResult PackManager::import(const std::string& rawPath, Database& db) {
+std::string packSignature(const std::vector<PackSpec>& specs) {
+    std::vector<std::string> files = {"manifest"};
+    files.insert(files.end(), packDataFiles().begin(), packDataFiles().end());
+    auto stamp = [](const std::string& path) {
+        SDL_PathInfo info;
+        return pathInfo(path, info) ? std::to_string(info.modify_time) + ":" + std::to_string(info.size) + ";" : std::string("-;");
+    };
+    std::string sig;
+    for (const PackSpec& s : specs) {
+        sig += s.dir + (s.enabled ? "+" : "-") + "|";
+        for (const std::string& f : files) sig += stamp(s.dir + "/" + f + ".json");
+        if (s.core || !s.enabled) continue;
+        for (const std::string& name : listDir(s.dir + "/images")) sig += name + ":" + stamp(s.dir + "/images/" + name);
+    }
+    return sig;
+}
+
+ImportResult PackManager::import(const std::string& rawPath) {
     ImportResult r;
     const std::string path = norm(rawPath);
     if (userDir_.empty()) {
@@ -256,10 +273,13 @@ ImportResult PackManager::import(const std::string& rawPath, Database& db) {
         r.message = "The id \"core\" is reserved for the built-in content. Choose another id in manifest.json.";
         return r;
     }
-    // load it once, on its own, exactly as the app will
+    // load it once, exactly as the app will: after Core, so rules that go under or replace the book's can be checked
     ContentStore trial;
-    trial.load(db, {PackSpec{root, false, true}});
-    const PackInfo& loaded = trial.packs().front();
+    std::vector<PackSpec> trialSpecs;
+    if (!coreDir_.empty()) trialSpecs.push_back({coreDir_, true, true});
+    trialSpecs.push_back({root, false, true});
+    trial.load(trialSpecs);
+    const PackInfo& loaded = trial.packs().back();
     if (!loaded.loaded) {
         removeTree(stage);
         r.message = "The pack could not be loaded: " + loaded.error;

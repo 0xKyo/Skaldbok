@@ -210,8 +210,11 @@ json partyView(const Party& party, const std::function<const Character*(const st
 json contentSummary(const ContentStore& cs) {
     json types = json::array(), packs = json::array();
     for (const ContentType& t : kTypes) types.push_back({{"id", t.id}, {"label", t.label}, {"count", cs.count(t.kind)}});
-    for (const PackInfo& p : cs.packs())
-        if (p.loaded) packs.push_back({{"id", p.id}, {"name", p.name}, {"version", p.version}, {"core", p.core}});
+    for (const PackInfo& p : cs.packs()) {
+        int shown = 0;                                   // a pack that only brings rules or tables has nothing to show here
+        for (const ContentType& t : kTypes) shown += p.counts[static_cast<int>(t.kind)];
+        if (p.loaded && shown > 0) packs.push_back({{"id", p.id}, {"name", p.name}, {"version", p.version}, {"core", p.core}});
+    }
     return {{"types", types}, {"packs", packs}};
 }
 

@@ -61,74 +61,121 @@ void sourceBadge(Host& host, int sourceId) {
     ImGui::PopStyleColor();
 }
 
+// A small, non-clickable note of where this comes from in the original book ("Rulebook p.18"): the app never ships or
+// opens the books' own PDFs, so this is a footnote, not a link.
 void pageLink(Host& host, int sourceId, const PageRef& r, const std::string& pageNote) {
     const SourceInfo* src = host.content().source(sourceId);
     if (!r.valid()) {
-        if (src && src->homebrew) ImGui::TextColored(kGrey, "%s%s%s", src->label.c_str(), pageNote.empty() ? "" : " · ", pageNote.c_str());
+        if (src && src->homebrew) {
+            ImGui::PushFont(nullptr, ImGui::GetFontSize() * 0.85f);
+            ImGui::TextColored(kGrey, "%s%s%s", src->label.c_str(), pageNote.empty() ? "" : " · ", pageNote.c_str());
+            ImGui::PopFont();
+        }
         return;
     }
-    char label[128];
+    char label[96];
     const char* name = src ? src->label.c_str() : "?";
     if (r.printed > 0) std::snprintf(label, sizeof label, "Original: %s p.%d", name, r.printed);
     else std::snprintf(label, sizeof label, "Original: %s (pdf p.%d)", name, r.page);
-    ImGui::PushID(r.page * 8 + r.sourceId);
-    if (ImGui::SmallButton(label)) host.openPage(r);
-    if (ImGui::IsItemHovered()) {
-        ImGui::BeginTooltip();
-        ImGui::Text("Opens %s", host.pdfPath(r.sourceId).c_str());
-        ImGui::Text("at PDF page %d%s", r.page, r.printed > 0 ? (" (printed page " + std::to_string(r.printed) + ")").c_str() : "");
-        ImGui::EndTooltip();
-    }
-    ImGui::PopID();
+    ImGui::PushFont(nullptr, ImGui::GetFontSize() * 0.85f);
+    ImGui::TextColored(kGrey, "%s", label);
+    ImGui::PopFont();
 }
 
-void detailHeader(Host& host, const std::string& title, const std::string& subtitle, int sourceId, const PageRef& ref,
-                  const std::string& pageNote) {
+void detailHeader(Host& host, const std::string& title, const std::string& subtitle, int sourceId) {
+    const float rightEdge = ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x;
     bigText(title.c_str(), 1.7f, ImGui::GetStyle().Colors[ImGuiCol_Text]);
+    if (IMasterScreen* screen = serviceOf<IMasterScreen>(host))      // pins what the shell is showing to the Master Screen
+        if (const Selection* sel = host.selection()) {
+            const float btnW = ImGui::CalcTextSize("Pin").x + ImGui::GetStyle().FramePadding.x * 2;
+            ImGui::SameLine(rightEdge - btnW);
+            if (ImGui::SmallButton("Pin")) screen->pinEntry(sel->kind, sel->id);
+            if (ImGui::IsItemHovered()) ImGui::SetTooltip("Pin this to the Master Screen");
+        }
     sourceBadge(host, sourceId);
     if (!subtitle.empty()) {
         ImGui::SameLine();
         ImGui::TextColored(kGrey, "· %s", subtitle.c_str());
     }
-    if (IMasterScreen* screen = serviceOf<IMasterScreen>(host))      // pins what the shell is showing to the Master Screen
-        if (const Selection* sel = host.selection()) {
-            ImGui::SameLine();
-            if (ImGui::SmallButton("Pin")) screen->pinEntry(sel->kind, sel->id);
-            if (ImGui::IsItemHovered()) ImGui::SetTooltip("Pin this to the Master Screen");
-        }
-    const SourceInfo* src = host.content().source(sourceId);
-    if (!ref.valid() && src && src->homebrew) {          // the badge above already names the homebrew source
-        if (!pageNote.empty()) ImGui::TextColored(kGrey, "%s", pageNote.c_str());
-    } else {
-        pageLink(host, sourceId, ref, pageNote);
-    }
     ImGui::Separator();
 }
 
-void paragraphs(const std::string& text) {
+// InputTextMultiline only breaks lines at an explicit '\n' - unlike TextWrapped, it never reflows a long line by
+// itself, so without this a word run past the edge would just be cut off instead of wrapping. This inserts the same
+// breaks TextWrapped would have chosen (the font's own word-wrap position), so each resulting line already fits.
+static std::string wrapToWidth(const std::string& text, float wrapWidth) {
+    ImFont* font = ImGui::GetFont();
+    const float fontSize = ImGui::GetFontSize();
+    std::string out;
+    out.reserve(text.size() + 8);
+    size_t paraStart = 0;
+    while (paraStart <= text.size()) {
+        size_t paraEnd = text.find('\n', paraStart);
+        if (paraEnd == std::string::npos) paraEnd = text.size();
+        const char* p = text.c_str() + paraStart;
+        const char* segEnd = text.c_str() + paraEnd;
+        while (p < segEnd) {
+            const char* wrapEnd = font->CalcWordWrapPosition(fontSize, p, segEnd, wrapWidth);
+            if (wrapEnd <= p) wrapEnd = p + 1;    // an unbreakable run wider than wrapWidth: take at least one char, never stall
+            out.append(p, wrapEnd);
+            p = wrapEnd;
+            while (p < segEnd && *p == ' ') ++p;  // the space that caused the wrap is dropped, like TextWrapped drops it
+            if (p < segEnd) out += '\n';
+        }
+        if (paraEnd >= text.size()) break;
+        out += '\n';
+        paraStart = paraEnd + 1;
+    }
+    return out;
+}
+
+void copyableText(const char* id, const std::string& text, float wrapWidth) {
+    if (text.empty()) return;
+    const float wrap = wrapWidth > 0 ? wrapWidth : std::max(1.0f, ImGui::GetContentRegionAvail().x);
+    const std::string wrapped = wrapToWidth(text, wrap);
+    const float height = ImGui::CalcTextSize(wrapped.c_str()).y;
+    ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0, 0, 0, 0));
+    ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0, 0, 0, 0));
+    ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0, 0, 0, 0));
+    ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 0));
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+    // InputTextMultiline needs a writable buffer, but ReadOnly means it is only ever read from.
+    std::vector<char> buf(wrapped.begin(), wrapped.end());
+    buf.push_back('\0');
+    ImGui::InputTextMultiline(id, buf.data(), buf.size(), ImVec2(wrap, height + 1),
+                              ImGuiInputTextFlags_ReadOnly | ImGuiInputTextFlags_NoHorizontalScroll);
+    ImGui::PopStyleVar();
+    ImGui::PopStyleColor(4);
+}
+
+void paragraphs(const std::string& text, const char* id) {
+    ImGui::PushID(id);
     size_t pos = 0;
+    int line = 0;
     while (pos <= text.size()) {
         size_t end = text.find('\n', pos);
         if (end == std::string::npos) end = text.size();
-        const std::string line = text.substr(pos, end - pos);
+        const std::string l = text.substr(pos, end - pos);
         pos = end + 1;
-        if (line.empty()) {
+        if (l.empty()) {
             ImGui::Dummy(ImVec2(0, 4));
             continue;
         }
-        const size_t colon = line.find(':');
-        if (line.starts_with("\xE2\x9C\xA6") && colon != std::string::npos && colon < 44) {
+        const std::string lineId = "##l" + std::to_string(line++);
+        const size_t colon = l.find(':');
+        if (l.starts_with("\xE2\x9C\xA6") && colon != std::string::npos && colon < 44) {
             ImGui::PushStyleColor(ImGuiCol_Text, kAccent);
-            ImGui::TextUnformatted(line.substr(0, colon + 1).c_str());
+            ImGui::TextUnformatted(l.substr(0, colon + 1).c_str());
             ImGui::PopStyleColor();
             ImGui::SameLine(0, 5);
-            ImGui::TextWrapped("%s", line.substr(colon + 1).c_str());
+            copyableText(lineId.c_str(), l.substr(colon + 1));
         } else {
-            ImGui::TextWrapped("%s", line.c_str());
+            copyableText(lineId.c_str(), l);
         }
         ImGui::Dummy(ImVec2(0, 2));
         if (end >= text.size()) break;
     }
+    ImGui::PopID();
 }
 
 void highlighted(const std::string& s) {
@@ -182,17 +229,23 @@ void highlighted(const std::string& s) {
 
 void fieldsTable(const std::vector<Field>& fields, const char* id) {
     if (fields.empty()) return;
-    if (!ImGui::BeginTable(id, 2, ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersInnerH | ImGuiTableFlags_SizingStretchProp)) return;
+    ImGui::PushID(id);
+    if (!ImGui::BeginTable("##t", 2, ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersInnerH | ImGuiTableFlags_SizingStretchProp)) {
+        ImGui::PopID();
+        return;
+    }
     ImGui::TableSetupColumn("k", ImGuiTableColumnFlags_WidthFixed, U(150.0f));
     ImGui::TableSetupColumn("v");
-    for (const Field& f : fields) {
+    for (size_t i = 0; i < fields.size(); ++i) {
+        const Field& f = fields[i];
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
         ImGui::TextColored(kGold, "%s", f.label.c_str());
         ImGui::TableSetColumnIndex(1);
-        ImGui::TextWrapped("%s", f.value.c_str());
+        copyableText(("##v" + std::to_string(i)).c_str(), f.value);
     }
     ImGui::EndTable();
+    ImGui::PopID();
 }
 
 void tableGrid(const DataTable& t, int highlightRow) {
@@ -220,11 +273,20 @@ void tableGrid(const DataTable& t, int highlightRow) {
             need += U(190.0f) + pad;                         // a text column is never squeezed below this
         }
     }
-    // Stretch columns need a defined width; only scroll sideways when the table truly does not fit.
+    // Stretch columns need a defined width; only scroll sideways when the table truly does not fit. The sideways scroll belongs to a box
+    // that is as tall as the table (a table's own ScrollX would be as tall as the room left in the window: several tables one below the
+    // other, as in a rule's section, would be cut off).
     const bool scroll = need > ImGui::GetContentRegionAvail().x;
     ImGuiTableFlags flags = ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders | ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingStretchProp;
-    if (scroll) flags |= ImGuiTableFlags_ScrollX;
-    if (!ImGui::BeginTable("##grid", cols, flags, ImVec2(0, 0), scroll ? need : 0.0f)) return;
+    if (scroll && !ImGui::BeginChild("##gridbox", ImVec2(0, 0), ImGuiChildFlags_AutoResizeY, ImGuiWindowFlags_HorizontalScrollbar)) {
+        ImGui::EndChild();
+        return;
+    }
+    const bool shown = ImGui::BeginTable("##grid", cols, flags, ImVec2(scroll ? need : 0.0f, 0));
+    if (!shown) {
+        if (scroll) ImGui::EndChild();
+        return;
+    }
     if (hasRoll) ImGui::TableSetupColumn(t.dice.c_str(), ImGuiTableColumnFlags_WidthFixed, U(56.0f));
     for (size_t c = 0; c < t.columns.size(); ++c)
         ImGui::TableSetupColumn(t.columns[c].c_str(), layout[c].fixed ? ImGuiTableColumnFlags_WidthFixed : ImGuiTableColumnFlags_WidthStretch,
@@ -239,13 +301,14 @@ void tableGrid(const DataTable& t, int highlightRow) {
             ImGui::TableSetColumnIndex(col++);
             ImGui::TextColored(kGold, "%s", row.rollText.c_str());
         }
-        for (const std::string& cell : row.cells) {
+        for (size_t c = 0; c < row.cells.size(); ++c) {
             if (col >= cols) break;
             ImGui::TableSetColumnIndex(col++);
-            ImGui::TextWrapped("%s", cell.c_str());
+            copyableText(("##c" + std::to_string(r) + "_" + std::to_string(c)).c_str(), row.cells[c]);
         }
     }
     ImGui::EndTable();
+    if (scroll) ImGui::EndChild();
 }
 
 void attacksTable(Host& host, const Monster& m, int& rolledRow, int& rolledValue) {
@@ -283,7 +346,7 @@ void attacksTable(Host& host, const Monster& m, int& rolledRow, int& rolledValue
                 ImGui::SameLine(0, 5);
                 rest = rest.substr(a.name.size());
             }
-            ImGui::TextWrapped("%s", rest.c_str());
+            copyableText(("##a" + std::to_string(i)).c_str(), rest);
         }
         ImGui::EndTable();
     }

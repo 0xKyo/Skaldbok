@@ -1,0 +1,6 @@
+{
+  "weapons": [
+    { "id": "morningstar", "name": "Morningstar", "kind": "melee", "grip": "1H", "range": "1", "damage": "D10", "durability": "6", "cost": "20 gold", "features": "Test features." },
+    { "id": "shield-small", "name": "Shield, Small", "kind": "melee", "grip": "1H", "range": "1", "damage": "D6", "durability": "8" }
+  ]
+}

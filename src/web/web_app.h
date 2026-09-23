@@ -95,7 +95,6 @@ private:
     Clock clock_;
     std::string error_;
     std::mutex mutex_;
-    Database db_;
     ContentStore content_;
     std::unique_ptr<PackManager> packs_;
     std::string contentSignature_;

@@ -1,5 +1,7 @@
 #include "web/web_config.h"
 
+#include "content.h"
+
 #ifdef _WIN32
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -116,7 +118,7 @@ WebConfig WebConfig::fromEnvironment() {
 #endif
     c.dataDir = data.empty() ? "data" : normalize(data.front());
     for (const std::string& d : data)
-        if (exists(normalize(d) + "/skaldbok.db")) {
+        if (looksLikePack(normalize(d) + "/packs/core")) {
             c.dataDir = normalize(d);
             break;
         }

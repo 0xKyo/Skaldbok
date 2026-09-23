@@ -14,11 +14,11 @@ std::vector<std::unique_ptr<Module>> createModules(Host& host) {
     m.push_back(makeMessagesModule(host));
     m.push_back(makeWebModule(host));
     m.push_back(makeCreaturesModule(host));
-    for (Compendium c : {Compendium::Spells, Compendium::Abilities, Compendium::Skills, Compendium::Kin, Compendium::Professions,
-                         Compendium::Equipment})
+    for (Compendium c : {Compendium::Spells, Compendium::Abilities, Compendium::Skills, Compendium::Kin, Compendium::Professions})
         m.push_back(makeCompendiumModule(host, c));
-    m.push_back(makeTablesModule(host));
+    m.push_back(makeGearModule(host));
     m.push_back(makeRulesModule(host));
+    m.push_back(makeAdventuresModule(host));
     m.push_back(makeSettingsModule(host));
     return m;
 }

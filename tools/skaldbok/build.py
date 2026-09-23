@@ -20,7 +20,7 @@ SOURCES = [
          drop_caps=RULEBOOK_DROP_CAPS, table_pages=(9, 126), page_offset=4),
     dict(key="bestiary", title="Dragonbane Bestiary", file="References/Dragonbane_Bestiary.pdf",
          drop_caps=None, table_pages=(9, 150), page_offset=4),
-    dict(key="adventure", title="Dragonbane Adventure: The Misty Vale", file="References/Adventure.pdf",
+    dict(key="adventure", title="Dragonbane Adventure: The Misty Vale", file="References/MistyValeAdventure.pdf",
          drop_caps=None, table_pages=(5, 118), page_offset=2),
 ]
 
