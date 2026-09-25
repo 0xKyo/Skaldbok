@@ -1,7 +1,7 @@
 #include <cstdio>
 #include <string>
 
-#include "encounter.h"
+#include "game/encounter.h"
 
 namespace {
 int failures = 0;

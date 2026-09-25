@@ -26,9 +26,9 @@ mi-pack/
   images/              arte de las criaturas (.png .jpg .gif .bmp)
 ```
 
-Para importarlo: **Settings › Content packs › Import a pack folder… / Import a .zip…**. Se copia a la carpeta de packs del
-usuario (`Settings › Where things are`), se puede apagar sin borrarlo y se puede quitar con *Remove*. Importar otra vez un pack
-con el mismo `id` lo **actualiza**. Un ejemplo completo está en [`examples/frostmarch-tales/`](../examples/frostmarch-tales).
+Para importarlo: el engranaje › **General Settings › Content packs › Import a pack folder… / Import a .zip…** (o `skaldbok --import <carpeta o .zip>`;
+también sirve copiar la carpeta a la de packs del usuario, `%APPDATA%\skaldbok\gm\packs\` en Windows: la app la toma sola). Se puede apagar sin
+borrarlo (la casilla de su fila) y se puede quitar con *Remove*. Importar otra vez un pack con el mismo `id` lo **actualiza**. Un ejemplo completo está en [`examples/frostmarch-tales/`](../examples/frostmarch-tales).
 
 Para comprobar un pack antes de repartirlo, desde una terminal:
 
@@ -40,7 +40,7 @@ pack_check mi-pack --strict   # los avisos también cuentan como fallo
 `pack_check` usa el mismo código que la app: si dice OK, la app lo importa. Nada se instala.
 
 Un pack ya instalado se puede editar con la app abierta: al guardar un `.json` o cambiar una imagen en la carpeta del pack
-(`Settings › Where things are`), la app lo relee sola en un segundo. Si el archivo quedó mal escrito, avisa cuál y el pack se
+(la de packs del usuario), la app lo relee sola en un segundo. Si el archivo quedó mal escrito, avisa cuál y el pack se
 omite hasta que lo arregles; al guardar de nuevo se vuelve a leer.
 
 ## Reglas generales de los archivos
@@ -56,7 +56,7 @@ omite hasta que lo arregles; al guardar de nuevo se vuelve a leer.
 * `fields`: cualquier ficha (menos criaturas y tablas) acepta `"fields": { "Etiqueta": "valor" }` para mostrar líneas
   extra, sin tocar el código.
 * `tables`: cualquier ficha (hechizo, raza, profesión, equipo...) puede llevar **sus propias tablas**, con el mismo formato que `tables.json`
-  (`name`, `dice`, `columns`, `rows`, `page`); heredan la `source` de la ficha. Se ven al abrir la tarjeta («Click to expand») y en el Master Screen
+  (`name`, `dice`, `columns`, `rows`, `page`); heredan la `source` de la ficha. Se ven en el detalle de la entrada y en el Master Screen
   cuando se fija; la búsqueda las cubre. No aparecen entre las tablas de las reglas (Rules).
 * Un pack con JSON inválido, un `manifest.json` roto o hecho para un formato más nuevo **se rechaza entero**, con el
   archivo y la posición del error. Los problemas de una sola entrada nunca rechazan el pack.
@@ -119,9 +119,11 @@ Todos los campos son opcionales salvo `name`. Cualquier tarjeta (de cualquiera d
 * `"image"`: una ilustración chica de la tarjeta, ruta relativa al pack (`"images/orco.png"`), igual que ya usan las criaturas.
 * `"replaces"`: en vez de agregar una tarjeta nueva, **cambia** la que tenga esa clave (`"core/kin/human"`, por ejemplo): conserva su
   lugar y su clave, toma el resto de los datos de la nueva, y queda marcada *"Changed by \<pack\>"* — igual que `replaces` en una regla
-  (ver más abajo). Así funcionan los botones **Edit** de Kin y Abilities en la app: sea una tarjeta del libro o una tuya, "editarla" en
-  realidad escribe una tarjeta con `replaces` en tu propio pack de homebrew (`custom`, uno solo para todo lo que crees así); `Generate
-  Kin`/`Generate Ability` crean una sin `replaces`, nueva. El original nunca se toca.
+  (ver más abajo). Así funcionan los botones **Edit** de Kin y Abilities en la app: editar una tarjeta de otro pack (o del libro)
+  escribe **una** tarjeta con `replaces` en tu propio pack de homebrew (`custom`, uno solo para todo lo que crees así; guardar de nuevo
+  la actualiza, no agrega otra); `Generate Kin`/`Generate Ability` crean una sin `replaces`, nueva, y editarla la actualiza donde está.
+  El original nunca se toca. **Delete** borra una tarjeta que creaste; en una edición de una tarjeta ajena el botón es **Revert to
+  original** y solo quita tu edición. El pack `custom` se carga siempre **último**, así que puede reemplazar tarjetas de cualquier otro pack.
 
 Cualquiera de estos archivos puede además llevar un `"intro"` de nivel superior
 (junto a su lista, no dentro de una tarjeta): un texto general de esa categoría
@@ -130,16 +132,15 @@ que una regla (`{"intro": {"body": "...", "sections": [{"name": "...", "body": "
 — así es como los capítulos "Skills", "Bestiary", "Magic" y "Gear" de Rules terminaron adentro de `skills.json`,
 `creatures.json`, `spells.json` y `gear.json`. Un pack posterior con `intro` no vacío reemplaza el de uno anterior para esa categoría.
 
-Si la categoría tiene mosaico (spells, abilities, skills, kin, professions) y además tiene `intro`, se muestra como una
-pestaña "Intro" separada de la pestaña con las tarjetas (Spells, Abilities, Skills); sin `intro` no hay pestañas, solo el
-mosaico, como siempre. Creatures (que no es un mosaico, es lista + detalle) hace lo mismo: "Intro" y "Creatures" como dos
-pestañas. Weapons, armor y gear no tienen mosaico propio — su categoría **Gear**, en Reference, es solo esa página
+Las categorías con página propia (creatures, spells, abilities, skills, kin, professions) son una lista + el detalle de la
+entrada elegida; si además tienen `intro`, se muestra como una pestaña "Intro" separada de la pestaña con la lista; sin
+`intro` no hay pestañas, solo la lista. Weapons, armor y gear no tienen lista propia — su categoría **Gear**, en Reference, es solo esa página
 (el `intro` de `gear.json`, con sus tablas).
 
 ### spells.json — hechizos y trucos
 `school` (por defecto *General Magic*), `trick` (`true` = truco de magia), `rank`, `prerequisite`, `requirement`,
 `casting_time`, `range`, `duration`, `description`.
-Una escuela nueva (por ejemplo `"Frostcraft"`) aparece sola como filtro en el mosaico de Spells.
+Una escuela nueva (por ejemplo `"Frostcraft"`) aparece sola en la lista de Spells (el filtro también busca por escuela).
 
 ### abilities.json — aptitudes
 `type` (`heroic` o `kin`), `kin` (para las innatas), `requirement`, `wp_cost`, `description`.
@@ -170,7 +171,7 @@ personaje (vienen con la profesión).
 * Armadura: `slot` (`armor` o `helmet`), `armor_rating`, `cost`, `supply`, `effect`.
 * Objeto: `category`, `cost`, `supply`, `weight`, `effect`.
 
-Este equipo no tiene un mosaico propio: las armas, armaduras y objetos del libro son las tablas de la categoría **Gear**
+Este equipo no tiene una lista propia: las armas, armaduras y objetos del libro son las tablas de la categoría **Gear**
 (en Reference, con su propio `gear.json`, ver más arriba); se puede igual añadir a la ficha de un personaje, buscarlo con
 `Ctrl+K` y fijarlo en el Master Screen.
 
@@ -248,6 +249,11 @@ misma. Las de Core traen el texto de los libros; cualquier otro pack puede sumar
   abre esa lista), la **clave de una entrada** (`core/kin/human`, `core/profession/thief`, `core/skill/languages`: abre la ficha) o la
   **clave de otra regla** (`core/rule/melee-combat`). Un `see` que no apunta a nada se avisa al cargar el pack. Así una regla
   puede decir «elegí un kin» y llevar a la lista de Kin, que vive en otro JSON.
+* `nav`: solo en un capítulo de primer nivel. Le da **página propia** en ese grupo de la barra de la izquierda, en vez de estar
+  dentro de Rules: `"nav": "Reference"` (así están *Character Creation*, *Combat & Damage* y *Adventures*). El grupo también puede ser otro texto (aparece como un encabezado nuevo).
+  La página aparece al abrir la app (tras un cambio en caliente, al reiniciarla). Si el capítulo
+  no tiene texto propio (ni `body`, ni `sections`, ni `tables`), no aparece como entrada: sus `children` son el primer nivel de su
+  página (así está *Combat & Damage*).
 * **Cualquier otra clave** de una regla se conserva como dato para el programa, como en las fichas (`"step": "4"`, `"trained_skills": 6`,
   `"attribute_mods": { "AGL": 1 }`, `"optional": true`): el creador de personajes los lee de ahí. Texto y números tal cual; objetos y listas,
   como su JSON. `step` además se muestra delante del título («4. Age») en Rules.
@@ -260,10 +266,10 @@ habilidades entrenadas dan y cómo cambian los atributos). Sirve como referencia
 
 ## Cómo se combina con el resto
 
-* La búsqueda (`Ctrl+K`) cubre todos los packs activos; las criaturas, hechizos, etc. del homebrew se listan en sus mosaicos
+* La búsqueda (`Ctrl+K`) cubre todos los packs activos; las criaturas, hechizos, etc. del homebrew se listan en sus páginas
   junto a los del Core, con su fuente.
 * Cada entrada tiene una **clave estable** `<pack>/<tipo>/<id>` (`frostmarch/spell/rime-ward`). Los personajes, el
-  encuentro y los «recientes» se guardan con esas claves, no con números: apagar, actualizar o reordenar un pack no los rompe.
+  encuentro y los «recientes» se guardan con esas claves, no con números: apagar, quitar, actualizar o reordenar un pack no los rompe.
   Si un pack se quita, las fichas siguen mostrando el nombre que guardaron.
 * Cambiar el `id` de una entrada en una versión nueva del pack rompe el vínculo con los personajes que ya la usan: conviene
   fijar los `id` desde el principio.

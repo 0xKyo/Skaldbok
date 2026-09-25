@@ -6,11 +6,11 @@
 #include <functional>
 #include <string>
 
-#include "character.h"
-#include "content.h"
-#include "jsonutil.h"
-#include "messages.h"
-#include "party.h"
+#include "game/character.h"
+#include "parsing/content.h"
+#include "parsing/jsonutil.h"
+#include "game/messages.h"
+#include "game/party.h"
 
 namespace gm {
 

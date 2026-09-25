@@ -3,10 +3,10 @@
 #include <string>
 #include <vector>
 
-#include "fsutil.h"
-#include "jsonutil.h"
-#include "messages.h"
-#include "packs.h"
+#include "parsing/fsutil.h"
+#include "parsing/jsonutil.h"
+#include "game/messages.h"
+#include "parsing/packs.h"
 #include "testutil.h"
 
 using namespace gm;

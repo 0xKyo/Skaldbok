@@ -8,15 +8,15 @@
 #include <SDL3/SDL.h>
 #include <httplib.h>
 
-#include "fsutil.h"
-#include "jsonutil.h"
-#include "changelog.h"
-#include "messages.h"
-#include "sheet_edit.h"
-#include "packs.h"
+#include "parsing/fsutil.h"
+#include "parsing/jsonutil.h"
+#include "game/changelog.h"
+#include "game/messages.h"
+#include "game/sheet_edit.h"
+#include "parsing/packs.h"
 #include "testutil.h"
 #include "web/web_app.h"
-#include "web_link.h"
+#include "game/web_link.h"
 #include "web/web_server.h"
 
 using namespace gm;

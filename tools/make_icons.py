@@ -1,4 +1,4 @@
-"""Renders the app's icons (assets/icons/*.svg) to transparent PNGs and embeds them in src/icon_data.h.
+"""Renders the app's icons (assets/icons/*.svg) to transparent PNGs and embeds them in src/ui/icon_data.h.
 
   python tools/make_icons.py
 
@@ -36,4 +36,4 @@ for svg in sorted(ICONS.glob("*.svg")):
     out.append("")
     print(f"{svg.name}: {pix.width}x{pix.height}px, {len(png)} bytes, corner alpha {corner[3]}")
 out.append("}  // namespace gm")
-(ROOT / "src" / "icon_data.h").write_text("\n".join(out) + "\n", encoding="utf-8")
+(ROOT / "src" / "ui" / "icon_data.h").write_text("\n".join(out) + "\n", encoding="utf-8")

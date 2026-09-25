@@ -25,7 +25,7 @@
 
 #include <SDL3/SDL.h>
 
-#include "jsonutil.h"
+#include "parsing/jsonutil.h"
 #include "web/web_app.h"
 #include "web/web_server.h"
 

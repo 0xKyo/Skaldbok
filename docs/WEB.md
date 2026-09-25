@@ -20,15 +20,16 @@ app del máster (C++)  ──escribe──►  characters/  parties/  packs/  se
 
 ## Lo normal: abrir la app y listo
 
-**`Skaldbok.bat`** abre la app del máster, y **la app arranca sola el servidor web** (**Settings › Web**: el engranaje de arriba a la derecha) y lo
-cierra al salir; incluso si la app se cierra a la fuerza, el servidor se apaga solo. En **Settings › Web** ves si está funcionando,
+**`Skaldbok.bat`** abre la app del máster. **El servidor web está apagado hasta que lo arrancás**: con **Start server** en **el engranaje › Web server**
+(el engranaje de arriba a la derecha; también sirve el botón *Web server: off* de la barra de arriba, que muestra si está funcionando), o marcando
+**Launch server when opening** para que arranque cada vez con la app. La app lo cierra al salir; incluso si la app se cierra a la fuerza, el servidor se apaga solo. En **el engranaje › Web server** ves si está funcionando,
 la dirección para los jugadores (la de tu red, por ejemplo `http://192.168.1.20:8080`) y el enlace personal de cada personaje con
 *Copy* y *Send in a message*. El enlace de un jugador es esa dirección más su token: `http://192.168.1.20:8080/?t=<token>`.
 
 * Los jugadores tienen que estar en la **misma red Wi-Fi** (o usar un túnel, ver más abajo).
 * La primera vez, Windows pregunta si permitir `skaldbok_web` en la red: **permitir en redes privadas**.
-* Si el puerto 8080 lo usa otro programa (Jellyfin usa 8096, otros usan 8080), cámbialo en Settings › Web › *Port* › *Apply*.
-* En Settings › Web se puede desactivar el arranque automático; también se puede apagar todo el módulo en Settings › General › Modules.
+* Si el puerto 8080 lo usa otro programa (Jellyfin usa 8096, otros usan 8080), cámbialo en el engranaje › Web server › *Port* › *Apply*.
+* En el engranaje › Web server se puede activar el arranque con la app (*Launch server when opening*).
 * La página necesita compilarse una vez (`cd web && npm install && npm run build`); `Skaldbok.bat` lo hace solo si falta y hay Node.
 
 ## Ponerlo en marcha a mano (sin la app, por ejemplo en otro equipo)
@@ -71,7 +72,7 @@ Variables de entorno o argumentos (`--port`, `--host`, `--public-url`, `--prefs`
 
 ## Que los jugadores lleguen desde fuera de tu casa
 
-En la misma Wi-Fi no hace falta nada: el módulo Web ya da enlaces con la dirección de tu PC. Desde otra red hay que exponerlo, y
+En la misma Wi-Fi no hace falta nada: la pestaña Web server ya da enlaces con la dirección de tu PC. Desde otra red hay que exponerlo, y
 conviene **HTTPS** (el enlace lleva el token; sobre HTTP plano viajaría a la vista). El servidor habla HTTP simple a propósito;
 hay tres caminos, del más fácil al más trabajoso:
 
@@ -82,7 +83,7 @@ winget install Cloudflare.cloudflared          # una vez
 cloudflared tunnel --url http://localhost:8080
 ```
 
-Escribe una dirección `https://algo-al-azar.trycloudflare.com`. Cópiala en **Settings › Web › Address players use › Apply**: los
+Escribe una dirección `https://algo-al-azar.trycloudflare.com`. Cópiala en **el engranaje › Web server › Address players use › Apply**: los
 enlaces de los jugadores pasan a usar esa dirección (y el servidor cuenta los intentos fallidos por cliente real, no por el túnel).
 Los jugadores los abren desde cualquier lugar, sin instalar nada. Limitaciones: la dirección **cambia cada vez** que reinicias
 `cloudflared` (hay que volver a copiar los enlaces) y el túnel solo existe mientras esa ventana esté abierta. Para una dirección
@@ -141,7 +142,7 @@ Además, las **reglas**: hechizos, aptitudes, habilidades, razas, profesiones y 
 **activos**.
 
 **Nunca**: criaturas y tablas (son del máster), las notas de la party, las conversaciones de otros jugadores, las fichas de
-otros jugadores (solo su resumen de party), ni los tokens. Un pack que el máster apaga en Settings deja de verse en la web.
+otros jugadores (solo su resumen de party), ni los tokens. Un pack que el máster apaga o quita deja de verse en la web.
 
 Seguridad:
 

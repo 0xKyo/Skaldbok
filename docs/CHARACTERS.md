@@ -1,7 +1,7 @@
 # Datos de personajes
 
-Cada personaje es **un archivo JSON** en la carpeta de personajes del usuario (`Settings › Where things are ›
-Characters`; en Windows `%APPDATA%\skaldbok\gm\characters\`). El nombre del archivo (sin `.json`) es el `id` del
+Cada personaje es **un archivo JSON** en la carpeta de personajes del usuario (en Windows
+`%APPDATA%\skaldbok\gm\characters\`). El nombre del archivo (sin `.json`) es el `id` del
 personaje. La app es hoy una herramienta del máster; estos archivos están pensados para que una futura web app de los
 jugadores los lea (y escriba) tal cual.
 
@@ -56,7 +56,7 @@ Reglas de lectura (la app las aplica y una web app debería hacer lo mismo):
 
 ## Números derivados (no se guardan)
 
-Del Rulebook, capítulo 2. Están implementados en `src/character.cpp` y probados en `tests/character_test.cpp`.
+Del Rulebook, capítulo 2. Están implementados en `src/game/character.cpp` y probados en `tests/character_test.cpp`.
 
 | dato | regla |
 |---|---|
@@ -70,7 +70,7 @@ Del Rulebook, capítulo 2. Están implementados en `src/character.cpp` y probado
 ## Creación
 
 El asistente del módulo Characters sigue el orden del libro (raza, profesión, edad, atributos, habilidades, aptitud heroica
-o magia, equipo, nombre y detalles) y decide en `src/creation.cpp` qué es válido:
+o magia, equipo, nombre y detalles) y decide en `src/game/creation.cpp` qué es válido:
 
 * **Edad** — Young: AGL y CON +1, 8 habilidades entrenadas (6 de la profesión + 2). Adult: sin cambios, 10 (6+4).
   Old: FUE, AGL y CON −2, INT y WIL +1, 12 (6+6). Ningún atributo pasa de 18.

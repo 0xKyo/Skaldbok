@@ -6,10 +6,10 @@
 
 #include <SDL3/SDL.h>
 
-#include "fsutil.h"
-#include "fts.h"
-#include "sheet_edit.h"
-#include "settings.h"
+#include "parsing/fsutil.h"
+#include "parsing/fts.h"
+#include "game/sheet_edit.h"
+#include "game/settings.h"
 #include "web/web_views.h"
 
 namespace gm {

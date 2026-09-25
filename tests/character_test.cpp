@@ -3,12 +3,12 @@
 #include <string>
 #include <vector>
 
-#include "character.h"
-#include "content.h"
-#include "creation.h"
-#include "dice.h"
-#include "packs.h"
-#include "party.h"
+#include "game/character.h"
+#include "parsing/content.h"
+#include "game/creation.h"
+#include "game/dice.h"
+#include "parsing/packs.h"
+#include "game/party.h"
 #include "testutil.h"
 
 using namespace gm;

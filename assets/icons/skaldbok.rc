@@ -1,0 +1,4 @@
+// The exe's icon: what Explorer, the taskbar and alt-tab show for skaldbok.exe before/without a running window
+// (a pinned shortcut, the taskbar while it's loading, etc). The window itself sets its own icon at runtime from
+// data/packs/core/images/skaldbok-icon.png (see main.cpp), so this only needs to match that image.
+IDI_ICON1 ICON "skaldbok.ico"

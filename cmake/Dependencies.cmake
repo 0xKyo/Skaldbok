@@ -73,7 +73,7 @@ set_target_properties(sqlite3_static PROPERTIES C_STANDARD 11)
 # stb_image lives next to the downloaded header
 set(STB_INCLUDE_DIR "${stb_image_h_SOURCE_DIR}" CACHE INTERNAL "")
 
-# nlohmann/json.hpp sits next to the downloaded header (included as "json.hpp" through src/jsonutil.h)
+# nlohmann/json.hpp sits next to the downloaded header (included as "json.hpp" through src/parsing/jsonutil.h)
 set(JSON_INCLUDE_DIR "${json_h_SOURCE_DIR}" CACHE INTERNAL "")
 
 # cpp-httplib sits next to the downloaded header (included as <httplib.h>); no TLS: use a tunnel or a reverse proxy for HTTPS

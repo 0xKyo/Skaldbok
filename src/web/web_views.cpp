@@ -3,9 +3,9 @@
 #include <algorithm>
 #include <cstdlib>
 
-#include "encounter.h"
-#include "sheet_edit.h"
-#include "fts.h"
+#include "game/encounter.h"
+#include "game/sheet_edit.h"
+#include "parsing/fts.h"
 
 namespace gm {
 namespace {

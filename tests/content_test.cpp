@@ -4,9 +4,9 @@
 #include <string>
 #include <vector>
 
-#include "content.h"
-#include "dice.h"
-#include "packs.h"
+#include "parsing/content.h"
+#include "game/dice.h"
+#include "parsing/packs.h"
 #include "testutil.h"
 
 using namespace gm;
@@ -132,7 +132,7 @@ int main(int argc, char** argv) {
             }
         check(bookTables >= 40, "the books' tables not on a card of their own are in Core: " + std::to_string(bookTables));
         check(bookWeakness && bookWeakness->rows.size() == 20 && bookWeakness->dieSides() == 20, "the book's Weakness table: D20, 20 rows");
-        check(bookWeakness && core.idByKey(Kind::Table, "#" + std::to_string(1)) != 0, "an old numeric table key still finds a table");
+        check(bookWeakness && core.idByKey(Kind::Table, "#" + std::to_string(35)) != 0, "an old numeric table key still finds a table");
         for (const DataTable& t : core.packTables()) rolled += t.dieSides() > 0;
         check(rolled > 30, "dice tables keep their dice");
     }
@@ -146,7 +146,7 @@ int main(int argc, char** argv) {
     hits = core.search("fetch");
     check(!hits.empty() && hits[0].exact && hits[0].title == "Fetch", "an exact title comes first");
     check(core.search("").empty() && core.search("   ").empty(), "empty search finds nothing");
-    check(!core.search("Measuring Time").empty() && core.search("Measuring Time")[0].kind == Kind::Table, "a table of the books is found by search");
+    check(!core.search("Fear Table").empty() && core.search("Fear Table")[0].kind == Kind::Table, "a table of the books is found by search");
 
     // Rules: book text minus what has its own category (creatures, spells, skills, kin...), the preface and the indexes; the adventure has its own section.
     {
@@ -164,7 +164,8 @@ int main(int argc, char** argv) {
             }
             if (n.parent && !core.rule(n.parent)) check(false, "a rule points at a parent that is not there");
         }
-        check(rules.size() > 100 && rules.size() < 1500, "a review-sized set of rules text: " + std::to_string(rules.size()));
+        // chapters are flattened into one page each (their parts are "sections" of it, not rules of their own), so few rules
+        check(rules.size() > 20 && rules.size() < 1500, "a review-sized set of rules text: " + std::to_string(rules.size()));
         {   // the adventure, all of it, under Adventures > The Misty Vale; its tables inside the places they belong to
             const int library = core.ruleByKey("core/rule/adventure-library"), vale = core.ruleByKey("core/rule/the-misty-vale");
             int inVale = 0;
@@ -179,7 +180,7 @@ int main(int argc, char** argv) {
             const DataTable* time = nullptr;
             for (const DataTable& t : core.packTables())
                 if (t.title == "Measuring Time") time = &t;
-            check(time && core.rule(time->rule) && core.rule(time->rule)->id == 1, "Measuring Time is at the top of the rules, in the first rule");
+            check(!time, "Measuring Time moved to the Skills intro: it is no longer a table of a rule");
         }
         {   // Character Creation: kin and innate ability are one step (they are the same topic); eleven more follow, in order,
             // each pointing to where its choices come from
@@ -223,10 +224,10 @@ int main(int argc, char** argv) {
                 for (const RuleNode::Section& s : n.sections) names.push_back(s.title);
                 return names;
             };
-            check(sectionNames(*step("creation-attributes")) == std::vector<std::string>{"Starting Scores", "Other Methods"} &&
+            check(sectionNames(*step("creation-attributes")) == std::vector<std::string>{"Starting Scores", "Other Methods", "Abbreviations"} &&
                       core.tablesOfRule(step("creation-attributes")->id).size() == 1 &&
                       core.packTable(core.tablesOfRule(step("creation-attributes")->id)[0])->rows.size() == 6,
-                  "Attributes: one page, with a table of the six attributes and two sections");
+                  "Attributes: one page, with a table of the six attributes (with their abbreviations) and three sections");
             check(sectionNames(*step("creation-derived-ratings")) == (std::vector<std::string>{"Hit Points (HP)", "Willpower Points (WP)"}) &&
                       core.tablesOfRule(step("creation-derived-ratings")->id).size() == 3,
                   "Derived Ratings: one page, with Movement's two tables and Damage Bonus's promoted up to it");
@@ -259,7 +260,9 @@ int main(int argc, char** argv) {
                     unresolved += core.seeTarget(ref).type == SeeTarget::Type::None;
                 }
             check(links > 20 && unresolved == 0, "every \"see\" of Core points to something that is there (" + std::to_string(links) + " links)");
-            check(core.packs()[0].warnings.empty(), "Core loads with no warnings");
+            std::string warned;
+            for (const std::string& w : core.packs()[0].warnings) warned += "\n         · " + w;
+            check(core.packs()[0].warnings.empty(), "Core loads with no warnings" + warned);
         }
         check(titles.count("Melee Combat"), "general rules are kept");
         check(!titles.count("Contents") && !titles.count("Index") && !titles.count("Preface"), "contents, index and preface are dropped");
@@ -701,6 +704,21 @@ int main(int argc, char** argv) {
               "installed packs are listed after Core");
         specs = pm.specs({"frostmarch"});
         check(specs.size() == 2 && !specs[1].enabled, "a disabled pack id switches its spec off");
+
+        {   // the app's own pack ("custom") loads LAST, so its "replaces" finds a card of any pack, whatever the folder order
+            test::write(userDir + "/custom-kin/kin.json", "{\"format\":1,\"name\":\"Custom Kin\",\"kin\":[{\"name\":\"Cat People\"}]}");
+            test::write(userDir + "/custom/kin.json",
+                        "{\"format\":1,\"name\":\"My Homebrew\",\"kin\":[{\"name\":\"Cat Folk\",\"replaces\":\"custom-kin/kin/cat-people\"}]}");
+            specs = pm.specs({});
+            check(specs.size() == 4 && specs.back().dir.ends_with("/custom"), "the app's own pack is listed last, after \"custom-kin\"");
+            ContentStore u;
+            u.load(specs);
+            const Entry* cat = u.findByName(Kind::Kin, "Cat Folk");
+            check(cat && cat->key == "custom-kin/kin/cat-people" && cat->editedBy == "My Homebrew" && !u.findByName(Kind::Kin, "Cat People"),
+                  "an edit saved in \"custom\" replaces a card of \"custom-kin\" (it loads after it)");
+            check(u.packs().back().warnings.empty(), "...with no warning");
+            check(slugOf("Frog People!") == "frog-people" && slugOf("  Cat -- People ") == "cat-people", "slugOf: what a card's key is made of");
+        }
 
         r = pm.import(fixtures + "/frostmarch-tales.zip");
         check(r.ok && r.replaced && r.packId == "frostmarch", "import a .zip that holds the pack folder: " + r.message);

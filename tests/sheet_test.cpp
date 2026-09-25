@@ -4,11 +4,11 @@
 #include <set>
 #include <string>
 
-#include "changelog.h"
-#include "character.h"
-#include "fsutil.h"
-#include "packs.h"
-#include "sheet_edit.h"
+#include "game/changelog.h"
+#include "game/character.h"
+#include "parsing/fsutil.h"
+#include "parsing/packs.h"
+#include "game/sheet_edit.h"
 #include "testutil.h"
 
 using namespace gm;

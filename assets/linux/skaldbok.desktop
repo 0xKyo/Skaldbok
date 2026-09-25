@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Skaldbok
+Comment=GM screen and character tools for tabletop sessions
+Exec=skaldbok
+Icon=skaldbok
+Terminal=false
+Categories=Game;RolePlaying;Utility;
+StartupWMClass=com.skaldbok.app

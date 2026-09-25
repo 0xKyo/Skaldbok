@@ -15,12 +15,12 @@
 #include <utility>
 #include <vector>
 
-#include "character.h"
-#include "content.h"
-#include "changelog.h"
-#include "messages.h"
-#include "packs.h"
-#include "party.h"
+#include "game/character.h"
+#include "parsing/content.h"
+#include "game/changelog.h"
+#include "game/messages.h"
+#include "parsing/packs.h"
+#include "game/party.h"
 #include "web/web_access.h"
 #include "web/web_config.h"
 

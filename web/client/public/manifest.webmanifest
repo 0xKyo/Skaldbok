@@ -1,0 +1,11 @@
+{
+  "name": "Skaldbok",
+  "short_name": "Skaldbok",
+  "theme_color": "#151a1e",
+  "background_color": "#151a1e",
+  "display": "standalone",
+  "icons": [
+    { "src": "/favicon.png", "sizes": "64x64", "type": "image/png" },
+    { "src": "/skaldbok-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

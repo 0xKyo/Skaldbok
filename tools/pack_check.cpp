@@ -11,8 +11,8 @@
 
 #include <SDL3/SDL.h>
 
-#include "content.h"
-#include "packs.h"
+#include "parsing/content.h"
+#include "parsing/packs.h"
 
 namespace {
 

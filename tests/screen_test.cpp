@@ -3,7 +3,7 @@
 #include <set>
 #include <string>
 
-#include "master_screen.h"
+#include "game/master_screen.h"
 #include "testutil.h"
 
 using namespace gm;

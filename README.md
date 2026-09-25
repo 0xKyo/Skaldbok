@@ -13,7 +13,7 @@ un plugin de datos.
 
 ## Qué tiene
 
-Cada fila es un **módulo** (Settings › Modules los enciende y apaga; el menú lateral solo muestra los encendidos):
+Cada fila es un **módulo** (el menú lateral los lista):
 
 | Módulo | |
 |---|---|
@@ -23,13 +23,12 @@ Cada fila es un **módulo** (Settings › Modules los enciende y apaga; el menú
 | **Party** | Agrupa personajes que juegan juntos (agregar/quitar, estado de todos de un vistazo, "Add the party to the encounter", *Message the party…*). |
 | **Messages** | **Chat real** con cada jugador (ellos escriben desde su página web y vos ves los mensajes al instante, con contador de no leídos) y **broadcast** a una party o a todos, que a los jugadores les llega con un estilo propio. Texto e imágenes en las dos direcciones. Los jugadores solo hablan con el máster, nunca entre ellos. |
 | **Master Screen** | Un lienzo infinito personal del máster: fijás criaturas, hechizos, tablas, personajes, la party, notas e imágenes, y los movés, agrandás y cerrás; varios tableros con pestañas (ver más abajo). |
-| **Web** *(en Settings)* | Arranca solo, junto con la app, el servidor web de los jugadores; muestra su estado, la dirección en tu red y el enlace personal de cada personaje (copiar / enviarlo en un mensaje). |
+| **Web server** *(engranaje de arriba a la derecha)* | El servidor web de los jugadores, **apagado hasta que lo arrancás** con el botón *Start server* (o con la casilla *Launch server when opening*). Un botón *Web server: on/off* en la barra de arriba muestra si está funcionando y abre esta pestaña; ahí ves la dirección en tu red y el enlace personal de cada personaje (copiar / enviarlo en un mensaje). |
 | **Creatures** | Criaturas de los tres libros y del homebrew: ilustración, statblock, tabla de *Monster Attacks* con botón de tirada, habilidades, encuentro aleatorio y semilla de aventura. Si hay algo que explicar sobre qué son los monstruos y cómo funcionan (el capítulo Bestiary del libro), aparece como pestaña **Intro** aparte de la pestaña con la lista. |
-| **Spells · Abilities · Skills** | Mosaicos de tarjetas con todos los datos (requisitos, alcance, texto entero, enlace al original). Cada uno tiene además su propia pestaña **Intro**: la explicación general de esa categoría (magia y sus escuelas, cómo tirar los dados, aptitudes heroicas...), separada de la pestaña con las tarjetas. Abilities además tiene **Generate Ability** y **Edit** en cada tarjeta (nombre, Heroic o Innate, requisito, Willpower, descripción). |
-| **Kin · Professions** | Mosaicos de tarjetas, igual que los anteriores (sin pestaña Intro por ahora). Kin además tiene **Generate Kin** (creás un kin propio: nombre, movimiento, descripción, nombres e imagen, y elegís sus aptitudes innatas de una lista, con opción de crear una nueva ahí mismo) y **Edit** en cada tarjeta (la del libro incluida: tu versión la reemplaza en todos lados, sin tocar el original). Generate Kin/Ability y Edit guardan en el mismo pack propio de homebrew, `custom`. |
-| **Gear** | Armas, armaduras y equipo: no tienen mosaico de tarjetas propio, son las tablas del libro (Armor & Helmets, Melee/Ranged Weapons, Trade Goods...) en una sola página, con qué significa cada columna. |
-| **Rules** | Las reglas de los libros que quedan cuando criaturas, hechizos, habilidades, razas, profesiones y equipo ya tienen su propia página (Rolling Dice, Combat & Damage, Character Creation...) **con sus tablas dentro de la sección a la que corresponden** (las de dado con botón *Roll* que resalta el resultado, y *Pin* para el Master Screen), la aventura *The Misty Vale* completa en su propia sección (**Adventures**: capítulos, ubicaciones numeradas y sus tablas), más las **homerules** de los packs que las traigan. **Character Creation** reúne los 13 pasos del libro para crear un personaje, numerados y con enlaces (*See also*) a Kin, Professions, Skills... de donde salen las opciones. Árbol de capítulos, filtro por texto (también por título de tabla) y enlace a la página original. Una tabla que salga en una búsqueda o en el enlace de una criatura abre su sección. Viene del pack Core, de su `rules.json` (ver más abajo). |
-| **Settings** (siempre activo) | Se abre con el **engranaje** de arriba a la derecha (otra vez el engranaje, o `Esc`, vuelve). Pestañas: **General** (módulos, packs de contenido: importar/apagar/quitar homebrew, dónde se guarda cada cosa) y **Web**. |
+| **Spells · Abilities · Skills · Kin · Professions** | Igual que Creatures: una lista filtrable a la izquierda y la entrada elegida a la derecha, con todos sus datos (requisitos, alcance, texto entero, sus tablas, enlace al original). Si la categoría trae su explicación general (magia y sus escuelas, cómo tirar los dados, aptitudes heroicas...), aparece como pestaña **Intro** aparte. Abilities tiene **Generate Ability** y **Edit** (nombre, Heroic o Innate, requisito, Willpower, descripción); Kin tiene **Generate Kin** (nombre, movimiento, descripción, nombres e imagen, y sus aptitudes innatas de una lista, con opción de crear una nueva ahí mismo) y **Edit** (la del libro incluida: tu versión la reemplaza en todos lados, sin tocar el original). Generate y Edit guardan en el mismo pack propio de homebrew, `custom` (guardar de nuevo actualiza la tarjeta, no agrega otra). **Delete** borra una que creaste; en una edición de una tarjeta del libro o de otro pack, **Revert to original** deshace tu edición. |
+| **Gear** | Armas, armaduras y equipo: no tienen lista propia, son las tablas del libro (Armor & Helmets, Melee/Ranged Weapons, Trade Goods...) en una sola página, con qué significa cada columna. |
+| **Character Creation · Combat & Damage · Adventures** | Los capítulos del libro con página propia, en Reference: un árbol de secciones, filtro por texto (también por título de tabla) y enlace a la página original, **con sus tablas dentro de la sección a la que corresponden** (las de dado con botón *Roll* que resalta el resultado, y *Pin* para el Master Screen). **Character Creation** reúne los pasos del libro para crear un personaje, numerados y con enlaces (*See also*) a Kin, Professions, Skills... de donde salen las opciones. **Adventures** es la aventura *The Misty Vale* completa (capítulos, ubicaciones numeradas y sus tablas). Vienen del pack Core, de su `rules.json` (ver más abajo): un capítulo con `"nav"` tiene su página. |
+| **Rules** | Aparece solo si un pack trae **homerules** o tablas que no pertenecen a un capítulo con página propia; sin ellas no hay entrada. |
 
 Además: **dados** en la barra inferior (D4–D20 y expresiones como `2D8+3`), botón *Original: libro p.N* en cada ficha
 (abre tu propio PDF en su página, en el lector del sistema; la app no muestra ni distribuye páginas del libro), **recientes** en la pantalla de inicio y filtro
@@ -53,11 +52,11 @@ mucho puede pasar a su propio JSON.
 * **Homerules**: un pack de homerules es un pack común con un `rules.json`, escrito como un **árbol anidado** (cada regla lista sus
   `"children"`). Sus reglas pueden colgar de una regla de Core (`"parent"`) o **reemplazarla** (`"replaces"`): la regla
   conserva su lugar en el árbol, muestra la fuente *Homebrew · <nombre>* y
-  dice *"Changed by <pack>"*, así que se ve siempre qué es del libro y qué es de la casa. Apagar el pack la devuelve a como era.
-* **Importar**: Settings › Content packs › *Import a pack folder…* o *Import a .zip…* (un pack que se importa lleva su `manifest.json`, porque el `id` no se puede deducir de una carpeta temporal). El pack se valida antes de instalarse
-  (si algo está mal, se rechaza con el archivo y la posición del error) y se copia a la carpeta del usuario.
+  dice *"Changed by <pack>"*, así que se ve siempre qué es del libro y qué es de la casa. Apagar o quitar el pack la devuelve a como era.
+* **Importar**: el engranaje › **General Settings › Content packs** › *Import a pack folder…* o *Import a .zip…* (o `skaldbok --import <carpeta o .zip>` desde una terminal). Un pack que se importa lleva su `manifest.json`, porque el `id` no se puede deducir de una carpeta temporal. El pack se valida antes de instalarse
+  (si algo está mal, se rechaza con el archivo y la posición del error) y se copia a la carpeta de packs del usuario (`%APPDATA%\skaldbok\gm\packs\` en Windows). También alcanza con copiar la carpeta ahí: la app la toma sola.
 * Lo importado **se suma** al Core y **conserva su fuente**: *Homebrew · <nombre>*, con su color, su filtro y su etiqueta en cada tarjeta.
-* Cada pack se puede **apagar** sin borrarlo, **actualizar** (importar otra vez con el mismo `id`) o **quitar**.
+* Cada pack se puede **apagar** sin borrarlo (la casilla de su fila), **actualizar** (importar otra vez con el mismo `id`) o **quitar** (*Remove*).
 * Las criaturas de un pack se incluyen en la búsqueda, el encuentro y el creador de personajes; una raza, profesión, habilidad
   o hechizo homebrew se puede elegir al crear un personaje.
 * **En vivo**: la app vigila los archivos de los packs (Core y los importados). Si editás un JSON, el `manifest.json` o las imágenes de un pack
@@ -138,8 +137,9 @@ solo cada pocos segundos, permite editar la hoja y chatear con el máster, y no 
 Vue 3 (`web/client`). Los enlaces salen con `skaldbok_web --links` y también en la ficha de cada personaje en la app.
 Detalles, seguridad, cómo exponerlo por HTTPS y la API: [`docs/WEB.md`](docs/WEB.md).
 
-Lo normal es **abrir `Skaldbok.bat`**: abre la app y ella arranca sola el servidor (módulo **Web**); los jugadores, en la misma
-Wi-Fi, abren su enlace (`http://<ip-de-tu-pc>:8080/?t=<token>`, que se copia desde el módulo Web). La página se compila una vez con
+Lo normal es **abrir `Skaldbok.bat`** y, cuando quieras que entren los jugadores, apretar **Start server** en **el engranaje › Web server**
+(o el botón *Web server: off* de la barra de arriba; con la casilla *Launch server when opening* arranca con la app); los jugadores, en la misma
+Wi-Fi, abren su enlace (`http://<ip-de-tu-pc>:8080/?t=<token>`, que se copia desde esa pestaña). La página se compila una vez con
 Node (`cd web && npm install && npm run build`; el `.bat` lo hace si falta). También se puede correr a mano, sin la app:
 
 ```
@@ -182,20 +182,26 @@ con `--data <carpeta>`. Los archivos del usuario (ajustes, recientes, encuentro,
 
 Todo el contenido se lee una sola vez al arrancar desde JSON (unos 2 MB entre criaturas, hechizos, etc.); las imágenes se
 decodifican bajo demanda con una caché de 12, la base de los libros se abre en solo lectura (`immutable`), la app no redibuja
-mientras nada cambia y los mosaicos miden el texto de sus tarjetas una sola vez por ancho de ventana. Los módulos apagados no dibujan ni se consultan. Con `--software` usa el renderizador por software de SDL.
+mientras nada cambia. Con `--software` usa el renderizador por software de SDL.
 
 ## Estructura
 
 ```
-src/            núcleo sin ventana (libgm_core): db, content (packs), packs (importar), character, creation (reglas), messages (chat),
-                sheet_edit (edición por campos y revisión de reglas), changelog, master_screen (datos del lienzo), settings, encounter, dice;
-                fsutil/jsondir (archivos y stores por usuario, que releen lo que otro programa escribe)
-src/modules/    un archivo por módulo (search, master_screen, encounter, characters + character_sheet, party, messages, creatures, compendium, tables,
-                web, settings)
+                ── núcleo (libgm_core): sin UI y sin servidor; lo usan todas las vistas ──
+src/parsing/    lee el JSON y lo convierte al modelo interno: content (packs), packs (importar), jsonutil, jsondir (stores
+                por usuario que releen lo que otro programa escribe), fsutil (archivos), fts/sql (índice de búsqueda)
+src/game/       la lógica del juego sobre ese modelo: model (datos), character, creation (reglas), party, encounter, dice,
+                messages (chat), sheet_edit (edición por campos y revisión de reglas), changelog, master_screen (datos del
+                lienzo), settings, web_link
+                ── vistas: cada una enlaza gm_core y nada más; ninguna incluye de otra ──
+src/ui/         la app del GM (ImGui): main, app.cpp (el shell: navegación, historial, filtro de fuentes, dados), module.h
+                (el contrato Module / Host y los servicios opcionales entre módulos), ui_common, fonts, textures, filedialog,
+                homebrew_forms (Generate / Edit de Kin y Abilities)
+src/ui/modules/ un archivo por módulo (search, master_screen, encounter, characters + character_sheet, party, messages,
+                catalog, gear, rules, web). catalog: la página lista + detalle (con su Intro) de cada tipo
+                de contenido que tenga página propia según la tabla de tipos de game/model.cpp; creatures agrega su detalle
 src/web/        el servidor de jugadores: app sin sockets (web_app), vistas JSON (web_views), tokens (web_access), HTTP (web_server)
 web/client/     la página de los jugadores (Vue 3 + Vite); se compila con npm y la sirve skaldbok_web
-src/module.h    el contrato Module / Host y los servicios opcionales entre módulos (IEncounterSink, IMessenger, ...)
-src/app.cpp     el shell: navegación, historial, filtro de fuentes, dados
 tests/          ctest sin ventana: contenido y packs, personajes y parties, encuentro, Master Screen, chat, edición de hojas (dos escritores sobre un archivo)
                 y la web de jugadores (autenticación, privacidad, HTTP real); las pruebas de la página están en web/client (npm test)
 tools/          conversor PDF → SQLite + pack Core en Python, y pack_check
@@ -204,9 +210,12 @@ examples/       frostmarch-tales: un pack de ejemplo
 scripts/        build.ps1, package.ps1 (Windows)
 ```
 
-**Añadir un módulo**: una clase que hereda de `Module` en `src/modules/`, su fábrica en `modules.h` y una línea en
-`registry.cpp`. Aparece sola en el menú y en Settings › Modules. Un módulo solo habla con los demás mediante `Host` y los
-servicios opcionales (`serviceOf<IEncounterSink>(host)` devuelve nulo si ese módulo está apagado, y el resto lo tolera).
+**Añadir una vista** (una API, otra UI): un target nuevo que enlace `gm_core`; todo lo que necesita (leer packs, personajes,
+reglas) ya está ahí. Lo que haga falta compartir entre vistas va al núcleo, nunca de una vista a otra.
+
+**Añadir un módulo**: una clase que hereda de `Module` en `src/ui/modules/`, su fábrica en `modules.h` y una línea en
+`registry.cpp`. Aparece sola en el menú. Un módulo solo habla con los demás mediante `Host` y los
+servicios opcionales (`serviceOf<IEncounterSink>(host)` devuelve nulo si ningún módulo lo ofrece, y el resto lo tolera).
 
 Opciones de línea de comandos para pruebas: `--shot archivo.png` (captura y sale), `--tab <id de módulo>`, `--select <nombre>`,
 `--search <texto>`, `--roll`, `--page N`, `--demo-encounter`, `--demo-character`, `--demo-party`, `--demo-screen`, `--new-character <paso>`, `--import <pack>`,
