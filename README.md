@@ -44,10 +44,11 @@ Atajos: `Ctrl+K` buscar · `Alt+←/→` atrás y adelante · `↑/↓` moverse 
 Todo el contenido —reglas, criaturas, hechizos, aptitudes, habilidades, razas, profesiones, equipo, tablas— vive en
 **packs**: una carpeta (o un `.zip`) con **un JSON por tipo** (`rules.json`, `creatures.json`, `spells.json`, …), más `images/` para el
 arte. El `manifest.json` es **opcional**: sin él, el `id` es el nombre de la carpeta y el nombre, los libros y demás datos del pack van
-en la cabecera de su primer JSON (los de Core están en la de `rules.json`). El contenido de los libros es un solo pack incorporado,
-**Core** (`data/packs/core`), que se abre primero y es la base de los demás: en `rules.json` van las reglas genéricas (sin categoría
-propia) y sus tablas, la aventura incluida, y en los otros JSON las criaturas, hechizos, razas, profesiones... Una categoría que crece
-mucho puede pasar a su propio JSON.
+en la cabecera de su primer JSON (los de Core están en su `manifest.json`). El contenido de los libros es un solo pack incorporado,
+**Core** (`data/packs/core`), que se abre primero y es la base de los demás: solo tiene las criaturas, hechizos, razas, profesiones...
+Una categoría que crece mucho puede pasar a su propio JSON. Lo que no es un elemento de una categoría va aparte, en `data/system/`:
+`rules.json` (las reglas genéricas y sus tablas, la aventura incluida) y el `intro` de cada página (`spells.json`, `creatures.json`...);
+la app los muestra en el mismo lugar de siempre.
 
 * **Homerules**: un pack de homerules es un pack común con un `rules.json`, escrito como un **árbol anidado** (cada regla lista sus
   `"children"`). Sus reglas pueden colgar de una regla de Core (`"parent"`) o **reemplazarla** (`"replaces"`): la regla
@@ -64,7 +65,7 @@ mucho puede pasar a su propio JSON.
 * `pack_check <carpeta|zip>` valida un pack desde una terminal con el mismo código de la app.
 
 Formato completo, con todos los campos de cada tipo: [`docs/HOMEBREW.md`](docs/HOMEBREW.md). Un ejemplo listo para importar:
-[`examples/frostmarch-tales/`](examples/frostmarch-tales).
+[`docs/examples/frostmarch-tales/`](docs/examples/frostmarch-tales).
 
 ## Personajes
 
@@ -206,7 +207,7 @@ tests/          ctest sin ventana: contenido y packs, personajes y parties, encu
                 y la web de jugadores (autenticación, privacidad, HTTP real); las pruebas de la página están en web/client (npm test)
 tools/          conversor PDF → SQLite + pack Core en Python, y pack_check
 docs/           HOMEBREW.md (formato de packs), CHARACTERS.md (personajes y parties), WEB.md (web de jugadores)
-examples/       frostmarch-tales: un pack de ejemplo
+docs/examples/  frostmarch-tales: un pack de ejemplo, solo como documentación (la app no lo usa)
 scripts/        build.ps1, package.ps1 (Windows)
 ```
 
@@ -249,4 +250,4 @@ estudiarlo, modificarlo y redistribuirlo, y toda versión modificada que distrib
 * **Dragonbane** es marca y obra de Free League Publishing. Este proyecto no está afiliado a ellos y **no incluye ningún contenido de los
   libros**: `References/` y `data/` (todo lo extraído de los PDF) están en `.gitignore`; cada persona genera esos datos con su propia copia
   legal de los libros (`tools/README.md`).
-* Los packs de contenido homebrew (`examples/`) son originales y se publican bajo la misma licencia.
+* Los packs de contenido homebrew (`docs/examples/`) son originales y se publican bajo la misma licencia.

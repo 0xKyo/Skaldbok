@@ -1,7 +1,7 @@
 // The game content the app shows: rules, creatures, spells, abilities, skills, kin, professions, equipment and tables.
 //
 // It lives in *content packs*: a folder of JSON files, one per type, and optionally a manifest.json (docs/HOMEBREW.md).
-// The Core pack (data/packs/core: the books' generic rules and their tables in rules.json, and the creatures, spells, kin...) opens
+// The Core pack (data/packs/core: the creatures, spells, kin...; the books' generic rules and each page's intro live next to it in data/system) opens
 // first and is the base the others build on; imported homebrew, homerules included, loads through the same code after it. Nothing
 // here draws anything.
 #pragma once
@@ -68,6 +68,9 @@ std::string slugOf(const std::string& s);
 const std::vector<std::string>& packDataFiles();
 // A folder is a pack when it has a manifest.json or at least one of those data files.
 bool looksLikePack(const std::string& dir);
+// Where Core keeps what is not an item of a category (data/system: rules.json, the "intro" of each data file), given its pack folder
+// (data/packs/core). Empty if it cannot be worked out.
+std::string systemDirOf(const std::string& coreDir);
 
 // A kind's own general text (its data file's top-level "intro"): shown as its page's "Intro" tab. Either a plain string
 // ("intro": "...") or, like a rule, a body plus named sections and its own tables
@@ -76,15 +79,18 @@ struct Intro {
     std::string body;
     std::vector<RuleNode::Section> sections;
     std::vector<DataTable> tables;                     // card-owned (id 0), like Entry::tables
+    std::string file;                                  // the JSON it was read from (where the in-app editor writes it back)
     bool empty() const { return body.empty() && sections.empty() && tables.empty(); }
 };
 
 // Where a rule's "see" points (RuleNode::see), resolved against what is loaded.
 struct SeeTarget {
-    enum class Type { None, Category, Entry, Rule };
+    enum class Type { None, Category, Entry, Rule, Section };
     Type type = Type::None;            // None: it points to nothing that is loaded
-    Kind kind = Kind::Spell;           // Category: which kind of entries; Entry: the kind of the entry
-    int id = 0;                        // Entry: its handle (Host::goTo); Rule: the rule's id
+    Kind kind = Kind::Spell;           // Category: which kind of entries; Entry: the kind of the entry; Section: the kind whose intro has it
+    int id = 0;                        // Entry: its handle (Host::goTo); Rule: the rule's id; Section: its index in the kind's intro
+    int line = -1;                     // Rule / Section: the line of that text the keyword is on (0 = its first), -1 when not known
+    int section = -1;                  // Rule: the section of the rule (RuleNode::sections) it points into, -1 for the rule as a whole
     std::string label;                 // what to show: "Kin (6)", "Human", "Age"
 };
 
@@ -120,6 +126,13 @@ public:
     const std::vector<Entry>& entries(Kind k) const;
     const Entry* entry(Kind k, int id) const;
     const Entry* findByName(Kind k, const std::string& name) const;         // case-insensitive, first match
+    // What a link in a text points to: a full "see" reference (seeTarget) or a keyword, tried as a category ("spells", "Spells"), then
+    // the name of an entry of any kind, then the title of a rule, then the title of a section of an intro ("Pushing Your Roll", or
+    // "skills/Pushing Your Roll" to say whose). Type::None if it is none of those.
+    SeeTarget resolveLink(const std::string& ref) const;
+    // Every keyword a text marks with {{key: word}} (or {{key: shown text | word}}): the word, lower case, and where it is. A link to a
+    // keyword ("[[word]]") goes there, from any text.
+    const std::map<std::string, SeeTarget>& keywords() const { return keywords_; }
     const Intro& introOf(Kind k) const;
 
     const std::vector<Monster>& monsters() const { return monsters_; }
@@ -131,6 +144,9 @@ public:
     // every table of every pack (the books' tables live in Core, inside their sections)
     const std::vector<DataTable>& packTables() const { return tables_; }
     const DataTable* packTable(int id) const;
+    // A table by its title (case-insensitive), wherever it is: the tables of the rules first, then those of an intro, then those of a
+    // card. What a "{{table: Name}}" line in a text shows. Null if there is none.
+    const DataTable* tableByName(const std::string& name) const;
     const DataTable* tableByRole(const std::string& role) const;             // first enabled pack's table with that role
     std::vector<const DataTable*> tablesByRole(const std::string& role) const;
 
@@ -151,6 +167,7 @@ private:
     void clear();
     void buildIndex();
     void resolveLinks();
+    void extractKeywords();
     void placeTables();
     void checkRuleLinks();
 
@@ -158,6 +175,7 @@ private:
     std::vector<SourceInfo> sources_;
     std::vector<Entry> entries_[kKindCount];
     Intro intros_[kKindCount];
+    std::map<std::string, SeeTarget> keywords_;      // "boon" -> the text that has {{key: boon}} (see extractKeywords)
     std::vector<Monster> monsters_;
     std::vector<DataTable> tables_;
     std::vector<RuleNode> rules_;

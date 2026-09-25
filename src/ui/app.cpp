@@ -32,6 +32,7 @@ double nowSeconds() { return static_cast<double>(SDL_GetTicks()) / 1000.0; }
 
 App::App(SDL_Window* window, SDL_Renderer* renderer, Paths paths)
     : window_(window), renderer_(renderer), paths_(std::move(paths)), textures_(renderer) {
+    ui::setLinkHost(this);                                 // the links in texts open through the shell
     // the per-user folder: --prefs <dir> for tests, otherwise the system's
     std::string prefDir = paths_.prefDir;
     if (prefDir.empty()) {
@@ -124,6 +125,45 @@ void App::showModule(const std::string& id) {
     active_ = m;
 }
 
+void App::openLink(const std::string& target) {
+    if (target.starts_with("http://") || target.starts_with("https://")) {
+        SDL_OpenURL(target.c_str());
+        return;
+    }
+    const SeeTarget t = content_.resolveLink(target);
+    Place p;
+    switch (t.type) {
+        case SeeTarget::Type::Entry: navigate(t.kind, t.id, true); return;          // (navigate writes the history)
+        case SeeTarget::Type::Category:
+            showModule(kindPage(t.kind));
+            p.module = kindPage(t.kind);
+            p.label = kindTitle(t.kind);
+            break;
+        case SeeTarget::Type::Rule: {
+            openRule(*this, t.id, t.section, t.line);
+            const RuleNode* r = content_.rule(t.id);
+            p.rule = t.id;
+            p.ruleSection = t.section;
+            p.line = t.line;
+            p.label = r ? r->title : t.label;
+            if (r && t.section >= 0 && t.section < static_cast<int>(r->sections.size())) p.label += " › " + r->sections[static_cast<size_t>(t.section)].title;
+            p.module = "rules";
+            break;
+        }
+        case SeeTarget::Type::Section:
+            ui::openIntroSection(*this, t.kind, t.id, t.line);
+            p.module = kindPage(t.kind);
+            p.introSection = true;
+            p.introKind = t.kind;
+            p.section = t.id;
+            p.line = t.line;
+            p.label = std::string(kindTitle(t.kind)) + " › " + t.label;
+            break;
+        case SeeTarget::Type::None: notify("Nothing to open for \"" + target + "\""); return;
+    }
+    pushPlace(std::move(p));
+}
+
 // The gear: opens the web server page (the only settings there are), and closes it again (back to what was open before).
 void App::toggleServerPage() {
     if (active_ && std::string(active_->id()) == "web") {
@@ -154,30 +194,49 @@ void App::navigate(Kind kind, int id, bool pushHistory) {
     sel_ = s;
     hasSel_ = true;
     active_ = h;
-    if (pushHistory && !(historyPos_ >= 0 && history_[static_cast<size_t>(historyPos_)] == s)) {
-        history_.resize(static_cast<size_t>(historyPos_ + 1));
-        history_.push_back(s);
-        historyPos_ = static_cast<int>(history_.size()) - 1;
+    if (pushHistory) {
+        Place p;
+        p.module = h->id();
+        p.entry = true;
+        p.sel = s;
+        p.label = content_.titleOf(kind, id);
+        pushPlace(std::move(p));
     }
     h->onSelect(s);
     noteRecent(s);
 }
 
-void App::goBack() {
-    if (historyPos_ > 0) {
-        --historyPos_;
-        const Selection s = history_[static_cast<size_t>(historyPos_)];
-        navigate(s.kind, s.id, false);
-    }
+void App::pushPlace(Place p) {
+    recorded_ = active_;
+    if (historyPos_ >= 0 && history_[static_cast<size_t>(historyPos_)] == p) return;
+    history_.resize(static_cast<size_t>(historyPos_ + 1));
+    history_.push_back(std::move(p));
+    if (history_.size() > 100) history_.erase(history_.begin());
+    historyPos_ = static_cast<int>(history_.size()) - 1;
 }
 
-void App::goForward() {
-    if (historyPos_ + 1 < static_cast<int>(history_.size())) {
-        ++historyPos_;
-        const Selection s = history_[static_cast<size_t>(historyPos_)];
-        navigate(s.kind, s.id, false);
+void App::showPlace(const Place& p) {
+    if (p.entry) {
+        navigate(p.sel.kind, p.sel.id, false);
+    } else if (p.rule) {
+        openRule(*this, p.rule, p.ruleSection, p.line);
+    } else if (p.introSection) {
+        ui::openIntroSection(*this, p.introKind, p.section, p.line);
+    } else {
+        showModule(p.module);
     }
+    recorded_ = active_;
 }
+
+void App::goToHistory(int pos) {
+    if (pos < 0 || pos >= static_cast<int>(history_.size())) return;
+    historyPos_ = pos;
+    showPlace(history_[static_cast<size_t>(pos)]);
+}
+
+void App::goBack() { goToHistory(historyPos_ - 1); }
+
+void App::goForward() { goToHistory(historyPos_ + 1); }
 
 // ---------------------------------------------------------------------------- saved state
 
@@ -534,6 +593,10 @@ void App::drawTopBar() {
     IWebStatus* web = serviceOf<IWebStatus>(*this);
     if (web) chipsW += U(120);                                  // the web server chip
     ISearch* search = serviceOf<ISearch>(*this);
+    const float historyW = U(96);
+    drawHistoryButtons();
+    ImGui::SameLine(0, 8);
+    chipsW += historyW;
     if (search) {
         ImGui::SetNextItemWidth(std::max(180.0f, ImGui::GetContentRegionAvail().x - chipsW - U(30)));
         ImGui::PushItemFlag(ImGuiItemFlags_NoNav, !focusSearch_ && !searchActive_);   // reachable by Ctrl+K only
@@ -560,6 +623,35 @@ void App::drawTopBar() {
     }
     drawSourceChips();
     drawGearButton();
+    ImGui::PopItemFlag();
+}
+
+// Back, Forward and the list of places visited (newest first; the one you are at is marked).
+void App::drawHistoryButtons() {
+    ImGui::PushItemFlag(ImGuiItemFlags_NoNav, true);
+    const bool canBack = historyPos_ > 0, canForward = historyPos_ + 1 < static_cast<int>(history_.size());
+    ImGui::BeginDisabled(!canBack);
+    if (ImGui::Button("<##back")) goBack();
+    ImGui::EndDisabled();
+    if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
+        ImGui::SetTooltip(canBack ? ("Back to " + history_[static_cast<size_t>(historyPos_ - 1)].label + " (Alt+Left)").c_str() : "Back (Alt+Left)");
+    ImGui::SameLine(0, 4);
+    ImGui::BeginDisabled(!canForward);
+    if (ImGui::Button(">##forward")) goForward();
+    ImGui::EndDisabled();
+    if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
+        ImGui::SetTooltip(canForward ? ("Forward to " + history_[static_cast<size_t>(historyPos_ + 1)].label + " (Alt+Right)").c_str() : "Forward (Alt+Right)");
+    ImGui::SameLine(0, 4);
+    if (ImGui::Button("History")) ImGui::OpenPopup("##history");
+    if (ImGui::BeginPopup("##history")) {
+        if (history_.empty()) ImGui::TextColored(kGrey, "Nothing visited yet");
+        for (int i = static_cast<int>(history_.size()) - 1; i >= 0; --i) {
+            const Place& p = history_[static_cast<size_t>(i)];
+            const std::string text = (p.label.empty() ? p.module : p.label) + "##h" + std::to_string(i);
+            if (ImGui::Selectable(text.c_str(), i == historyPos_)) goToHistory(i);
+        }
+        ImGui::EndPopup();
+    }
     ImGui::PopItemFlag();
 }
 
@@ -718,6 +810,8 @@ void App::frame(float width, float height) {
     if (ImGui::IsKeyPressed(ImGuiKey_Escape, false) && !io.WantTextInput && active_ && std::string(active_->id()) == "web") toggleServerPage();
     if (io.KeyAlt && ImGui::IsKeyPressed(ImGuiKey_LeftArrow, false)) goBack();
     if (io.KeyAlt && ImGui::IsKeyPressed(ImGuiKey_RightArrow, false)) goForward();
+    if (ImGui::IsMouseClicked(3) && !io.WantTextInput) goBack();                   // the mouse's side buttons
+    if (ImGui::IsMouseClicked(4) && !io.WantTextInput) goForward();
     if (io.KeyCtrl) {
         const bool plus = ImGui::IsKeyPressed(ImGuiKey_Equal) || ImGui::IsKeyPressed(ImGuiKey_KeypadAdd);
         const bool minus = ImGui::IsKeyPressed(ImGuiKey_Minus) || ImGui::IsKeyPressed(ImGuiKey_KeypadSubtract);
@@ -740,6 +834,12 @@ void App::frame(float width, float height) {
 
     ImGui::BeginChild("##nav", ImVec2(navW, bodyH));
     drawNav();
+    if (active_ && active_ != recorded_) {                 // a page opened from the rail (or the gear) is a place too
+        Place p;
+        p.module = active_->id();
+        p.label = active_->title();
+        pushPlace(std::move(p));
+    }
     const bool navFocused = ImGui::IsWindowFocused(ImGuiFocusedFlags_ChildWindows);   // not RootAndChildWindows: the root is "##root", i.e. the whole app
     ImGui::EndChild();
     ImGui::SameLine();

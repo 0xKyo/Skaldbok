@@ -11,7 +11,7 @@ import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-PACK = ROOT / "examples" / "frostmarch-tales"
+PACK = ROOT / "docs" / "examples" / "frostmarch-tales"
 OUT = ROOT / "tests" / "fixtures"
 OUT.mkdir(parents=True, exist_ok=True)
 

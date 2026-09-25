@@ -35,10 +35,11 @@ public:
     void onSelect(const Selection&) override {}
 
     void drawFull() override {
-        const Intro& intro = host_.content().introOf(Kind::Gear);
-        if (intro.empty()) ImGui::TextColored(kGrey, "Nothing here yet.");
-        else introPage(intro, "##gear");
+        introPage(host_, Kind::Gear, edit_, "##gear");
     }
+
+private:
+    IntroEdit edit_;
 };
 
 }  // namespace

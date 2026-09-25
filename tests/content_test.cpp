@@ -35,15 +35,70 @@ bool hasWarning(const PackInfo& p, const std::string& needle) {
 int main(int argc, char** argv) {
     const std::string dataDir = test::dataDir(argc, argv);
     const std::string coreDir = dataDir + "/packs/core";
-    const std::string example = test::sourceDir() + "/examples/frostmarch-tales";
+    const std::string example = test::sourceDir() + "/docs/examples/frostmarch-tales";
 
-    // ------------------------------------------------------------------------ the built-in pack: Core, with no manifest.json
+    // ------------------------------------------------------------------------ the built-in pack: Core, its items and its system files
     ContentStore core;
     core.load({PackSpec{coreDir, true, true}});
     check(core.packs().size() == 1 && core.packs()[0].id == "core" && core.packs()[0].loaded && core.packs()[0].error.empty(),
-          "Core loads: its id is the folder's name, with no manifest.json: " + core.packs()[0].error);
-    check(!test::exists(coreDir + "/manifest.json") && core.packs()[0].name == "Dragonbane Core" && core.packs()[0].author == "Free League",
-          "Core describes itself in the header of rules.json (name, author...)");
+          "Core loads: " + core.packs()[0].error);
+    check(test::exists(coreDir + "/manifest.json") && core.packs()[0].name == "Dragonbane Core" && core.packs()[0].author == "Free League",
+          "Core describes itself in its manifest.json (name, author...)");
+    check(!test::exists(coreDir + "/rules.json") && test::exists(systemDirOf(coreDir) + "/rules.json") && core.rules().size() > 20,
+          "Core's rules are in data/system, not in the pack folder");
+    check(!core.introOf(Kind::Spell).empty() && !core.introOf(Kind::Monster).empty() && !core.introOf(Kind::Skill).empty(),
+          "each page keeps its intro, read from data/system");
+    check(core.introOf(Kind::Spell).file.ends_with("/system/spells.json"), "an intro remembers the file it came from (the editor writes it back)");
+    {
+        // the keywords a text can link to: a category (any case), an entry by name, a rule by title, a full key; junk goes nowhere
+        const SeeTarget cat = core.resolveLink("Spells"), cat2 = core.resolveLink("spells");
+        check(cat.type == SeeTarget::Type::Category && cat.kind == Kind::Spell && cat2.type == SeeTarget::Type::Category, "a link \"Spells\" is the category");
+        const SeeTarget dwarf = core.resolveLink("dwarf");
+        check(dwarf.type == SeeTarget::Type::Entry && dwarf.kind == Kind::Kin, "a link \"dwarf\" is that entry");
+        check(core.resolveLink(core.keyOf(Kind::Kin, dwarf.id)).type == SeeTarget::Type::Entry, "a full key works too");
+        check(core.resolveLink("Melee Combat").type == SeeTarget::Type::Rule, "a link \"Melee Combat\" is that rule");
+        const SeeTarget push = core.resolveLink("pushing your roll"), push2 = core.resolveLink("skills/Pushing Your Roll"), push3 = core.resolveLink("spells/Pushing Your Roll");
+        check(push.type == SeeTarget::Type::Section && push.kind == Kind::Skill && push2.type == SeeTarget::Type::Section && push2.id == push.id,
+              "a link to a section of an intro (\"Pushing Your Roll\", or \"skills/...\")");
+        check(push3.type == SeeTarget::Type::None, "\"spells/Pushing Your Roll\" is not in the Spells intro");
+        check(core.tableByName("sizes") && core.tableByName("SIZES")->rows.size() == 5, "a table by its title, from an intro (\"{{table: Sizes}}\" shows it anywhere)");
+        check(core.tableByName("no such table") == nullptr, "and a table that is not there is null");
+        // keywords: a word marked {{key: word}} where it is explained, linked [[word]] from anywhere
+        const SeeTarget boon = core.resolveLink("Boon"), hp = core.resolveLink("hp");
+        check(core.keywords().size() >= 20 && boon.type == SeeTarget::Type::Section && boon.kind == Kind::Skill && hp.type == SeeTarget::Type::Rule,
+              "keywords of Core: 'boon' is a section of the Skills intro, 'hp' a rule");
+        {
+            bool markers = false;
+            for (const RuleNode& r : core.rules()) {
+                markers |= r.body.find("{{key:") != std::string::npos;
+                for (const RuleNode::Section& sec : r.sections) markers |= sec.body.find("{{key:") != std::string::npos;
+            }
+            for (int k = 0; k < kKindCount; ++k)
+                for (const RuleNode::Section& sec : core.introOf(static_cast<Kind>(k)).sections) markers |= sec.body.find("{{key:") != std::string::npos;
+            check(!markers, "the {{key: ...}} markers are taken out of the texts that are shown");
+            // every [[link]] written in the rules and intros of Core points to something
+            int links = 0, dead = 0;
+            std::string firstDead;
+            auto scan = [&](const std::string& text) {
+                for (size_t at = text.find("[["); at != std::string::npos; at = text.find("[[", at + 2)) {
+                    const size_t end = text.find("]]", at);
+                    if (end == std::string::npos) break;
+                    std::string inner = text.substr(at + 2, end - at - 2);
+                    if (const size_t bar = inner.find('|'); bar != std::string::npos) inner = inner.substr(bar + 1);
+                    ++links;
+                    if (core.resolveLink(inner).type == SeeTarget::Type::None && ++dead == 1) firstDead = inner;
+                }
+            };
+            for (const RuleNode& r : core.rules()) {
+                scan(r.body);
+                for (const RuleNode::Section& sec : r.sections) scan(sec.body);
+            }
+            for (int k = 0; k < kKindCount; ++k)
+                for (const RuleNode::Section& sec : core.introOf(static_cast<Kind>(k)).sections) scan(sec.body);
+            check(links > 50 && dead == 0, "every [[link]] of Core's texts points to something (" + std::to_string(links) + " links, first dead: " + firstDead + ")");
+        }
+        check(core.resolveLink("no such thing").type == SeeTarget::Type::None && core.resolveLink("").type == SeeTarget::Type::None, "and a link to nothing is nothing");
+    }
     {
         int books = 0;
         for (const SourceInfo& s : core.sources()) books += s.book;
@@ -472,9 +527,9 @@ int main(int argc, char** argv) {
                 if (t.title == "Weapons & Armor Terms") termsTable = true;
                 if (t.title == "Armor & Helmets") armorTable = true;
             }
-            check(!gi.body.empty() && gi.sections.size() == 2 && gi.sections[0].title == "Supply" && gi.sections[1].title == "Weapons & Armor" && gi.tables.size() == 17 &&
+            check(gi.body.empty() && gi.sections.size() == 3 && gi.sections[0].title == "Intro" && gi.sections[1].title == "Supply" && gi.sections[2].title == "Weapons & Armor" && gi.tables.size() == 17 &&
                       termsTable && armorTable,
-                  "gear.json's intro (moved from the Gear chapter of Rules) has a body, its two sections and all 17 tables");
+                  "gear.json's intro (moved from the Gear chapter of Rules) has its Intro and two sections, no naked body, and all 17 tables");
             check(core.ruleByKey("core/rule/gear-equipment") == 0, "the Gear chapter no longer exists as a rule: it is gear.json's intro now");
             const SeeTarget w1 = core.seeTarget("weapons"), a1 = core.seeTarget("armor"), g1 = core.seeTarget("gear");
             check(w1.type == SeeTarget::Type::Category && w1.kind == Kind::Weapon && a1.type == SeeTarget::Type::Category && a1.kind == Kind::Armor &&
@@ -494,15 +549,15 @@ int main(int argc, char** argv) {
         ContentStore ic;
         ic.load({PackSpec{coreDir, true, true}, PackSpec{root + "/intro", false, true}});
         check(ic.introOf(Kind::Spell).body == "Homebrew magic works differently here.", "a pack's \"intro\" for a kind with none yet is picked up");
-        check(!core.introOf(Kind::Skill).body.empty() && core.introOf(Kind::Skill).sections.size() >= 10,
-              "skills.json's intro (moved from the Skills chapter of Rules) has a body and named sections, like a rule");
+        check(core.introOf(Kind::Skill).body.empty() && core.introOf(Kind::Skill).sections.size() >= 10,
+              "skills.json's intro (moved from the Skills chapter of Rules) has named sections and no naked body");
         {
             const Intro& spi = core.introOf(Kind::Spell);
             bool hasMishaps = false;
             for (const DataTable& t : spi.tables)
                 if (t.title == "Magical Mishaps" && t.dice == "D20") hasMishaps = true;
-            check(!spi.body.empty() && spi.sections.size() >= 30 && hasMishaps,
-                  "spells.json's intro (moved from the Magic chapter of Rules) has a body, named sections and its Magical Mishaps table");
+            check(spi.body.empty() && spi.sections[0].title == "Intro" && spi.sections.size() >= 30 && hasMishaps,
+                  "spells.json's intro (moved from the Magic chapter of Rules) has an Intro section, named sections and its Magical Mishaps table");
             for (const char* key : {"core/rule/magic-2", "core/rule/casting-spells", "core/rule/learning-magic", "core/rule/spell-list"})
                 check(core.ruleByKey(key) == 0, (std::string(key) + " no longer exists as a rule: it is part of Spells' intro now").c_str());
         }
@@ -511,8 +566,8 @@ int main(int argc, char** argv) {
             bool hasAnimals = false;
             for (const DataTable& t : mi.tables)
                 if (t.title == "Common Animals" && t.rows.size() == 11) hasAnimals = true;
-            check(!mi.body.empty() && mi.sections.size() >= 15 && hasAnimals,
-                  "creatures.json's intro (moved from the Bestiary chapter of Rules) has a body, named sections and its own table");
+            check(mi.body.empty() && mi.sections.size() >= 2 && hasAnimals,
+                  "creatures.json's intro (moved from the Bestiary chapter of Rules) has named sections, no naked body and its own table");
             for (const char* key : {"core/rule/bestiary", "core/rule/ferocity", "core/rule/monster-attacks", "core/rule/common-animals"})
                 check(core.ruleByKey(key) == 0, (std::string(key) + " no longer exists as a rule: it is part of Creatures' intro now").c_str());
             check(core.idByKey(Kind::Table, "core/table/common-animals-rule") == 0 && core.idByKey(Kind::Table, "#71") == 0,

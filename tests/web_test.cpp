@@ -57,7 +57,7 @@ Env makeEnv(const std::string& name, bool realData = false) {
     const std::string fixtures = test::sourceDir() + "/tests/fixtures/web";
     e.prefs = e.root + "/prefs";
     copyTree(fixtures + "/prefs", e.prefs);
-    copyTree(test::sourceDir() + "/examples/frostmarch-tales", e.prefs + "/packs/frostmarch");
+    copyTree(test::sourceDir() + "/docs/examples/frostmarch-tales", e.prefs + "/packs/frostmarch");
     test::write(e.prefs + "/packs/hidden-pack/manifest.json", "{\"format\":1,\"id\":\"hidden-pack\",\"name\":\"Hidden\"}");
     test::write(e.prefs + "/packs/hidden-pack/spells.json", "{\"spells\":[{\"name\":\"Hidden Spell\"}]}");
     if (realData) {

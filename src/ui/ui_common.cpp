@@ -184,68 +184,201 @@ void focusFrame() {
     dl->PopClipRect();
 }
 
-void introPage(const Intro& intro, const char* id) {
-    ImGui::PushItemFlag(ImGuiItemFlags_NoNav, true);           // the arrows scroll the text (keyScroll), not ImGui's nav
-    ImGui::BeginChild(id, ImVec2(0, 0));
-    keyScroll();
-    if (!intro.body.empty()) paragraphs(intro.body, "introbody");
-    for (size_t i = 0; i < intro.sections.size(); ++i) {
-        const RuleNode::Section& sec = intro.sections[i];
-        ImGui::Spacing();
-        bigText(sec.title.c_str(), 1.1f, kGold);
-        paragraphs(sec.body, ("introsec" + std::to_string(i)).c_str());
+// ---- links inside a text ------------------------------------------------------------------------------------------------
+// "[[Keyword]]" and "[[label|target]]" (a keyword or reference), "[label](target)" (a web address or reference): clickable words.
+namespace {
+Host* g_linkHost = nullptr;
+
+struct Piece {
+    std::string text;
+    std::string target;      // empty: plain text
+};
+
+std::vector<Piece> parsePieces(const std::string& s) {
+    std::vector<Piece> out;
+    std::string plain;
+    auto flush = [&] {
+        if (!plain.empty()) out.push_back({plain, {}});
+        plain.clear();
+    };
+    for (size_t i = 0; i < s.size();) {
+        if (s.compare(i, 2, "[[") == 0) {
+            const size_t end = s.find("]]", i + 2);
+            if (end != std::string::npos && end > i + 2) {
+                const std::string inner = s.substr(i + 2, end - i - 2);
+                const size_t bar = inner.find('|');
+                flush();
+                out.push_back(bar == std::string::npos ? Piece{inner, inner} : Piece{inner.substr(0, bar), inner.substr(bar + 1)});
+                i = end + 2;
+                continue;
+            }
+        } else if (s[i] == '[') {
+            const size_t close = s.find(']', i + 1);
+            if (close != std::string::npos && close > i + 1 && close + 1 < s.size() && s[close + 1] == '(') {
+                const size_t end = s.find(')', close + 2);
+                if (end != std::string::npos && end > close + 2) {
+                    flush();
+                    out.push_back({s.substr(i + 1, close - i - 1), s.substr(close + 2, end - close - 2)});
+                    i = end + 1;
+                    continue;
+                }
+            }
+        }
+        plain += s[i++];
     }
-    for (size_t i = 0; i < intro.tables.size(); ++i) {
-        ImGui::PushID(static_cast<int>(i));
-        ImGui::Spacing();
-        bigText(intro.tables[i].title.c_str(), 1.1f, kAccent);
-        tableGrid(intro.tables[i], -1);
-        ImGui::PopID();
-    }
-    ImGui::EndChild();
-    ImGui::PopItemFlag();
+    flush();
+    return out;
 }
 
-void introTabs(IntroTabs& tabs, const char* id, const char* pageLabel, const Intro& intro, const std::function<void()>& page) {
-    if (intro.empty()) {
-        page();
-        return;
-    }
-    if (!ImGui::BeginTabBar(id)) return;
-    if (pageKeys()) {
-        if (tabs.showingIntro && ImGui::IsKeyPressed(ImGuiKey_RightArrow)) tabs.wantPage = true;
-        if (!tabs.showingIntro && ImGui::IsKeyPressed(ImGuiKey_LeftArrow)) tabs.wantIntro = true;
-    }
-    ImGui::PushItemFlag(ImGuiItemFlags_NoNav, true);
-    const bool introOpen = ImGui::BeginTabItem("Intro", nullptr, tabs.wantIntro ? ImGuiTabItemFlags_SetSelected : 0);
-    ImGui::PopItemFlag();
-    tabs.showingIntro = introOpen;
-    if (introOpen) {
-        introPage(intro, "##intro");
-        ImGui::EndTabItem();
-    }
-    ImGui::PushItemFlag(ImGuiItemFlags_NoNav, true);
-    const bool pageOpen = ImGui::BeginTabItem(pageLabel, nullptr, tabs.wantPage ? ImGuiTabItemFlags_SetSelected : 0);
-    ImGui::PopItemFlag();
-    tabs.wantIntro = tabs.wantPage = false;
-    if (pageOpen) {
-        page();
-        ImGui::EndTabItem();
-    }
-    ImGui::EndTabBar();
+bool hasLinks(const std::vector<Piece>& pieces) {
+    for (const Piece& p : pieces)
+        if (!p.target.empty()) return true;
+    return false;
 }
 
-void paragraphs(const std::string& text, const char* id) {
+// The pieces as wrapped words; the linked ones are underlined and clickable.
+void flowPieces(const std::vector<Piece>& pieces) {
+    struct Word {
+        std::string text, target;
+        bool spaceBefore;
+    };
+    std::vector<Word> words;
+    bool space = false;
+    for (const Piece& p : pieces) {
+        size_t pos = 0;
+        for (int part = 0; pos <= p.text.size(); ++part) {
+            size_t end = p.text.find_first_of(" \n", pos);
+            if (end == std::string::npos) end = p.text.size();
+            if (part > 0) space = true;
+            if (end > pos) {
+                words.push_back({p.text.substr(pos, end - pos), p.target, space && !words.empty()});
+                space = false;
+            }
+            pos = end + 1;
+        }
+    }
+    const float wrapW = std::max(1.0f, ImGui::GetContentRegionAvail().x);
+    const ImVec2 origin = ImGui::GetCursorScreenPos();
+    ImDrawList* dl = ImGui::GetWindowDrawList();
+    const float lh = lineH() + 1, spaceW = ImGui::CalcTextSize(" ").x;
+    const ImU32 plainColor = ImGui::GetColorU32(ImGuiCol_Text);
+    const ImVec4 linkInk(0.09f, 0.29f, 0.62f, 1.0f);
+    float x = 0, y = 0;
+    for (const Word& w : words) {
+        const float width = ImGui::CalcTextSize(w.text.c_str()).x;
+        float gap = w.spaceBefore ? spaceW : 0;
+        if (x > 0 && x + gap + width > wrapW) {
+            x = 0;
+            y += lh;
+            gap = 0;
+        }
+        const float gapFrom = x;
+        x += gap;
+        const ImVec2 at(origin.x + x, origin.y + y);
+        if (w.target.empty()) {
+            dl->AddText(at, plainColor, w.text.c_str());
+        } else {
+            const bool web = w.target.starts_with("http://") || w.target.starts_with("https://");
+            const bool known = web || !g_linkHost || g_linkHost->content().resolveLink(w.target).type != SeeTarget::Type::None;
+            const ImVec2 lo = at, hi(at.x + width, at.y + lh);
+            const bool hot = ImGui::IsWindowHovered() && ImGui::IsMouseHoveringRect(lo, hi);
+            ImVec4 ink = known ? linkInk : kRed;
+            if (hot) ink = ImVec4(ink.x * 0.6f, ink.y * 0.6f, std::min(1.0f, ink.z + 0.2f), 1.0f);
+            const ImU32 col = ImGui::GetColorU32(ink);
+            dl->AddText(at, col, w.text.c_str());
+            const bool sameLinkAsPrevious = &w != &words.front() && (&w - 1)->target == w.target && gap > 0;   // one underline across a link's words
+            dl->AddLine(ImVec2(sameLinkAsPrevious ? origin.x + gapFrom : lo.x, hi.y - 1), ImVec2(hi.x, hi.y - 1), col, hot ? 2.0f : 1.0f);
+            if (hot) {
+                ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+                ImGui::SetTooltip("%s", known ? w.target.c_str() : (w.target + " (nothing with that name)").c_str());
+                if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && g_linkHost) g_linkHost->openLink(w.target);
+            }
+        }
+        x += width;
+    }
+    ImGui::Dummy(ImVec2(wrapW, y + lh));
+}
+}  // namespace
+
+void setLinkHost(Host* host) { g_linkHost = host; }
+
+static std::string trimmedLine(const std::string& s) {
+    const size_t a = s.find_first_not_of(" \t\r");
+    if (a == std::string::npos) return {};
+    return s.substr(a, s.find_last_not_of(" \t\r") + 1 - a);
+}
+
+bool tableMarker(const std::string& line, std::string& name) {
+    const std::string t = trimmedLine(line);
+    if (!t.starts_with("{{table:") || !t.ends_with("}}")) return false;
+    name = trimmedLine(t.substr(8, t.size() - 10));
+    return !name.empty();
+}
+
+// A line's text (after its bullet or label): with links it is drawn word by word, without them it stays selectable and copyable.
+static void lineText(const char* id, const std::string& text) {
+    if (g_linkHost) {
+        const std::vector<Piece> pieces = parsePieces(text);
+        if (hasLinks(pieces)) {
+            flowPieces(pieces);
+            return;
+        }
+    }
+    copyableText(id, text);
+}
+
+namespace {
+std::string g_scrollKey;
+int g_scrollLine = -1;
+}  // namespace
+
+void scrollToLine(const std::string& key, int line) {
+    g_scrollKey = key;
+    g_scrollLine = line;
+}
+
+void paragraphs(const std::string& text, const char* id, const char* scrollKey, int firstLine) {
     ImGui::PushID(id);
     size_t pos = 0;
-    int line = 0;
+    int line = 0, physical = firstLine;
     while (pos <= text.size()) {
         size_t end = text.find('\n', pos);
         if (end == std::string::npos) end = text.size();
-        const std::string l = text.substr(pos, end - pos);
+        std::string l = text.substr(pos, end - pos);
         pos = end + 1;
+        if (scrollKey && g_scrollLine == physical && g_scrollKey == scrollKey) {
+            ImGui::SetScrollHereY(0.1f);                      // reached from a link: this line goes near the top
+            g_scrollLine = -1;
+        }
+        ++physical;
+        if (!l.empty() && l.back() == '\r') l.pop_back();
+        // nesting: every two leading spaces (a tab counts as two) push the line one level in
+        int spaces = 0;
+        size_t lead = 0;
+        while (lead < l.size() && (l[lead] == ' ' || l[lead] == '\t')) spaces += l[lead++] == '\t' ? 2 : 1;
+        l.erase(0, lead);
+        const int level = std::min(spaces / 2, 6);
         if (l.empty()) {
             ImGui::Dummy(ImVec2(0, 4));
+            if (end >= text.size()) break;
+            continue;
+        }
+        const float indent = U(20) * static_cast<float>(level);
+        if (indent > 0) ImGui::Indent(indent);
+        if (std::string tableName; tableMarker(l, tableName)) {          // "{{table: Name}}": that table, right here
+            const DataTable* t = g_linkHost ? g_linkHost->content().tableByName(tableName) : nullptr;
+            if (t) {
+                ImGui::PushID(line++);
+                ImGui::Spacing();
+                bigText(t->title.c_str(), 1.1f, kAccent);
+                tableGrid(*t, -1);
+                ImGui::PopID();
+            } else {
+                ImGui::TextColored(kRed, "No table called \"%s\"", tableName.c_str());
+            }
+            ImGui::Dummy(ImVec2(0, 2));
+            if (indent > 0) ImGui::Unindent(indent);
+            if (end >= text.size()) break;
             continue;
         }
         const std::string lineId = "##l" + std::to_string(line++);
@@ -258,19 +391,20 @@ void paragraphs(const std::string& text, const char* id) {
             ImGui::TextUnformatted(l.substr(0, colon + 1).c_str());
             ImGui::PopStyleColor();
             ImGui::SameLine(0, 5);
-            copyableText(lineId.c_str(), l.substr(colon + 1));
+            lineText(lineId.c_str(), l.substr(colon + 1));
         } else if (l.starts_with("- ") || l.starts_with("* ")) {          // "- Item text" -> a bulleted line
-            ImGui::TextUnformatted("\xE2\x80\xA2");                       // "•"
+            ImGui::TextUnformatted(level == 0 ? "\xE2\x80\xA2" : level == 1 ? "\xE2\x80\x93" : "\xC2\xB7");   // bullet, then en dash, then middle dot
             ImGui::SameLine(0, 8);
-            copyableText(lineId.c_str(), l.substr(2));
+            lineText(lineId.c_str(), l.substr(2));
         } else if (ordered) {                                             // "3. Item text" -> a numbered line, kept as written
             ImGui::TextUnformatted(l.substr(0, digits + 1).c_str());
             ImGui::SameLine(0, 8);
-            copyableText(lineId.c_str(), l.substr(digits + 2));
+            lineText(lineId.c_str(), l.substr(digits + 2));
         } else {
-            copyableText(lineId.c_str(), l);
+            lineText(lineId.c_str(), l);
         }
         ImGui::Dummy(ImVec2(0, 2));
+        if (indent > 0) ImGui::Unindent(indent);
         if (end >= text.size()) break;
     }
     ImGui::PopID();
@@ -350,45 +484,77 @@ void tableGrid(const DataTable& t, int highlightRow) {
     const bool hasRoll = !t.dice.empty();
     const int cols = static_cast<int>(t.columns.size()) + (hasRoll ? 1 : 0);
     if (cols == 0) return;
-    // Short columns ("Uncommon", "2D8", "12 gold") get exactly the width their widest cell needs so they never wrap
-    // mid-word; long text columns share whatever is left in proportion to their content.
-    const float pad = ImGui::GetStyle().CellPadding.x * 2.0f + U(4.0f);
+    // Every column has a size it never goes below: its widest single word (or its header) plus some padding, so a word is never cut in
+    // half. Above that, a column wants the room its longest cell needs on one line ("Bite (skill level 8, damage D3)"), but never more
+    // than kMultiline: a longer text is written on several lines. When everything fits on one line, short columns get exactly that and the
+    // long ones share the rest; when it does not, each column keeps its minimum and takes a share of what is left in proportion to what
+    // it wants, and only when even the minimums do not fit does the table scroll sideways.
+    const float pad = ImGui::GetStyle().CellPadding.x * 2.0f + U(8.0f);
+    const float kMultiline = U(320.0f);
     struct Col {
-        float width;
-        bool fixed;
+        float minW, want;
+        bool shortCol;
     };
     std::vector<Col> layout;
-    float need = hasRoll ? U(56.0f) : 0.0f;
+    if (hasRoll) layout.push_back({U(56.0f), U(56.0f), true});
     for (size_t c = 0; c < t.columns.size(); ++c) {
-        float widest = ImGui::CalcTextSize(t.columns[c].c_str()).x;
-        for (const TableRow& r : t.rows)
-            if (c < r.cells.size()) widest = std::max(widest, ImGui::CalcTextSize(r.cells[c].c_str()).x);
-        if (widest <= U(150.0f)) {
-            layout.push_back({widest + U(2.0f), true});     // ImGui adds the cell padding itself
-            need += widest + pad;
-        } else {
-            layout.push_back({std::min(widest, U(600.0f)), false});
-            need += U(190.0f) + pad;                         // a text column is never squeezed below this
+        const float header = ImGui::CalcTextSize(t.columns[c].c_str()).x;
+        float single = header, word = header;
+        for (const TableRow& r : t.rows) {
+            if (c >= r.cells.size()) continue;
+            const std::string& cell = r.cells[c];
+            single = std::max(single, ImGui::CalcTextSize(cell.c_str()).x);
+            size_t pos = 0;
+            while (pos < cell.size()) {                                    // its widest word
+                size_t end = cell.find_first_of(" \n", pos);
+                if (end == std::string::npos) end = cell.size();
+                if (end > pos) word = std::max(word, ImGui::CalcTextSize(cell.c_str() + pos, cell.c_str() + end).x);
+                pos = end + 1;
+            }
         }
+        const float minW = word + pad;
+        const float want = std::max(minW, std::min(single + pad, kMultiline));
+        layout.push_back({minW, want, single + pad <= kMultiline});
     }
-    // Stretch columns need a defined width; only scroll sideways when the table truly does not fit. The sideways scroll belongs to a box
-    // that is as tall as the table (a table's own ScrollX would be as tall as the room left in the window: several tables one below the
-    // other, as in a rule's section, would be cut off).
-    const bool scroll = need > ImGui::GetContentRegionAvail().x;
-    ImGuiTableFlags flags = ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders | ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingStretchProp;
+    float sumMin = 0, sumWant = 0, sumSpread = 0;
+    for (const Col& c : layout) {
+        sumMin += c.minW;
+        sumWant += c.want;
+        sumSpread += c.want - c.minW;
+    }
+    const float avail = ImGui::GetContentRegionAvail().x;
+    const bool fits = sumWant <= avail;
+    // Only when even the minimums do not fit does the table scroll sideways. The sideways scroll belongs to a box that is as tall as the
+    // table (a table's own ScrollX would be as tall as the room left in the window: several tables one below the other, as in a rule's
+    // section, would be cut off).
+    const bool scroll = sumMin > avail;
+    // ImGui keeps a column's width from the first frame the table exists (and in imgui.ini), so a width worked out from the room there is
+    // must come with a table of its own for that room: the id says which, and nothing of an older layout is carried over.
+    ImGuiTableFlags flags = ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders | ImGuiTableFlags_SizingStretchProp | ImGuiTableFlags_NoSavedSettings;
+    const std::string gridId = std::string("##grid") + (fits ? "f" : "s") + std::to_string(static_cast<int>(avail)) + "_" + std::to_string(t.rows.size());
     if (scroll && !ImGui::BeginChild("##gridbox", ImVec2(0, 0), ImGuiChildFlags_AutoResizeY, ImGuiWindowFlags_HorizontalScrollbar)) {
         ImGui::EndChild();
         return;
     }
-    const bool shown = ImGui::BeginTable("##grid", cols, flags, ImVec2(scroll ? need : 0.0f, 0));
+    const bool shown = ImGui::BeginTable(gridId.c_str(), cols, flags, ImVec2(scroll ? sumMin : 0.0f, 0));
     if (!shown) {
         if (scroll) ImGui::EndChild();
         return;
     }
-    if (hasRoll) ImGui::TableSetupColumn(t.dice.c_str(), ImGuiTableColumnFlags_WidthFixed, U(56.0f));
-    for (size_t c = 0; c < t.columns.size(); ++c)
-        ImGui::TableSetupColumn(t.columns[c].c_str(), layout[c].fixed ? ImGuiTableColumnFlags_WidthFixed : ImGuiTableColumnFlags_WidthStretch,
-                                layout[c].width);
+    const float spare = std::max(0.0f, avail - sumMin);
+    // (the last column always stretches: with only fixed columns the room left over would show as an empty column at the right)
+    size_t li = 0;
+    auto setup = [&](const char* name, const Col& col, bool last) {
+        if (fits) {                                                         // short: exactly what it needs; long: shares the rest
+            if (col.shortCol && !last) ImGui::TableSetupColumn(name, ImGuiTableColumnFlags_WidthFixed, col.want);
+            else ImGui::TableSetupColumn(name, ImGuiTableColumnFlags_WidthStretch, col.want);
+        } else {
+            const float extra = sumSpread > 0 ? spare * (col.want - col.minW) / sumSpread : 0.0f;
+            ImGui::TableSetupColumn(name, ImGuiTableColumnFlags_WidthFixed, col.minW + extra);
+        }
+    };
+    if (hasRoll) setup(t.dice.c_str(), layout[li++], cols == 1);
+    for (size_t c = 0; c < t.columns.size(); ++c, ++li) setup(t.columns[c].c_str(), layout[li], c + 1 == t.columns.size());
     ImGui::TableHeadersRow();
     for (size_t r = 0; r < t.rows.size(); ++r) {
         const TableRow& row = t.rows[r];
@@ -402,7 +568,7 @@ void tableGrid(const DataTable& t, int highlightRow) {
         for (size_t c = 0; c < row.cells.size(); ++c) {
             if (col >= cols) break;
             ImGui::TableSetColumnIndex(col++);
-            copyableText(("##c" + std::to_string(r) + "_" + std::to_string(c)).c_str(), row.cells[c]);
+            lineText(("##c" + std::to_string(r) + "_" + std::to_string(c)).c_str(), row.cells[c]);
         }
     }
     ImGui::EndTable();
@@ -615,8 +781,8 @@ bool inputStr(const char* id, std::string& s, float width, const char* hint) {
                 : ImGui::InputText(id, s.data(), s.capacity() + 1, flags, growString, &s);
 }
 
-bool inputMultiline(const char* id, std::string& s, ImVec2 size) {
-    return ImGui::InputTextMultiline(id, s.data(), s.capacity() + 1, size, ImGuiInputTextFlags_CallbackResize, growString, &s);
+bool inputMultiline(const char* id, std::string& s, ImVec2 size, ImGuiInputTextFlags extra) {
+    return ImGui::InputTextMultiline(id, s.data(), s.capacity() + 1, size, ImGuiInputTextFlags_CallbackResize | extra, growString, &s);
 }
 
 bool smallInt(const char* id, int& v, int lo, int hi, float width) {

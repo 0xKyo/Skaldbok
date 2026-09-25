@@ -27,7 +27,7 @@ void PacksPanel::draw() {
     ContentStore& content = host_.content();
     ImGui::TextWrapped("A content pack is a folder (or a .zip of one) with a manifest.json and one JSON file per type: creatures, spells, abilities, "
                        "skills, kin, professions, weapons, armor, gear, tables. The Core pack holds the books' content; homebrew packs add to it and "
-                       "keep their own source (\"Homebrew · name\"). See docs/HOMEBREW.md for the format and examples/frostmarch-tales for a sample.");
+                       "keep their own source (\"Homebrew · name\"). See docs/HOMEBREW.md for the format and docs/examples/frostmarch-tales for a sample.");
     ImGui::BeginDisabled(dialog_.busy());
     if (ImGui::Button("Import a pack folder…")) dialog_.openFolder(host_.window());
     ImGui::SameLine();

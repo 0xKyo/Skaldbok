@@ -45,7 +45,7 @@ private:
 
 // ---- text and number inputs that edit the value in place (strings grow as needed, no fixed buffers)
 bool inputStr(const char* id, std::string& s, float width = -FLT_MIN, const char* hint = nullptr);
-bool inputMultiline(const char* id, std::string& s, ImVec2 size);
+bool inputMultiline(const char* id, std::string& s, ImVec2 size, ImGuiInputTextFlags extra = 0);
 bool smallInt(const char* id, int& v, int lo, int hi, float width = 64);       // width in 16px-font units (see U)
 std::string capitalized(std::string s);
 
@@ -62,17 +62,42 @@ void keyScroll();
 void focusFrame();
 
 // ---- pages with an intro -----------------------------------------------------------------------------------------
-// A data file's "intro" (its chapter of the book): body, sections and tables in one scrolling child; the arrows scroll it.
-void introPage(const Intro& intro, const char* id);
+// The state of one page's intro editor (see intro_page.cpp).
+struct IntroEdit {
+    struct Section {
+        std::string title, body;
+    };
+    // A table of the page while it is edited; `extra` holds what the editor has no field for (its id, source, page...) as JSON.
+    struct TableEdit {
+        struct Row {
+            std::string roll;
+            std::vector<std::string> cells;
+        };
+        std::string name, dice, extra;
+        std::vector<std::string> columns;
+        std::vector<Row> rows;
+    };
+    bool on = false;
+    std::string body;
+    std::vector<Section> sections;
+    std::vector<TableEdit> tables;
+    int openTable = -1;                // a table just added: its header opens
+    std::string error;
+};
+// A kind's "intro" (its chapter of the book): body, sections and tables in one scrolling child; the arrows scroll it. The Edit button
+// turns the text into fields and Save writes them back to the JSON the intro was read from.
+void introPage(Host& host, Kind kind, IntroEdit& edit, const char* id);
+// Brings the page of `kind` to its Intro, scrolled to the section with that index (a link to a section).
+void openIntroSection(Host& host, Kind kind, int section, int line = -1);
 
 // "Intro" | <page>: two tabs that never take keyboard focus; Left / Right switch them while the page has the keyboard.
-// With no intro there is no tab bar at all, just the page.
 struct IntroTabs {
     bool showingIntro = false;         // last frame
     bool wantIntro = false;
     bool wantPage = false;             // set it to bring the page to the front (a jump to one of its entries)
+    IntroEdit edit;
 };
-void introTabs(IntroTabs& tabs, const char* id, const char* pageLabel, const Intro& intro, const std::function<void()>& page);
+void introTabs(Host& host, Kind kind, IntroTabs& tabs, const char* id, const char* pageLabel, const std::function<void()>& page);
 
 // ---- game content entries as the sheet and the creator use them
 const Entry* entryFor(const ContentStore& cs, Kind kind, const Ref& r);       // by key, else by name
@@ -85,8 +110,18 @@ bool pickEntry(const ContentStore& cs, const char* popup, std::initializer_list<
 // string, or one built from a stable index) so a selection made by dragging survives from frame to frame.
 void copyableText(const char* id, const std::string& text, float wrapWidth = 0);
 // Splits `text` on '\n' into copyable, wrapped lines. A line starting "✦Label: " gets a coloured label; "- " or
-// "* " gets a bullet; "3. " gets a number, kept exactly as written (no renumbering). A blank line is a small gap.
-void paragraphs(const std::string& text, const char* id = "p");
+// "* " gets a bullet (two leading spaces per level nest it); "3. " gets a number, kept exactly as written (no renumbering). A blank line is a small gap.
+// `scrollKey` names this text for scrollToLine(); `firstLine` is the number (in the whole text) of the first line of `text`, when it is a
+// piece of a longer one.
+void paragraphs(const std::string& text, const char* id = "p", const char* scrollKey = nullptr, int firstLine = 0);
+// The next time the text called `key` is drawn, it scrolls (the window it is in) to its line number `line`.
+void scrollToLine(const std::string& key, int line);
+// Lets the links written in a text ("[[Keyword]]", "[[label|target]]", "[label](https://...)") open what they point to: paragraphs() draws
+// a line that has links word by word, each link clickable (Host::openLink); a line without any stays selectable text.
+void setLinkHost(Host* host);
+// A line that is only "{{table: Name}}" shows that table (any table of the content, by its title) right there, in any text drawn by
+// paragraphs(). tableMarker() tells whether a line is one, and gives the name.
+bool tableMarker(const std::string& line, std::string& name);
 void highlighted(const std::string& snippet);       // a search snippet with \x01 ... \x02 marking the hits
 void fieldsTable(const std::vector<Field>& fields, const char* id);
 void tableGrid(const DataTable& t, int highlightRow);

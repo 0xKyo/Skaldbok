@@ -64,6 +64,7 @@ add_executable(skaldbok
   src/ui/textures.cpp
   src/ui/filedialog.cpp
   src/ui/ui_common.cpp
+  src/ui/intro_page.cpp
   src/ui/homebrew_forms.cpp
   src/ui/packs_panel.cpp
   src/ui/modules/registry.cpp

@@ -49,7 +49,7 @@ public:
     }
 
     void drawFull() override {
-        introTabs(tabs_, "##tabs", kindTitle(kind_), host_.content().introOf(kind_), [&] { drawListDetail(); });
+        introTabs(host_, kind_, tabs_, "##tabs", kindTitle(kind_), [&] { drawListDetail(); });
         forms_.draw();
     }
 

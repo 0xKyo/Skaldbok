@@ -1,9 +1,10 @@
 # Packs de contenido (homebrew)
 
 Todo el contenido del juego —reglas, criaturas, hechizos, aptitudes, habilidades, razas, profesiones, equipo y tablas— vive en
-**packs**. El contenido de los libros es un solo pack incorporado, **Core** (`data/packs/core`): en su `rules.json` van las reglas
-genéricas, que no necesitan una categoría en particular, con sus tablas y la aventura; y en los demás archivos, las criaturas,
-hechizos, razas... Cuando una categoría crece demasiado puede pasar a su propio JSON. Core se abre primero y el homebrew se suma a él:
+**packs**. El contenido de los libros es un solo pack incorporado, **Core** (`data/packs/core`): un pack como cualquier otro, con solo las criaturas,
+hechizos, razas... (cada archivo tiene únicamente elementos de su categoría). Lo que no es un elemento de una categoría —las reglas
+genéricas con sus tablas y la aventura (`rules.json`) y el `"intro"` de cada página— está aparte, en `data/system/`, y se muestra en el
+mismo lugar de la app. Cuando una categoría crece demasiado puede pasar a su propio JSON. Core se abre primero y el homebrew se suma a él:
 nunca lo reemplaza (salvo una regla con `replaces`, ver `rules.json`). Cada entrada mantiene su **fuente**: lo de los libros aparece
 como *Rulebook / Bestiary / Adventure*; lo de un pack de homebrew como *Homebrew · <nombre>*. El id `core` está reservado.
 
@@ -28,7 +29,7 @@ mi-pack/
 
 Para importarlo: el engranaje › **General Settings › Content packs › Import a pack folder… / Import a .zip…** (o `skaldbok --import <carpeta o .zip>`;
 también sirve copiar la carpeta a la de packs del usuario, `%APPDATA%\skaldbok\gm\packs\` en Windows: la app la toma sola). Se puede apagar sin
-borrarlo (la casilla de su fila) y se puede quitar con *Remove*. Importar otra vez un pack con el mismo `id` lo **actualiza**. Un ejemplo completo está en [`examples/frostmarch-tales/`](../examples/frostmarch-tales).
+borrarlo (la casilla de su fila) y se puede quitar con *Remove*. Importar otra vez un pack con el mismo `id` lo **actualiza**. Un ejemplo completo está en [`docs/examples/frostmarch-tales/`](examples/frostmarch-tales).
 
 Para comprobar un pack antes de repartirlo, desde una terminal:
 
@@ -72,7 +73,7 @@ pack. Importar un `.zip` o una carpeta pide `manifest.json`, porque el `id` no s
 { "name": "Mi Tome", "author": "Alguien", "sources": [ { "key": "tome", "title": "Mi Tome", "short": "Tome" } ],
   "spells": [ { "name": "Zap" } ] }
 ```
-(Así se describe Core: en la cabecera de su `rules.json`.) Con un `manifest.json`:
+(Así se describe Core: en su `manifest.json`.) Con un `manifest.json`:
 
 ```json
 {
@@ -103,7 +104,7 @@ su color y su etiqueta en cada tarjeta. Una entrada elige su fuente con `"source
 
 `"page": 12` es solo una referencia para mostrar (*p.12*): un pack no tiene PDF, así que no hay botón «Original». Las entradas de
 los libros (Core) sí llevan enlace a la página del PDF, y ahí `page` es la **página física del PDF**: es la única que hace falta
-escribir. El número impreso en la página se deduce de la cabecera del libro (en Core, la de `rules.json`):
+escribir. El número impreso en la página se deduce de la cabecera del libro (en Core, la de su `manifest.json`):
 
 ```json
 { "key": "adventure", "title": "…", "short": "Adventure", "file": "References/MistyValeAdventure.pdf", "pages": 120,
@@ -131,6 +132,29 @@ Cualquiera de estos archivos puede además llevar un `"intro"` de nivel superior
 que una regla (`{"intro": {"body": "...", "sections": [{"name": "...", "body": "..."}], "tables": [...]}, "spells": [...]}`)
 — así es como los capítulos "Skills", "Bestiary", "Magic" y "Gear" de Rules terminaron adentro de `skills.json`,
 `creatures.json`, `spells.json` y `gear.json`. Un pack posterior con `intro` no vacío reemplaza el de uno anterior para esa categoría.
+
+El **intro se edita en la app**: en la pestaña "Intro" el botón **Edit** convierte el texto y las secciones en campos, y **Save** escribe el
+resultado en el JSON del que salió (`data/system/<categoría>.json` en Core; sin intro todavía, lo crea allí). El resto del archivo
+queda tal cual. Debajo de las secciones, **Tables** permite crear (**Add table**), editar y borrar las tablas del intro: nombre, dados
+("D20"... agrega la columna Roll), columnas y filas; **Put in a section...** agrega el `{{table: Nombre}}` al final de esa sección (sin él, la
+tabla sale al final de la página). Las celdas de una tabla también aceptan enlaces. Como cualquier texto de la app, se escribe una línea por párrafo:
+`- ` o `* ` abre una viñeta, `1. ` una línea numerada (dos espacios al principio de la línea = un nivel más adentro: listas anidadas), `✦Etiqueta: texto` una línea con etiqueta, y hay **enlaces** en cualquier texto
+(el de una regla, el de una tarjeta, un intro): `[[Fighter]]` va a la entrada, página o regla con ese nombre (también `[[Spells]]`, una
+categoría); `[[texto|destino]]` muestra otro texto (el destino puede ser una clave completa, como `core/spell/birdsong`, o una categoría);
+`[[texto|Pushing Your Roll]]` (o `skills/Pushing Your Roll` para decir de qué intro) lleva a una **sección** de un intro: abre esa página en su
+Intro, con la sección arriba; `[texto](https://...)` abre una dirección web. Un enlace a algo que no existe se ve en rojo.
+
+**Palabras clave** (keywords): en el texto donde una palabra se explica, se la marca con `{{key: boon}}` (se ve como "boon"; con
+`{{key: boons | boon}}` se ve "boons" y la clave es "boon"). Desde cualquier otro texto, `[[boon]]` (o `[[boons|boon]]`) lleva ahí: a la
+sección del intro, a la regla o a la ficha que la marca. Las marcas se quitan al cargar, así que en pantalla, en la búsqueda y en la web es
+solo la palabra; en el editor del intro ves la marca. La primera marca de una palabra manda, y una clave tiene prioridad sobre un nombre
+de entrada, categoría o regla igual. Core ya trae las suyas (boon, bane, condition, hp, wp, initiative, heroic ability...), enlazadas la
+primera vez que aparecen en cada regla o sección.
+
+**Tablas en cualquier texto**: una línea que sea solo `{{table: Nombre}}` muestra ahí mismo la tabla con ese título —una tabla de una regla, la
+de un intro (p. ej. "Sizes" de `creatures.json`) o la de una ficha—, en cualquier texto de la app (regla, ficha, intro, sección); con sangría
+sale sangrada. Si el texto es de un intro y ese intro tiene una tabla con ese nombre, gana esa; una tabla que ninguna línea pide sigue
+apareciendo al final del intro. Si no existe, la línea sale en rojo ("No table called…").
 
 Las categorías con página propia (creatures, spells, abilities, skills, kin, professions) son una lista + el detalle de la
 entrada elegida; si además tienen `intro`, se muestra como una pestaña "Intro" separada de la pestaña con la lista; sin

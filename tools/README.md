@@ -1,11 +1,11 @@
 # Dragonbane data extraction (how the data was first made)
 
-> **The app no longer reads a database.** Its data is one content pack, `data/packs/core` (the books' rules and tables, the adventure,
-> creatures, spells, kin...), loaded like any homebrew pack — see
+> **The app no longer reads a database.** Its data is one content pack, `data/packs/core` (creatures, spells, kin...) plus `data/system/` (the books'
+> rules and tables, the adventure, and the intro of each page), loaded like any homebrew pack — see
 > [`docs/HOMEBREW.md`](../docs/HOMEBREW.md). These scripts are the original PDF extraction: they wrote an intermediate
-> `data/skaldbok.db` and part of the Core pack from it. The rules and tables (`rules.json`) were taken from that database once and are kept as JSON from then on,
+> `data/skaldbok.db` and part of the Core pack from it. The rules and tables (`data/system/rules.json`) were taken from that database once and are kept as JSON from then on,
 > so nothing here is needed to run the app (and the scripts do not write `rules.json`). **Do not run `build_db.py` / `export_packs.py` on
-> an existing `data/`**: they regenerate `data/packs/core/` (and bring back its `manifest.json`), overwriting what is edited by hand now.
+> an existing `data/`**: they regenerate `data/packs/core/` (with the old header in `rules.json`), overwriting what is edited by hand now.
 
 One-off converter: reads the three PDFs in `References/` and writes
 
@@ -28,14 +28,14 @@ and `pdf_link` (`References/<file>.pdf#page=N`) to open the original.
 
 | Table | Content |
 |---|---|
-| `sources`, `pages`, `sections` | Book text in reading order, structured by the PDF bookmarks (the app takes the rules text and tables from Core's `rules.json` now) |
+| `sources`, `pages`, `sections` | Book text in reading order, structured by the PDF bookmarks (the app takes the rules text and tables from `data/system/rules.json` now) |
 | `game_tables`, `game_table_rows` | Every table (dice tables validated to cover 1..N; plain tables by column) |
 | `monsters`, `monster_statblocks`, `monster_attacks`, `monster_abilities` | Creatures/NPCs of all three books, kept apart by source; attack tables row by row; `image` = art |
 | `abilities`, `kin`, `professions`, `skills`, `spells`, `conditions` | Rulebook rules, typed |
 | `weapons`, `armor`, `gear_items` | Rulebook equipment, typed |
 | `search_index` | FTS5 over everything (`SELECT * FROM search_index WHERE search_index MATCH 'centaur'`) |
 
-The app reads none of it any more: rules and tables are in Core's `rules.json`, and creatures, spells, abilities, skills, kin,
+The app reads none of it any more: rules and tables are in `data/system/rules.json`, and creatures, spells, abilities, skills, kin,
 professions and equipment in the Core pack (exported from the typed tables above by `export_packs.py`).
 
 ```sql

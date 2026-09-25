@@ -44,7 +44,7 @@ int main(int argc, char** argv) {
     std::string err;
     ContentStore content;
     content.load({PackSpec{dataDir + "/packs/core", true, true},
-                  PackSpec{test::sourceDir() + "/examples/frostmarch-tales", false, true}});
+                  PackSpec{test::sourceDir() + "/docs/examples/frostmarch-tales", false, true}});
     Dice dice;
 
     // -------------------------------------------------------------------------------- the numbers

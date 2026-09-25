@@ -1,12 +1,12 @@
 # Builds a Release and assembles a portable folder + zip that can be copied to any Windows machine:
-#   dist\Skaldbok\skaldbok.exe  skaldbok_web.exe  pack_check.exe  web\  data\packs\core\...  docs\  examples\
+#   dist\Skaldbok\skaldbok.exe  skaldbok_web.exe  pack_check.exe  web\  data\packs\core\...  data\system\...  docs\ (with docs\examples\)
 # The PDFs are NOT included (copyright); the app only needs the generated data. The app never ships or shows a copy of the
 # book's own pages (its "Original: book p.N" links just open the reader's own PDF, in their own PDF viewer).
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
 
 & (Join-Path $PSScriptRoot 'build.ps1') -Config Release
-if (-not (Test-Path "$root\data\packs\core\rules.json")) { throw 'data\packs\core is missing (the Core pack: the books'' rules, tables, creatures, spells...).' }
+if (-not (Test-Path "$root\data\system\rules.json")) { throw 'data\system is missing (the books'' rules and the intro of each page; the creatures, spells... are in data\packs\core).' }
 
 $out = Join-Path $root 'dist\Skaldbok'
 if (Test-Path $out) { Remove-Item $out -Recurse -Force }
@@ -18,8 +18,8 @@ Copy-Item "$root\build\release\skaldbok_web.exe" $out
 if (Test-Path "$root\web\client\dist\index.html") { Copy-Item "$root\web\client\dist" "$out\web" -Recurse }
 else { Write-Warning 'web\client\dist is missing: the package will not include the players'' page (cd web; npm install; npm run build).' }
 Copy-Item "$root\data\packs" "$out\data\packs" -Recurse
+Copy-Item "$root\data\system" "$out\data\system" -Recurse
 Copy-Item "$root\docs" "$out\docs" -Recurse
-Copy-Item "$root\examples" "$out\examples" -Recurse
 Copy-Item "$root\README.md" $out
 Copy-Item "$root\Skaldbok.bat" $out
 

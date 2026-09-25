@@ -171,6 +171,19 @@ const std::vector<std::string>& packDataFiles() {
     return files;
 }
 
+std::string systemDirOf(const std::string& coreDir) {
+    std::string d = coreDir;
+    for (char& c : d)
+        if (c == '\\') c = '/';
+    while (d.size() > 1 && d.back() == '/') d.pop_back();
+    for (int up = 0; up < 2; ++up) {                              // packs/core -> packs -> data
+        const size_t slash = d.find_last_of('/');
+        if (slash == std::string::npos) return std::string();
+        d.erase(slash);
+    }
+    return d + "/system";
+}
+
 bool looksLikePack(const std::string& dir) {
     if (isFile(dir + "/manifest.json")) return true;
     for (const std::string& f : packDataFiles())
@@ -248,12 +261,14 @@ struct ContentStore::Loader {
     ContentStore& st;
     PackInfo& pk;
     const json manifest;
+    std::string sysDir;                 // Core only: the game system's own text (data/system), see systemDirOf()
     std::map<std::string, int> srcByKey;
     int firstSource = 0;
     std::set<std::string> usedIds[kKindCount];
     std::set<std::string> usedRuleIds;
 
-    Loader(ContentStore& store, PackInfo& pack, json man) : st(store), pk(pack), manifest(std::move(man)) {}
+    Loader(ContentStore& store, PackInfo& pack, json man, std::string system)
+        : st(store), pk(pack), manifest(std::move(man)), sysDir(std::move(system)) {}
 
     void warn(const std::string& msg) {
         if (pk.warnings.size() < kMaxWarnings) pk.warnings.push_back(msg);
@@ -451,9 +466,16 @@ struct ContentStore::Loader {
         return v.back();
     }
 
-    // Reads dir/<file>.json and calls fn for every named object of its array.
+    // Reads <file>.json and calls fn for every named object of its array. Core reads it from data/system first (its intro, its rules:
+    // what is not an item of the category) and then from the pack folder, which holds the items, like any other pack.
     bool eachObject(const std::string& file, const std::function<void(const json&, const std::string&)>& fn) {
-        const std::string path = pk.dir + "/" + file + ".json";
+        if (!sysDir.empty() && !eachObjectIn(sysDir, file, fn, true)) return false;
+        return eachObjectIn(pk.dir, file, fn, false);
+    }
+
+    // `listOptional`: a system file may hold only an intro.
+    bool eachObjectIn(const std::string& dir, const std::string& file, const std::function<void(const json&, const std::string&)>& fn, bool listOptional) {
+        const std::string path = dir + "/" + file + ".json";
         if (!isFile(path)) return true;
         std::string text, err;
         if (!readTextFile(path, text, &err)) {
@@ -507,9 +529,13 @@ struct ContentStore::Loader {
                             }
                         }
                     }
-                    if (!in.empty()) st.intros_[static_cast<int>(introKind)] = std::move(in);
+                    if (!in.empty()) {
+                        in.file = path;
+                        st.intros_[static_cast<int>(introKind)] = std::move(in);
+                    }
                 }
         const json* arr = root.is_array() ? &root : jsonFind(root, file.c_str());
+        if (!arr && listOptional) return true;
         if (!arr || !arr->is_array()) {
             pk.error = file + ".json: expected a list (either the whole file or under \"" + file + "\")";
             return false;
@@ -979,6 +1005,7 @@ void ContentStore::clear() {
     sources_.clear();
     for (auto& v : entries_) v.clear();
     for (auto& in : intros_) in = Intro();
+    keywords_.clear();
     for (auto& m : byKey_) m.clear();
     monsters_.clear();
     tables_.clear();
@@ -1015,7 +1042,7 @@ void ContentStore::load(const std::vector<PackSpec>& specs) {
             size_t before[kKindCount];
             for (int k = 0; k < kKindCount; ++k) before[k] = entries_[k].size();
             const size_t monBefore = monsters_.size(), tabBefore = tables_.size(), srcBefore = sources_.size(), rulesBefore = rules_.size();
-            Loader loader(*this, pk, meta);
+            Loader loader(*this, pk, meta, spec.core ? systemDirOf(spec.dir) : std::string());
             loader.run();
             if (!pk.loaded) {
                 for (int k = 0; k < kKindCount; ++k) {
@@ -1036,6 +1063,7 @@ void ContentStore::load(const std::vector<PackSpec>& specs) {
         }
         packs_.push_back(std::move(pk));
     }
+    extractKeywords();
     placeTables();
     resolveLinks();
     checkRuleLinks();
@@ -1069,6 +1097,105 @@ SeeTarget ContentStore::seeTarget(const std::string& ref) const {
         t.id = id;
         t.label = titleOf(k, id);
     }
+    return t;
+}
+
+// A keyword is a word marked where it is explained: "{{key: boon}}" (shown as "boon") or "{{key: boons | boon}}" (shown as "boons", the
+// keyword is "boon"). The markers are taken out of the texts here, so everything that shows or searches them sees plain words; the
+// keyword remembers the text it was in. The first text to mark a word keeps it.
+void ContentStore::extractKeywords() {
+    keywords_.clear();
+    auto strip = [&](std::string& text, const SeeTarget& owner) {
+        for (size_t at = text.find("{{key:"); at != std::string::npos; at = text.find("{{key:", at)) {
+            const size_t end = text.find("}}", at);
+            if (end == std::string::npos) break;
+            std::string inner = text.substr(at + 6, end - at - 6);
+            std::string shown = inner, word = inner;
+            if (const size_t bar = inner.find('|'); bar != std::string::npos) {
+                shown = inner.substr(0, bar);
+                word = inner.substr(bar + 1);
+            }
+            shown = trimmed(shown);
+            word = lowerCopy(trimmed(word));
+            if (!word.empty()) {
+                SeeTarget at_ = owner;
+                at_.line = static_cast<int>(std::count(text.begin(), text.begin() + static_cast<std::ptrdiff_t>(at), '\n'));
+                keywords_.emplace(word, at_);
+            }
+            text.replace(at, end + 2 - at, shown);
+            at += shown.size();
+        }
+    };
+    for (int k = 0; k < kKindCount; ++k) {
+        Intro& in = intros_[k];
+        SeeTarget owner;
+        owner.kind = static_cast<Kind>(k);
+        owner.type = SeeTarget::Type::Category;
+        owner.label = kindTitle(owner.kind);
+        strip(in.body, owner);
+        for (size_t s = 0; s < in.sections.size(); ++s) {
+            owner.type = SeeTarget::Type::Section;
+            owner.id = static_cast<int>(s);
+            owner.label = in.sections[s].title;
+            strip(in.sections[s].body, owner);
+        }
+    }
+    for (RuleNode& r : rules_) {
+        SeeTarget owner;
+        owner.type = SeeTarget::Type::Rule;
+        owner.id = r.id;
+        owner.label = r.title;
+        strip(r.body, owner);
+        for (size_t s = 0; s < r.sections.size(); ++s) {                    // a keyword in a section points at that section
+            owner.section = static_cast<int>(s);
+            strip(r.sections[s].body, owner);
+        }
+    }
+    for (int k = 0; k < kKindCount; ++k)
+        for (Entry& e : entries_[k]) {
+            SeeTarget owner;
+            owner.type = SeeTarget::Type::Entry;
+            owner.kind = e.kind;
+            owner.id = e.id;
+            owner.label = e.title;
+            strip(e.body, owner);
+        }
+}
+
+SeeTarget ContentStore::resolveLink(const std::string& ref) const {
+    if (const auto kw = keywords_.find(lowerCopy(trimmed(ref))); kw != keywords_.end()) return kw->second;
+    if (SeeTarget t = seeTarget(ref); t.type != SeeTarget::Type::None) return t;
+    const std::string want = lowerCopy(trimmed(ref));
+    SeeTarget t;
+    if (want.empty()) return t;
+    auto sectionOf = [&](Kind k, const std::string& title) {
+        const Intro& in = intros_[static_cast<int>(k)];
+        for (size_t s = 0; s < in.sections.size(); ++s)
+            if (lowerCopy(in.sections[s].title) == title) {
+                SeeTarget out;
+                out.type = SeeTarget::Type::Section;
+                out.kind = k;
+                out.id = static_cast<int>(s);
+                out.label = in.sections[s].title;
+                return out;
+            }
+        return SeeTarget();
+    };
+    if (const size_t slash = want.find('/'); slash != std::string::npos)     // "skills/Pushing Your Roll"
+        if (Kind k; kindFromFile(want.substr(0, slash), k) && k != Kind::Table) return sectionOf(k, trimmed(want.substr(slash + 1)));
+    for (int i = 0; i < kKindCount; ++i) {                                  // "Spells", "creatures"
+        const Kind k = static_cast<Kind>(i);
+        if (k == Kind::Table || lowerCopy(kindTitle(k)) != want) continue;
+        return seeTarget(kindFile(k));
+    }
+    for (int i = 0; i < kKindCount; ++i) {                                  // "Fighter", "Birdsong"
+        const Kind k = static_cast<Kind>(i);
+        if (const Entry* e = findByName(k, want)) return seeTarget(e->key);
+    }
+    for (const RuleNode& r : rules_)                                        // "Melee Combat"
+        if (lowerCopy(r.title) == want) return seeTarget(r.key);
+    for (int i = 0; i < kKindCount; ++i)                                    // "Pushing Your Roll"
+        if (SeeTarget s = sectionOf(static_cast<Kind>(i), want); s.type != SeeTarget::Type::None) return s;
     return t;
 }
 
@@ -1265,6 +1392,21 @@ std::vector<const DataTable*> ContentStore::tablesByRole(const std::string& role
     for (const DataTable& t : tables_)
         if (t.role == role) out.push_back(&t);
     return out;
+}
+
+const DataTable* ContentStore::tableByName(const std::string& name) const {
+    const std::string want = lowerCopy(trimmed(name));
+    if (want.empty()) return nullptr;
+    for (const DataTable& t : tables_)
+        if (lowerCopy(t.title) == want) return &t;
+    for (const Intro& in : intros_)
+        for (const DataTable& t : in.tables)
+            if (lowerCopy(t.title) == want) return &t;
+    for (const auto& list : entries_)
+        for (const Entry& e : list)
+            for (const DataTable& t : e.tables)
+                if (lowerCopy(t.title) == want) return &t;
+    return nullptr;
 }
 
 const DataTable* ContentStore::tableByRole(const std::string& role) const {

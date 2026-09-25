@@ -214,6 +214,8 @@ std::string packSignature(const std::vector<PackSpec>& specs) {
     for (const PackSpec& s : specs) {
         sig += s.dir + (s.enabled ? "+" : "-") + "|";
         for (const std::string& f : files) sig += stamp(s.dir + "/" + f + ".json");
+        if (s.core)
+            for (const std::string& f : files) sig += stamp(systemDirOf(s.dir) + "/" + f + ".json");
         if (s.core || !s.enabled) continue;
         for (const std::string& name : listDir(s.dir + "/images")) sig += name + ":" + stamp(s.dir + "/images/" + name);
     }

@@ -161,6 +161,8 @@ public:
     virtual SDL_Window* window() = 0;
 
     virtual void goTo(Kind kind, int id) = 0;            // open an entry, in whichever module shows that kind
+    // Follow a link written in a text: a web address, a "see" reference ("core/spell/birdsong", "spells") or a keyword ("Birdsong").
+    virtual void openLink(const std::string& target) = 0;
     virtual void showModule(const std::string& id) = 0;
     virtual bool kindAvailable(Kind k) const = 0;        // is a module that shows this kind switched on
     virtual const std::vector<std::unique_ptr<Module>>& modules() const = 0;

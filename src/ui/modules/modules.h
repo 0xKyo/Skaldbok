@@ -17,6 +17,9 @@ std::unique_ptr<Module> makeMessagesModule(Host& host);
 std::unique_ptr<Module> makeWebModule(Host& host);
 std::unique_ptr<Module> makeGearModule(Host& host);
 std::unique_ptr<Module> makeRulesModule(Host& host);
+// Shows a rule on the page that has it (a chapter's own page, or Rules), opening its parents.
+// `section` (an index of the rule's sections, or -1) is scrolled to.
+void openRule(Host& host, int ruleId, int section = -1, int line = -1);
 // A page per top-level chapter of rules.json that asks for one ("nav": "<group of the nav rail>"), in file order.
 // Made once at startup: a chapter that gains or loses "nav" in a live reload shows up after a restart.
 std::vector<std::unique_ptr<Module>> makeChapterModules(Host& host);

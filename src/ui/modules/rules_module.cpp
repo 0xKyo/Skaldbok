@@ -22,6 +22,16 @@ using namespace ui;
 
 // A "see" on one rules page that points at a rule on another: that page shows it the next time it draws.
 int g_pendingRule = 0;
+int g_pendingRuleLine = -1;            // ... and the line of it (or of the rule's own text)
+int g_pendingRuleSection = -1;         // with a pending rule (a link into one of its sections): the section is scrolled to once it is drawn
+
+// The id of the page a rule is on: its top-level chapter's own page, or "Rules".
+std::string pageOfRuleId(const ContentStore& content, int ruleId) {
+    const RuleNode* n = content.rule(ruleId);
+    while (n && n->parent) n = content.rule(n->parent);
+    if (!n || n->prop("nav").empty()) return "rules";
+    return n->key.substr(n->key.find_last_of('/') + 1);
+}
 
 // The top-level chapters that ask for a page of their own ("nav" in rules.json).
 std::vector<const RuleNode*> chapterPages(const ContentStore& content) {
@@ -115,7 +125,11 @@ public:
     void drawList() override {
         if (g_pendingRule && at_.count(g_pendingRule)) {          // a "see" on another rules page pointed here
             show(g_pendingRule);
+            scrollToSection_ = g_pendingRuleSection;
+            scrollToLine_ = g_pendingRuleLine;
             g_pendingRule = 0;
+            g_pendingRuleSection = -1;
+            g_pendingRuleLine = -1;
         }
         inputStr("##rulefilter", filter_, -FLT_MIN, key_.empty() ? "Filter rules and tables…" : hint_.c_str());
         ImGui::BeginChild("##rules", ImVec2(0, 0));
@@ -161,12 +175,23 @@ public:
             ImGui::SetScrollY(0);
             shown_ = selected_;
         }
-        paragraphs(n.body, "body");
+        if (scrollToSection_ < 0 && scrollToLine_ > 0) {                // a link into the rule's own text
+            ui::scrollToLine("rule" + std::to_string(n.id) + ":body", scrollToLine_);
+            scrollToLine_ = -1;
+        }
+        paragraphs(n.body, "body", ("rule" + std::to_string(n.id) + ":body").c_str());
         for (size_t i = 0; i < n.sections.size(); ++i) {
             const RuleNode::Section& sec = n.sections[i];
             ImGui::Spacing();
+            const std::string secKey = "rule" + std::to_string(n.id) + ":sec" + std::to_string(i);
+            if (scrollToSection_ == static_cast<int>(i)) {
+                if (scrollToLine_ > 0) ui::scrollToLine(secKey, scrollToLine_);          // the line itself, when it is not the first
+                else ImGui::SetScrollHereY(0.0f);               // reached from a link: this section goes to the top
+                scrollToSection_ = -1;
+                scrollToLine_ = -1;
+            }
             bigText(sec.title.c_str(), 1.1f, kGold);
-            paragraphs(sec.body, ("sec" + std::to_string(i)).c_str());
+            paragraphs(sec.body, ("sec" + std::to_string(i)).c_str(), secKey.c_str());
         }
         for (int tableId : host_.content().tablesOfRule(n.id))
             if (const DataTable* t = host_.content().packTable(tableId)) drawTable(*t);
@@ -234,12 +259,7 @@ private:
     }
 
     // The id of the page a rule is on: its top-level chapter's own page, or "Rules".
-    std::string pageOfRule(int ruleId) const {
-        const RuleNode* n = host_.content().rule(ruleId);
-        while (n && n->parent) n = host_.content().rule(n->parent);
-        if (!n || n->prop("nav").empty()) return "rules";
-        return n->key.substr(n->key.find_last_of('/') + 1);
-    }
+    std::string pageOfRule(int ruleId) const { return pageOfRuleId(host_.content(), ruleId); }
 
     // Select a rule and make the list show it: its parents open and the list scrolls to it.
     void show(int ruleId) {
@@ -312,6 +332,8 @@ private:
     std::unordered_set<int> reveal_;                          // rules whose tree node must be open (the parents of what was just shown)
     std::string filter_;
     int selected_ = 0;
+    int scrollToSection_ = -1;
+    int scrollToLine_ = -1;
     int shown_ = 0;                                           // the rule the detail was drawn for last
     int focusTable_ = 0;                                      // a table to scroll into view when the detail draws it
     int focusFrames_ = 0;                                     // for how many more frames
@@ -319,6 +341,13 @@ private:
 };
 
 }  // namespace
+
+void openRule(Host& host, int ruleId, int section, int line) {
+    g_pendingRule = ruleId;
+    g_pendingRuleSection = section;
+    g_pendingRuleLine = line;                                  // the page that has it shows it the next time it draws
+    host.showModule(pageOfRuleId(host.content(), ruleId));
+}
 
 std::unique_ptr<Module> makeRulesModule(Host& host) { return std::make_unique<RulesModule>(host, nullptr); }
 

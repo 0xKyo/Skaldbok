@@ -56,6 +56,7 @@ public:
     SDL_Window* window() override { return window_; }
     void goTo(Kind kind, int id) override { navigate(kind, id, true); }
     void showModule(const std::string& id) override;
+    void openLink(const std::string& target) override;
     bool kindAvailable(Kind k) const override;
     const std::vector<std::unique_ptr<Module>>& modules() const override { return modules_; }
     const Selection* selection() const override { return hasSel_ ? &sel_ : nullptr; }
@@ -76,6 +77,26 @@ private:
     void loadContent();
     void reloadContent();
     void navigate(Kind kind, int id, bool pushHistory);
+    // The history: every place the user got to (an entry, a rule or one of its sections, a section of an intro, a page), so Back and
+    // Forward (the buttons, Alt+Left / Alt+Right, the mouse's side buttons) retrace links as well as picks.
+    struct Place {
+        std::string module;                   // the page ("spells", "combat-damage", "gear"...)
+        bool entry = false;
+        Selection sel;                        // an entry
+        int rule = 0, ruleSection = -1;       // a rule (and the section of it), 0 for none
+        bool introSection = false;
+        Kind introKind = Kind::Spell;
+        int section = -1, line = -1;          // a section of an intro
+        std::string label;
+        bool operator==(const Place& o) const {
+            return module == o.module && entry == o.entry && (!entry || sel == o.sel) && rule == o.rule && ruleSection == o.ruleSection &&
+                   introSection == o.introSection && (!introSection || (introKind == o.introKind && section == o.section));
+        }
+    };
+    void pushPlace(Place p);                  // after getting somewhere: it becomes the newest place, the ones ahead of it are dropped
+    void showPlace(const Place& p);           // gets there (no history is written)
+    void goToHistory(int pos);
+    void drawHistoryButtons();
     void goBack();
     void goForward();
     Module* handlerFor(Kind k, int id = -1) const;
@@ -125,8 +146,9 @@ private:
 
     Selection sel_;
     bool hasSel_ = false;
-    std::vector<Selection> history_;
+    std::vector<Place> history_;
     int historyPos_ = -1;
+    Module* recorded_ = nullptr;              // the page the history knows about: a page opened from the rail is a new place
     std::vector<Recent> recents_;             // newest first, kept between sessions
     std::string recentFile_;
     std::map<std::string, std::string> nameCache_;
