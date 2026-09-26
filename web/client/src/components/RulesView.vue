@@ -100,7 +100,7 @@ watch(query, () => {
           <h2 class="rules-detail-name">{{ selected.name }}</h2>
           <div class="chips" style="margin-top: 4px;">
             <span v-if="selected.source" class="chip" :class="selected.homebrew ? 'homebrew' : 'src'">
-              {{ selected.source }}<template v-if="selected.page"> · p.{{ selected.page }}</template>
+              {{ selected.source }}
             </span>
             <span v-if="selected.subtitle" class="chip">{{ selected.subtitle }}</span>
           </div>
