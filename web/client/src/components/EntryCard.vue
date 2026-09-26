@@ -15,7 +15,7 @@ const paragraphs = computed(() => (props.entry.body ?? '').split('\n').filter((p
     <summary>
       <span class="name">{{ entry.name }}</span>
       <span v-if="entry.subtitle" class="sub">{{ entry.subtitle }}</span>
-      <span v-if="entry.source" class="chip" :class="entry.homebrew ? 'homebrew' : 'src'">{{ entry.source }}</span>
+      <span v-if="entry.homebrew" class="chip homebrew">{{ entry.source }}</span>
     </summary>
     <div class="body">
       <p v-if="entry.found === false" class="muted">This is no longer in the loaded content, so only its name is known.</p>
