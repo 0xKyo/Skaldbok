@@ -46,7 +46,7 @@ void WebAccess::write() {
     json tokens = json::object();
     for (const auto& [id, token] : tokens_) tokens[id] = token;
     j["tokens"] = tokens;
-    fs::writeFile(file_, j.dump(2) + "\n");
+    fs::writeFile(file_, jsonToYaml(j));
     fileUrl_ = publicUrl_;
 }
 

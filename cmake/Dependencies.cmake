@@ -34,10 +34,21 @@ FetchContent_Declare(stb_image_h
   URL https://raw.githubusercontent.com/nothings/stb/master/stb_image.h
   DOWNLOAD_NO_EXTRACT TRUE)
 
-# ---- nlohmann/json (single header): content packs, settings and character files are JSON ---------------
+# ---- nlohmann/json (single header): internal in-memory representation for parsed data -----------------
 FetchContent_Declare(json_h
   URL https://github.com/nlohmann/json/releases/download/v3.12.0/json.hpp
   DOWNLOAD_NO_EXTRACT TRUE)
+
+# ---- yaml-cpp: pack, character and settings files are YAML -----------------------------------------------
+# yaml-cpp 0.8.0 uses cmake_minimum_required(2.8.12); CMake 4.x rejects < 3.5. We populate the source
+# ourselves, patch the cmake_minimum_required line to 3.5, then add_subdirectory normally.
+set(YAML_CPP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(YAML_CPP_BUILD_TOOLS OFF CACHE BOOL "" FORCE)
+set(YAML_CPP_BUILD_CONTRIB OFF CACHE BOOL "" FORCE)
+set(YAML_CPP_INSTALL OFF CACHE BOOL "" FORCE)
+FetchContent_Declare(yaml_cpp_src
+  URL https://github.com/jbeder/yaml-cpp/archive/refs/tags/0.8.0.zip
+  DOWNLOAD_EXTRACT_TIMESTAMP TRUE)
 
 # ---- miniz (amalgamated zip/deflate): importing homebrew packs from a .zip ----------------------------
 FetchContent_Declare(miniz_src
@@ -49,7 +60,19 @@ FetchContent_Declare(httplib_h
   URL https://raw.githubusercontent.com/yhirose/cpp-httplib/v0.26.0/httplib.h
   DOWNLOAD_NO_EXTRACT TRUE)
 
-FetchContent_MakeAvailable(SDL3 imgui_src sqlite_src stb_image_h json_h miniz_src httplib_h)
+FetchContent_MakeAvailable(SDL3 imgui_src sqlite_src stb_image_h json_h yaml_cpp_src miniz_src httplib_h)
+
+# Silence yaml-cpp warnings; add the namespaced alias if yaml-cpp didn't create it itself.
+if(TARGET yaml-cpp)
+  if(MSVC)
+    target_compile_options(yaml-cpp PRIVATE /W0)
+  else()
+    target_compile_options(yaml-cpp PRIVATE -w)
+  endif()
+  if(NOT TARGET yaml-cpp::yaml-cpp)
+    add_library(yaml-cpp::yaml-cpp ALIAS yaml-cpp)
+  endif()
+endif()
 
 # imgui + the SDL3 / SDL_Renderer backends
 add_library(imgui_sdl3 STATIC

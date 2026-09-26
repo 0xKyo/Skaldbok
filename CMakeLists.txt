@@ -1,4 +1,6 @@
 cmake_minimum_required(VERSION 3.24)
+# yaml-cpp 0.8.0 declares cmake_minimum_required(2.8.12); CMake 4.x rejects < 3.5 unless this is set.
+set(CMAKE_POLICY_VERSION_MINIMUM 3.5 CACHE INTERNAL "" FORCE)
 if(WIN32)
   project(Skaldbok VERSION 0.2.0 LANGUAGES C CXX RC)
 else()
@@ -44,7 +46,7 @@ add_library(gm_core STATIC
 )
 target_include_directories(gm_core PUBLIC src)
 target_include_directories(gm_core SYSTEM PUBLIC ${JSON_INCLUDE_DIR})
-target_link_libraries(gm_core PUBLIC SDL3::SDL3 sqlite3_static miniz_static)
+target_link_libraries(gm_core PUBLIC SDL3::SDL3 sqlite3_static miniz_static yaml-cpp::yaml-cpp)
 target_compile_definitions(gm_core PUBLIC SKALDBOK_DEV_DATA_DIR="${CMAKE_SOURCE_DIR}/data"
                                           SKALDBOK_SOURCE_DIR="${CMAKE_SOURCE_DIR}")
 if(MSVC)

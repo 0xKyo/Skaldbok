@@ -47,7 +47,7 @@ void ChangeLog::setPrefDir(const std::string& prefDir) {
 void ChangeLog::save(const std::string& characterId, const std::vector<ChangeEntry>& list) const {
     json j = {{"format", 1}, {"entries", json::array()}};
     for (const ChangeEntry& e : list) j["entries"].push_back(toJson(e));
-    fs::writeFile(fileFor(characterId), j.dump(2) + "\n");
+    fs::writeFile(fileFor(characterId), jsonToYaml(j));
 }
 
 void ChangeLog::add(const std::string& characterId, ChangeEntry entry) {
@@ -79,7 +79,7 @@ std::vector<std::pair<std::string, ChangeEntry>> ChangeLog::poll() {
     if (dir_.empty()) return fresh;
     std::map<std::string, Stamp> now;
     for (const std::string& name : fs::listDir(dir_)) {
-        if (!name.ends_with(".json")) continue;
+        if (!name.ends_with(".yaml")) continue;
         const std::string id = name.substr(0, name.size() - 5);
         SDL_PathInfo info{};
         if (fs::safeId(id) && SDL_GetPathInfo(fileFor(id).c_str(), &info)) now[id] = {static_cast<long long>(info.modify_time), info.size};

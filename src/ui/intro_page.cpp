@@ -25,7 +25,7 @@ struct PendingSection {
 std::string introFile(Host& host, Kind kind) {
     const Intro& intro = host.content().introOf(kind);
     if (!intro.file.empty()) return intro.file;
-    return host.paths().dataDir + "/system/" + kindFile(kind) + ".json";
+    return host.paths().dataDir + "/system/" + kindFile(kind) + ".yaml";
 }
 
 // A body of text with the intro's tables in it where it asks for them; `used` remembers which ones were placed.

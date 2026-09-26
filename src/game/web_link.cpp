@@ -5,7 +5,7 @@
 namespace gm {
 
 std::string webLinkFor(const std::string& prefDir, const std::string& characterId) {
-    const auto j = jsonLoad(fs::withoutTrailingSlash(prefDir) + "/web-access.json");
+    const auto j = jsonLoad(fs::withoutTrailingSlash(prefDir) + "/web-access.yaml");
     const json* tokens = j ? jsonFind(*j, "tokens") : nullptr;
     if (!tokens) return {};
     const std::string token = jsonStr(*tokens, characterId.c_str());

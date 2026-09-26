@@ -81,7 +81,7 @@ template <class T>
 void WebApp::DirCache<T>::scan(const std::string& dir, const std::function<bool(const std::string&, T&, const std::string&)>& parse) {
     std::set<std::string> seen;
     for (const std::string& n : fs::listDir(dir)) {
-        if (!n.ends_with(".json")) continue;
+        if (!n.ends_with(".yaml")) continue;
         const std::string id = n.substr(0, n.size() - 5);
         SDL_PathInfo info{};
         if (!fs::safeId(id) || !pathInfo(dir + "/" + n, info) || info.type != SDL_PATHTYPE_FILE) continue;
@@ -119,7 +119,7 @@ WebApp::~WebApp() = default;
 
 void WebApp::reloadContentIfChanged() {
     Settings settings;
-    settings.open(config_.prefsDir + "/settings.json");
+    settings.open(config_.prefsDir + "/settings.yaml");
     const std::vector<PackSpec> specs = packs_->specs(settings.disabledPacks());
     const std::string sig = packSignature(specs);
     if (sig == contentSignature_) return;
@@ -285,7 +285,7 @@ WebResponse WebApp::postChat(const WebRequest& request, const std::string& chara
 WebResponse WebApp::editSheet(const WebRequest& request, const std::string& characterId, long long now) {
     json body;
     if (!jsonParse(request.body, body, nullptr) || !body.is_object() || !body.contains("set")) return errorResponse(400, "Send {\"set\": {...}} with the fields to change.");
-    const sheet::EditResult r = sheet::editFile(config_.prefsDir + "/characters/" + characterId + ".json", characterId, body["set"], true, &changes_);
+    const sheet::EditResult r = sheet::editFile(config_.prefsDir + "/characters/" + characterId + ".yaml", characterId, body["set"], true, &changes_);
     if (!r.ok) return errorResponse(r.status, r.error);
     refreshedAt_ = -1;                                   // the next look must see the file we just wrote
     refresh(now);

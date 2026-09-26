@@ -54,8 +54,8 @@ void writeStatus(const gm::WebConfig& config, bool running, const std::string& e
                   {"url", config.publicUrl},
                   {"local_url", "http://localhost:" + std::to_string(config.port)},
                   {"error", error}};
-    const std::string text = j.dump(2) + "\n";
-    const std::string file = config.prefsDir + "/web-status.json";
+    const std::string text = gm::jsonToYaml(j);
+    const std::string file = config.prefsDir + "/web-status.yaml";
     SDL_SaveFile(file.c_str(), text.data(), text.size());
 }
 std::string lowerText(std::string s) {
@@ -147,7 +147,7 @@ int main(int argc, char** argv) {
         if (parentPid > 0 && !processAlive(parentPid)) break;         // the app that started us is gone
     }
     server.stop();
-    const std::string file = config.prefsDir + "/web-status.json";
+    const std::string file = config.prefsDir + "/web-status.yaml";
     SDL_RemovePath(file.c_str());
     return 0;
 }

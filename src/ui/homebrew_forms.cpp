@@ -42,10 +42,10 @@ std::string slugOfCard(const json& o) {
     return slugOf(id.empty() ? jsonStr(o, "name") : id);
 }
 
-// Loads <dir>/<file>.json (or starts it), giving back the root; its list of cards is root[file].
+// Loads <dir>/<file>.yaml (or starts it), giving back the root; its list of cards is root[file].
 json loadCustomFile(const std::string& dir, const char* file) {
     json root = json::object();
-    if (const auto text = fs::readFile(dir + "/" + file + ".json")) {
+    if (const auto text = fs::readFile(dir + "/" + file + ".yaml")) {
         json parsed;
         if (jsonParse(*text, parsed, nullptr) && parsed.is_object()) root = parsed;
     }
@@ -57,7 +57,7 @@ json loadCustomFile(const std::string& dir, const char* file) {
 
 bool writeCustomFile(Host& host, const std::string& dir, const char* file, const json& root, std::string& error) {
     SDL_CreateDirectory(dir.c_str());
-    if (!fs::writeFile(dir + "/" + file + ".json", root.dump(1))) {
+    if (!fs::writeFile(dir + "/" + file + ".yaml", jsonToYaml(root))) {
         error = "Could not save: " + std::string(SDL_GetError());
         return false;
     }

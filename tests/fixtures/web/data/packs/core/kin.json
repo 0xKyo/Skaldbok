@@ -1,5 +1,0 @@
-{
-  "kin": [
-    { "id": "human", "name": "Human", "source": "rulebook", "description": "Test humans.", "movement": 10, "innate_abilities": ["Adaptive"], "names": ["Tym", "Lothar"], "page": 18 }
-  ]
-}

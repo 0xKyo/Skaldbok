@@ -1,0 +1,30 @@
+spells:
+  - name: Frost Nip
+    school: Elementalism
+    trick: true
+    requirement: Word, gesture
+    range: Touch
+    duration: Instant
+    description: A thin rime spreads over a small object or a creature's fingertips. The target is chilled and takes a bane on its next roll that needs a steady hand.
+    page: 20
+  - name: Rime Ward
+    school: Elementalism
+    rank: "1"
+    requirement: Word, gesture
+    casting_time: Action
+    range: Touch
+    duration: Shift
+    description: You coat a creature in a shimmer of ice. The target gets +2 armor against fire damage and is immune to the effects of natural cold until the spell ends.
+    page: 20
+  - name: Blizzard Call
+    school: Elementalism
+    rank: "3"
+    prerequisite: Rime Ward
+    requirement: Word, gesture, staff
+    casting_time: Action
+    range: 20 meters
+    duration: Concentration
+    description:
+      - A swirling storm of snow fills a sphere 10 meters across. Everyone inside has a bane on attacks and on AWARENESS rolls.
+      - Fire in the area is doused at once.
+    page: 21

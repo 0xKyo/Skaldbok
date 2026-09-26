@@ -1,0 +1,38 @@
+creatures:
+  - id: frost-wight
+    name: Frost Wight
+    kind: monster
+    category: Undead
+    quote: |
+      “The cold does not kill you. It just waits.”
+      – Old northern saying
+    description:
+      - Frost wights are the frozen dead of the marches, risen when a blizzard lasts longer than the food. They drift over the snow with no footprints.
+      - A wight will not stop while there is still warmth to take.
+    image: images/frost-wight.png
+    attack_dice: D6
+    statblocks:
+      - fields:
+          Ferocity: "2"
+          Size: Normal
+          Movement: "10"
+          Armor: "2"
+          HP: "18"
+    attacks:
+      - roll: 1-2
+        name: Rimed Claws
+        text: The wight rakes one target for D8 damage. The target is chilled and takes a bane on its next action.
+      - roll: 3-4
+        name: Grave Chill
+        text: Everyone within 4 meters must make a WIL roll or become Scared.
+      - roll: "5"
+        name: Steal Warmth
+        text: The wight touches one target, dealing D6 damage that ignores armor, and heals the same amount.
+      - roll: "6"
+        name: Howl of the Marches
+        text: A freezing howl. All in sight take a bane on their next roll.
+    abilities:
+      - name: Undead
+        text: Immune to poison, sleep and fear. Takes double damage from fire.
+    adventure_seed: A caravan is stranded at a mountain pass. Every night one more wagon is found empty, and the snow around it is unmarked.
+    page: 40

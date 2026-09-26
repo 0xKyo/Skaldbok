@@ -192,7 +192,7 @@ private:
         std::string url, localUrl, error;
     };
 
-    std::string statusFile() const { return host_.paths().prefDir + "web-status.json"; }
+    std::string statusFile() const { return host_.paths().prefDir + "web-status.yaml"; }
 
     void readStatus() {
         Status s;

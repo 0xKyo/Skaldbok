@@ -1,0 +1,7 @@
+gear:
+  - name: Snow Goggles
+    category: Clothes
+    cost: 8 silver
+    supply: Uncommon
+    effect: Carved bone slits that prevent snow blindness.
+    page: 31

@@ -53,7 +53,7 @@ App::App(SDL_Window* window, SDL_Renderer* renderer, Paths paths)
     paths_.prefDir = prefDir;
     if (!prefDir.empty()) {
         SDL_CreateDirectory(paths_.userPacksDir().c_str());
-        settings_.open(prefDir + "settings.json");
+        settings_.open(prefDir + "settings.yaml");
         recentFile_ = prefDir + "recent.txt";
         characters_.setDir(paths_.charactersDir());
         parties_.setDir(paths_.partiesDir());

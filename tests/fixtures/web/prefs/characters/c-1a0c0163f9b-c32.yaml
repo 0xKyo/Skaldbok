@@ -1,0 +1,123 @@
+format: 1
+id: c-1a0c0163f9b-c32
+name: Groddy
+nickname: ""
+player: ""
+age: adult
+kin:
+  key: core/kin/mallard
+  name: Mallard
+profession:
+  key: core/profession/thief
+  name: Thief
+school: ""
+attributes:
+  STR: 10
+  CON: 11
+  AGL: 16
+  INT: 14
+  WIL: 9
+  CHA: 8
+hp: 7
+wp: 9
+hp_bonus: 0
+wp_bonus: 0
+conditions: []
+skills:
+  - key: core/skill/bluffing
+    name: Bluffing
+    attribute: CHA
+    level: 8
+    trained: true
+    marked: false
+  - key: core/skill/acrobatics
+    name: Acrobatics
+    attribute: AGL
+    level: 14
+    trained: true
+    marked: false
+  - key: core/skill/sneaking
+    name: Sneaking
+    attribute: AGL
+    level: 14
+    trained: true
+    marked: false
+  - key: core/skill/knives
+    name: Knives
+    attribute: AGL
+    level: 14
+    trained: true
+    marked: false
+  - key: core/skill/spot-hidden
+    name: Spot Hidden
+    attribute: INT
+    level: 12
+    trained: true
+    marked: false
+  - key: core/skill/awareness
+    name: Awareness
+    attribute: INT
+    level: 12
+    trained: true
+    marked: false
+  - key: core/skill/languages
+    name: Languages
+    attribute: INT
+    level: 12
+    trained: true
+    marked: false
+  - key: core/skill/staves
+    name: Staves
+    attribute: AGL
+    level: 14
+    trained: true
+    marked: false
+  - key: core/skill/bows
+    name: Bows
+    attribute: AGL
+    level: 14
+    trained: true
+    marked: false
+  - key: core/skill/seamanship
+    name: Seamanship
+    attribute: INT
+    level: 12
+    trained: true
+    marked: false
+abilities:
+  - key: core/ability/ill-tempered
+    name: Ill-Tempered
+  - key: core/ability/webbed-feet
+    name: Webbed Feet
+  - key: core/ability/backstabbing
+    name: Backstabbing
+spells: []
+weapons:
+  - name: Dagger
+    key: core/weapon/dagger
+  - name: Sling
+    key: core/weapon/sling
+armor: null
+helmet: null
+inventory:
+  - name: Rope, Hemp (10 meters)
+    key: core/gear/rope-hemp-10-meters
+  - name: Grappling Hook
+    key: core/gear/grappling-hook
+  - name: Torch
+    key: core/gear/torch
+  - name: Flint & Tinder
+    key: core/gear/flint-and-tinder
+  - name: Food rations
+    count: 2
+tiny_items: []
+coins:
+  gold: 0
+  silver: 2
+  copper: 0
+weakness: Haughty. I look down on everyone I meet.
+memento: A copper coin from a treasure sought by your mother or father
+appearance: Abnormal amounts of body hair (depending on kin)
+notes: ""
+created_at: 2026-09-20T18:31:18Z
+updated_at: 2026-09-20T18:31:18Z

@@ -1,4 +1,4 @@
-// The shape shared by the per-user stores (characters, parties): a folder with one "<id>.json" file per item, where the file
+// The shape shared by the per-user stores (characters, parties): a folder with one "<id>.yaml" file per item, where the file
 // name is the identity. T needs `id`, `name`, `createdAt`, `updatedAt`, `toJson()` and a static `fromJson(text, out, error)`.
 //
 // Another program (the web server) may write the same files, so the store can look again with poll() and picks up what changed.
@@ -16,6 +16,7 @@
 #include <SDL3/SDL.h>
 
 #include "parsing/fsutil.h"
+#include "parsing/jsonutil.h"
 
 namespace gm {
 
@@ -35,7 +36,7 @@ public:
         stamps_.clear();
         if (!dir_.empty())
             for (const std::string& name : fs::listDir(dir_)) {
-                if (!name.ends_with(".json")) continue;
+                if (!name.ends_with(".yaml")) continue;
                 const std::string stem = name.substr(0, name.size() - 5);
                 if (!fs::safeId(stem)) continue;
                 T item;
@@ -52,7 +53,7 @@ public:
         if (dir_.empty()) return changed;
         std::set<std::string> present;
         for (const std::string& name : fs::listDir(dir_)) {
-            if (!name.ends_with(".json")) continue;
+            if (!name.ends_with(".yaml")) continue;
             const std::string stem = name.substr(0, name.size() - 5);
             if (!fs::safeId(stem)) continue;
             const auto text = fs::readFile(pathOf(stem));                   // these files are small, and the text is the one honest sign of change
@@ -136,7 +137,7 @@ public:
 
     int revision() const { return revision_; }           // changes whenever the list does
     const std::string& dir() const { return dir_; }
-    std::string pathOf(const std::string& id) const { return dir_ + "/" + id + ".json"; }
+    std::string pathOf(const std::string& id) const { return dir_ + "/" + id + ".yaml"; }
 
 protected:
     JsonDirStore(char idPrefix, const char* noun) : prefix_(idPrefix), noun_(noun) {}
@@ -145,7 +146,9 @@ protected:
     // the same time overrides this to fold the change into the file instead of replacing it (and may adjust `item` to match).
     virtual bool commit(T& item, const T* memory) {
         (void)memory;
-        return fs::writeFile(pathOf(item.id), item.toJson());
+        json j;
+        if (!jsonParse(item.toJson(), j, nullptr)) return false;
+        return fs::writeFile(pathOf(item.id), jsonToYaml(j));
     }
 
 private:

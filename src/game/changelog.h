@@ -38,7 +38,7 @@ private:
         unsigned long long size = 0;
         bool operator==(const Stamp&) const = default;
     };
-    std::string fileFor(const std::string& characterId) const { return dir_ + "/" + characterId + ".json"; }
+    std::string fileFor(const std::string& characterId) const { return dir_ + "/" + characterId + ".yaml"; }
     void save(const std::string& characterId, const std::vector<ChangeEntry>& list) const;
 
     std::string dir_;

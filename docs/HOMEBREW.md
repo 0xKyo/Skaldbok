@@ -3,27 +3,27 @@
 Todo el contenido del juego —reglas, criaturas, hechizos, aptitudes, habilidades, razas, profesiones, equipo y tablas— vive en
 **packs**. El contenido de los libros es un solo pack incorporado, **Core** (`data/packs/core`): un pack como cualquier otro, con solo las criaturas,
 hechizos, razas... (cada archivo tiene únicamente elementos de su categoría). Lo que no es un elemento de una categoría —las reglas
-genéricas con sus tablas y la aventura (`rules.json`) y el `"intro"` de cada página— está aparte, en `data/system/`, y se muestra en el
-mismo lugar de la app. Cuando una categoría crece demasiado puede pasar a su propio JSON. Core se abre primero y el homebrew se suma a él:
-nunca lo reemplaza (salvo una regla con `replaces`, ver `rules.json`). Cada entrada mantiene su **fuente**: lo de los libros aparece
+genéricas con sus tablas y la aventura (`rules.yaml`) y el `"intro"` de cada página— está aparte, en `data/system/`, y se muestra en el
+mismo lugar de la app. Cuando una categoría crece demasiado puede pasar a su propio YAML. Core se abre primero y el homebrew se suma a él:
+nunca lo reemplaza (salvo una regla con `replaces`, ver `rules.yaml`). Cada entrada mantiene su **fuente**: lo de los libros aparece
 como *Rulebook / Bestiary / Adventure*; lo de un pack de homebrew como *Homebrew · <nombre>*. El id `core` está reservado.
 
 Un pack es una **carpeta** (o un **.zip** de esa carpeta) con:
 
 ```
 mi-pack/
-  manifest.json        opcional: sin él, el id es el nombre de la carpeta (para importar el pack, hace falta)
-  rules.json           un archivo JSON por tipo; todos opcionales (las homerules van aquí)
-  creatures.json
-  spells.json
-  abilities.json
-  skills.json
-  kin.json
-  professions.json
-  weapons.json
-  armor.json
-  gear.json
-  tables.json
+  manifest.yaml        opcional: sin él, el id es el nombre de la carpeta (para importar el pack, hace falta)
+  rules.yaml           un archivo YAML por tipo; todos opcionales (las homerules van aquí)
+  creatures.yaml
+  spells.yaml
+  abilities.yaml
+  skills.yaml
+  kin.yaml
+  professions.yaml
+  weapons.yaml
+  armor.yaml
+  gear.yaml
+  tables.yaml
   images/              arte de las criaturas (.png .jpg .gif .bmp)
 ```
 
@@ -40,85 +40,103 @@ pack_check mi-pack --strict   # los avisos también cuentan como fallo
 
 `pack_check` usa el mismo código que la app: si dice OK, la app lo importa. Nada se instala.
 
-Un pack ya instalado se puede editar con la app abierta: al guardar un `.json` o cambiar una imagen en la carpeta del pack
+Un pack ya instalado se puede editar con la app abierta: al guardar un `.yaml` o cambiar una imagen en la carpeta del pack
 (la de packs del usuario), la app lo relee sola en un segundo. Si el archivo quedó mal escrito, avisa cuál y el pack se
 omite hasta que lo arregles; al guardar de nuevo se vuelve a leer.
 
 ## Reglas generales de los archivos
 
-* JSON en UTF-8. Se aceptan comentarios `//` y `/* */` y el BOM que agregan algunos editores de Windows.
-* Cada archivo es `{ "spells": [ … ] }` (la clave es el nombre del archivo) o directamente una lista `[ … ]`.
-* Los textos largos pueden escribirse como **lista de párrafos**: `"description": ["Primer párrafo.", "Segundo."]`.
-* Los números pueden ir como texto (`"rank": "1"`, `"movement": "9"`). Los campos desconocidos se ignoran, así que
+* **YAML** en UTF-8. JSON es YAML válido, así que podés escribir los archivos como JSON si preferís: la app los lee igual.
+  Comentarios: `#` en YAML; `//` y `/* */` también si el contenido está en JSON. La app acepta el BOM que agregan algunos editores de Windows.
+* Cada archivo es una mapping de nivel superior con una clave igual al nombre del archivo (`spells:`, `creatures:`…) y una lista de entradas debajo.
+  También puede ser directamente una lista `[ … ]` (JSON).
+* Los textos largos pueden escribirse como **lista de párrafos**:
+  ```yaml
+  description:
+    - Primer párrafo.
+    - Segundo.
+  ```
+* Los números pueden ir como texto (`rank: "1"`, `movement: "9"`). Los campos desconocidos se ignoran, así que
   un pack escrito para una versión futura sigue cargando.
 * Toda entrada necesita `name`. Sin nombre se **omite** con un aviso; el resto del pack carga igual.
 * `id` es opcional (se deriva del nombre). Debe ser único dentro de su archivo; si se repite, se renumera y se avisa.
 * `source` y `page`: ver más abajo. Una entrada dice su página una sola vez, con `page`.
-* `fields`: cualquier ficha (menos criaturas y tablas) acepta `"fields": { "Etiqueta": "valor" }` para mostrar líneas
+* `fields`: cualquier ficha (menos criaturas y tablas) acepta `fields: { Etiqueta: valor }` para mostrar líneas
   extra, sin tocar el código.
-* `tables`: cualquier ficha (hechizo, raza, profesión, equipo...) puede llevar **sus propias tablas**, con el mismo formato que `tables.json`
+* `tables`: cualquier ficha (hechizo, raza, profesión, equipo...) puede llevar **sus propias tablas**, con el mismo formato que `tables.yaml`
   (`name`, `dice`, `columns`, `rows`, `page`); heredan la `source` de la ficha. Se ven en el detalle de la entrada y en el Master Screen
   cuando se fija; la búsqueda las cubre. No aparecen entre las tablas de las reglas (Rules).
-* Un pack con JSON inválido, un `manifest.json` roto o hecho para un formato más nuevo **se rechaza entero**, con el
+* Un pack con YAML inválido, un `manifest.yaml` roto o hecho para un formato más nuevo **se rechaza entero**, con el
   archivo y la posición del error. Los problemas de una sola entrada nunca rechazan el pack.
 
-## Descripción del pack: manifest.json, o la cabecera de un JSON
+## Descripción del pack: manifest.yaml, o la cabecera de un YAML
 
-Un pack se describe (nombre, autor, fuentes...) en un `manifest.json`, **o, si no tiene, en la cabecera de su primer archivo de datos
-que la tenga**: las mismas claves, arriba de todo en el JSON del tipo (se prueba en el orden `rules`, `spells`, `abilities`, `skills`,
-`kin`, `professions`, `weapons`, `armor`, `gear`, `tables`, `creatures`). Si hay las dos cosas, manda el `manifest.json`. El `id` de un
+Un pack se describe (nombre, autor, fuentes...) en un `manifest.yaml`, **o, si no tiene, en la cabecera de su primer archivo de datos
+que la tenga**: las mismas claves, arriba de todo en el YAML del tipo (se prueba en el orden `rules`, `spells`, `abilities`, `skills`,
+`kin`, `professions`, `weapons`, `armor`, `gear`, `tables`, `creatures`). Si hay las dos cosas, manda el `manifest.yaml`. El `id` de un
 pack sin manifest es el nombre de su carpeta (minúsculas, dígitos, `-` y `_`); una carpeta sin manifest ni archivos de datos no es un
-pack. Importar un `.zip` o una carpeta pide `manifest.json`, porque el `id` no se puede deducir de una carpeta temporal.
-```json
-{ "name": "Mi Tome", "author": "Alguien", "sources": [ { "key": "tome", "title": "Mi Tome", "short": "Tome" } ],
-  "spells": [ { "name": "Zap" } ] }
+pack. Importar un `.zip` o una carpeta pide `manifest.yaml`, porque el `id` no se puede deducir de una carpeta temporal.
+```yaml
+name: Mi Tome
+author: Alguien
+sources:
+  - key: tome
+    title: Mi Tome
+    short: Tome
+spells:
+  - name: Zap
 ```
-(Así se describe Core: en su `manifest.json`.) Con un `manifest.json`:
+(Así se describe Core: en su `manifest.yaml`.) Con un `manifest.yaml` aparte:
 
-```json
-{
-  "format": 1,
-  "id": "frostmarch",
-  "name": "Frostmarch Tales",
-  "version": "1.0.0",
-  "author": "Alguien",
-  "description": "Una frase sobre el pack.",
-  "sources": [
-    { "key": "frostmarch", "title": "Frostmarch Tales", "short": "Frostmarch" }
-  ]
-}
+```yaml
+format: 1
+id: frostmarch
+name: Frostmarch Tales
+version: 1.0.0
+author: Alguien
+description: Una frase sobre el pack.
+sources:
+  - key: frostmarch
+    title: Frostmarch Tales
+    short: Frostmarch
 ```
 
 | campo | |
 |---|---|
 | `format` | siempre `1` por ahora. Un número mayor lo rechaza esta versión de la app |
-| `id` | Minúsculas, dígitos, `-` y `_` (`mi-pack`). Identifica al pack; `core` está reservado. Sin manifest.json (o sin `id`), es el nombre de la carpeta |
+| `id` | Minúsculas, dígitos, `-` y `_` (`mi-pack`). Identifica al pack; `core` está reservado. Sin manifest.yaml (o sin `id`), es el nombre de la carpeta |
 | `name` | nombre a mostrar (por defecto, el `id`) |
 | `version`, `author`, `description` | informativos |
 | `sources` | opcional. Los libros o suplementos de donde sale el contenido. Sin esto, hay una fuente con el nombre del pack |
 
 Cada fuente se muestra como **Homebrew · `short`** y tiene su propio botón/filtro (menú *Homebrew* de la barra superior),
-su color y su etiqueta en cada tarjeta. Una entrada elige su fuente con `"source": "<key>"`; sin él usa la primera.
+su color y su etiqueta en cada tarjeta. Una entrada elige su fuente con `source: <key>`; sin él usa la primera.
 
 ### Páginas
 
-`"page": 12` es solo una referencia para mostrar (*p.12*): un pack no tiene PDF, así que no hay botón «Original». Las entradas de
+`page: 12` es solo una referencia para mostrar (*p.12*): un pack no tiene PDF, así que no hay botón «Original». Las entradas de
 los libros (Core) sí llevan enlace a la página del PDF, y ahí `page` es la **página física del PDF**: es la única que hace falta
-escribir. El número impreso en la página se deduce de la cabecera del libro (en Core, la de su `manifest.json`):
+escribir. El número impreso en la página se deduce de la cabecera del libro (en Core, la de su `manifest.yaml`):
 
-```json
-{ "key": "adventure", "title": "…", "short": "Adventure", "file": "References/MistyValeAdventure.pdf", "pages": 120,
-  "page_offset": 2, "first_numbered_page": 5, "unnumbered_pages": [6, 7, 8] }
+```yaml
+key: adventure
+title: "…"
+short: Adventure
+file: References/MistyValeAdventure.pdf
+pages: 120
+page_offset: 2
+first_numbered_page: 5
+unnumbered_pages: [6, 7, 8]
 ```
 El número impreso es la página del PDF menos `page_offset`, desde `first_numbered_page` (por defecto, la que sigue al offset), salvo las
-`unnumbered_pages`, que no tienen número. Si un libro no sigue ninguna fórmula, `"printed_pages": [0, 0, 5, 6, …]` da el número de cada
+`unnumbered_pages`, que no tienen número. Si un libro no sigue ninguna fórmula, `printed_pages: [0, 0, 5, 6, …]` da el número de cada
 página. Ninguna entrada escribe el número impreso: solo `page`, y el número se deduce del libro.
 
 ## Tipos
 
 Todos los campos son opcionales salvo `name`. Cualquier tarjeta (de cualquiera de estos archivos) puede llevar:
-* `"image"`: una ilustración chica de la tarjeta, ruta relativa al pack (`"images/orco.png"`), igual que ya usan las criaturas.
-* `"replaces"`: en vez de agregar una tarjeta nueva, **cambia** la que tenga esa clave (`"core/kin/human"`, por ejemplo): conserva su
+* `image`: una ilustración chica de la tarjeta, ruta relativa al pack (`images/orco.png`), igual que ya usan las criaturas.
+* `replaces`: en vez de agregar una tarjeta nueva, **cambia** la que tenga esa clave (`core/kin/human`, por ejemplo): conserva su
   lugar y su clave, toma el resto de los datos de la nueva, y queda marcada *"Changed by \<pack\>"* — igual que `replaces` en una regla
   (ver más abajo). Así funcionan los botones **Edit** de Kin y Abilities en la app: editar una tarjeta de otro pack (o del libro)
   escribe **una** tarjeta con `replaces` en tu propio pack de homebrew (`custom`, uno solo para todo lo que crees así; guardar de nuevo
@@ -128,13 +146,28 @@ Todos los campos son opcionales salvo `name`. Cualquier tarjeta (de cualquiera d
 
 Cualquiera de estos archivos puede además llevar un `"intro"` de nivel superior
 (junto a su lista, no dentro de una tarjeta): un texto general de esa categoría
-(`{"intro": "...", "spells": [...]}`). También puede llevar sus propias secciones con título y sus propias tablas, igual
-que una regla (`{"intro": {"body": "...", "sections": [{"name": "...", "body": "..."}], "tables": [...]}, "spells": [...]}`)
-— así es como los capítulos "Skills", "Bestiary", "Magic" y "Gear" de Rules terminaron adentro de `skills.json`,
-`creatures.json`, `spells.json` y `gear.json`. Un pack posterior con `intro` no vacío reemplaza el de uno anterior para esa categoría.
+(`intro: "..."`, o con secciones y tablas propias). También puede llevar sus propias secciones con título y sus propias tablas, igual
+que una regla:
+```yaml
+intro:
+  body: "…"
+  sections:
+    - name: "…"
+      body: "…"
+  tables:
+    - name: "…"
+      dice: D6
+      columns: [COL1, COL2]
+      rows:
+        - cells: [val1, val2]
+spells:
+  - name: "…"
+```
+— así es como los capítulos "Skills", "Bestiary", "Magic" y "Gear" de Rules terminaron adentro de `skills.yaml`,
+`creatures.yaml`, `spells.yaml` y `gear.yaml`. Un pack posterior con `intro` no vacío reemplaza el de uno anterior para esa categoría.
 
 El **intro se edita en la app**: en la pestaña "Intro" el botón **Edit** convierte el texto y las secciones en campos, y **Save** escribe el
-resultado en el JSON del que salió (`data/system/<categoría>.json` en Core; sin intro todavía, lo crea allí). El resto del archivo
+resultado en el YAML del que salió (`data/system/<categoría>.yaml` en Core; sin intro todavía, lo crea allí). El resto del archivo
 queda tal cual. Debajo de las secciones, **Tables** permite crear (**Add table**), editar y borrar las tablas del intro: nombre, dados
 ("D20"... agrega la columna Roll), columnas y filas; **Put in a section...** agrega el `{{table: Nombre}}` al final de esa sección (sin él, la
 tabla sale al final de la página). Las celdas de una tabla también aceptan enlaces. Como cualquier texto de la app, se escribe una línea por párrafo:
@@ -152,33 +185,33 @@ de entrada, categoría o regla igual. Core ya trae las suyas (boon, bane, condit
 primera vez que aparecen en cada regla o sección.
 
 **Tablas en cualquier texto**: una línea que sea solo `{{table: Nombre}}` muestra ahí mismo la tabla con ese título —una tabla de una regla, la
-de un intro (p. ej. "Sizes" de `creatures.json`) o la de una ficha—, en cualquier texto de la app (regla, ficha, intro, sección); con sangría
+de un intro (p. ej. "Sizes" de `creatures.yaml`) o la de una ficha—, en cualquier texto de la app (regla, ficha, intro, sección); con sangría
 sale sangrada. Si el texto es de un intro y ese intro tiene una tabla con ese nombre, gana esa; una tabla que ninguna línea pide sigue
 apareciendo al final del intro. Si no existe, la línea sale en rojo ("No table called…").
 
 Las categorías con página propia (creatures, spells, abilities, skills, kin, professions) son una lista + el detalle de la
 entrada elegida; si además tienen `intro`, se muestra como una pestaña "Intro" separada de la pestaña con la lista; sin
 `intro` no hay pestañas, solo la lista. Weapons, armor y gear no tienen lista propia — su categoría **Gear**, en Reference, es solo esa página
-(el `intro` de `gear.json`, con sus tablas).
+(el `intro` de `gear.yaml`, con sus tablas).
 
-### spells.json — hechizos y trucos
+### spells.yaml — hechizos y trucos
 `school` (por defecto *General Magic*), `trick` (`true` = truco de magia), `rank`, `prerequisite`, `requirement`,
 `casting_time`, `range`, `duration`, `description`.
-Una escuela nueva (por ejemplo `"Frostcraft"`) aparece sola en la lista de Spells (el filtro también busca por escuela).
+Una escuela nueva (por ejemplo `Frostcraft`) aparece sola en la lista de Spells (el filtro también busca por escuela).
 
-### abilities.json — aptitudes
+### abilities.yaml — aptitudes
 `type` (`heroic` o `kin`), `kin` (para las innatas), `requirement`, `wp_cost`, `description`.
 
-### skills.json — habilidades
+### skills.yaml — habilidades
 `attribute` (`STR CON AGL INT WIL CHA`), `category` (`core`, `weapon`, `magic` u otra), `description`.
 El atributo define la probabilidad base del personaje. Las de categoría `magic` no se eligen libremente al crear un
 personaje (vienen con la profesión).
 
-### kin.json — razas
+### kin.yaml — razas
 `description`, `movement` (número), `innate_abilities` (nombres de aptitudes; pueden ser de cualquier pack cargado),
 `names` (lista de nombres típicos: el creador de personajes los ofrece). Si el kin trae su **tabla de nombres** en `tables` (ver arriba), no hace falta la lista: los nombres son la primera columna de esa tabla (Core lo hace así: la tabla «Human: First Name» está en la ficha de Human).
 
-### professions.json — profesiones
+### professions.yaml — profesiones
 * `key_attribute`, `description`.
 * `skills`: las habilidades entre las que se eligen las 6 de profesión.
 * `heroic_abilities`: aptitudes heroicas entre las que se elige la inicial (de cualquier pack).
@@ -187,31 +220,52 @@ personaje (vienen con la profesión).
   `"<Profesión>: Gear"` (mismo formato que en cualquier ficha, ver arriba), no hace falta la lista: el creador toma cada conjunto de la
   primera celda de cada fila (Core lo hace así: la tabla de equipo de cada profesión vive en su propia ficha).
 * `nicknames`: apodos típicos. Igual que `starting_gear`: si hay una tabla `"<Profesión>: Nickname"`, la lista sale de ahí.
-* Magia: `"skills_by_school": { "Animism": [ … ], … }` y `"magic": { "spells": 3, "tricks": 3, "spell_rank": 1 }`.
+* Magia: `skills_by_school: { Animism: [ … ], … }` y `magic: { spells: 3, tricks: 3, spell_rank: 1 }`.
   Si existe `skills_by_school` el creador pide elegir escuela, y la profesión no da aptitud heroica.
 
-### weapons.json, armor.json, gear.json — equipo
+### weapons.yaml, armor.yaml, gear.yaml — equipo
 * Arma: `kind` (`melee`/`ranged`), `grip`, `str_req`, `range`, `damage`, `durability`, `cost`, `supply`, `features`.
 * Armadura: `slot` (`armor` o `helmet`), `armor_rating`, `cost`, `supply`, `effect`.
 * Objeto: `category`, `cost`, `supply`, `weight`, `effect`.
 
 Este equipo no tiene una lista propia: las armas, armaduras y objetos del libro son las tablas de la categoría **Gear**
-(en Reference, con su propio `gear.json`, ver más arriba); se puede igual añadir a la ficha de un personaje, buscarlo con
+(en Reference, con su propio `gear.yaml`, ver más arriba); se puede igual añadir a la ficha de un personaje, buscarlo con
 `Ctrl+K` y fijarlo en el Master Screen.
 
-### creatures.json — criaturas (un archivo grande)
-```json
-{
-  "id": "frost-wight", "name": "Frost Wight", "kind": "monster", "category": "Undead",
-  "quote": "…", "description": ["…", "…"],
-  "image": "images/frost-wight.png",
-  "attack_dice": "D6",
-  "statblocks": [ { "variant": "", "fields": { "Ferocity": "2", "Size": "Normal", "Movement": "10", "Armor": "2", "HP": "18" } } ],
-  "attacks": [ { "roll": "1-2", "name": "Rimed Claws", "text": "…" }, { "roll": "3-4", "name": "…", "text": "…" } ],
-  "abilities": [ { "name": "Undead", "text": "…" } ],
-  "random_encounter": "…", "adventure_seed": "…",
-  "tables": ["Título de una tabla relacionada"]
-}
+### creatures.yaml — criaturas (un archivo grande)
+```yaml
+creatures:
+  - id: frost-wight
+    name: Frost Wight
+    kind: monster
+    category: Undead
+    quote: |
+      "The cold does not kill you. It just waits."
+      – Old northern saying
+    description:
+      - Frost wights are the frozen dead of the marches, risen when a blizzard lasts longer than the food.
+      - A wight will not stop while there is still warmth to take.
+    image: images/frost-wight.png
+    attack_dice: D6
+    statblocks:
+      - fields:
+          Ferocity: "2"
+          Size: Normal
+          Movement: "10"
+          Armor: "2"
+          HP: "18"
+    attacks:
+      - roll: 1-2
+        name: Rimed Claws
+        text: The wight rakes one target for D8 damage.
+      - roll: 3-4
+        name: Grave Chill
+        text: Everyone within 4 meters must make a WIL roll or become Scared.
+    abilities:
+      - name: Undead
+        text: Immune to poison, sleep and fear. Takes double damage from fire.
+    adventure_seed: A caravan is stranded at a mountain pass.
+    page: 40
 ```
 * `kind`: `monster`, `npc` o `animal`. `category` agrupa la lista.
 * `statblocks`: uno o varios (por ejemplo *Scout* y *Warrior*); `fields` conserva el orden que escribas. El campo **HP**
@@ -221,39 +275,77 @@ Este equipo no tiene una lista propia: las armas, armaduras y objetos del libro 
 * `image`: ruta **relativa a la carpeta del pack**, dentro de ella. Una ruta con `..` o absoluta se ignora con un aviso.
 * `stats_ref`: para criaturas cuyas estadísticas están en otra página («stats as per page 87»).
 
-### tables.json — tablas
-```json
-{ "name": "Frostmarch Weather", "dice": "D6", "columns": ["WEATHER", "EFFECT"],
-  "rows": [ { "roll": "1", "cells": ["Whiteout", "…"] }, { "roll": "3-4", "cells": ["Snowfall", "…"] } ] }
+### tables.yaml — tablas
+```yaml
+tables:
+  - name: Frostmarch Weather
+    dice: D6
+    columns:
+      - WEATHER
+      - EFFECT
+    rows:
+      - roll: "1"
+        cells:
+          - Whiteout
+          - Travel is impossible; everyone outside takes a bane on all rolls.
+      - roll: 3-4
+        cells:
+          - Snowfall
+          - Tracks are covered. Bane on tracking.
 ```
 Con `dice` la tabla tiene botón *Roll* que resalta la fila. Sin `dice`, es una tabla simple (las filas pueden ser solo
-listas de celdas). Dos campos opcionales: `"browse": false` la deja fuera de Rules, y
-`"role": "weakness" | "memento" | "appearance"` hace que el creador de personajes tire en ella (además de las del Core).
+listas de celdas). Dos campos opcionales: `browse: false` la deja fuera de Rules, y
+`role: weakness | memento | appearance` hace que el creador de personajes tire en ella (además de las del Core).
 
 **Dónde se ve una tabla.** No hay una lista aparte de tablas: se leen dentro de **Rules**, en la sección a la que pertenecen. Lo
 más cómodo es escribirla **dentro de su regla**, con la clave `tables` (igual que `children`; la tabla toma la `source` de la
 regla si no pone otra):
-```json
-{ "rules": [ { "name": "Foraging", "source": "zine", "body": "…",
-    "tables": [ { "name": "Finds", "dice": "D6", "columns": ["FIND"], "rows": [ { "roll": "1-3", "cells": ["Berries"] }, { "roll": "4-6", "cells": ["Roots"] } ] } ],
-    "children": [ … ] } ] }
+```yaml
+rules:
+  - name: Foraging
+    source: zine
+    body: "…"
+    tables:
+      - name: Finds
+        dice: D6
+        columns:
+          - FIND
+        rows:
+          - roll: 1-3
+            cells:
+              - Berries
+          - roll: 4-6
+            cells:
+              - Roots
+    children:
+      - name: "…"
 ```
-Una tabla de `tables.json` (sin regla) aparece en Rules bajo una sección propia del pack, **«Tables · <nombre del pack>»**, al final
+Una tabla de `tables.yaml` (sin regla) aparece en Rules bajo una sección propia del pack, **«Tables · <nombre del pack>»**, al final
 del árbol. Buscar una tabla (`Ctrl+K`), abrirla desde una criatura o desde el Master Screen lleva a su sección. Una criatura enlaza
-su tabla con `"tables": ["First Name"]`; si existe una tabla llamada `<Criatura>: First Name` (por ejemplo `Goblin: First Name`),
+su tabla con `tables: ["First Name"]`; si existe una tabla llamada `<Criatura>: First Name` (por ejemplo `Goblin: First Name`),
 enlaza a esa, y si no, a la primera con ese título.
 
-### rules.json — reglas y homerules
-```json
-{ "rules": [
-    { "name": "Camping", "source": "zine", "body": "Descansar bien cuesta una ración.",
-      "children": [
-        { "name": "Fogatas", "body": ["Mantené una encendida.", "Con lluvia, tirada de Supervivencia."] },
-        { "name": "Guardias", "children": [ { "name": "Guardia de noche", "body": "…" } ] }
-      ] },
-    { "name": "Fumbles", "parent": "core/rule/combat-damage", "body": "Un 20 en un ataque es un desastre." },
-    { "name": "Melee, a nuestra manera", "replaces": "core/rule/melee-combat", "body": "Sin paradas gratis." }
-] }
+### rules.yaml — reglas y homerules
+```yaml
+rules:
+  - name: Camping
+    source: zine
+    body: Descansar bien cuesta una ración.
+    children:
+      - name: Fogatas
+        body:
+          - Mantené una encendida.
+          - Con lluvia, tirada de Supervivencia.
+      - name: Guardias
+        children:
+          - name: Guardia de noche
+            body: "…"
+  - name: Fumbles
+    parent: core/rule/combat-damage
+    body: Un 20 en un ataque es un desastre.
+  - name: Melee, a nuestra manera
+    replaces: core/rule/melee-combat
+    body: Sin paradas gratis.
 ```
 Las reglas forman un **árbol** (lo que muestra el módulo Rules) y se escriben **anidadas**: una regla lista sus `children` dentro de sí
 misma. Las de Core traen el texto de los libros; cualquier otro pack puede sumar las suyas:
@@ -272,15 +364,15 @@ misma. Las de Core traen el texto de los libros; cualquier otro pack puede sumar
   de textos, cada uno una **categoría** (`kin`, `professions`, `skills`, `abilities`, `spells`, `weapons`, `armor`, `gear`, `creatures`:
   abre esa lista), la **clave de una entrada** (`core/kin/human`, `core/profession/thief`, `core/skill/languages`: abre la ficha) o la
   **clave de otra regla** (`core/rule/melee-combat`). Un `see` que no apunta a nada se avisa al cargar el pack. Así una regla
-  puede decir «elegí un kin» y llevar a la lista de Kin, que vive en otro JSON.
+  puede decir «elegí un kin» y llevar a la lista de Kin, que vive en otro YAML.
 * `nav`: solo en un capítulo de primer nivel. Le da **página propia** en ese grupo de la barra de la izquierda, en vez de estar
-  dentro de Rules: `"nav": "Reference"` (así están *Character Creation*, *Combat & Damage* y *Adventures*). El grupo también puede ser otro texto (aparece como un encabezado nuevo).
+  dentro de Rules: `nav: Reference` (así están *Character Creation*, *Combat & Damage* y *Adventures*). El grupo también puede ser otro texto (aparece como un encabezado nuevo).
   La página aparece al abrir la app (tras un cambio en caliente, al reiniciarla). Si el capítulo
   no tiene texto propio (ni `body`, ni `sections`, ni `tables`), no aparece como entrada: sus `children` son el primer nivel de su
   página (así está *Combat & Damage*).
-* **Cualquier otra clave** de una regla se conserva como dato para el programa, como en las fichas (`"step": "4"`, `"trained_skills": 6`,
-  `"attribute_mods": { "AGL": 1 }`, `"optional": true`): el creador de personajes los lee de ahí. Texto y números tal cual; objetos y listas,
-  como su JSON. `step` además se muestra delante del título («4. Age») en Rules.
+* **Cualquier otra clave** de una regla se conserva como dato para el programa, como en las fichas (`step: "4"`, `trained_skills: 6`,
+  `attribute_mods: { AGL: 1 }`, `optional: true`): el creador de personajes los lee de ahí. Texto y números tal cual; objetos y listas,
+  como su YAML. `step` además se muestra delante del título («4. Age») en Rules.
 * Core se carga siempre primero, así que sus reglas existen cuando el homebrew las nombra. Apagar el pack de homerules
   deja las reglas del libro como estaban. El árbol admite hasta 24 niveles.
 
@@ -297,5 +389,5 @@ habilidades entrenadas dan y cómo cambian los atributos). Sirve como referencia
   Si un pack se quita, las fichas siguen mostrando el nombre que guardaron.
 * Cambiar el `id` de una entrada en una versión nueva del pack rompe el vínculo con los personajes que ya la usan: conviene
   fijar los `id` desde el principio.
-* Límites: 64 MB por archivo JSON, 5 000 archivos y 512 MB por pack; solo se importan `.json .png .jpg .jpeg .gif .bmp .txt .md`.
+* Límites: 64 MB por archivo YAML, 5 000 archivos y 512 MB por pack; solo se importan `.yaml .png .jpg .jpeg .gif .bmp .txt .md`.
   Un `.zip` con rutas que intenten salir de la carpeta (`../`) se rechaza.

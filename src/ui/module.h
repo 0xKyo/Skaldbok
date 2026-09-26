@@ -38,7 +38,7 @@ struct Paths {
     std::string userPacksDir() const { return prefDir + "packs"; }
     std::string charactersDir() const { return prefDir + "characters"; }
     std::string partiesDir() const { return prefDir + "parties"; }
-    std::string masterScreenFile() const { return prefDir + "master_screen.json"; }
+    std::string masterScreenFile() const { return prefDir + "master_screen.yaml"; }
 };
 
 // ---------------------------------------------------------------------------------- optional services

@@ -1,11 +1,11 @@
 # Datos de personajes
 
-Cada personaje es **un archivo JSON** en la carpeta de personajes del usuario (en Windows
-`%APPDATA%\skaldbok\gm\characters\`). El nombre del archivo (sin `.json`) es el `id` del
+Cada personaje es **un archivo YAML** en la carpeta de personajes del usuario (en Windows
+`%APPDATA%\skaldbok\gm\characters\`). El nombre del archivo (sin `.yaml`) es el `id` del
 personaje. La app es hoy una herramienta del máster; estos archivos están pensados para que una futura web app de los
 jugadores los lea (y escriba) tal cual.
 
-* **Exportar / importar** un personaje: botones *Export…* y *Import…* del módulo Characters. Importar **siempre crea
+* **Exportar / importar** un personaje: botones *Export…* y *Import…* del módulo Characters (exporta e importa `.yaml`). Importar **siempre crea
   un personaje nuevo** (nuevo `id`), nunca pisa uno existente.
 * La app escribe el archivo entero cada vez que algo cambia en la ficha.
 * Lo que un personaje toma del contenido del juego (raza, profesión, habilidades, aptitudes, hechizos, equipo) se guarda como
@@ -13,6 +13,8 @@ jugadores los lea (y escriba) tal cual.
   momento de guardar. Con la clave se encuentra la entrada completa; con el nombre la ficha se lee aunque el pack ya no esté.
 
 ## Formato (`format: 1`)
+
+Los archivos se guardan en YAML. El bloque de abajo usa la sintaxis JSON (que también es YAML válido) para mostrar la estructura; la app escribe YAML real.
 
 ```json
 {
@@ -117,5 +119,5 @@ la carpeta `parties/` (junto a `characters/`); el nombre del archivo es su `id`.
 
 ## Acceso web
 
-El servidor web (`skaldbok_web`) guarda un token secreto por personaje en `web-access.json` (en la carpeta del usuario, junto a
+El servidor web (`skaldbok_web`) guarda un token secreto por personaje en `web-access.yaml` (en la carpeta del usuario, junto a
 `characters/`). La app del máster solo lo **lee** para mostrar el enlace de cada jugador; no es parte del archivo del personaje.

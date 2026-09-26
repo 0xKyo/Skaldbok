@@ -86,13 +86,13 @@ void copyTree(const std::string& from, const std::string& to, CopyState& st) {
     }
 }
 
-// The folder that holds manifest.json: `dir` itself, or its only subfolder ("MyPack.zip" often holds "MyPack/").
+// The folder that holds manifest.yaml: `dir` itself, or its only subfolder ("MyPack.zip" often holds "MyPack/").
 std::string findPackRoot(const std::string& dir) {
-    if (isFileAt(dir + "/manifest.json")) return dir;
+    if (isFileAt(dir + "/manifest.yaml")) return dir;
     std::string found;
     for (const std::string& name : listDir(dir)) {
         if (name.empty() || name[0] == '.' || name == "__MACOSX") continue;
-        if (isDir(dir + "/" + name) && isFileAt(dir + "/" + name + "/manifest.json")) {
+        if (isDir(dir + "/" + name) && isFileAt(dir + "/" + name + "/manifest.yaml")) {
             if (!found.empty()) return {};
             found = dir + "/" + name;
         }
@@ -213,9 +213,9 @@ std::string packSignature(const std::vector<PackSpec>& specs) {
     std::string sig;
     for (const PackSpec& s : specs) {
         sig += s.dir + (s.enabled ? "+" : "-") + "|";
-        for (const std::string& f : files) sig += stamp(s.dir + "/" + f + ".json");
+        for (const std::string& f : files) sig += stamp(s.dir + "/" + f + ".yaml");
         if (s.core)
-            for (const std::string& f : files) sig += stamp(systemDirOf(s.dir) + "/" + f + ".json");
+            for (const std::string& f : files) sig += stamp(systemDirOf(s.dir) + "/" + f + ".yaml");
         if (s.core || !s.enabled) continue;
         for (const std::string& name : listDir(s.dir + "/images")) sig += name + ":" + stamp(s.dir + "/images/" + name);
     }
@@ -263,7 +263,7 @@ ImportResult PackManager::import(const std::string& rawPath) {
     const std::string root = findPackRoot(stage);
     if (root.empty()) {
         removeTree(stage);
-        r.message = "No manifest.json found. A pack is a folder with a manifest.json and the type files next to it.";
+        r.message = "No manifest.yaml found. A pack is a folder with a manifest.yaml and the type files next to it.";
         return r;
     }
     PackInfo probe;
@@ -274,7 +274,7 @@ ImportResult PackManager::import(const std::string& rawPath) {
     }
     if (probe.id == "core") {
         removeTree(stage);
-        r.message = "The id \"core\" is reserved for the built-in content. Choose another id in manifest.json.";
+        r.message = "The id \"core\" is reserved for the built-in content. Choose another id in manifest.yaml.";
         return r;
     }
     // load it once, exactly as the app will: after Core, so rules that go under or replace the book's can be checked

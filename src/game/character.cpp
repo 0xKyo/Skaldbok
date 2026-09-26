@@ -321,7 +321,7 @@ bool CharacterStore::commit(Character& item, const Character* memory) {
             sheet::merge(doc, sheet::diff(base, edited));
             doc["revision"] = jsonInt(doc, "revision") + 1;
             doc["updated_at"] = item.updatedAt;
-            if (!fs::writeFile(path, doc.dump(2) + "\n")) return false;
+            if (!fs::writeFile(path, jsonToYaml(doc))) return false;
             const std::string id = item.id;
             Character::fromJson(doc.dump(), item, nullptr);            // what is now in the file, other people's changes included
             item.id = id;
@@ -329,7 +329,9 @@ bool CharacterStore::commit(Character& item, const Character* memory) {
         }
     }
     item.revision = (memory ? memory->revision : 0) + 1;
-    return fs::writeFile(path, item.toJson());
+    json j;
+    if (!jsonParse(item.toJson(), j, nullptr)) return false;
+    return fs::writeFile(path, jsonToYaml(j));
 }
 
 bool CharacterStore::importFile(const std::string& path, std::string* newId, std::string* error) {
@@ -348,7 +350,12 @@ bool CharacterStore::importFile(const std::string& path, std::string* newId, std
 }
 
 bool CharacterStore::exportFile(const Character& c, const std::string& path, std::string* error) const {
-    if (fs::writeFile(path, c.toJson())) return true;
+    json j;
+    if (!jsonParse(c.toJson(), j, nullptr)) {
+        if (error) *error = "serialisation error";
+        return false;
+    }
+    if (fs::writeFile(path, jsonToYaml(j))) return true;
     if (error) *error = SDL_GetError();
     return false;
 }

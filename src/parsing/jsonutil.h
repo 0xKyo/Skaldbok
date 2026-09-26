@@ -1,5 +1,5 @@
-// JSON reading helpers. Pack and character files are written by people, so every accessor is forgiving:
-// a missing key or a value of the wrong type gives an empty/default value instead of an exception.
+// Data-file reading helpers. Files are YAML; the in-memory representation is nlohmann::ordered_json.
+// Every accessor is forgiving: a missing key or wrong type gives an empty/default value instead of an exception.
 #pragma once
 
 #include <cstdlib>
@@ -7,13 +7,9 @@
 #include <string>
 #include <vector>
 
-#include "parsing/fsutil.h"
-#include "json.hpp"
+#include "parsing/yamlutil.h"  // declares gm::json, yamlParse, yamlLoad, jsonToYaml
 
 namespace gm {
-
-// ordered_json keeps the order of an object's keys: stat block fields are shown as the author wrote them.
-using json = nlohmann::ordered_json;
 
 // Text of a value: strings as they are, numbers and booleans printed, arrays of strings joined by newlines
 // (so a long description can be written as a list of paragraphs).
@@ -84,27 +80,22 @@ inline std::vector<std::string> jsonStrings(const json& o, const char* key) {
     return out;
 }
 
-// Parses text; on failure returns false and says where ("parse error at line 3, column 9...").
+// Parses YAML (or JSON) text; on failure returns false and says where.
 inline bool jsonParse(const std::string& text, json& out, std::string* error) {
-    size_t start = 0;
+    // Strip a UTF-8 byte-order mark that some Windows editors add.
+    const std::string* src = &text;
+    std::string stripped;
     if (text.size() >= 3 && static_cast<unsigned char>(text[0]) == 0xEF && static_cast<unsigned char>(text[1]) == 0xBB &&
-        static_cast<unsigned char>(text[2]) == 0xBF)
-        start = 3;                                             // Windows editors like to add a byte-order mark
-    try {
-        out = json::parse(text.begin() + static_cast<std::ptrdiff_t>(start), text.end(), nullptr, true, true);
-        return true;
-    } catch (const std::exception& e) {
-        if (error) *error = e.what();
-        return false;
+        static_cast<unsigned char>(text[2]) == 0xBF) {
+        stripped = text.substr(3);
+        src = &stripped;
     }
+    return yamlParse(*src, out, error);
 }
 
-// Reads a file and parses it; nothing if it is missing, damaged, or not a JSON object.
+// Reads a file and parses it as YAML; nothing if missing, damaged, or not a mapping.
 inline std::optional<json> jsonLoad(const std::string& path) {
-    const auto text = fs::readFile(path);
-    json j;
-    if (!text || !jsonParse(*text, j, nullptr) || !j.is_object()) return std::nullopt;
-    return j;
+    return yamlLoad(path);
 }
 
 }  // namespace gm

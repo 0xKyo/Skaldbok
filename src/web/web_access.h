@@ -26,7 +26,7 @@ public:
     const std::map<std::string, std::string>& tokens() const { return tokens_; }
 
     static std::string newToken();                              // 128 random bits, as 32 hex digits
-    static std::string fileName() { return "web-access.json"; }
+    static std::string fileName() { return "web-access.yaml"; }
 
 private:
     void read();

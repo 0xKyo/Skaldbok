@@ -185,9 +185,9 @@ std::string systemDirOf(const std::string& coreDir) {
 }
 
 bool looksLikePack(const std::string& dir) {
-    if (isFile(dir + "/manifest.json")) return true;
+    if (isFile(dir + "/manifest.yaml")) return true;
     for (const std::string& f : packDataFiles())
-        if (isFile(dir + "/" + f + ".json")) return true;
+        if (isFile(dir + "/" + f + ".yaml")) return true;
     return false;
 }
 
@@ -197,29 +197,29 @@ static bool readMeta(const std::string& dir, PackInfo& out, json& meta) {
     out.dir = dir;
     meta = json::object();
     std::string text, err;
-    const bool hasManifest = isFile(dir + "/manifest.json");
+    const bool hasManifest = isFile(dir + "/manifest.yaml");
     if (hasManifest) {
-        if (!readTextFile(dir + "/manifest.json", text, &err)) {
-            out.error = "manifest.json: " + err;
+        if (!readTextFile(dir + "/manifest.yaml", text, &err)) {
+            out.error = "manifest.yaml: " + err;
             return false;
         }
         if (!jsonParse(text, meta, &err)) {
-            out.error = "manifest.json: " + err;
+            out.error = "manifest.yaml: " + err;
             return false;
         }
         if (!meta.is_object()) {
-            out.error = "manifest.json must be a JSON object";
+            out.error = "manifest.yaml must be a YAML mapping";
             return false;
         }
     } else {
         bool anyFile = false;
         for (const std::string& f : packDataFiles()) {
-            const std::string path = dir + "/" + f + ".json";
+            const std::string path = dir + "/" + f + ".yaml";
             if (!isFile(path)) continue;
             anyFile = true;
             json j;
             if (!readTextFile(path, text, &err) || !jsonParse(text, j, &err)) {
-                out.error = f + ".json: " + err;
+                out.error = f + ".yaml: " + err;
                 return false;
             }
             if (j.is_object() && hasHeaderKeys(j)) {
@@ -228,7 +228,7 @@ static bool readMeta(const std::string& dir, PackInfo& out, json& meta) {
             }
         }
         if (!anyFile) {
-            out.error = "manifest.json: not found, and the folder has no data file either (rules.json, spells.json...)";
+            out.error = "manifest.yaml: not found, and the folder has no data file either (rules.yaml, spells.yaml...)";
             return false;
         }
     }
@@ -239,8 +239,8 @@ static bool readMeta(const std::string& dir, PackInfo& out, json& meta) {
     out.id = jsonStr(meta, "id");
     if (out.id.empty() && !hasManifest) out.id = folderNameOf(dir);
     if (!validPackId(out.id)) {
-        out.error = hasManifest ? "manifest.json: \"id\" must be lowercase letters, digits, - or _ (like \"my-tome\")"
-                                : "manifest.json: there is none, and the folder name \"" + out.id + "\" is not a valid pack id (lowercase letters, digits, - or _)";
+        out.error = hasManifest ? "manifest.yaml: \"id\" must be lowercase letters, digits, - or _ (like \"my-tome\")"
+                                : "manifest.yaml: there is none, and the folder name \"" + out.id + "\" is not a valid pack id (lowercase letters, digits, - or _)";
         return false;
     }
     out.name = jsonStr(meta, "name", out.id);
@@ -475,20 +475,20 @@ struct ContentStore::Loader {
 
     // `listOptional`: a system file may hold only an intro.
     bool eachObjectIn(const std::string& dir, const std::string& file, const std::function<void(const json&, const std::string&)>& fn, bool listOptional) {
-        const std::string path = dir + "/" + file + ".json";
+        const std::string path = dir + "/" + file + ".yaml";
         if (!isFile(path)) return true;
         std::string text, err;
         if (!readTextFile(path, text, &err)) {
-            pk.error = file + ".json: " + err;
+            pk.error = file + ".yaml: " + err;
             return false;
         }
         json root;
         if (!jsonParse(text, root, &err)) {
-            pk.error = file + ".json: " + err;
+            pk.error = file + ".yaml: " + err;
             return false;
         }
         if (jsonInt(root, "format", kFormat) > kFormat) {
-            pk.error = file + ".json: made for a newer version of the app";
+            pk.error = file + ".yaml: made for a newer version of the app";
             return false;
         }
         // A data file's own general text, its page's "Intro" tab (docs/HOMEBREW.md): {"intro": "...", "<file>": [...]}, or with its
@@ -516,13 +516,13 @@ struct ContentStore::Loader {
                                 ++index;
                                 const std::string tableName = t.is_object() ? trimmed(jsonStr(t, "name")) : std::string();
                                 if (tableName.empty()) {
-                                    warn(file + ".json intro: table #" + std::to_string(index) + " has no \"name\", skipped");
+                                    warn(file + ".yaml intro: table #" + std::to_string(index) + " has no \"name\", skipped");
                                     continue;
                                 }
                                 DataTable table;
                                 table.key = "intro/" + file + "#" + std::to_string(index);
                                 table.title = tableName;
-                                table.sourceId = sourceFor(t, file + ".json intro, table \"" + tableName + "\"");
+                                table.sourceId = sourceFor(t, file + ".yaml intro, table \"" + tableName + "\"");
                                 fillTable(t, table);
                                 table.browse = false;
                                 in.tables.push_back(std::move(table));
@@ -537,19 +537,19 @@ struct ContentStore::Loader {
         const json* arr = root.is_array() ? &root : jsonFind(root, file.c_str());
         if (!arr && listOptional) return true;
         if (!arr || !arr->is_array()) {
-            pk.error = file + ".json: expected a list (either the whole file or under \"" + file + "\")";
+            pk.error = file + ".yaml: expected a list (either the whole file or under \"" + file + "\")";
             return false;
         }
         size_t index = 0;
         for (const json& o : *arr) {
             ++index;
             if (!o.is_object()) {
-                warn(file + ".json #" + std::to_string(index) + ": not an object, skipped");
+                warn(file + ".yaml #" + std::to_string(index) + ": not an object, skipped");
                 continue;
             }
             const std::string name = trimmed(jsonStr(o, "name"));
             if (name.empty()) {
-                warn(file + ".json #" + std::to_string(index) + ": has no \"name\", skipped");
+                warn(file + ".yaml #" + std::to_string(index) + ": has no \"name\", skipped");
                 continue;
             }
             fn(o, name);

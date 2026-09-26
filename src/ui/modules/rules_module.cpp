@@ -63,6 +63,7 @@ public:
     const char* title() const override { return title_.c_str(); }
     const char* group() const override { return group_.c_str(); }
     bool ownsDetail() const override { return true; }
+    Layout layout() const override { return key_.empty() ? Layout::ListDetail : Layout::Full; }
     int badge() const override { return static_cast<int>(at_.size()); }
     // "Rules" is what no chapter page took: the homerules and tables that packs add. With none, it has no entry at all.
     bool showInNav() const override { return !key_.empty() || !at_.empty(); }
@@ -123,14 +124,7 @@ public:
     }
 
     void drawList() override {
-        if (g_pendingRule && at_.count(g_pendingRule)) {          // a "see" on another rules page pointed here
-            show(g_pendingRule);
-            scrollToSection_ = g_pendingRuleSection;
-            scrollToLine_ = g_pendingRuleLine;
-            g_pendingRule = 0;
-            g_pendingRuleSection = -1;
-            g_pendingRuleLine = -1;
-        }
+        consumePendingRule();
         inputStr("##rulefilter", filter_, -FLT_MIN, key_.empty() ? "Filter rules and tables…" : hint_.c_str());
         ImGui::BeginChild("##rules", ImVec2(0, 0));
         if (filter_.empty()) {
@@ -148,58 +142,56 @@ public:
         ImGui::EndChild();
     }
 
-    void drawDetail() override {
-        const auto it = at_.find(selected_);
-        if (it == at_.end()) {
-            ImGui::Spacing();
-            ImGui::TextWrapped("Nothing here.");
+    void drawDetail() override { drawRuleBody(); }
+
+    void drawFull() override {
+        consumePendingRule();
+        inputStr("##rulefilter", filter_, -FLT_MIN, hint_.c_str());
+
+        if (!filter_.empty()) {
+            // Filtered: side-by-side list + detail within the full area
+            const float listW = ImGui::GetContentRegionAvail().x * 0.28f;
+            ImGui::BeginChild("##filtlist", ImVec2(listW, 0), ImGuiChildFlags_Borders);
+            const std::string want = lowered(filter_);
+            for (const auto& [id, i] : at_) {
+                const RuleNode& n = nodes_[i];
+                if (matches(n, want))
+                    if (ImGui::Selectable((labelOf(n) + "##" + std::to_string(n.id)).c_str(), n.id == selected_)) selected_ = n.id;
+            }
+            ImGui::EndChild();
+            ImGui::SameLine();
+            ImGui::BeginChild("##filtdetail", ImVec2(0, 0), ImGuiChildFlags_Borders | ImGuiChildFlags_AlwaysUseWindowPadding);
+            drawRuleBody();
+            ImGui::EndChild();
             return;
         }
-        const RuleNode& n = nodes_[it->second];
-        bigText(labelOf(n).c_str(), 1.5f, kAccent);
-        std::string path;                                       // where it sits: Chapter > Section
-        for (int p = n.parent; at_.count(p);) {
-            const RuleNode& up = nodes_[at_[p]];
-            path = labelOf(up) + (path.empty() ? "" : " > " + path);
-            p = up.parent;
-        }
-        if (!path.empty()) ImGui::TextColored(kGrey, "%s", path.c_str());
-        sourceBadge(host_, n.sourceId);
-        if (!n.editedBy.empty()) {
-            ImGui::SameLine();
-            ImGui::TextColored(kGold, "Changed by %s", n.editedBy.c_str());
-        }
-        ImGui::Separator();
-        ImGui::BeginChild("##rulebody", ImVec2(0, 0));
-        if (shown_ != selected_) {                              // another rule: read it from the top
-            ImGui::SetScrollY(0);
-            shown_ = selected_;
-        }
-        if (scrollToSection_ < 0 && scrollToLine_ > 0) {                // a link into the rule's own text
-            ui::scrollToLine("rule" + std::to_string(n.id) + ":body", scrollToLine_);
-            scrollToLine_ = -1;
-        }
-        paragraphs(n.body, "body", ("rule" + std::to_string(n.id) + ":body").c_str());
-        for (size_t i = 0; i < n.sections.size(); ++i) {
-            const RuleNode::Section& sec = n.sections[i];
-            ImGui::Spacing();
-            const std::string secKey = "rule" + std::to_string(n.id) + ":sec" + std::to_string(i);
-            if (scrollToSection_ == static_cast<int>(i)) {
-                if (scrollToLine_ > 0) ui::scrollToLine(secKey, scrollToLine_);          // the line itself, when it is not the first
-                else ImGui::SetScrollHereY(0.0f);               // reached from a link: this section goes to the top
-                scrollToSection_ = -1;
-                scrollToLine_ = -1;
+
+        // Primary tab bar — one tab per root section
+        if (roots_.empty()) return;
+        if (ImGui::BeginTabBar("##chaptabs", ImGuiTabBarFlags_FittingPolicyScroll)) {
+            for (size_t ri : roots_) {
+                const RuleNode& root = nodes_[ri];
+                const bool active = inSubtree(root.id, selected_);
+                const ImGuiTabItemFlags flags = (active && scrollToSelected_) ? ImGuiTabItemFlags_SetSelected : 0;
+                if (ImGui::BeginTabItem(labelOf(root).c_str(), nullptr, flags)) {
+                    if (!active) {                             // user clicked this tab: select its first item
+                        const bool hasOwnContent = !root.body.empty() || !root.sections.empty();
+                        selected_ = children_[ri].empty() ? root.id
+                                  : hasOwnContent            ? root.id
+                                  :                            nodes_[children_[ri].front()].id;
+                    }
+                    if (!children_[ri].empty()) drawSubTabs(ri);
+                    else {
+                        ImGui::BeginChild("##tabdetail", ImVec2(0, 0), ImGuiChildFlags_AlwaysUseWindowPadding);
+                        drawRuleBody();
+                        ImGui::EndChild();
+                    }
+                    ImGui::EndTabItem();
+                }
             }
-            bigText(sec.title.c_str(), 1.1f, kGold);
-            paragraphs(sec.body, ("sec" + std::to_string(i)).c_str(), secKey.c_str());
+            ImGui::EndTabBar();
+            scrollToSelected_ = false;
         }
-        for (int tableId : host_.content().tablesOfRule(n.id))
-            if (const DataTable* t = host_.content().packTable(tableId)) drawTable(*t);
-        drawSee(n);
-        ImGui::Spacing();
-        pageLink(host_, n.sourceId, n.ref, n.pageNote);
-        if (focusTable_ && --focusFrames_ <= 0) focusTable_ = 0;
-        ImGui::EndChild();
     }
 
     bool wantsRedraw() const override { return focusTable_ != 0; }
@@ -223,6 +215,113 @@ private:
             if (const DataTable* t = host_.content().packTable(tableId))
                 if (lowered(t->title).find(want) != std::string::npos) return true;
         return false;
+    }
+
+    // True if leafId is rootId or a descendant of it.
+    bool inSubtree(int rootId, int leafId) const {
+        for (int id = leafId; id; ) {
+            if (id == rootId) return true;
+            const auto it = at_.find(id);
+            if (it == at_.end()) break;
+            id = nodes_[it->second].parent;
+        }
+        return false;
+    }
+
+    void consumePendingRule() {
+        if (!g_pendingRule || !at_.count(g_pendingRule)) return;
+        show(g_pendingRule);
+        scrollToSection_ = g_pendingRuleSection;
+        scrollToLine_    = g_pendingRuleLine;
+        g_pendingRule        = 0;
+        g_pendingRuleSection = -1;
+        g_pendingRuleLine    = -1;
+    }
+
+    // Secondary tab bar for children of a root tab; drawn inside the active parent tab item.
+    void drawSubTabs(size_t parentIdx) {
+        const RuleNode& parent = nodes_[parentIdx];
+        const bool hasOwnContent = !parent.body.empty() || !parent.sections.empty();
+        if (ImGui::BeginTabBar("##subtabs", ImGuiTabBarFlags_FittingPolicyScroll)) {
+            // If the parent has its own body/sections, expose them as the first sub-tab.
+            if (hasOwnContent) {
+                const bool active = (selected_ == parent.id);
+                const ImGuiTabItemFlags flags = (active && scrollToSelected_) ? ImGuiTabItemFlags_SetSelected : 0;
+                if (ImGui::BeginTabItem("Intro", nullptr, flags)) {
+                    if (!active) selected_ = parent.id;
+                    ImGui::BeginChild("##subtabdetail", ImVec2(0, 0), ImGuiChildFlags_AlwaysUseWindowPadding);
+                    drawRuleBody();
+                    ImGui::EndChild();
+                    ImGui::EndTabItem();
+                }
+            }
+            for (size_t ci : children_[parentIdx]) {
+                const RuleNode& child = nodes_[ci];
+                const bool active = inSubtree(child.id, selected_);
+                const ImGuiTabItemFlags flags = (active && scrollToSelected_) ? ImGuiTabItemFlags_SetSelected : 0;
+                if (ImGui::BeginTabItem(labelOf(child).c_str(), nullptr, flags)) {
+                    if (!active) selected_ = child.id;
+                    ImGui::BeginChild("##subtabdetail", ImVec2(0, 0), ImGuiChildFlags_AlwaysUseWindowPadding);
+                    drawRuleBody();
+                    ImGui::EndChild();
+                    ImGui::EndTabItem();
+                }
+            }
+            ImGui::EndTabBar();
+        }
+    }
+
+    // The body of the currently selected rule (shared by drawDetail and drawFull).
+    void drawRuleBody() {
+        const auto it = at_.find(selected_);
+        if (it == at_.end()) {
+            ImGui::Spacing();
+            ImGui::TextWrapped("Nothing here.");
+            return;
+        }
+        const RuleNode& n = nodes_[it->second];
+        bigText(labelOf(n).c_str(), 1.5f, kAccent);
+        std::string path;                                       // where it sits: Chapter > Section
+        for (int p = n.parent; at_.count(p);) {
+            const RuleNode& up = nodes_[at_[p]];
+            path = labelOf(up) + (path.empty() ? "" : " > " + path);
+            p = up.parent;
+        }
+        if (!path.empty()) ImGui::TextColored(kGrey, "%s", path.c_str());
+        sourceBadge(host_, n.sourceId);
+        if (!n.editedBy.empty()) {
+            ImGui::SameLine();
+            ImGui::TextColored(kGold, "Changed by %s", n.editedBy.c_str());
+        }
+        ImGui::Separator();
+        ImGui::BeginChild("##rulebody", ImVec2(0, 0));
+        if (shown_ != selected_) {
+            ImGui::SetScrollY(0);
+            shown_ = selected_;
+        }
+        if (scrollToSection_ < 0 && scrollToLine_ > 0) {
+            ui::scrollToLine("rule" + std::to_string(n.id) + ":body", scrollToLine_);
+            scrollToLine_ = -1;
+        }
+        paragraphs(n.body, "body", ("rule" + std::to_string(n.id) + ":body").c_str());
+        for (size_t i = 0; i < n.sections.size(); ++i) {
+            const RuleNode::Section& sec = n.sections[i];
+            ImGui::Spacing();
+            const std::string secKey = "rule" + std::to_string(n.id) + ":sec" + std::to_string(i);
+            if (scrollToSection_ == static_cast<int>(i)) {
+                if (scrollToLine_ > 0) ui::scrollToLine(secKey, scrollToLine_);
+                else ImGui::SetScrollHereY(0.0f);
+                scrollToSection_ = -1;
+                scrollToLine_ = -1;
+            }
+            bigText(sec.title.c_str(), 1.1f, kGold);
+            paragraphs(sec.body, ("sec" + std::to_string(i)).c_str(), secKey.c_str());
+        }
+        drawSee(n);
+        ImGui::Spacing();
+        pageLink(host_, n.sourceId, n.ref, n.pageNote);
+        if (focusTable_ && --focusFrames_ <= 0) focusTable_ = 0;
+        ImGui::EndChild();
     }
 
     // "See also": what the rule points to in the rest of the data (the entries of a category, one entry, another rule), as buttons that go there.

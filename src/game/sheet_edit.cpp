@@ -362,7 +362,7 @@ EditResult editFile(const std::string& path, const std::string& characterId, con
         else doc["reviews"] = reviews;
         doc["revision"] = jsonInt(doc, "revision") + 1;
         doc["updated_at"] = nowIso();
-        if (!fs::writeFile(path, doc.dump(2) + "\n")) {
+        if (!fs::writeFile(path, jsonToYaml(doc))) {
             r.status = 500;
             r.error = "Could not save the change.";
             return r;

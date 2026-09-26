@@ -1,0 +1,6 @@
+skills:
+  - name: Ice Lore
+    attribute: INT
+    category: core
+    description: "Knowledge of frozen lands: reading the ice, finding safe crossings and surviving a blizzard."
+    page: 14

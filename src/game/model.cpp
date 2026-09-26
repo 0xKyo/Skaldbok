@@ -11,7 +11,7 @@ struct KindInfo {
     Kind kind;
     const char* key;       // saved files, content keys: "<pack>/spell/<id>"
     const char* label;     // one of them: "Spell"
-    const char* file;      // its data file in a pack ("spells.json"), and the word a "see" uses for the whole category
+    const char* file;      // its data file in a pack ("spells.yaml"), and the word a "see" uses for the whole category
     const char* title;     // all of them: "Spells"
     const char* page;      // the id of the page that shows them
     bool catalog;          // that page is a list + detail of this kind alone, made from this row (catalog_module.cpp)

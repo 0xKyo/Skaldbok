@@ -1,0 +1,105 @@
+format: 1
+id: c-1a0c0163f9a-000
+name: Garmander
+nickname: Gildenclef
+player: ""
+age: young
+kin:
+  key: core/kin/human
+  name: Human
+profession:
+  key: core/profession/bard
+  name: Bard
+school: ""
+attributes:
+  STR: 14
+  CON: 10
+  AGL: 14
+  INT: 14
+  WIL: 10
+  CHA: 14
+hp: 10
+wp: 10
+hp_bonus: 0
+wp_bonus: 0
+conditions: []
+skills:
+  - key: core/skill/bluffing
+    name: Bluffing
+    attribute: CHA
+    level: 12
+    trained: true
+    marked: false
+  - key: core/skill/persuasion
+    name: Persuasion
+    attribute: CHA
+    level: 12
+    trained: true
+    marked: false
+  - key: core/skill/knives
+    name: Knives
+    attribute: AGL
+    level: 12
+    trained: true
+    marked: false
+  - key: core/skill/myths-and-legends
+    name: Myths & Legends
+    attribute: INT
+    level: 12
+    trained: true
+    marked: false
+  - key: core/skill/evade
+    name: Evade
+    attribute: AGL
+    level: 12
+    trained: true
+    marked: false
+  - key: core/skill/languages
+    name: Languages
+    attribute: INT
+    level: 12
+    trained: true
+    marked: false
+  - key: core/skill/acrobatics
+    name: Acrobatics
+    attribute: AGL
+    level: 12
+    trained: true
+    marked: false
+  - key: core/skill/sleight-of-hand
+    name: Sleight of Hand
+    attribute: AGL
+    level: 12
+    trained: true
+    marked: false
+abilities:
+  - key: core/ability/adaptive
+    name: Adaptive
+  - key: core/ability/musician
+    name: Musician
+spells: []
+weapons:
+  - name: Knife
+    key: core/weapon/knife
+armor: null
+helmet: null
+inventory:
+  - name: Horn
+    key: core/gear/horn
+  - name: Torch
+    key: core/gear/torch
+  - name: Flint & Tinder
+    key: core/gear/flint-and-tinder
+  - name: Food rations
+    count: 4
+tiny_items: []
+coins:
+  gold: 0
+  silver: 6
+  copper: 0
+weakness: Kleptomaniac. I can’t stop myself from stealing valuables.
+memento: A simple silver medallion
+appearance: Abnormal amounts of body hair (depending on kin)
+notes: ""
+created_at: 2026-09-20T18:31:18Z
+updated_at: 2026-09-20T18:31:18Z

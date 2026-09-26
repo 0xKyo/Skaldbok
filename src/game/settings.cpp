@@ -27,7 +27,7 @@ bool Settings::save() const {
     j["format"] = 1;
     j["disabled_packs"] = disabledPacks_;
     j["web"] = {{"launch_on_open", web.launchOnOpen}, {"port", web.port}, {"public_url", web.publicUrl}};
-    return fs::writeFile(file_, j.dump(2) + "\n");
+    return fs::writeFile(file_, jsonToYaml(j));
 }
 
 void Settings::setPackEnabled(const std::string& id, bool on) {

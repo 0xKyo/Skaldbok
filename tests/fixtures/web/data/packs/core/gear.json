@@ -1,6 +1,0 @@
-{
-  "gear": [
-    { "id": "torch", "name": "Torch", "category": "Light Sources", "cost": "1 silver", "effect": "Burns for a shift." },
-    { "id": "flint-and-tinder", "name": "Flint & Tinder", "category": "Light Sources" }
-  ]
-}

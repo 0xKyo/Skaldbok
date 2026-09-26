@@ -221,7 +221,7 @@ private:
         if (ImGui::Button("Export…")) {
             dialogAction_ = Action::Export;
             exportId_ = c.id;
-            dialog_.saveFile(host_.window(), "Character (JSON)", "json", (c.name.empty() ? std::string("character") : c.name) + ".json");
+            dialog_.saveFile(host_.window(), "Character (YAML)", "yaml", (c.name.empty() ? std::string("character") : c.name) + ".yaml");
         }
         ImGui::SameLine();
         if (ImGui::Button("Duplicate")) {

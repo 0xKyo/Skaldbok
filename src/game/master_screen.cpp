@@ -146,7 +146,7 @@ std::string MasterScreenData::toJson() const {
         list.push_back({{"id", b.id}, {"name", b.name}, {"view", {{"x", b.viewX}, {"y", b.viewY}, {"zoom", b.zoom}}}, {"locked", b.locked}, {"items", items}});
     }
     j["boards"] = list;
-    return j.dump(2) + "\n";
+    return jsonToYaml(j);
 }
 
 namespace {

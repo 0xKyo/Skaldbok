@@ -45,7 +45,7 @@ powershell -ExecutionPolicy Bypass -File scripts\build.ps1        # crea build\r
 build\release\skaldbok_web.exe --public-url http://mi-direccion
 ```
 
-Al arrancar crea el archivo `web-access.json` (en la carpeta del usuario) con un **token secreto por personaje**. Los enlaces:
+Al arrancar crea el archivo `web-access.yaml` (en la carpeta del usuario) con un **token secreto por personaje**. Los enlaces:
 
 ```
 skaldbok_web --links                    # imprime el enlace de cada jugador

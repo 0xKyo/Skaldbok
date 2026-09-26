@@ -1,0 +1,12 @@
+weapons:
+  - name: Frostmarch Greataxe
+    kind: melee
+    grip: 2H
+    str_req: "13"
+    range: "2"
+    damage: 2D8
+    durability: "9"
+    cost: 30 gold
+    supply: Rare
+    features: Toppling. Bane on attacks in cramped spaces.
+    page: 30

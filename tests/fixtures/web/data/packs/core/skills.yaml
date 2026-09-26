@@ -1,0 +1,66 @@
+skills:
+  - id: acrobatics
+    name: Acrobatics
+    attribute: AGL
+    category: core
+    description: Test.
+  - id: awareness
+    name: Awareness
+    attribute: INT
+    category: core
+    description: Test.
+  - id: evade
+    name: Evade
+    attribute: AGL
+    category: core
+    description: Test.
+  - id: healing
+    name: Healing
+    attribute: INT
+    category: core
+    description: Test.
+  - id: riding
+    name: Riding
+    attribute: AGL
+    category: core
+    description: Test.
+  - id: swimming
+    name: Swimming
+    attribute: AGL
+    category: core
+    description: Test.
+  - id: axes
+    name: Axes
+    attribute: STR
+    category: weapon
+    description: Test.
+  - id: bows
+    name: Bows
+    attribute: AGL
+    category: weapon
+    description: Test.
+  - id: brawling
+    name: Brawling
+    attribute: STR
+    category: weapon
+    description: Test.
+  - id: crossbows
+    name: Crossbows
+    attribute: AGL
+    category: weapon
+    description: Test.
+  - id: swords
+    name: Swords
+    attribute: STR
+    category: weapon
+    description: Test.
+  - id: weapon-skills
+    name: Weapon Skills
+    attribute: STR/AGL
+    category: weapon
+    description: The heading, not a skill.
+  - id: animism
+    name: Animism
+    attribute: INT
+    category: magic
+    description: A school of magic.
