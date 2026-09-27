@@ -147,32 +147,37 @@ bool CharacterSheet::draw(Character& c) {
     header(c, changed, w);
     attributes(c, changed, w);
 
-    // the three blocks under the gems: damage bonuses and movement
+    // WP and HP side by side, right below the attribute gems
+    {
+        const float half = (w - gap) * 0.5f;
+        const ImGuiChildFlags cf2 = ImGuiChildFlags_AutoResizeY;
+        const ImGuiWindowFlags wf2 = ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoScrollWithMouse;
+        ImGui::BeginChild("##wp", ImVec2(half, 0), cf2, wf2);
+        points("WILLPOWER POINTS", c.wp, maxWp(c), c.wpBonus, "Added to WIL for the maximum (the heroic ability Focused, for example)", false, changed, half);
+        ImGui::EndChild();
+        ImGui::SameLine(0, gap);
+        ImGui::BeginChild("##hp", ImVec2(half, 0), cf2, wf2);
+        points("HIT POINTS", c.hp, maxHp(c), c.hpBonus, "Added to CON for the maximum (the heroic ability Robust, for example)", true, changed, half);
+        ImGui::EndChild();
+    }
+
+    // three columns: left = damage bonuses + abilities; middle = skills; right = inventory + coins + armor + weapons
+    const float leftW = (w - 2 * gap) * 0.21f, rightW = (w - 2 * gap) * 0.29f, midW = w - 2 * gap - leftW - rightW;
+    const ImGuiChildFlags cf = ImGuiChildFlags_AutoResizeY;
+    const ImGuiWindowFlags wf = ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoScrollWithMouse;
+
+    ImGui::BeginChild("##colL", ImVec2(leftW, 0), cf, wf);
     {
         const ContentStore& content = host_.content();
         int kinMove = 0;
         if (const Entry* k = entryFor(content, Kind::Kin, c.kin)) kinMove = std::atoi(k->prop("movement").c_str());
-        const float cell = (w - 2 * gap) / 3;
         const std::string strBonus = damageBonus(c.attr[0]), aglBonus = damageBonus(c.attr[2]);
         const std::string move = kinMove > 0 ? std::to_string(kinMove + movementModifier(c.attr[2])) : "?";
-        const std::pair<const char*, std::string> cells[3] = {{"DAMAGE BON. STR", strBonus.empty() ? "–" : strBonus}, {"DAMAGE BON. AGL", aglBonus.empty() ? "–" : aglBonus}, {"MOVEMENT", move}};
-        ImGui::BeginGroup();
-        for (int i = 0; i < 3; ++i) {
-            if (i) ImGui::SameLine(0, gap);
-            ImGui::BeginGroup();
-            bannerBox(cells[i].first, cell, [&](float bw) { centeredLabel(bw, cells[i].second.c_str(), ImGui::GetStyle().Colors[ImGuiCol_Text]); });
-            ImGui::EndGroup();
-        }
-        ImGui::EndGroup();
+        const std::pair<const char*, std::string> dmgCells[3] = {{"DAMAGE BON. STR", strBonus.empty() ? "–" : strBonus}, {"DAMAGE BON. AGL", aglBonus.empty() ? "–" : aglBonus}, {"MOVEMENT", move}};
+        for (int i = 0; i < 3; ++i)
+            bannerBox(dmgCells[i].first, leftW, [&, i](float bw) { centeredLabel(bw, dmgCells[i].second.c_str(), ImGui::GetStyle().Colors[ImGuiCol_Text]); });
     }
-
-    // three columns like the printed page: abilities and coins | skills | inventory
-    const float leftW = (w - 2 * gap) * 0.21f, rightW = (w - 2 * gap) * 0.29f, midW = w - 2 * gap - leftW - rightW;
-    const ImGuiChildFlags cf = ImGuiChildFlags_AutoResizeY;
-    const ImGuiWindowFlags wf = ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoScrollWithMouse;
-    ImGui::BeginChild("##colL", ImVec2(leftW, 0), cf, wf);
     abilities(c, changed, leftW);
-    coins(c, changed, leftW);
     ImGui::EndChild();
     ImGui::SameLine(0, gap);
     ImGui::BeginChild("##colM", ImVec2(midW, 0), cf, wf);
@@ -181,17 +186,10 @@ bool CharacterSheet::draw(Character& c) {
     ImGui::SameLine(0, gap);
     ImGui::BeginChild("##colR", ImVec2(rightW, 0), cf, wf);
     inventory(c, changed, rightW);
-    ImGui::EndChild();
-
-    // bottom: armor, helmet and weapons | willpower and hit points
-    const float bottomLeft = w - rightW - gap;
-    ImGui::BeginChild("##rowL", ImVec2(bottomLeft, 0), cf, wf);
-    armorAndWeapons(c, changed, bottomLeft);
-    ImGui::EndChild();
-    ImGui::SameLine(0, gap);
-    ImGui::BeginChild("##rowR", ImVec2(rightW, 0), cf, wf);
-    points("WILLPOWER POINTS", c.wp, maxWp(c), c.wpBonus, "Added to WIL for the maximum (the heroic ability Focused, for example)", false, changed, rightW);
-    points("HIT POINTS", c.hp, maxHp(c), c.hpBonus, "Added to CON for the maximum (the heroic ability Robust, for example)", true, changed, rightW);
+    ImGui::Spacing();
+    coins(c, changed, rightW);
+    ImGui::Spacing();
+    armorAndWeapons(c, changed, rightW);
     ImGui::EndChild();
     c.hp = std::min(c.hp, maxHp(c));
     c.wp = std::min(c.wp, maxWp(c));
@@ -481,16 +479,30 @@ void CharacterSheet::abilities(Character& c, bool& changed, float w) {
 
 void CharacterSheet::coins(Character& c, bool& changed, float w) {
     ImGui::Spacing();
-    struct Coin {
-        const char* label;
-        int* value;
-    };
-    for (const Coin& coin : {Coin{"GOLD", &c.gold}, Coin{"SILVER", &c.silver}, Coin{"COPPER", &c.copper}}) {
-        ImGui::PushID(coin.label);
-        bannerBox(coin.label, w, [&](float bw) {
+    const float imgH    = U(64.0f);
+    const float innerGap = U(4.0f);
+    const float outerGap = U(10.0f);
+    const float valW    = std::max(U(32.0f), (w - 3.0f * imgH - 2.0f * outerGap - 3.0f * innerGap) / 3.0f);
+
+    const std::string coinDir = host_.paths().root + "/web/client/public/coins/";
+    struct Coin { const char* key; int* value; };
+    const Coin list[] = {{"gold", &c.gold}, {"silver", &c.silver}, {"copper", &c.copper}};
+    for (int i = 0; i < 3; ++i) {
+        if (i > 0) ImGui::SameLine(0, outerGap);
+        ImGui::PushID(list[i].key);
+        ImGui::BeginGroup();
+        const std::string imgPath = coinDir + list[i].key + "_coin_64.png";
+        if (const TextureCache::Tex* t = host_.textures().get(imgPath))
+            ImGui::Image(reinterpret_cast<ImTextureID>(t->tex), ImVec2(imgH, imgH));
+        else
+            ImGui::Dummy(ImVec2(imgH, imgH));
+        ImGui::SameLine(0, innerGap);
+        {
             BlankStyle style;
-            changed |= smallInt("##v", *coin.value, 0, 99999, bw / U(1.0f));
-        });
+            ImGui::SetCursorPosY(ImGui::GetCursorPosY() + (imgH - ImGui::GetFrameHeight()) * 0.5f);
+            changed |= smallInt("##v", *list[i].value, 0, 99999, valW / U(1.0f));
+        }
+        ImGui::EndGroup();
         ImGui::PopID();
     }
 }

@@ -22,9 +22,10 @@
 }
 
 * { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; overflow-x: hidden; }
 body {
   margin: 0;
+  overflow-x: hidden;
   color: var(--ink);
   font: 16px/1.5 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   background-color: var(--paper);
@@ -101,6 +102,15 @@ th { text-align: left; color: var(--brown); font-weight: 600; font-size: 0.8rem;
 td { padding: 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
 td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 
+/* clickable entry link: replaces EntryCard accordion in view mode */
+.entry-link { display: flex; justify-content: space-between; align-items: baseline; gap: 6px; width: 100%;
+  padding: 7px 0; border: 0; border-bottom: 1px solid var(--line); background: none; font: inherit;
+  color: var(--ink); cursor: pointer; text-align: left; }
+.entry-link:last-child { border-bottom: 0; }
+.entry-link:hover .entry-link-name { color: var(--green); }
+.entry-link-name { font-weight: 600; }
+.entry-link-sub { font-size: 0.8rem; color: var(--muted); flex-shrink: 0; }
+
 /* an entry of the rules: a spell, an ability... */
 details.entry { border: 1px solid var(--line); border-radius: 8px; background: var(--parchment); margin-bottom: 8px; }
 details.entry summary { padding: 10px 12px; cursor: pointer; list-style: none; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
@@ -146,16 +156,31 @@ input[type='search']:focus-visible { outline: 2px solid var(--green); }
 
 /* ---- the character sheet (page 1 of the printed sheet: the green one) ------------------------------------- */
 .sheet { display: grid; gap: 14px; grid-template-columns: minmax(0, 1fr);
-  grid-template-areas: 'tools' 'issues' 'name' 'ident' 'attrs' 'hp' 'wp' 'dmg' 'skills' 'abil' 'weapons' 'armor' 'helmet' 'inv' 'coins' 'memento' 'tiny' 'appear' 'about'; }
+  grid-template-areas: 'tools' 'issues' 'name' 'ident' 'appear' 'attrs' 'points' 'skills' 'abil' 'inv' 'coins' 'armor' 'helmet' 'weapons' 'memento' 'tiny' 'about';
+}
 .sheet > * { min-width: 0; }
 .a-tools { grid-area: tools; } .a-issues { grid-area: issues; } .a-name { grid-area: name; } .a-ident { grid-area: ident; } .a-appear { grid-area: appear; } .a-attrs { grid-area: attrs; }
-.a-dmg { grid-area: dmg; } .a-abil { grid-area: abil; } .a-skills { grid-area: skills; } .a-inv { grid-area: inv; }
+.a-abil { grid-area: abil; } .a-skills { grid-area: skills; } .a-inv { grid-area: inv; }
 .a-coins { grid-area: coins; } .a-memento { grid-area: memento; } .a-tiny { grid-area: tiny; } .a-armor { grid-area: armor; }
-.a-helmet { grid-area: helmet; } .a-weapons { grid-area: weapons; } .a-wp { grid-area: wp; } .a-hp { grid-area: hp; } .a-about { grid-area: about; }
+.a-helmet { grid-area: helmet; } .a-weapons { grid-area: weapons; } .a-about { grid-area: about; }
+.a-points { grid-area: points; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.a-hp { grid-column: 1; } .a-wp { grid-column: 2; }
 @media (min-width: 900px) {
   .sheet { grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr) minmax(0, 1.1fr); align-items: start;
-    grid-template-areas: 'tools tools tools' 'issues issues issues' 'ident name appear' 'attrs attrs attrs' 'dmg dmg dmg' 'abil skills inv' 'coins skills memento' 'coins skills tiny'
-      'armor helmet wp' 'weapons weapons hp' 'about about about'; }
+    grid-template-areas:
+      'tools  tools   tools'
+      'issues issues  issues'
+      'ident  name    appear'
+      'attrs  attrs   attrs'
+      'points points  points'
+      'abil   skills  inv'
+      'abil   skills  coins'
+      'abil   skills  armor'
+      'abil   skills  helmet'
+      'abil   skills  weapons'
+      'abil   skills  memento'
+      '.      skills  tiny'
+      'about  about   about'; }
 }
 
 /* the green ornamented banner that heads every block */
@@ -172,6 +197,12 @@ input[type='search']:focus-visible { outline: 2px solid var(--green); }
 .field-row .banner { text-align: left; padding-left: 30px; }
 .field { display: flex; align-items: center; justify-content: center; min-height: 2.1rem; padding: 2px 10px; border: 1px solid var(--line); border-radius: 6px;
   background: linear-gradient(var(--parchment), #e2d3a8); font-family: var(--display); font-weight: 800; font-size: 1.2rem; color: var(--ink); }
+
+.coins-row { display: flex; align-items: center; justify-content: space-around; gap: 6px; }
+.coin-cell { display: flex; flex: 1; align-items: center; justify-content: center; gap: 6px; }
+.coin-icon { display: block; }
+.coin-val { display: flex; align-items: center; justify-content: center; min-height: 2.1rem; min-width: 3.2rem; padding: 2px 8px; border: 1px solid var(--line); border-radius: 6px;
+  background: linear-gradient(var(--parchment), #e2d3a8); font-family: var(--display); font-weight: 800; font-size: 1.2rem; color: var(--ink); text-align: center; }
 
 /* underlined "form line" rows */
 .lines { display: grid; }
@@ -264,12 +295,40 @@ input[type='search']:focus-visible { outline: 2px solid var(--green); }
 /* ---- editing the sheet ---------------------------------------------------------------------------------- */
 .a-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; }
 .locked-note { color: var(--red-dark); font-weight: 600; }
-.edit { font: inherit; color: var(--ink); background: #fbf6e6; border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px; min-width: 0; width: 100%; }
-.edit:focus-visible { outline: 2px solid var(--green); }
-textarea.edit { resize: vertical; }
+.edit { font: inherit; color: var(--ink); background: transparent; border: 1px solid transparent; border-radius: 6px; padding: 4px 8px; min-width: 0; width: 100%; }
+.edit:hover { background: rgba(255, 255, 255, 0.5); border-color: var(--line); }
+.edit:focus { background: #fbf6e6; border-color: var(--line); }
+.edit:focus-visible { outline: 2px solid var(--green); outline-offset: 0; }
+select.edit { appearance: none; -webkit-appearance: none; cursor: pointer; }
+textarea.edit { resize: none; field-sizing: content; min-height: 1.5em; }
+input[type="number"].edit:not(:focus) { -moz-appearance: textfield; }
+input[type="number"].edit:not(:focus)::-webkit-outer-spin-button,
+input[type="number"].edit:not(:focus)::-webkit-inner-spin-button { -webkit-appearance: none; }
 .line .edit { flex: 1 1 auto; }
+.line.line-top { align-items: start; }
+.line .age-select { flex: 0 0 auto; }
+
+/* skill name as a link-button */
+.skill-link { background: none; border: none; padding: 0; font: inherit; color: inherit; cursor: pointer; text-align: left; }
+.skill-link:hover { color: var(--green); }
+
+/* weapon card header (name link + remove button) */
+.weapon-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 2px; }
+.weapon-title { background: none; border: none; padding: 0; font: inherit; font-weight: 700; color: var(--ink); cursor: pointer; text-align: left; }
+.weapon-title:hover { color: var(--green); }
+
+/* inventory drag-and-drop rows */
+.inv-row { display: flex; align-items: center; gap: 6px; padding: 3px 0; border-bottom: 1px solid var(--line); }
+.inv-row:last-child { border-bottom: 0; }
+.inv-row.drag-over { background: var(--parchment); border-radius: 4px; outline: 2px dashed var(--green); }
+.inv-row input.edit:not(.count) { flex: 1 1 auto; }
+.inv-row .count { flex: 0 0 2.4rem; width: 2.4rem; text-align: center; padding: 2px 4px; }
+.drag-handle { cursor: grab; color: var(--muted); font-size: 1rem; flex: 0 0 auto; user-select: none; }
+.inv-add { display: flex; gap: 8px; align-items: center; margin-top: 8px; flex-wrap: wrap; }
+.name-line { display: flex; align-items: baseline; justify-content: center; gap: 10px; flex-wrap: wrap; }
+.name-line .edit { width: auto; flex: 0 1 auto; min-width: 2rem; }
 .scroll .edit.the-name { text-align: center; font-family: var(--display); font-weight: 800; font-size: 1.3rem; }
-.scroll .edit.the-nick { margin-top: 6px; text-align: center; font-style: italic; }
+.scroll .edit.the-nick { text-align: center; font-style: italic; }
 .ring-input { width: 100%; height: 100%; padding: 0; border: 0; border-radius: 50%; background: transparent; text-align: center; font-family: var(--display); font-weight: 800; font-size: 1.5rem; -moz-appearance: textfield; }
 .ring-input::-webkit-inner-spin-button { display: none; }
 button.cond { border: 0; cursor: pointer; font: inherit; font-family: var(--display); font-weight: 700; font-size: 0.6rem; letter-spacing: 0.08em; text-transform: uppercase; }
@@ -279,8 +338,9 @@ button.cond { border: 0; cursor: pointer; font: inherit; font-family: var(--disp
 .x { flex: 0 0 auto; width: 1.9rem; height: 1.9rem; border: 1px solid var(--line); border-radius: 50%; background: var(--parchment); color: var(--red-dark); font-size: 1.1rem; line-height: 1; cursor: pointer; }
 .dia-btn { flex: 0 0 auto; width: 2rem; height: 2rem; padding: 0; border: 0; background: none; cursor: pointer; display: grid; place-items: center; }
 .lvl-input { flex: 0 0 3.6rem; width: 3.6rem; text-align: center; padding: 2px 4px; }
-.trained-tick { margin-left: auto; font-size: 0.75rem; color: var(--muted); white-space: nowrap; }
-.editing .skill { align-items: center; flex-wrap: wrap; }
+.kin-name { white-space: nowrap; }
+.inv-name { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.editing .skill { align-items: center; }
 .skill-group { margin-top: 4px; }
 .field.edit { width: 100%; text-align: center; font-family: var(--display); font-weight: 800; font-size: 1.1rem; }
 

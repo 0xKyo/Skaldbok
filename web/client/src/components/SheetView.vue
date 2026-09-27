@@ -7,7 +7,6 @@
 import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import { ApiError, apiSend } from '../api.js';
 import { adopt, clone, diffDoc, issueFor } from '../lib/sheetdoc.js';
-import EntryCard from './EntryCard.vue';
 import EntryPicker from './EntryPicker.vue';
 import Points from './Points.vue';
 
@@ -18,19 +17,28 @@ const props = defineProps({
   me: { type: Object, required: true },
   token: { type: String, default: '' },
 });
-const emit = defineEmits(['updated']);
+const emit = defineEmits(['updated', 'goto-rules']);
+
+function typeFromKey(key) {
+  const seg = key?.split('/')?.[1];
+  const map = { skill: 'skills', ability: 'abilities', spell: 'spells', weapon: 'weapons', armor: 'armor', gear: 'gear', kin: 'kin', profession: 'professions' };
+  return map[seg] ?? null;
+}
+
+function gotoRules(key) {
+  const type = typeFromKey(key);
+  if (key && type) emit('goto-rules', { key, type });
+}
 
 // ------------------------------------------------------------------------------------------------- reading
-const onlyTrained = ref(false);
-
-const skillsShown = computed(() => props.me.skills.filter((s) => !onlyTrained.value || s.trained || s.marked || s.level > s.base));
+const skillsShown = computed(() => props.me.skills);
 const coreSkills = computed(() => skillsShown.value.filter((s) => s.category === 'core'));
 const weaponSkills = computed(() => skillsShown.value.filter((s) => s.category === 'weapon'));
 const otherSkills = computed(() => skillsShown.value.filter((s) => s.category !== 'core' && s.category !== 'weapon'));
-const trainedCount = computed(() => props.me.skills.filter((s) => s.trained).length);
 
 const conditionOf = (attribute) => props.me.conditions.find((c) => c.attribute === attribute);
 const activeConditions = computed(() => props.me.conditions.filter((c) => c.active));
+const hasBane = (s) => activeConditions.value.some((c) => c.attribute === s.attribute);
 const bonus = (v) => (v ? `+${v}` : '–');
 const eq = computed(() => props.me.equipment);
 const stat = (item, label) => item?.stats.find((f) => f.label === label)?.value ?? '';
@@ -43,47 +51,45 @@ const inventoryLines = computed(() => {
 });
 const overloaded = computed(() => props.me.derived.encumbrance.carried > props.me.derived.encumbrance.limit);
 
-// ------------------------------------------------------------------------------------------------ editing
-const editing = ref(false);
-const draft = ref(null); // what the player is editing: the "doc" of the sheet
-const base = ref(null); // what the draft was last in step with the server
-const saveError = ref('');
+// ------------------------------------------------------------------------------------------------ editing (always-on; no mode toggle)
 const lockedNow = ref(false);
+const editing = computed(() => !!props.me.doc && !props.me.locked && !lockedNow.value);
+const draft = ref(props.me.doc ? clone(props.me.doc) : null);
+const base = ref(props.me.doc ? clone(props.me.doc) : null);
+const saveError = ref('');
+const dragFrom = ref(null);
+const dragOver = ref(null);
 let timer = null;
 let saving = false;
 
-const canEdit = computed(() => !!props.token && !!props.me.doc && !props.me.locked && !lockedNow.value);
-
-function startEditing() {
-  base.value = clone(props.me.doc);
-  draft.value = clone(props.me.doc);
-  saveError.value = '';
-  editing.value = true;
-}
-
-async function stopEditing() {
-  clearTimeout(timer);
-  await save();
-  editing.value = false;
-}
-
-// the GM (or the player on another phone) changed something: take it in, except what is being edited right now
+// adopt server changes without overwriting local edits in progress
 watch(
   () => props.me.doc,
   (doc) => {
-    if (!editing.value || !doc) return;
-    draft.value = adopt(draft.value, base.value, doc);
+    if (!doc) return;
+    if (draft.value) {
+      draft.value = adopt(draft.value, base.value, doc);
+    } else {
+      draft.value = clone(doc);
+    }
     base.value = clone(doc);
-  },
-);
-watch(
-  () => props.me.locked,
-  (locked) => {
-    if (locked) editing.value = false;
   },
 );
 watch(draft, () => queueSave(), { deep: true });
 onBeforeUnmount(() => clearTimeout(timer));
+
+function onDragStart(i, e) { dragFrom.value = i; e.dataTransfer.effectAllowed = 'move'; }
+function onDragOver(i, e) { e.preventDefault(); dragOver.value = i; }
+function onDragEnd() { dragFrom.value = null; dragOver.value = null; }
+function onDrop(i) {
+  if (dragFrom.value !== null && dragFrom.value !== i) {
+    const items = draft.value.inventory;
+    const [moved] = items.splice(dragFrom.value, 1);
+    items.splice(i, 0, moved);
+  }
+  dragFrom.value = null;
+  dragOver.value = null;
+}
 
 function queueSave(delay = SAVE_DELAY_MS) {
   if (!editing.value) return;
@@ -106,7 +112,6 @@ async function save() {
   } catch (e) {
     if (e instanceof ApiError && e.status === 423) {
       lockedNow.value = true;
-      editing.value = false;
       saveError.value = e.message;
     } else if (e instanceof ApiError && e.status === 0) {
       saveError.value = 'Offline: your change will be sent when the connection is back.';
@@ -176,11 +181,8 @@ const setInt = (target, key, value, lo, hi) => (target[key] = num(value, lo, hi)
 
 <template>
   <section class="sheet" :class="{ editing }" aria-label="Character sheet">
-    <div v-if="token && me.doc" class="a-tools">
-      <button v-if="!editing && canEdit" type="button" class="btn" data-test="edit" @click="startEditing">Edit my sheet</button>
-      <button v-else-if="editing" type="button" class="btn" data-test="done" @click="stopEditing">Done</button>
+    <div v-if="me.locked || lockedNow || saveError" class="a-tools">
       <span v-if="me.locked || lockedNow" class="locked-note" data-test="locked">Your GM has locked your sheet.</span>
-      <span v-else-if="editing" class="muted small">Changes are saved as you make them.</span>
       <span v-if="saveError" class="error small" data-test="save-error">{{ saveError }}</span>
     </div>
 
@@ -193,23 +195,27 @@ const setInt = (target, key, value, lo, hi) => (target[key] = num(value, lo, hi)
     </div>
 
     <div class="a-name scroll">
-      <span class="k">Name</span>
       <template v-if="editing">
-        <input v-model="draft.name" class="edit the-name" maxlength="80" aria-label="Name" />
-        <input v-model="draft.nickname" class="edit the-nick" maxlength="80" placeholder="Nickname" aria-label="Nickname" />
+        <div class="name-line">
+          <input v-model="draft.name" class="edit the-name" maxlength="80" aria-label="Name" />
+          <input v-model="draft.nickname" class="edit the-nick" maxlength="80" placeholder="Nickname" aria-label="Nickname" />
+        </div>
       </template>
       <template v-else>
-        <div class="the-name" data-test="name">{{ me.name }}</div>
-        <div v-if="me.nickname" class="the-nick">"{{ me.nickname }}"</div>
+        <div class="name-line">
+          <div class="the-name" data-test="name">{{ me.name }}</div>
+          <div v-if="me.nickname" class="the-nick">"{{ me.nickname }}"</div>
+        </div>
       </template>
     </div>
 
     <div class="a-ident lines">
       <div class="line"><span class="k">Player</span>{{ me.player }}</div>
-      <div class="line"><span class="k">Kin</span>{{ me.kin.name }}</div>
       <div class="line">
-        <span class="k">Age</span>
-        <select v-if="editing" v-model="draft.age" class="edit" aria-label="Age">
+        <span class="k">Kin</span>
+        <span class="kin-name">{{ me.kin.name }}</span>
+        <span class="muted">·</span>
+        <select v-if="editing" v-model="draft.age" class="edit age-select" aria-label="Age">
           <option value="young">Young</option>
           <option value="adult">Adult</option>
           <option value="old">Old</option>
@@ -217,18 +223,20 @@ const setInt = (target, key, value, lo, hi) => (target[key] = num(value, lo, hi)
         <template v-else>{{ me.age.label }}</template>
       </div>
       <div class="line"><span class="k">Profession</span>{{ me.profession.name }}<span v-if="me.school" class="muted">&nbsp;· {{ me.school }}</span></div>
-      <div class="line">
-        <span class="k">Weakness</span>
-        <input v-if="editing" v-model="draft.weakness" class="edit" maxlength="400" aria-label="Weakness" />
-        <template v-else>{{ me.about.weakness }}</template>
-      </div>
       <div v-if="me.party" class="line"><span class="k">Party</span>{{ me.party }}</div>
     </div>
 
-    <div class="a-appear box">
-      <span class="k">Appearance</span>
-      <textarea v-if="editing" v-model="draft.appearance" class="edit" rows="3" maxlength="1500" aria-label="Appearance"></textarea>
-      <template v-else>{{ me.about.appearance }}</template>
+    <div class="a-appear lines">
+      <div class="line line-top">
+        <span class="k">Appearance</span>
+        <textarea v-if="editing" v-model="draft.appearance" class="edit" rows="3" maxlength="1500" aria-label="Appearance"></textarea>
+        <template v-else>{{ me.about.appearance }}</template>
+      </div>
+      <div class="line line-top">
+        <span class="k">Weakness</span>
+        <textarea v-if="editing" v-model="draft.weakness" class="edit" rows="1" maxlength="400" aria-label="Weakness"></textarea>
+        <template v-else>{{ me.about.weakness }}</template>
+      </div>
     </div>
 
     <div class="a-attrs">
@@ -253,66 +261,49 @@ const setInt = (target, key, value, lo, hi) => (target[key] = num(value, lo, hi)
           </component>
         </div>
       </div>
-      <p v-if="activeConditions.length" class="small" style="margin: 6px 2px 0">
-        <span class="gold">You have a bane on {{ activeConditions.map((c) => c.attribute).join(', ') }} rolls.</span>
-      </p>
     </div>
 
+    <div class="a-points">
     <div class="a-hp">
       <Points
-        label="Hit points"
+        label="HP"
         :current="editing ? draft.hp : me.hp.current"
         :max="me.hp.max"
         kind="hp"
         :editable="editing"
-        :bonus="editing ? draft.hp_bonus : me.hp.bonus"
         :flagged="flagged('hp') || flagged('hpmax')"
         @update:current="(v) => (draft.hp = num(v, 0, 999))"
-        @update:bonus="(v) => (draft.hp_bonus = num(v, -99, 99))"
       />
     </div>
     <div class="a-wp">
       <Points
-        label="Willpower points"
+        label="WP"
         :current="editing ? draft.wp : me.wp.current"
         :max="me.wp.max"
         kind="wp"
         :editable="editing"
-        :bonus="editing ? draft.wp_bonus : me.wp.bonus"
         :flagged="flagged('wp') || flagged('wpmax')"
         @update:current="(v) => (draft.wp = num(v, 0, 999))"
-        @update:bonus="(v) => (draft.wp_bonus = num(v, -99, 99))"
       />
     </div>
-
-    <div class="a-dmg trio">
-      <div class="field-row"><span class="banner">Damage bon. STR</span><span class="field" data-test="damage-str">{{ bonus(me.derived.damageBonus.str) }}</span></div>
-      <div class="field-row"><span class="banner">Damage bon. AGL</span><span class="field" data-test="damage-agl">{{ bonus(me.derived.damageBonus.agl) }}</span></div>
-      <div class="field-row"><span class="banner">Movement</span><span class="field" data-test="movement">{{ me.derived.movement ?? '?' }}</span></div>
     </div>
 
     <div class="a-skills parchment" data-test="skills">
       <span class="banner">Skills</span>
-      <label class="toggle" style="margin-top: 8px">
-        <input v-model="onlyTrained" type="checkbox" />
-        Only trained skills ({{ trainedCount }} of {{ me.derived.trainedSkills }})
-      </label>
-      <p v-if="editing" class="muted small" style="margin: 6px 0 0">Diamond: advancement mark. Tick "trained" to train a skill; the level box changes its level.</p>
       <div class="skill-cols">
         <template v-for="group in [{ title: 'Skills', list: coreSkills }, { title: 'Weapon skills', list: weaponSkills }, { title: 'Secondary skills', list: otherSkills }]" :key="group.title">
           <div v-if="group.list.length" :class="group.title === 'Skills' ? '' : 'skill-group'">
             <div class="skill-head">{{ group.title }}</div>
-            <div v-for="s in group.list" :key="s.name" class="skill" :class="{ untrained: editing ? !isTrained(s) : !s.trained, flagged: flagged('skill:' + s.name) }">
+            <div v-for="s in group.list" :key="s.name" class="skill" :class="{ untrained: editing ? !isTrained(s) : !s.trained, flagged: flagged('skill:' + s.name) || hasBane(s) }">
               <template v-if="editing">
                 <button type="button" class="dia-btn" :aria-pressed="isMarked(s)" :aria-label="`Advancement mark for ${s.name}`" @click="toggleMark(s)"><span class="dia" :class="{ on: isMarked(s) }"></span></button>
                 <input type="number" class="edit lvl-input" min="0" max="99" :value="levelOf(s)" :aria-label="`${s.name} level`" data-test="skill-input" @input="setLevel(s, $event.target.value)" />
-                <span>{{ s.name }} <span class="attr">({{ s.attribute }})</span></span>
-                <label class="trained-tick"><input type="checkbox" :checked="isTrained(s)" @change="toggleTrained(s)" /> trained</label>
+                <button type="button" class="skill-link" @click="gotoRules(s.key)">{{ s.name }} <span class="attr">({{ s.attribute }})</span></button>
               </template>
               <template v-else>
                 <span class="dia" :class="{ on: s.marked }" :title="s.marked ? 'Advancement mark' : ''"></span>
                 <span class="lvl" data-test="skill-level">{{ s.level }}</span>
-                <span>{{ s.name }} <span class="attr">({{ s.attribute }})</span></span>
+                <button type="button" class="skill-link" @click="gotoRules(s.key)">{{ s.name }} <span class="attr">({{ s.attribute }})</span></button>
               </template>
             </div>
           </div>
@@ -323,49 +314,53 @@ const setInt = (target, key, value, lo, hi) => (target[key] = num(value, lo, hi)
     </div>
 
     <div class="a-abil block">
+      <div class="field-row"><span class="banner">Damage bon. STR</span><span class="field" data-test="damage-str">{{ bonus(me.derived.damageBonus.str) }}</span></div>
+      <div class="field-row"><span class="banner">Damage bon. AGL</span><span class="field" data-test="damage-agl">{{ bonus(me.derived.damageBonus.agl) }}</span></div>
+      <div class="field-row"><span class="banner">Movement</span><span class="field" data-test="movement">{{ me.derived.movement ?? '?' }}</span></div>
       <span class="banner">Abilities &amp; spells</span>
       <p v-if="!me.abilities.length && !me.spells.length && !editing" class="muted">None yet.</p>
       <template v-if="editing">
         <div v-for="(a, i) in draft.abilities" :key="'a' + i" class="edit-row">
-          <span>{{ a.name }}</span>
+          <button type="button" class="link" @click="gotoRules(a.key)">{{ a.name }}</button>
           <button type="button" class="x" :aria-label="`Remove ${a.name}`" @click="removeAt(draft.abilities, i)">×</button>
         </div>
         <EntryPicker :token="token" type="abilities" label="Add an ability…" @pick="(e) => addRef(draft.abilities, e)" />
-        <div class="skill-head">Spells</div>
+        <div class="skill-head">Spells{{ me.school ? ` · ${me.school}` : '' }}</div>
         <div v-for="(a, i) in draft.spells" :key="'s' + i" class="edit-row">
-          <span>{{ a.name }}</span>
+          <button type="button" class="link" @click="gotoRules(a.key)">{{ a.name }}</button>
           <button type="button" class="x" :aria-label="`Remove ${a.name}`" @click="removeAt(draft.spells, i)">×</button>
         </div>
         <EntryPicker :token="token" type="spells" label="Add a spell…" @pick="(e) => addRef(draft.spells, e)" />
       </template>
       <template v-else>
-        <EntryCard v-for="a in me.abilities" :key="a.key || a.name" :entry="a" />
+        <button v-for="a in me.abilities" :key="a.key || a.name" class="entry-link" @click="gotoRules(a.key)">
+          <span class="entry-link-name">{{ a.name }}</span>
+          <span v-if="a.subtitle" class="entry-link-sub">{{ a.subtitle }}</span>
+        </button>
         <template v-if="me.spells.length">
           <div class="skill-head">Spells{{ me.school ? ` · ${me.school}` : '' }}</div>
-          <EntryCard v-for="sp in me.spells" :key="sp.key || sp.name" :entry="sp" />
+          <button v-for="sp in me.spells" :key="sp.key || sp.name" class="entry-link" @click="gotoRules(sp.key)">
+            <span class="entry-link-name">{{ sp.name }}</span>
+            <span v-if="sp.subtitle" class="entry-link-sub">{{ sp.subtitle }}</span>
+          </button>
         </template>
       </template>
     </div>
 
     <div class="a-weapons block">
       <span class="banner">Weapon / shield</span>
-      <p v-if="!eq.weapons.length && !editing" class="muted">None.</p>
-      <template v-if="editing">
-        <div v-for="(w, i) in draft.weapons" :key="'w' + i" class="edit-row">
-          <input v-model="w.name" class="edit" maxlength="80" :aria-label="`Weapon ${i + 1}`" />
-          <button type="button" class="x" :aria-label="`Remove ${w.name}`" @click="removeAt(draft.weapons, i)">×</button>
+      <p v-if="!eq.weapons.length" class="muted">None.</p>
+      <div v-for="(w, i) in eq.weapons" :key="i" class="weapon">
+        <div class="weapon-head">
+          <button type="button" class="weapon-title" @click="gotoRules(w.key)">{{ w.name }}<span v-if="w.count > 1"> ×{{ w.count }}</span></button>
+          <button v-if="editing" type="button" class="x" :aria-label="`Remove ${w.name}`" @click="removeAt(draft.weapons, i)">×</button>
         </div>
-        <EntryPicker :token="token" type="weapons" label="Add a weapon…" @pick="addWeapon" />
-      </template>
-      <template v-else>
-        <div v-for="(w, i) in eq.weapons" :key="i" class="weapon">
-          <div class="name">{{ w.name }}<span v-if="w.count > 1"> ×{{ w.count }}</span></div>
-          <div class="stats">
-            <span v-for="f in w.stats" :key="f.label"><b>{{ f.label }}</b>{{ f.value }}</span>
-          </div>
-          <div v-if="w.description" class="muted small">{{ w.description }}</div>
+        <div class="stats">
+          <span v-for="f in w.stats" :key="f.label"><b>{{ f.label }}</b>{{ f.value }}</span>
         </div>
-      </template>
+        <div v-if="w.description" class="muted small">{{ w.description }}</div>
+      </div>
+      <EntryPicker v-if="editing" :token="token" type="weapons" label="Add a weapon…" @pick="addWeapon" />
     </div>
 
     <div class="a-armor block">
@@ -396,28 +391,36 @@ const setInt = (target, key, value, lo, hi) => (target[key] = num(value, lo, hi)
         <span class="field" :class="{ error: overloaded, flagged: flagged('encumbrance') }" data-test="carrying">{{ me.derived.encumbrance.carried }}<span class="muted">/{{ me.derived.encumbrance.limit }}</span></span>
       </div>
       <div class="muted small" style="text-align: right">Encumbrance limit {{ me.derived.encumbrance.limit }}</div>
-      <template v-if="editing">
-        <div v-for="(it, i) in draft.inventory" :key="'i' + i" class="edit-row">
-          <span class="n">{{ i + 1 }}</span>
-          <input v-model="it.name" class="edit" maxlength="80" :aria-label="`Item ${i + 1}`" data-test="item-input" />
-          <input type="number" class="edit count" min="1" max="999" :value="it.count ?? 1" :aria-label="`Number of ${it.name}`" @input="setInt(it, 'count', $event.target.value, 1, 999)" />
-          <button type="button" class="x" :aria-label="`Remove ${it.name}`" @click="removeAt(draft.inventory, i)">×</button>
-        </div>
-        <button type="button" class="btn secondary small-btn" data-test="add-item" @click="addItem(draft.inventory)">Add an item</button>
-      </template>
-      <div v-else class="lines">
-        <div v-for="(it, i) in inventoryLines" :key="i" class="line" :class="{ empty: !it }">
-          <span class="n">{{ i + 1 }}</span>
-          <template v-if="it">{{ it.name }}<span v-if="it.count > 1">&nbsp;×{{ it.count }}</span><span v-if="it.note" class="muted">&nbsp;({{ it.note }})</span></template>
-        </div>
+      <div v-for="(it, i) in draft.inventory" :key="'i' + i" class="inv-row"
+        :class="{ 'drag-over': dragOver === i }"
+        draggable="true"
+        @dragstart="onDragStart(i, $event)"
+        @dragover="onDragOver(i, $event)"
+        @dragleave="dragOver = null"
+        @drop="onDrop(i)"
+        @dragend="onDragEnd">
+        <span class="drag-handle" aria-hidden="true">⠿</span>
+        <span class="n">{{ i + 1 }}</span>
+        <input v-if="!it.key" v-model="it.name" class="edit" maxlength="80" :aria-label="`Item ${i + 1}`" data-test="item-input" />
+        <span v-else class="inv-name">{{ it.name }}</span>
+        <input type="number" class="edit count" min="1" max="999" :value="it.count ?? 1" :aria-label="`Number of ${it.name}`" @input="setInt(it, 'count', $event.target.value, 1, 999)" />
+        <button type="button" class="x" :aria-label="`Remove ${it.name}`" @click="removeAt(draft.inventory, i)">×</button>
+      </div>
+      <div class="inv-add">
+        <EntryPicker :token="token" type="gear" label="Add an item…" @pick="(e) => addRef(draft.inventory, e)" />
+        <button type="button" class="btn secondary small-btn" @click="addItem(draft.inventory)">+ Custom</button>
       </div>
     </div>
 
     <div class="a-coins block">
-      <div v-for="c in ['gold', 'silver', 'copper']" :key="c" class="field-row">
-        <span class="banner">{{ c[0].toUpperCase() + c.slice(1) }}</span>
-        <input v-if="editing" type="number" class="edit field" min="0" max="99999" :value="draft.coins[c]" :aria-label="c" :data-test="`${c}-input`" @input="setCoin(c, $event.target.value)" />
-        <span v-else class="field" :data-test="c">{{ eq.coins[c] }}</span>
+      <div class="coins-row">
+        <template v-for="c in ['gold', 'silver', 'copper']" :key="c">
+          <div class="coin-cell">
+            <img :src="`/coins/${c}_coin_64.png`" :alt="c" class="coin-icon" />
+            <input v-if="editing" type="number" class="edit coin-val" min="0" max="99999" :value="draft.coins[c]" :aria-label="c" :data-test="`${c}-input`" @input="setCoin(c, $event.target.value)" />
+            <span v-else class="coin-val" :data-test="c">{{ eq.coins[c] }}</span>
+          </div>
+        </template>
       </div>
     </div>
 

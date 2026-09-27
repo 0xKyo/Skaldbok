@@ -18,6 +18,7 @@ const problem = ref(''); // why the link does not work
 const offline = ref(false);
 const lastUpdate = ref(null);
 const tab = ref(['sheet', 'party', 'chat', 'rules'].includes(window.location.hash.slice(1)) ? window.location.hash.slice(1) : 'sheet');
+const rulesJump = ref(null); // {key, type} forwarded to RulesView
 let timer = null;
 
 // what the GM wrote after the last message this player read (the server keeps the marker, so it follows them from phone to phone)
@@ -41,10 +42,22 @@ async function markRead() {
   }
 }
 
-function pick(id) {
+function pick(id, replace = false) {
   tab.value = id;
   markRead();
-  window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}#${id}`);
+  const url = `${window.location.pathname}${window.location.search}#${id}`;
+  if (replace) window.history.replaceState(null, '', url);
+  else window.history.pushState(null, '', url);
+}
+
+const onPopState = () => {
+  const id = window.location.hash.slice(1);
+  if (['sheet', 'party', 'chat', 'rules'].includes(id)) tab.value = id;
+};
+
+function goToRules(target) {
+  rulesJump.value = target;
+  pick('rules');
 }
 
 async function refresh() {
@@ -86,13 +99,17 @@ const onVisible = () => {
 };
 
 onMounted(() => {
+  // replace the current history entry so the initial tab is a real entry browsers can return to
+  window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}#${tab.value}`);
   refresh();
   schedule();
   document.addEventListener('visibilitychange', onVisible);
+  window.addEventListener('popstate', onPopState);
 });
 onBeforeUnmount(() => {
   clearTimeout(timer);
   document.removeEventListener('visibilitychange', onVisible);
+  window.removeEventListener('popstate', onPopState);
 });
 
 const updated = computed(() => (lastUpdate.value ? lastUpdate.value.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : ''));
@@ -127,10 +144,10 @@ watchEffect(() => {
       <nav class="tabs" role="tablist">
         <button v-for="t in tabs" :key="t.id" role="tab" :aria-selected="tab === t.id" @click="pick(t.id)">{{ t.label }}</button>
       </nav>
-      <SheetView v-if="tab === 'sheet'" :me="me" :token="token" @updated="(fresh) => (me = fresh)" />
+      <SheetView v-if="tab === 'sheet'" :me="me" :token="token" @updated="(fresh) => (me = fresh)" @goto-rules="goToRules" />
       <PartyView v-else-if="tab === 'party'" :party="party" />
       <ChatView v-else-if="tab === 'chat'" :thread="chat" :token="token" @sent="refresh" />
-      <RulesView v-else :token="token" />
+      <RulesView v-else :token="token" :jump-to="rulesJump" />
     </template>
   </main>
 </template>

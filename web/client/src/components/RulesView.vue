@@ -2,15 +2,19 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { apiGet } from '../api.js';
 
-const props = defineProps({ token: { type: String, required: true } });
+const props = defineProps({
+  token: { type: String, required: true },
+  jumpTo: { type: Object, default: null }, // {key, type} — scroll to this entry on mount or change
+});
 
 const summary = ref(null);
-const type = ref('spells');
+const type = ref(props.jumpTo?.type ?? 'spells');
 const query = ref('');
 const entries = ref([]);
 const loading = ref(false);
 const error = ref('');
 const selected = ref(null); // the entry shown in the detail panel
+let pendingKey = props.jumpTo?.key ?? null; // key to select after the next load
 let timer = null;
 let request = 0;
 
@@ -31,7 +35,14 @@ async function load() {
     if (mine !== request) return;
     entries.value = res.entries;
     error.value = '';
-    if (entries.value.length) selected.value = entries.value[0];
+    if (entries.value.length) {
+      if (pendingKey) {
+        selected.value = entries.value.find((e) => e.key === pendingKey) ?? entries.value[0];
+        pendingKey = null;
+      } else {
+        selected.value = entries.value[0];
+      }
+    }
   } catch (e) {
     if (mine === request) error.value = e.message;
   } finally {
@@ -54,6 +65,18 @@ watch(query, () => {
   clearTimeout(timer);
   timer = setTimeout(load, 250);
 });
+watch(
+  () => props.jumpTo,
+  (j) => {
+    if (!j) return;
+    pendingKey = j.key;
+    if (type.value !== j.type) {
+      type.value = j.type; // watch(type) triggers load()
+    } else {
+      load();
+    }
+  },
+);
 </script>
 
 <template>

@@ -49,7 +49,24 @@ public:
     }
 
     void drawFull() override {
-        introTabs(host_, kind_, tabs_, "##tabs", kindTitle(kind_), [&] { drawListDetail(); });
+        // Abilities and Professions show their intro inline above the list; Kin has no intro tab at all.
+        const bool inlineIntro = (kind_ == Kind::Ability || kind_ == Kind::Profession);
+        if (inlineIntro) {
+            const Intro& intro = host_.content().introOf(kind_);
+            if (!intro.body.empty()) { paragraphs(intro.body, "##ib"); ImGui::Spacing(); }
+            for (size_t i = 0; i < intro.sections.size(); ++i) {
+                ImGui::PushID(static_cast<int>(i));
+                paragraphs(intro.sections[i].body, "##is");
+                ImGui::Spacing();
+                ImGui::PopID();
+            }
+            if (!intro.empty()) { ImGui::Separator(); ImGui::Spacing(); }
+            drawListDetail();
+        } else if (kind_ == Kind::Kin) {
+            drawListDetail();
+        } else {
+            introTabs(host_, kind_, tabs_, "##tabs", kindTitle(kind_), [&] { drawListDetail(); });
+        }
         forms_.draw();
     }
 
