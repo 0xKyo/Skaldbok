@@ -211,6 +211,13 @@ WebResponse WebApp::api(const WebRequest& request, long long now) {
     std::string token;
     if (auto h = request.headers.find("authorization"); h != request.headers.end() && h->second.starts_with("Bearer ")) token = trimmed(h->second.substr(7));
     refresh(now);                                        // a character created a moment ago must already be able to sign in
+
+    // GM token: full access to /api/gm/* routes only
+    if (access_.isGm(token)) {
+        if (!sub.starts_with("/gm")) return errorResponse(403, "Use /api/gm/* with the GM link.");
+        return gmApi(request, now);
+    }
+
     const std::string id = access_.characterFor(token);
     const Character* me = id.empty() ? nullptr : characters_.find(id);
     if (!me) {
@@ -222,7 +229,7 @@ WebResponse WebApp::api(const WebRequest& request, long long now) {
     if (!reading && !writing) return errorResponse(405, "That is not allowed.");
     if (writing && tooManyWrites(id, now)) return errorResponse(429, "Too many changes at once. Wait a moment.");
 
-    if (sub == "/me") return request.method == "PATCH" ? editSheet(request, id, now) : jsonResponse(200, characterView(*me, content_, partyOf(id)));
+    if (sub == "/me") return request.method == "PATCH" ? editSheet(request, id, now, true) : jsonResponse(200, characterView(*me, content_, partyOf(id)));
     if (sub == "/party") {
         const Party* party = partyOf(id);
         json body = {{"party", party ? partyView(*party, [this](const std::string& cid) { return characters_.find(cid); }, id) : json(nullptr)}};
@@ -287,11 +294,12 @@ WebResponse WebApp::postChat(const WebRequest& request, const std::string& chara
     return jsonResponse(201, {{"message", t.messages.empty() ? json(nullptr) : chatMessageView(t.messages.back())}});
 }
 
-// The player changes their own sheet, field by field. Nothing is refused for breaking a rule: it is allowed and flagged for the GM.
-WebResponse WebApp::editSheet(const WebRequest& request, const std::string& characterId, long long now) {
+// Applies a set of field changes to a character. Called with asPlayer=true from the player's PATCH /me,
+// and asPlayer=false from the GM's PATCH /gm/characters/:id (no field restrictions).
+WebResponse WebApp::editSheet(const WebRequest& request, const std::string& characterId, long long now, bool asPlayer) {
     json body;
     if (!jsonParse(request.body, body, nullptr) || !body.is_object() || !body.contains("set")) return errorResponse(400, "Send {\"set\": {...}} with the fields to change.");
-    const sheet::EditResult r = sheet::editFile(config_.prefsDir + "/characters/" + characterId + ".yaml", characterId, body["set"], true, &changes_);
+    const sheet::EditResult r = sheet::editFile(config_.prefsDir + "/characters/" + characterId + ".yaml", characterId, body["set"], asPlayer, &changes_);
     if (!r.ok) return errorResponse(r.status, r.error);
     refreshedAt_ = -1;                                   // the next look must see the file we just wrote
     refresh(now);
@@ -305,6 +313,199 @@ bool WebApp::tooManyWrites(const std::string& characterId, long long now) {
     if (list.size() >= kWritesPerWindow) return true;
     list.push_back(now);
     return false;
+}
+
+// The GM sends a direct message to one player.
+WebResponse WebApp::postGmChat(const WebRequest& request, const std::string& characterId) {
+    json body;
+    if (!jsonParse(request.body, body, nullptr) || !body.is_object()) return errorResponse(400, "Send {\"text\": \"...\"}.");
+    const json* text = jsonFind(body, "text");
+    if (!text || !text->is_string() || text->get<std::string>().empty()) return errorResponse(400, "Text is required.");
+    const std::vector<std::string> ids = {characterId};
+    std::string error;
+    if (!chat_.sendFromGm(ids, false, "", text->get<std::string>(), "", &error)) return errorResponse(400, "Could not send: " + error + ".");
+    const Thread& t = chat_.thread(characterId);
+    return jsonResponse(201, {{"message", t.messages.empty() ? json(nullptr) : chatMessageView(t.messages.back())}});
+}
+
+// Full GM API: list/create/edit/delete characters, manage parties, read/send chat.
+WebResponse WebApp::gmApi(const WebRequest& request, long long now) {
+    const std::string sub = request.path.size() > 4 ? request.path.substr(4) : std::string();
+    const bool reading = request.method == "GET" || request.method == "HEAD";
+
+    if (sub == "/gm/me") return jsonResponse(200, {{"ok", true}, {"gmLink", access_.gmLink()}});
+
+    // ---- characters ----
+    if (sub == "/gm/characters") {
+        if (reading) {
+            json list = json::array();
+            for (const auto& [id, item] : characters_.items)
+                list.push_back(characterSummary(item.doc, content_, access_.linkFor(id)));
+            return jsonResponse(200, {{"characters", list}});
+        }
+        if (request.method == "POST") {
+            json body;
+            if (!jsonParse(request.body, body, nullptr) || !body.is_object()) body = json::object();
+            Character c;
+            c.id = fs::stampedId("c");
+            c.name = jsonStr(body, "name");
+            c.createdAt = c.updatedAt = nowIso();
+            const std::string path = config_.prefsDir + "/characters/" + c.id + ".yaml";
+            if (!fs::writeFile(path, jsonToYaml(c.toJson()))) return errorResponse(500, "Could not create character.");
+            refreshedAt_ = -1;
+            refresh(now);
+            return jsonResponse(201, characterSummary(c, content_, access_.linkFor(c.id)));
+        }
+    }
+
+    static const std::string kChars = "/gm/characters/";
+    if (sub.starts_with(kChars)) {
+        const std::string rest = sub.substr(kChars.size());
+        const auto slash = rest.find('/');
+        const std::string cid = slash == std::string::npos ? rest : rest.substr(0, slash);
+        if (!fs::safeId(cid)) return errorResponse(400, "Invalid character id.");
+        if (reading && slash == std::string::npos) {
+            const Character* c = characters_.find(cid);
+            if (!c) return errorResponse(404, "No such character.");
+            return jsonResponse(200, characterView(*c, content_, partyOf(cid)));
+        }
+        if (request.method == "PATCH" && slash == std::string::npos) {
+            if (!characters_.find(cid)) return errorResponse(404, "No such character.");
+            return editSheet(request, cid, now, false);
+        }
+        if (request.method == "DELETE" && slash == std::string::npos) {
+            const std::string path = config_.prefsDir + "/characters/" + cid + ".yaml";
+            if (!fs::isFile(path)) return errorResponse(404, "No such character.");
+            SDL_RemovePath(path.c_str());
+            refreshedAt_ = -1;
+            refresh(now);
+            return jsonResponse(200, {{"ok", true}});
+        }
+    }
+
+    // ---- parties ----
+    if (sub == "/gm/parties") {
+        if (reading) {
+            json list = json::array();
+            for (const auto& [id, item] : parties_.items) {
+                json members = json::array();
+                for (const auto& m : item.doc.members) members.push_back(m);
+                list.push_back({{"id", id}, {"name", item.doc.name}, {"members", members}});
+            }
+            return jsonResponse(200, {{"parties", list}});
+        }
+        if (request.method == "POST") {
+            json body;
+            if (!jsonParse(request.body, body, nullptr) || !body.is_object()) return errorResponse(400, "Send {\"name\": \"...\"}.");
+            const std::string name = jsonStr(body, "name");
+            if (name.empty()) return errorResponse(400, "Party name is required.");
+            Party p;
+            p.id = fs::stampedId("p");
+            p.name = name;
+            p.createdAt = p.updatedAt = nowIso();
+            const std::string path = config_.prefsDir + "/parties/" + p.id + ".yaml";
+            if (!fs::writeFile(path, jsonToYaml(p.toJson()))) return errorResponse(500, "Could not create party.");
+            refreshedAt_ = -1;
+            refresh(now);
+            return jsonResponse(201, {{"id", p.id}, {"name", p.name}, {"members", json::array()}});
+        }
+    }
+
+    static const std::string kParties = "/gm/parties/";
+    if (sub.starts_with(kParties)) {
+        const std::string pid = sub.substr(kParties.size());
+        if (pid.find('/') != std::string::npos || !fs::safeId(pid)) return errorResponse(400, "Invalid party id.");
+        if (request.method == "PATCH") {
+            const Party* p = parties_.find(pid);
+            if (!p) return errorResponse(404, "No such party.");
+            Party updated = *p;
+            json body;
+            if (!jsonParse(request.body, body, nullptr) || !body.is_object()) return errorResponse(400, "Send a JSON object.");
+            if (const json* n = jsonFind(body, "name"); n && n->is_string()) updated.name = n->get<std::string>();
+            if (const json* add = jsonFind(body, "addMember"); add && add->is_string()) {
+                const std::string mid = add->get<std::string>();
+                if (!std::ranges::contains(updated.members, mid)) updated.members.push_back(mid);
+            }
+            if (const json* rem = jsonFind(body, "removeMember"); rem && rem->is_string())
+                std::erase(updated.members, rem->get<std::string>());
+            updated.updatedAt = nowIso();
+            if (!fs::writeFile(config_.prefsDir + "/parties/" + pid + ".yaml", jsonToYaml(updated.toJson()))) return errorResponse(500, "Could not update party.");
+            refreshedAt_ = -1;
+            refresh(now);
+            json members = json::array();
+            for (const auto& m : updated.members) members.push_back(m);
+            return jsonResponse(200, {{"id", updated.id}, {"name", updated.name}, {"members", members}});
+        }
+        if (request.method == "DELETE") {
+            const std::string path = config_.prefsDir + "/parties/" + pid + ".yaml";
+            if (!fs::isFile(path)) return errorResponse(404, "No such party.");
+            SDL_RemovePath(path.c_str());
+            refreshedAt_ = -1;
+            refresh(now);
+            return jsonResponse(200, {{"ok", true}});
+        }
+    }
+
+    // ---- chat (GM side) ----
+    if (sub == "/gm/chat" && reading) {
+        json list = json::array();
+        for (const auto& [id, item] : characters_.items) {
+            const int unread = chat_.unread(id, true);
+            const Thread& t = chat_.thread(id);
+            json last = nullptr;
+            if (!t.messages.empty()) {
+                const Message& m = t.messages.back();
+                last = {{"id", m.id}, {"at", m.at}, {"from", m.from}, {"text", m.text.size() > 100 ? m.text.substr(0, 100) : m.text}};
+            }
+            list.push_back({{"characterId", id}, {"name", item.doc.name.empty() ? id : item.doc.name}, {"unread", unread}, {"last", last}});
+        }
+        return jsonResponse(200, {{"threads", list}});
+    }
+
+    static const std::string kChat = "/gm/chat/";
+    if (sub.starts_with(kChat)) {
+        const std::string rest = sub.substr(kChat.size());
+        const auto slash = rest.find('/');
+        const std::string cid = slash == std::string::npos ? rest : rest.substr(0, slash);
+        const std::string tail = slash == std::string::npos ? std::string() : rest.substr(slash);
+        if (!fs::safeId(cid)) return errorResponse(400, "Invalid character id.");
+        if (tail.empty() && reading) {
+            const Thread& t = chat_.thread(cid);
+            return jsonResponse(200, chatView(t));
+        }
+        if (tail.empty() && request.method == "POST") return postGmChat(request, cid);
+        if (tail == "/read" && request.method == "POST") {
+            json body;
+            if (!jsonParse(request.body, body, nullptr) || !body.is_object()) return errorResponse(400, "Send {\"upTo\": <message id>}.");
+            chat_.markRead(cid, true, jsonStr(body, "upTo"));
+            return jsonResponse(200, {{"ok", true}});
+        }
+    }
+
+    // ---- content + rules (same data, GM may access directly) ----
+    if (sub == "/gm/content") return jsonResponse(200, contentSummary(content_));
+    if (sub.starts_with("/gm/content/")) {
+        std::string q;
+        if (auto it = request.query.find("q"); it != request.query.end()) q = it->second.substr(0, 100);
+        json out;
+        if (!contentList(content_, sub.substr(12), q, out)) return errorResponse(404, "Unknown content type.");
+        return jsonResponse(200, out);
+    }
+    if (sub.starts_with("/gm/rules/")) {
+        json out;
+        if (!rulesChapter(content_, sub.substr(10), out)) return errorResponse(404, "Unknown rules chapter.");
+        return jsonResponse(200, out);
+    }
+
+    // ---- links ----
+    if (sub == "/gm/links" && reading) {
+        json list = json::array();
+        for (const auto& [id, item] : characters_.items)
+            list.push_back({{"id", id}, {"name", item.doc.name.empty() ? id : item.doc.name}, {"link", access_.linkFor(id)}});
+        return jsonResponse(200, {{"characters", list}, {"gmLink", access_.gmLink()}});
+    }
+
+    return errorResponse(404, "Not found.");
 }
 
 // ------------------------------------------------------------------------- the Vue client

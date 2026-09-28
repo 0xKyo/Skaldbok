@@ -7,6 +7,7 @@ const props = defineProps({
   token: { type: String, required: true },
   jumpTo: { type: Object, default: null }, // {key, type}
   mode: { type: String, default: 'tables' }, // 'tables' | 'rules'
+  gmPrefix: { type: String, default: '' },   // '/gm' when used in GM view, '' for player
 });
 const emit = defineEmits(['follow-key']);
 
@@ -65,7 +66,7 @@ async function load() {
     let res;
     if (isIntroOnly.value) {
       // Fetch the content type's data and use its intro as the entry list
-      res = await apiGet(`/content/${type.value}`, props.token);
+      res = await apiGet(`${props.gmPrefix}/content/${type.value}`, props.token);
       const introData = res.intro;
       const sects = [];
       if (introData?.body) sects.push({ key: '__body__', title: currentChapter.value.title, body: introData.body, sections: [] });
@@ -81,7 +82,7 @@ async function load() {
         pendingKey = null;
       }
     } else if (isRulesChapter.value) {
-      res = await apiGet(`/rules/${type.value}`, props.token);
+      res = await apiGet(`${props.gmPrefix}/rules/${type.value}`, props.token);
       entries.value = res.rules ?? [];
       if (entries.value.length) {
         selected.value = pendingKey
@@ -90,7 +91,7 @@ async function load() {
         pendingKey = null;
       }
     } else {
-      res = await apiGet(`/content/${type.value}${q ? `?q=${encodeURIComponent(q)}` : ''}`, props.token);
+      res = await apiGet(`${props.gmPrefix}/content/${type.value}${q ? `?q=${encodeURIComponent(q)}` : ''}`, props.token);
       entries.value = res.entries;
       intro.value = res.intro ?? null;
       if (entries.value.length) {
@@ -124,7 +125,7 @@ async function followLink(key) {
       try {
         let res;
         if (ch.introOnly) {
-          res = await apiGet(`/content/${ch.key}`, props.token);
+          res = await apiGet(`${props.gmPrefix}/content/${ch.key}`, props.token);
           const intro = res.intro;
           const sects = [];
           if (intro?.body) sects.push({ key: '__body__', title: ch.title, body: intro.body });
@@ -132,7 +133,7 @@ async function followLink(key) {
           const hit = sects.find((e) => e.title?.toLowerCase() === key);
           if (hit) { type.value = ch.key; return; }
         } else {
-          res = await apiGet(`/rules/${ch.key}`, props.token);
+          res = await apiGet(`${props.gmPrefix}/rules/${ch.key}`, props.token);
           const hit = (res.rules ?? []).find(
             (e) => (e.title ?? '').toLowerCase() === key || e.key?.split('/').pop() === key,
           );
@@ -148,7 +149,7 @@ async function followLink(key) {
 
 onMounted(async () => {
   try {
-    summary.value = await apiGet('/content', props.token);
+    summary.value = await apiGet(`${props.gmPrefix}/content`, props.token);
     if (props.mode === 'rules' && !type.value && summary.value?.rules?.length) {
       type.value = summary.value.rules[0].key;
     }

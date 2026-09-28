@@ -113,10 +113,12 @@ int main(int argc, char** argv) {
         links = true;
     }
     if (links) {
-        if (characters.empty()) std::printf("No characters found in %s. Create them in the GM app first.\n", config.prefsDir.c_str());
+        std::printf("GM link:                 %s\n", app.access().gmLink().c_str());
+        if (!characters.empty()) std::printf("\nPlayer links:\n");
+        else std::printf("No characters found in %s. Create them in the GM app first.\n", config.prefsDir.c_str());
         for (const gm::Character& c : characters) {
             const auto [name, link] = app.nameAndLink(c);
-            std::printf("%-24s %s\n", name.c_str(), link.c_str());
+            std::printf("  %-22s %s\n", name.c_str(), link.c_str());
         }
         std::printf("\nLinks use %s (set PUBLIC_URL to the address your players use).\n", config.publicUrl.c_str());
         return 0;
@@ -140,6 +142,7 @@ int main(int argc, char** argv) {
     writeStatus(config, true, "");
     std::printf("Skaldbok web listening on %s (http://%s:%d)\n", config.publicUrl.c_str(), config.host.c_str(), config.port);
     std::printf("  GM files:   %s\n  Books/Core: %s\n  Client:     %s\n", config.prefsDir.c_str(), config.dataDir.c_str(), config.staticDir.c_str());
+    std::printf("  GM link:    %s\n", app.access().gmLink().c_str());
     std::printf("  Players:    %d character(s); their links: skaldbok_web --links (or in the GM app, Characters)\n", static_cast<int>(characters.size()));
     std::fflush(stdout);
     while (!g_stop) {

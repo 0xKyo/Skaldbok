@@ -25,6 +25,11 @@ public:
     std::string linkFor(const std::string& characterId) const; // "" if the character has no token
     const std::map<std::string, std::string>& tokens() const { return tokens_; }
 
+    // GM token: generated once, persists in web-access.yaml; the GM opens /?gm=<token>.
+    bool isGm(const std::string& token) const;
+    std::string gmLink() const;
+    std::string gmToken() const { return gmToken_; }
+
     static std::string newToken();                              // 128 random bits, as 32 hex digits
     static std::string fileName() { return "web-access.yaml"; }
 
@@ -35,7 +40,8 @@ private:
 
     std::string file_, publicUrl_, fileUrl_;
     std::map<std::string, std::string> tokens_;                // character id -> token
-    std::unordered_map<std::string, std::string> byToken_;      // token -> character id
+    std::unordered_map<std::string, std::string> byToken_;     // token -> character id
+    std::string gmToken_;
 };
 
 }  // namespace gm

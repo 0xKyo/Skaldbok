@@ -10,6 +10,9 @@ const MAX_PICTURE = 8 * 1024 * 1024;
 const props = defineProps({
   thread: { type: Object, default: () => ({ messages: [], gmRead: '', playerRead: '' }) },
   token: { type: String, required: true },
+  sendPath: { type: String, default: '/chat' },
+  readPath: { type: String, default: '/chat/read' },
+  asGm: { type: Boolean, default: false },    // true = show thread from GM's perspective
 });
 const emit = defineEmits(['sent']);
 
@@ -32,7 +35,10 @@ const dayOf = (iso) => {
 };
 const startsDay = (i) => i === 0 || dayOf(messages.value[i].at) !== dayOf(messages.value[i - 1].at);
 const lines = (value) => (value ?? '').split('\n');
-const seen = (m) => m.from === 'player' && props.thread.gmRead && m.id <= props.thread.gmRead;
+// GM: "seen" means the player read the GM's message. Player: "seen" means the GM read the player's message.
+const seen = (m) => props.asGm
+  ? m.from === 'gm' && props.thread.playerRead && m.id <= props.thread.playerRead
+  : m.from === 'player' && props.thread.gmRead && m.id <= props.thread.gmRead;
 
 // a new message: show it
 watch(
@@ -72,7 +78,7 @@ async function send() {
     const body = {};
     if (text.value.trim()) body.text = text.value.trim();
     if (picture.value) body.image = picture.value.data;
-    await apiSend('POST', '/chat', props.token, body);
+    await apiSend('POST', props.sendPath, props.token, body);
     text.value = '';
     picture.value = null;
     emit('sent');
@@ -85,9 +91,9 @@ async function send() {
 </script>
 
 <template>
-  <section class="chat" aria-label="Chat with your GM">
+  <section class="chat" :aria-label="asGm ? 'Chat with player' : 'Chat with your GM'">
     <div ref="log" class="chat-log" data-test="chat-log">
-      <p v-if="!messages.length" class="muted">Nothing yet. Write to your GM below; only they can read it.</p>
+      <p v-if="!messages.length" class="muted">{{ asGm ? 'No messages yet.' : 'Nothing yet. Write to your GM below; only they can read it.' }}</p>
       <template v-for="(m, i) in messages" :key="m.id">
         <div v-if="startsDay(i)" class="chat-day muted small">{{ dayOf(m.at) }}</div>
         <article v-if="m.kind === 'broadcast'" class="broadcast" data-test="broadcast">
@@ -104,7 +110,7 @@ async function send() {
     </div>
 
     <form class="composer" @submit.prevent="send">
-      <textarea v-model="text" rows="2" maxlength="4000" placeholder="Write to your GM…" aria-label="Message" @keydown.enter.ctrl.prevent="send"></textarea>
+      <textarea v-model="text" rows="2" maxlength="4000" :placeholder="asGm ? 'Write to the player…' : 'Write to your GM…'" aria-label="Message" @keydown.enter.ctrl.prevent="send"></textarea>
       <div class="composer-row">
         <label class="btn secondary">
           Picture

@@ -1,6 +1,7 @@
-// Talking to the server. The player's token comes in the personal link (?t=...); it is kept in the browser and removed from
-// the address bar right away, so it does not end up in a screenshot, a bookmark or a shared URL.
+// Talking to the server. Player token comes from ?t=..., GM token from ?gm=...; both are kept in the browser and
+// removed from the address bar so they don't end up in screenshots or shared URLs.
 const KEY = 'skaldbok.token';
+const GM_KEY = 'skaldbok.gmtoken';
 
 export class ApiError extends Error {
   constructor(status, message) {
@@ -33,6 +34,35 @@ export function captureToken(win = window) {
 export function forgetToken(win = window) {
   try {
     win.localStorage.removeItem(KEY);
+  } catch {
+    /* nothing to forget */
+  }
+}
+
+export function captureGmToken(win = window) {
+  const params = new URLSearchParams(win.location.search);
+  const fromUrl = params.get('gm');
+  if (fromUrl) {
+    try {
+      win.localStorage.setItem(GM_KEY, fromUrl);
+    } catch {
+      /* private mode */
+    }
+    params.delete('gm');
+    const query = params.toString();
+    win.history.replaceState(null, '', win.location.pathname + (query ? `?${query}` : '') + win.location.hash);
+    return fromUrl;
+  }
+  try {
+    return win.localStorage.getItem(GM_KEY);
+  } catch {
+    return null;
+  }
+}
+
+export function forgetGmToken(win = window) {
+  try {
+    win.localStorage.removeItem(GM_KEY);
   } catch {
     /* nothing to forget */
   }

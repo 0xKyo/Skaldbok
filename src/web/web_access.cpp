@@ -26,11 +26,13 @@ std::string WebAccess::newToken() {
 void WebAccess::read() {
     tokens_.clear();
     fileUrl_.clear();
+    gmToken_.clear();
     if (const auto j = jsonLoad(file_)) {
         if (const json* t = jsonFind(*j, "tokens"); t && t->is_object())
             for (auto it = t->begin(); it != t->end(); ++it)
                 if (it.value().is_string()) tokens_[it.key()] = it.value().get<std::string>();
         fileUrl_ = jsonStr(*j, "base_url");
+        gmToken_ = jsonStr(*j, "gm_token");
     }
     index();
 }
@@ -43,6 +45,7 @@ void WebAccess::write() {
     json j;
     j["format"] = 1;
     j["base_url"] = publicUrl_;
+    j["gm_token"] = gmToken_;
     json tokens = json::object();
     for (const auto& [id, token] : tokens_) tokens[id] = token;
     j["tokens"] = tokens;
@@ -52,6 +55,10 @@ void WebAccess::write() {
 
 bool WebAccess::sync(const std::vector<std::string>& readable, const std::set<std::string>& existing) {
     bool changed = false;
+    if (gmToken_.empty()) {
+        gmToken_ = newToken();
+        changed = true;
+    }
     for (const std::string& id : readable)
         if (!tokens_.count(id)) {
             tokens_[id] = newToken();
@@ -87,6 +94,14 @@ std::string WebAccess::characterFor(const std::string& token) const {
 std::string WebAccess::linkFor(const std::string& characterId) const {
     auto it = tokens_.find(characterId);
     return it == tokens_.end() ? std::string() : publicUrl_ + "/?t=" + it->second;
+}
+
+bool WebAccess::isGm(const std::string& token) const {
+    return !gmToken_.empty() && token.size() >= 16 && token == gmToken_;
+}
+
+std::string WebAccess::gmLink() const {
+    return gmToken_.empty() ? std::string() : publicUrl_ + "/?gm=" + gmToken_;
 }
 
 }  // namespace gm

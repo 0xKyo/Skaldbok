@@ -285,4 +285,21 @@ bool rulesChapter(const ContentStore& cs, const std::string& keyId, json& out) {
     return true;
 }
 
+json characterSummary(const Character& c, const ContentStore& /*content*/, const std::string& link) {
+    json conditions = json::array();
+    for (int i = 0; i < 6; ++i)
+        if (c.conditions & (1u << i)) conditions.push_back(kConditions[i].name);
+    const AgeRule& age = ageRule(c.age);
+    return {{"id", c.id},
+            {"name", c.name.empty() ? c.id : c.name},
+            {"player", c.player},
+            {"kin", c.kin.name},
+            {"profession", c.profession.name},
+            {"age", age.label},
+            {"hp", {{"current", c.hp}, {"max", maxHp(c)}}},
+            {"wp", {{"current", c.wp}, {"max", maxWp(c)}}},
+            {"conditions", conditions},
+            {"link", link}};
+}
+
 }  // namespace gm

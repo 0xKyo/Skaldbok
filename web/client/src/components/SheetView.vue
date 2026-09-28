@@ -16,6 +16,7 @@ const RETRY_MS = 3000;
 const props = defineProps({
   me: { type: Object, required: true },
   token: { type: String, default: '' },
+  patchPath: { type: String, default: '/me' }, // '/me' for player, '/gm/characters/:id' for GM
 });
 const emit = defineEmits(['updated', 'goto-rules']);
 
@@ -104,7 +105,7 @@ async function save() {
   if (!Object.keys(set).length) return;
   saving = true;
   try {
-    const fresh = await apiSend('PATCH', '/me', props.token, { set });
+    const fresh = await apiSend('PATCH', props.patchPath, props.token, { set });
     saveError.value = '';
     emit('updated', fresh);
     draft.value = adopt(draft.value, sent, fresh.doc);

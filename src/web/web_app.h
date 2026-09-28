@@ -80,10 +80,12 @@ private:
 
     WebResponse route(const WebRequest& request, long long now);
     WebResponse api(const WebRequest& request, long long now);
+    WebResponse gmApi(const WebRequest& request, long long now);
     WebResponse serveStatic(const WebRequest& request);
     WebResponse chatImage(const std::string& characterId, const std::string& messageId);
     WebResponse postChat(const WebRequest& request, const std::string& characterId);
-    WebResponse editSheet(const WebRequest& request, const std::string& characterId, long long now);
+    WebResponse postGmChat(const WebRequest& request, const std::string& characterId);
+    WebResponse editSheet(const WebRequest& request, const std::string& characterId, long long now, bool asPlayer);
     bool tooManyWrites(const std::string& characterId, long long now);
     void refresh(long long now);
     void reloadContentIfChanged();

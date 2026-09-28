@@ -1,15 +1,16 @@
 <script setup>
-// The player's page: their own sheet (which they can edit), their party, the chat with the GM, and the rules. The token comes from
-// the personal link.
+// App root: detects GM vs player mode from the URL token (?gm=... or ?t=...) and renders the matching view.
 import { computed, onBeforeUnmount, onMounted, ref, watchEffect } from 'vue';
-import { ApiError, apiGet, apiSend, captureToken, forgetToken } from './api.js';
+import { ApiError, apiGet, apiSend, captureToken, captureGmToken, forgetToken } from './api.js';
 import ChatView from './components/ChatView.vue';
+import GmView from './components/GmView.vue';
 import PartyView from './components/PartyView.vue';
 import RulesView from './components/RulesView.vue';
 import SheetView from './components/SheetView.vue';
 
 const POLL_MS = 3000; // a change by the GM shows up within a few seconds
 
+const gmToken = ref(captureGmToken());
 const token = ref(captureToken());
 const me = ref(null);
 const party = ref(null);
@@ -130,7 +131,17 @@ watchEffect(() => {
 </script>
 
 <template>
-  <main class="wrap">
+  <!-- GM view: full interface when accessed with the GM link -->
+  <main v-if="gmToken" class="wrap gm-wrap">
+    <header class="top">
+      <span class="wordmark">Skaldbok <small class="ver">0.1</small></span>
+      <span class="who">Game Master</span>
+      <span class="live"><span class="dot"></span>GM</span>
+    </header>
+    <GmView :token="gmToken" />
+  </main>
+
+  <main v-else class="wrap">
     <div v-if="!token" class="notice" data-test="no-link">
       <h1>Skaldbok <small class="ver">0.1</small></h1>
       <p v-if="problem" class="error">{{ problem }}</p>
