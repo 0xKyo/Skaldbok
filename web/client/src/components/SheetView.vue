@@ -197,7 +197,7 @@ const setInt = (target, key, value, lo, hi) => (target[key] = num(value, lo, hi)
     <div class="a-name scroll">
       <template v-if="editing">
         <div class="name-line">
-          <input v-model="draft.name" class="edit the-name" maxlength="80" aria-label="Name" />
+          <input v-model="draft.name" class="edit the-name" maxlength="80" aria-label="Name" data-test="name" />
           <input v-model="draft.nickname" class="edit the-nick" maxlength="80" placeholder="Nickname" aria-label="Nickname" />
         </div>
       </template>
@@ -391,7 +391,7 @@ const setInt = (target, key, value, lo, hi) => (target[key] = num(value, lo, hi)
         <span class="field" :class="{ error: overloaded, flagged: flagged('encumbrance') }" data-test="carrying">{{ me.derived.encumbrance.carried }}<span class="muted">/{{ me.derived.encumbrance.limit }}</span></span>
       </div>
       <div class="muted small" style="text-align: right">Encumbrance limit {{ me.derived.encumbrance.limit }}</div>
-      <div v-for="(it, i) in draft.inventory" :key="'i' + i" class="inv-row"
+      <div v-for="(it, i) in (editing ? draft.inventory : me.equipment.inventory)" :key="'i' + i" class="inv-row"
         :class="{ 'drag-over': dragOver === i }"
         draggable="true"
         @dragstart="onDragStart(i, $event)"
@@ -406,9 +406,9 @@ const setInt = (target, key, value, lo, hi) => (target[key] = num(value, lo, hi)
         <input type="number" class="edit count" min="1" max="999" :value="it.count ?? 1" :aria-label="`Number of ${it.name}`" @input="setInt(it, 'count', $event.target.value, 1, 999)" />
         <button type="button" class="x" :aria-label="`Remove ${it.name}`" @click="removeAt(draft.inventory, i)">×</button>
       </div>
-      <div class="inv-add">
+      <div v-if="editing" class="inv-add">
         <EntryPicker :token="token" type="gear" label="Add an item…" @pick="(e) => addRef(draft.inventory, e)" />
-        <button type="button" class="btn secondary small-btn" @click="addItem(draft.inventory)">+ Custom</button>
+        <button type="button" class="btn secondary small-btn" data-test="add-item" @click="addItem(draft.inventory)">+ Custom</button>
       </div>
     </div>
 

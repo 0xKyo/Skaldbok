@@ -132,7 +132,7 @@ watchEffect(() => {
 <template>
   <main class="wrap">
     <div v-if="!token" class="notice" data-test="no-link">
-      <h1>Skaldbok</h1>
+      <h1>Skaldbok <small class="ver">0.1</small></h1>
       <p v-if="problem" class="error">{{ problem }}</p>
       <p v-else>Open the personal link your GM sent you. It looks like <span class="gold">…/?t=xxxxxxxx</span>.</p>
       <p class="muted small">The link is yours alone: it opens your character and nobody else's.</p>
@@ -146,7 +146,7 @@ watchEffect(() => {
 
     <template v-else>
       <header class="top">
-        <span class="wordmark">Skaldbok</span>
+        <span class="wordmark">Skaldbok <small class="ver">0.1</small></span>
         <span class="who" data-test="who">{{ me.kin.name }} {{ me.profession.name }} · {{ me.age.label }}<span v-if="me.school"> · {{ me.school }}</span><span v-if="me.party"> · {{ me.party }}</span></span>
         <span class="live" :title="offline ? 'Connection lost: showing the last data' : 'Updates by itself every few seconds'">
           <span class="dot" :class="{ off: offline }"></span>{{ offline ? 'offline' : `updated ${updated}` }}

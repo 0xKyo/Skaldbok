@@ -28,8 +28,9 @@ inline json yamlNodeToJson(const YAML::Node& node) {
             if (tag == "tag:yaml.org,2002:float") {
                 try { return node.as<double>(); } catch (...) {}
             }
-            if (tag == "tag:yaml.org,2002:str") return node.Scalar();
-            // Untagged scalar: infer type from value
+            // "!" = non-specific tag for quoted scalars; per YAML spec these always resolve to !!str
+            if (tag == "tag:yaml.org,2002:str" || tag == "!") return node.Scalar();
+            // Untagged/plain scalar: infer type from value
             const std::string& s = node.Scalar();
             if (s.empty()) return s;
             if (s == "null" || s == "~") return nullptr;

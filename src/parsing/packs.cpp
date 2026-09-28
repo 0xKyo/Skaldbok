@@ -30,7 +30,7 @@ std::string extensionOf(const std::string& name) {
 
 // What a pack may contain: data and pictures. Anything else (scripts, executables) is left behind.
 bool allowedFile(const std::string& name) {
-    static const char* const ok[] = {"json", "png", "jpg", "jpeg", "gif", "bmp", "txt", "md"};
+    static const char* const ok[] = {"yaml", "json", "png", "jpg", "jpeg", "gif", "bmp", "txt", "md"};
     const std::string e = extensionOf(name);
     for (const char* x : ok)
         if (e == x) return true;

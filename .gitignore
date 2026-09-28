@@ -62,3 +62,4 @@ desktop.ini
 # per-user files the app writes next to a custom --prefs folder
 web-status.json
 screenshots/
+imgui.ini

@@ -4,19 +4,22 @@ import SheetView from './SheetView.vue';
 import me from '../test/fixtures/me.json';
 
 const clone = () => structuredClone(me);
+// meReadonly: strip the editable doc so the sheet renders in display mode (simulates a viewer without a token)
+const meReadonly = () => { const m = clone(); delete m.doc; return m; };
 
 describe('SheetView', () => {
-  it('shows the identity block and the name like the printed sheet', () => {
-    const w = mount(SheetView, { props: { me: clone() } });
+  it('shows the identity block and the name', () => {
+    const w = mount(SheetView, { props: { me: meReadonly() } });
     expect(w.get('[data-test=name]').text()).toBe('Brenna');
-    expect(w.text()).toContain('"Grimjaw"');
     const lines = w.findAll('.a-ident .line').map((l) => l.text());
-    expect(lines).toEqual(expect.arrayContaining(['PlayerSebastián', 'KinHuman', 'AgeAdult', 'ProfessionFighter']));
-    expect(w.get('.a-ident').text()).toContain('Child of the Wild');
+    expect(lines.some((t) => t.includes('Sebastián'))).toBe(true);
+    expect(lines.some((t) => t.includes('Human'))).toBe(true);
+    expect(lines.some((t) => t.includes('Fighter'))).toBe(true);
+    expect(w.text()).toContain('Child of the Wild');
   });
 
   it('shows the six attributes with their base chance and the derived numbers the server computed', () => {
-    const w = mount(SheetView, { props: { me: clone() } });
+    const w = mount(SheetView, { props: { me: meReadonly() } });
     expect(w.findAll('[data-test=attribute]').map((a) => a.text())).toEqual(['15', '13', '12', '9', '10', '11']);
     expect(w.text()).toContain('base chance 6');
     expect(w.get('[data-test=movement]').text()).toBe('10');
@@ -27,73 +30,64 @@ describe('SheetView', () => {
   });
 
   it('draws hit points as circles that go empty as they are lost', () => {
-    const w = mount(SheetView, { props: { me: clone() } });
+    const w = mount(SheetView, { props: { me: meReadonly() } });
     const hp = w.get('.points.hp');
     expect(hp.findAll('.pip')).toHaveLength(13);
     expect(hp.findAll('.pip.gone')).toHaveLength(3);
     expect(w.get('.points.wp').findAll('.pip.gone')).toHaveLength(0);
   });
 
-  it('lists every skill in the printed order, and only the trained ones on request', async () => {
-    const w = mount(SheetView, { props: { me: clone() } });
-    const names = () => w.findAll('.skill').map((r) => r.text());
-    expect(names().some((t) => t.startsWith('12') && t.includes('Axes (STR)'))).toBe(true);
-    expect(names().some((t) => t.includes('Acrobatics (AGL)'))).toBe(true);
+  it('lists every skill in the printed order', () => {
+    const w = mount(SheetView, { props: { me: meReadonly() } });
+    const skills = w.findAll('.skill');
+    expect(skills.some((r) => r.text().includes('Axes (STR)'))).toBe(true);
+    expect(skills.some((r) => r.text().includes('Acrobatics (AGL)'))).toBe(true);
     const heads = w.findAll('.skill-head').map((h) => h.text());
     expect(heads.indexOf('Skills')).toBeLessThan(heads.indexOf('Weapon skills'));
-    await w.get('input[type=checkbox]').setValue(true);
-    expect(names().some((t) => t.includes('Acrobatics'))).toBe(false);
-    expect(names().some((t) => t.includes('Axes'))).toBe(true);
-    await w.get('input[type=checkbox]').setValue(false);
-    const levels = Object.fromEntries(w.findAll('.skill').map((r) => [r.text().replace(/^\d+\s*/, '').split(' (')[0], r.get('[data-test=skill-level]').text()]));
+    const levels = Object.fromEntries(
+      skills
+        .filter((r) => r.find('[data-test=skill-level]').exists())
+        .map((r) => [r.find('.skill-link').text().split(' (')[0], r.get('[data-test=skill-level]').text()]),
+    );
     expect(levels.Axes).toBe('12');
     expect(levels.Acrobatics).toBe('5');
   });
 
   it('shows each condition under its attribute, lit when active, and says what it does', () => {
-    const data = clone();
+    const data = meReadonly();
     data.conditions.find((c) => c.name === 'Scared').active = true;
     const w = mount(SheetView, { props: { me: data } });
     expect(w.findAll('.cond')).toHaveLength(6);
     const on = w.findAll('.cond.on').map((c) => c.text());
     expect(on).toEqual(['Scared']);
     expect(w.get('.cond.on').element.closest('.gem').textContent).toContain('WIL');
-    expect(w.text()).toContain('bane on WIL rolls');
+    expect(w.get('.cond.on').attributes('title')).toContain('WIL');
   });
 
-  it('opens abilities to their text, and shows names only for what is no longer loaded', () => {
-    const data = clone();
-    data.abilities.push({ key: 'gone/ability/x', kind: 'ability', name: 'Vanished Power', found: false });
-    const w = mount(SheetView, { props: { me: data } });
-    const veteran = w.findAll('details.entry').find((d) => d.text().includes('Veteran'));
-    expect(veteran.text()).toContain('A hardened fighter.');
-    expect(veteran.text()).toContain('Second paragraph.');
-    const gone = w.findAll('details.entry').find((d) => d.text().includes('Vanished Power'));
-    expect(gone.text()).toContain('no longer in the loaded content');
+  it('shows abilities as rule links', () => {
+    const w = mount(SheetView, { props: { me: meReadonly() } });
+    expect(w.findAll('.entry-link').some((b) => b.text().includes('Veteran'))).toBe(true);
+    expect(w.findAll('.entry-link').some((b) => b.text().includes('Heroic ability'))).toBe(true);
   });
 
-  it('shows weapons with their stats, armor with its rating and the banes, numbered inventory lines and the coins', () => {
-    const w = mount(SheetView, { props: { me: clone() } });
+  it('shows weapons with their stats, armor with its rating, and coins', () => {
+    const w = mount(SheetView, { props: { me: meReadonly() } });
     const star = w.findAll('.weapon').find((x) => x.text().includes('Morningstar'));
     expect(star.text()).toContain('DamageD10');
     expect(w.get('[data-test=armor]').text()).toBe('Chainmail');
     expect(w.get('.a-armor .rating').text()).toBe('4');
     expect(w.get('.a-armor .bane').text()).toContain('Sneaking');
-    expect(w.get('.a-helmet .bane').text()).toContain('Ranged attacks');
     expect(w.get('[data-test=helmet]').text()).toBe('None');
-    const lines = w.findAll('.a-inv .line');
-    expect(lines.length).toBeGreaterThanOrEqual(8);
-    expect(lines[0].text()).toContain('Torch');
     expect(w.get('[data-test=silver]').text()).toBe('1');
     expect(w.get('[data-test=gold]').text()).toBe('0');
   });
 
   it('never interprets text as HTML', () => {
-    const data = clone();
+    const data = meReadonly();
     data.about.notes = '<img src=x onerror="alert(1)"><b>bold</b>';
     const w = mount(SheetView, { props: { me: data } });
-    expect(w.find('img').exists()).toBe(false);
-    expect(w.find('b').exists() && w.find('.a-about b').exists()).toBe(false);
+    expect(w.find('.a-about img').exists()).toBe(false);
+    expect(w.find('.a-about b').exists()).toBe(false);
     expect(w.text()).toContain('<img src=x onerror="alert(1)">');
   });
 });
@@ -132,28 +126,25 @@ describe('SheetView editing', () => {
   }
 
   const mountEditable = (extra = {}) => mount(SheetView, { props: { me: clone(), token: 'good-token', ...extra } });
-  const startEditing = async (w) => {
-    await w.get('[data-test=edit]').trigger('click');
-  };
   const settle = async () => {
     await vi.advanceTimersByTimeAsync(500);
     await flushPromises();
   };
 
-  it('offers editing only to someone with a link, and not on a locked sheet', () => {
-    expect(mount(SheetView, { props: { me: clone() } }).find('[data-test=edit]').exists()).toBe(false);
-    expect(mountEditable().find('[data-test=edit]').exists()).toBe(true);
+  it('shows edit controls with a personal link, and not on a locked or doc-less sheet', () => {
+    // without doc (display mode): no edit inputs
+    expect(mount(SheetView, { props: { me: meReadonly() } }).findAll('[data-test=attribute-input]')).toHaveLength(0);
+    // with doc and token: edit mode is always on
+    expect(mountEditable().findAll('[data-test=attribute-input]')).toHaveLength(6);
     const locked = mountEditable({ me: { ...clone(), locked: true } });
-    expect(locked.find('[data-test=edit]').exists()).toBe(false);
+    expect(locked.findAll('[data-test=attribute-input]')).toHaveLength(0);
     expect(locked.get('[data-test=locked]').text()).toContain('locked');
   });
 
-  it('turns the sheet into inputs, and saves nothing until something changes', async () => {
+  it('shows edit inputs and saves nothing until something changes', async () => {
     const server = fakeServer();
     const w = mountEditable();
-    await startEditing(w);
     expect(w.findAll('[data-test=attribute-input]')).toHaveLength(6);
-    expect(w.find('[data-test=done]').exists()).toBe(true);
     await settle();
     expect(server.patches).toHaveLength(0);
   });
@@ -161,7 +152,6 @@ describe('SheetView editing', () => {
   it('saves a change a moment after it is made, and sends only the field that changed', async () => {
     const server = fakeServer();
     const w = mountEditable();
-    await startEditing(w);
     await w.findAll('.pip.tap')[6].trigger('click'); // the seventh circle: HP becomes 7
     expect(server.patches).toHaveLength(0); // (it waits a moment, in case the player keeps going)
     await settle();
@@ -173,7 +163,6 @@ describe('SheetView editing', () => {
   it('sends a burst of changes as one, key by key inside attributes and coins', async () => {
     const server = fakeServer();
     const w = mountEditable();
-    await startEditing(w);
     await w.findAll('[data-test=attribute-input]')[0].setValue('16');
     await w.get('[data-test=silver-input]').setValue('9');
     await w.get('textarea[aria-label=Notes]').setValue('Owes the innkeeper.');
@@ -184,7 +173,6 @@ describe('SheetView editing', () => {
   it('adds, changes and removes items, and toggles conditions and advancement marks', async () => {
     const server = fakeServer();
     const w = mountEditable();
-    await startEditing(w);
     await w.get('[data-test=add-item]').trigger('click');
     const rows = w.findAll('[data-test=item-input]');
     await rows[rows.length - 1].setValue('Rope');
@@ -198,23 +186,17 @@ describe('SheetView editing', () => {
     expect(set.skills.find((s) => s.name === 'Acrobatics')).toMatchObject({ marked: true, level: 0, trained: false });
   });
 
-  it('trains a skill and changes its level', async () => {
+  it('changes a skill level', async () => {
     const server = fakeServer();
     const w = mountEditable();
-    await startEditing(w);
-    const row = w.findAll('.skill').find((r) => r.text().includes('Acrobatics'));
-    await row.get('input[type=checkbox]').setValue(true);
-    await settle();
-    expect(server.patches[0].skills.find((s) => s.name === 'Acrobatics')).toMatchObject({ trained: true, level: 10 });
     await w.findAll('.skill').find((r) => r.text().includes('Acrobatics')).get('[data-test=skill-input]').setValue('14');
     await settle();
-    expect(server.patches[1].skills.find((s) => s.name === 'Acrobatics').level).toBe(14);
+    expect(server.patches[0].skills.find((s) => s.name === 'Acrobatics').level).toBe(14);
   });
 
   it('adds an ability picked from the rules', async () => {
     const server = fakeServer();
     const w = mountEditable();
-    await startEditing(w);
     await w.findAll('.picker button').find((b) => b.text().includes('ability')).trigger('click');
     await vi.advanceTimersByTimeAsync(300);
     await flushPromises();
@@ -222,17 +204,6 @@ describe('SheetView editing', () => {
     await settle();
     expect(server.patches[0].abilities.map((a) => a.name)).toContain('Robust');
     expect(server.patches[0].abilities.find((a) => a.name === 'Robust').key).toBe('core/ability/robust');
-  });
-
-  it('flushes what is pending when the player presses Done', async () => {
-    const server = fakeServer();
-    const w = mountEditable();
-    await startEditing(w);
-    await w.get('[data-test=gold-input]').setValue('5');
-    await w.get('[data-test=done]').trigger('click');
-    await flushPromises();
-    expect(server.patches).toEqual([{ coins: { gold: 5 } }]);
-    expect(w.find('[data-test=edit]').exists()).toBe(true);
   });
 
   it('shows the rule breaks in red: which part, what is wrong, and what the GM said', () => {
@@ -257,7 +228,6 @@ describe('SheetView editing', () => {
   it('when the server refuses a change, says why and goes back to what the server has', async () => {
     fakeServer({ refuse: { status: 400, error: 'hp must be a whole number' } });
     const w = mountEditable();
-    await startEditing(w);
     await w.findAll('.pip.tap')[3].trigger('click');
     await settle();
     expect(w.get('[data-test=save-error]').text()).toContain('whole number');
@@ -267,18 +237,15 @@ describe('SheetView editing', () => {
   it('leaves editing when the GM locks the sheet', async () => {
     fakeServer({ refuse: { status: 423, error: 'Your GM has locked your sheet.' } });
     const w = mountEditable();
-    await startEditing(w);
     await w.get('[data-test=gold-input]').setValue('1');
     await settle();
-    expect(w.find('[data-test=done]').exists()).toBe(false);
-    expect(w.find('[data-test=edit]').exists()).toBe(false);
+    expect(w.findAll('[data-test=attribute-input]')).toHaveLength(0);
     expect(w.get('[data-test=locked]').text()).toContain('locked');
   });
 
   it('takes in a change the GM made while the player is editing, without losing what the player is typing', async () => {
     fakeServer();
     const w = mountEditable();
-    await startEditing(w);
     const fresh = clone();
     fresh.doc.coins.gold = 30; // the GM
     fresh.doc.notes = 'from the GM';

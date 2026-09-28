@@ -6,7 +6,7 @@ $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
 
 & (Join-Path $PSScriptRoot 'build.ps1') -Config Release
-if (-not (Test-Path "$root\data\system\rules.json")) { throw 'data\system is missing (the books'' rules and the intro of each page; the creatures, spells... are in data\packs\core).' }
+if (-not (Test-Path "$root\data\system\rules.yaml")) { throw 'data\system is missing (the books'' rules and the intro of each page; the creatures, spells... are in data\packs\core).' }
 
 $out = Join-Path $root 'dist\Skaldbok'
 if (Test-Path $out) { Remove-Item $out -Recurse -Force }

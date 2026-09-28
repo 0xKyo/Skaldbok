@@ -27,6 +27,8 @@ if ($Clean -and (Test-Path $build)) { Remove-Item $build -Recurse -Force }
 $app = if ($Headless) { 'OFF' } else { 'ON' }
 $steps = "`"$vcvars`" >nul && `"$cmake`" -S `"$root`" -B `"$build`" -G Ninja -DCMAKE_BUILD_TYPE=$Config -DGM_BUILD_APP=$app && `"$cmake`" --build `"$build`""
 if ($Test) { $steps += " && ctest --test-dir `"$build`" --output-on-failure" }
+$prev = $ErrorActionPreference; $ErrorActionPreference = 'Continue'
 cmd /c $steps
-if ($LASTEXITCODE -ne 0) { throw "Build failed ($LASTEXITCODE)" }
+$code = $LASTEXITCODE; $ErrorActionPreference = $prev
+if ($code -ne 0) { throw "Build failed ($code)" }
 Write-Host "`nBuilt: $build\skaldbok.exe"

@@ -45,7 +45,7 @@ describe('App', () => {
     window.history.replaceState(null, '', '/?t=good-token');
     const w = mount(App);
     await flushPromises();
-    expect(w.get('[data-test=name]').text()).toContain('Brenna');
+    expect(w.get('[data-test=name]').element.value).toContain('Brenna');
     expect(w.get('[data-test=who]').text()).toContain('Human Fighter');
     expect(window.location.search).toBe('');
     expect(localStorage.getItem('skaldbok.token')).toBe('good-token');
@@ -68,7 +68,7 @@ describe('App', () => {
     const w = mount(App);
     await flushPromises();
     const tabs = w.findAll('[role=tab]');
-    expect(tabs.map((t) => t.text())).toEqual(['My character', 'Party', 'Chat', 'Rules']);
+    expect(tabs.map((t) => t.text())).toEqual(['My character', 'Party', 'Chat', 'Tables', 'Rules']);
     await tabs[1].trigger('click');
     expect(w.get('[data-test=party-name]').text()).toBe('The Misty Vale party');
     expect(w.findAll('[data-test=member]').length).toBe(party.party.members.length);
@@ -108,7 +108,7 @@ describe('App', () => {
     localStorage.setItem('skaldbok.token', 'good-token');
     const w = mount(App);
     await flushPromises();
-    expect(w.get('[data-test=name]').text()).toContain('Brenna');
+    expect(w.get('[data-test=name]').element.value).toContain('Brenna');
     expect(w.text()).not.toContain('offline');
     expect(w.findAll('[role=tab]')[2].text()).toBe('Chat');
   });
@@ -122,7 +122,7 @@ describe('App', () => {
     f.mockImplementation(async () => { throw new TypeError('offline'); });
     await vi.advanceTimersByTimeAsync(3100);
     await flushPromises();
-    expect(w.get('[data-test=name]').text()).toContain('Brenna');
+    expect(w.get('[data-test=name]').element.value).toContain('Brenna');
     expect(w.text()).toContain('offline');
   });
 
@@ -135,6 +135,7 @@ describe('App', () => {
     await flushPromises();
     expect(w.findAll('[data-test=meter-value]')[0].text()).toBe('10 / 13');
     changing.hp.current = 4;
+    changing.doc.hp = 4;
     await vi.advanceTimersByTimeAsync(3100);
     await flushPromises();
     expect(w.findAll('[data-test=meter-value]')[0].text()).toBe('4 / 13');

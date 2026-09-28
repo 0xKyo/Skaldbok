@@ -68,8 +68,9 @@ json itemView(const ContentStore& cs, const Item& it) {
     json stats = json::array();
     if (card)
         for (const Field& f : card->fields)
-            if (f.label == "Damage" || f.label == "Grip" || f.label == "Range" || f.label == "Durability" || f.label == "Features" || f.label == "Armor rating")
+            if (f.label == "Damage" || f.label == "Grip" || f.label == "Range" || f.label == "Durability" || f.label == "Features" || f.label == "Armor rating") {
                 stats.push_back({{"label", f.label}, {"value", f.value}});
+            }
     return {{"name", it.name}, {"count", it.count}, {"note", it.note}, {"stats", stats}, {"description", card ? card->body : std::string()}};
 }
 
@@ -117,6 +118,7 @@ json skillRows(const Character& c, const ContentStore& cs) {
 
 }  // namespace
 
+// Builds the JSON card shown to players. Source label is included only for homebrew; core content has no attribution.
 json publicCard(const ContentStore& cs, const Entry& e) {
     const SourceInfo* src = cs.source(e.sourceId);
     return {{"key", e.key},

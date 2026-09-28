@@ -138,8 +138,7 @@ archivos del máster **sigue siendo privado** hasta que se añade a propósito.
 |---|---|
 | Su ficha completa: atributos, PV/PW, condiciones, habilidades, aptitudes y hechizos con su texto, equipo con sus estadísticas, monedas, debilidad, recuerdo, apariencia y las **notas de la ficha** | El nombre de la party y de cada miembro: raza, profesión, edad, PV, PW y condiciones |
 
-Además, las **reglas**: hechizos, aptitudes, habilidades, razas, profesiones y equipo del Core y de los packs de homebrew
-**activos**.
+Además, las **reglas**: dos pestañas, **Tables** (hechizos, aptitudes, habilidades, razas, profesiones y equipo) y **Rules** (capítulos de reglas: Combate & Daño, Aventuras, y la intro de Magia/Skills como contexto), del Core y los packs de homebrew **activos**.
 
 **Nunca**: criaturas y tablas (son del máster), las notas de la party, las conversaciones de otros jugadores, las fichas de
 otros jugadores (solo su resumen de party), ni los tokens. Un pack que el máster apaga o quita deja de verse en la web.
@@ -164,8 +163,9 @@ Todas las rutas menos `/api/health` piden `Authorization: Bearer <token>`.
 | `GET /api/health` | `{"ok":true}` |
 | `GET /api/me` | la ficha del jugador, con los números derivados (movimiento, bonificación de daño, carga, nivel de cada habilidad) |
 | `GET /api/party` | `{"party": {"name", "members":[…]}}` o `{"party": null}` |
-| `GET /api/content` | los tipos de regla (con su cantidad) y los packs cargados |
-| `GET /api/content/<tipo>?q=texto` | `spells`, `abilities`, `skills`, `kin`, `professions`, `weapons`, `armor`, `gear` |
+| `GET /api/content` | tipos de contenido (con su cantidad), packs cargados y capítulos de reglas (`rules[]`; los marcados `introOnly: true` muestran la intro del tipo en lugar de un capítulo YAML) |
+| `GET /api/content/<tipo>?q=texto` | `spells`, `abilities`, `skills`, `kin`, `professions`, `weapons`, `armor`, `gear`; cada entrada tiene `key`, `kind`, `name`, `subtitle`, `fields`, `body`, `homebrew`; `source` solo para homebrew |
+| `GET /api/rules/<cap>` | capítulo de reglas YAML por clave (`combat-damage`, `adventures`, …); devuelve `{key, title, rules[]}` con cada nodo `{key, title, body, sections, parentId}` |
 
 Errores: `401` enlace no válido, `429` demasiados intentos, `404` ruta o tipo desconocido, `405` método no permitido.
 
@@ -174,7 +174,7 @@ Errores: `401` enlace no válido, `429` demasiados intentos, `404` ruta o tipo d
 ```
 cd web
 npm run dev          # http://localhost:5173, reenvía /api a http://localhost:8080 (API_URL para otro)
-npm test             # 19 pruebas (Vitest): enlace y token, la ficha, el refresco, la desconexión
+npm test             # Vitest: enlace y token, la ficha, el refresco, la desconexión, las tabs
 npm run build        # web/client/dist
 ```
 

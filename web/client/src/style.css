@@ -49,6 +49,7 @@ p { margin: 0 0 0.6em; }
 /* ---- header and tabs ------------------------------------------------------------------------------------- */
 .top { padding: 14px 0 6px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 14px; }
 .wordmark { font-family: var(--display); font-weight: 900; font-size: 1.5rem; letter-spacing: 0.08em; color: var(--red); text-transform: uppercase; line-height: 1; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6); }
+.wordmark .ver { font-size: 0.7rem; font-weight: 700; letter-spacing: 0; opacity: 0.7; vertical-align: middle; }
 .top .who { color: var(--muted); flex: 1 1 auto; }
 .top .live { font-size: 0.8rem; color: var(--muted); margin-left: auto; }
 .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--green); margin-right: 6px; }

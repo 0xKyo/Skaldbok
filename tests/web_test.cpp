@@ -58,8 +58,8 @@ Env makeEnv(const std::string& name, bool realData = false) {
     e.prefs = e.root + "/prefs";
     copyTree(fixtures + "/prefs", e.prefs);
     copyTree(test::sourceDir() + "/docs/examples/frostmarch-tales", e.prefs + "/packs/frostmarch");
-    test::write(e.prefs + "/packs/hidden-pack/manifest.json", "{\"format\":1,\"id\":\"hidden-pack\",\"name\":\"Hidden\"}");
-    test::write(e.prefs + "/packs/hidden-pack/spells.json", "{\"spells\":[{\"name\":\"Hidden Spell\"}]}");
+    test::write(e.prefs + "/packs/hidden-pack/manifest.yaml", "format: 1\nid: hidden-pack\nname: Hidden\n");
+    test::write(e.prefs + "/packs/hidden-pack/spells.yaml", "spells:\n  - name: Hidden Spell\n");
     if (realData) {
         e.data = SKALDBOK_DEV_DATA_DIR;
     } else {
@@ -140,7 +140,7 @@ std::string tokenOf(WebApp& app, const std::string& name) {
     return c ? app.access().tokens().at(c->id) : std::string();
 }
 
-std::string charFile(const Env& e, WebApp& app, const std::string& name) { return e.prefs + "/characters/" + byName(app, name)->id + ".json"; }
+std::string charFile(const Env& e, WebApp& app, const std::string& name) { return e.prefs + "/characters/" + byName(app, name)->id + ".yaml"; }
 
 json readJson(const std::string& path) {
     size_t size = 0;
@@ -233,7 +233,7 @@ void resolution() {
     json me = body(get(app, "/api/me", token));
     const json* veteran = find(me["abilities"], "name", "Veteran");
     check(veteran && (*veteran)["found"] == true && (*veteran)["subtitle"] == "Heroic ability" && contains((*veteran)["body"], "hardened fighter") &&
-              (*veteran)["source"] == "Rulebook",
+              (*veteran)["source"] == "" && (*veteran)["homebrew"] == false,
           "abilities carry their card from the loaded content");
     const json* star = find(me["equipment"]["weapons"], "name", "Morningstar");
     bool damage = false;
@@ -349,7 +349,7 @@ void editing() {
     WebApp app(e.config);
     const std::string brenna = tokenOf(app, "Brenna"), garmander = tokenOf(app, "Garmander");
     const std::string brennaId = byName(app, "Brenna")->id;
-    const std::string file = e.prefs + "/characters/" + brennaId + ".json";
+    const std::string file = e.prefs + "/characters/" + brennaId + ".yaml";
     auto patch = [&](const std::string& token, const std::string& set) { return get(app, "/api/me", token, "10.0.0.1", "PATCH", "{\"set\": " + set + "}"); };
 
     const json me = body(get(app, "/api/me", brenna));
@@ -476,7 +476,7 @@ void rules() {
     for (const json& t : summary["types"]) types.push_back(t["id"]);
     for (const json& p : summary["packs"]) packs.push_back(p["id"]);
     check(types == std::vector<std::string>{"spells", "abilities", "skills", "kin", "professions", "weapons", "armor", "gear"}, "the rule types on offer: no creatures, no tables");
-    check(packs == std::vector<std::string>{"core", "frostmarch"}, "packs: Core and homebrew; the fixture's settings.json switches hidden-pack off");
+    check(packs == std::vector<std::string>{"core", "frostmarch"}, "packs: Core and homebrew; the fixture's settings.yaml switches hidden-pack off");
     std::vector<std::string> names;
     const json allSpells = body(get(app, "/api/content/spells", token));      // (kept in a variable: a range over a temporary would dangle)
     for (const json& s : allSpells["entries"]) names.push_back(s["name"]);
@@ -491,9 +491,9 @@ void rules() {
     check(body(get(app, "/api/content/spells?q=zzzzz", token))["entries"].empty(), "nothing found is an empty list");
     check(body(get(app, "/api/content/abilities?q=blizzard", token))["entries"].empty(), "a search stays inside its type");
     check(get(app, "/api/content/nonsense", token).status == 404, "an unknown type is a 404");
-    test::write(e.prefs + "/settings.json", "{\"format\":1,\"disabled_packs\":[\"hidden-pack\",\"frostmarch\"]}");
+    test::write(e.prefs + "/settings.yaml", "format: 1\ndisabled_packs:\n  - hidden-pack\n  - frostmarch\n");
     check(body(get(app, "/api/content/spells", token))["entries"].empty(), "when the GM switches a pack off, players stop seeing it");
-    test::write(e.prefs + "/settings.json", "{\"format\":1}");
+    test::write(e.prefs + "/settings.yaml", "format: 1\n");
     check(body(get(app, "/api/content/spells", token))["entries"].size() == 4, "and when it is switched on again, the hidden pack shows up");
 }
 
@@ -530,8 +530,8 @@ void liveUpdates() {
 void tokens() {
     Env e = makeEnv("tokens");
     WebApp app(e.config);
-    const json saved = readJson(e.prefs + "/web-access.json");
-    check(jsonStr(saved, "base_url") == "http://players.test" && saved["tokens"].size() == 4, "web-access.json records the address and a token per character");
+    const json saved = readJson(e.prefs + "/web-access.yaml");
+    check(jsonStr(saved, "base_url") == "http://players.test" && saved["tokens"].size() == 4, "web-access.yaml records the address and a token per character");
     bool shape = true;
     std::set<std::string> distinct;
     for (auto it = saved["tokens"].begin(); it != saved["tokens"].end(); ++it) {
@@ -544,7 +544,7 @@ void tokens() {
     check(app.access().linkFor(brennaId) == "http://players.test/?t=" + std::string(saved["tokens"][brennaId]), "the personal link");
 
     check(webLinkFor(e.prefs, brennaId) == app.access().linkFor(brennaId) && webLinkFor(e.prefs, "c-nobody").empty() && webLinkFor(e.root + "/nowhere", brennaId).empty(),
-          "the GM app reads the same link from web-access.json");
+          "the GM app reads the same link from web-access.yaml");
 
     WebApp restarted(e.config);
     check(restarted.access().tokens() == app.access().tokens(), "a restart keeps every link working");
@@ -562,7 +562,7 @@ void tokens() {
     json c = readJson(charFile(e, app, "Brenna"));
     c["id"] = "c-newcomer";
     c["name"] = "Newcomer";
-    test::write(e.prefs + "/characters/c-newcomer.json", c.dump());
+    test::write(e.prefs + "/characters/c-newcomer.yaml", c.dump()); // JSON is valid YAML
     get(app, "/api/me", fresh);                          // any request notices the new file
     const std::string token = app.access().tokens().count("c-newcomer") ? app.access().tokens().at("c-newcomer") : std::string();
     check(token.size() == 32 && body(get(app, "/api/me", token))["name"] == "Newcomer", "a new character gets a link and can use it immediately");
@@ -680,8 +680,8 @@ void realData() {
     const std::string token = tokenOf(app, "Brenna");
     const json me = body(get(app, "/api/me", token));
     const json* veteran = find(me["abilities"], "name", "Veteran");
-    check(veteran && (*veteran)["found"] == true && (*veteran)["body"].get<std::string>().size() > 20 && (*veteran)["source"] == "Rulebook" && (*veteran)["page"].is_string(),
-          "the real Core pack resolves the keys the app really writes (Veteran, with its page)");
+    check(veteran && (*veteran)["found"] == true && (*veteran)["body"].get<std::string>().size() > 20 && (*veteran)["source"] == "",
+          "the real Core pack resolves the keys the app really writes (Veteran, core source hidden)");
     check(me["derived"]["movement"] == 10 && find(me["skills"], "name", "Axes") && !me["equipment"]["weapons"].empty() && !me["equipment"]["weapons"][0]["stats"].empty(),
           "real kin movement and equipment stats");
     const json spells = body(get(app, "/api/content/spells", token))["entries"];

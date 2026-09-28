@@ -205,13 +205,13 @@ int main() {
     watcher.setDir(dir);
     check(watcher.poll().empty(), "a store that has just loaded has nothing new to report");
 
-    sheet::EditResult web = sheet::editFile(dir + "/" + id + ".json", id, parse(R"({"hp": 4, "coins": {"gold": 9}})"), true, &log);   // the web server, meanwhile
+    sheet::EditResult web = sheet::editFile(dir + "/" + id + ".yaml", id, parse(R"({"hp": 4, "coins": {"gold": 9}})"), true, &log);   // the web server, meanwhile
     Character mine = *app.find(id);                                   // the app's copy is stale: it has not looked yet
     mine.notes = "Met the captain.";
     mine.attr[2] = 14;
     check(app.save(mine), "the app saves an edit made on a stale copy");
     Character now2;
-    Character::fromJson(fs::readFile(dir + "/" + id + ".json").value_or(""), now2, nullptr);
+    Character::fromJson(fs::readFile(dir + "/" + id + ".yaml").value_or(""), now2, nullptr);
     check(now2.hp == 4 && now2.gold == 9 && now2.notes == "Met the captain." && now2.attr[2] == 14 && now2.revision == 3 && web.ok,
           "the file holds both people's changes: the player's HP and coins, the GM's notes and attribute");
     check(mine.hp == 4 && app.find(id)->hp == 4, "and the app's copy now shows them too");
@@ -219,7 +219,7 @@ int main() {
     const std::vector<std::string> changed = watcher.poll();
     check(changed == std::vector<std::string>{id} && watcher.find(id)->hp == 4 && watcher.find(id)->notes == "Met the captain.", "another store notices the file changed and reloads it");
     check(app.poll().empty(), "a store does not report its own writes as somebody else's");
-    web = sheet::editFile(dir + "/" + id + ".json", id, parse(R"({"hp": 2})"), true, nullptr);
+    web = sheet::editFile(dir + "/" + id + ".yaml", id, parse(R"({"hp": 2})"), true, nullptr);
     check(app.poll() == std::vector<std::string>{id} && app.find(id)->hp == 2, "but it does see the other program's next one");
     Character gone = *watcher.find(id);
     watcher.remove(id);
