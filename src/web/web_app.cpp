@@ -245,6 +245,12 @@ WebResponse WebApp::api(const WebRequest& request, long long now) {
             return errorResponse(404, "Unknown type. Choose one of: spells, abilities, skills, kin, professions, weapons, armor, gear");
         return jsonResponse(200, out);
     }
+    if (sub.starts_with("/rules/")) {
+        json out;
+        if (!rulesChapter(content_, sub.substr(7), out))
+            return errorResponse(404, "Unknown rules chapter");
+        return jsonResponse(200, out);
+    }
     return errorResponse(404, "Not found");
 }
 

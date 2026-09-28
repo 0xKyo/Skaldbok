@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cstdlib>
+#include <unordered_set>
 
 #include "game/encounter.h"
 #include "game/sheet_edit.h"
@@ -118,18 +119,14 @@ json skillRows(const Character& c, const ContentStore& cs) {
 
 json publicCard(const ContentStore& cs, const Entry& e) {
     const SourceInfo* src = cs.source(e.sourceId);
-    json page = nullptr;
-    if (e.ref.valid()) page = e.ref.printed > 0 ? "p." + std::to_string(e.ref.printed) : "pdf p." + std::to_string(e.ref.page);
-    else if (!e.pageNote.empty()) page = e.pageNote;
     return {{"key", e.key},
             {"kind", kindKey(e.kind)},
             {"name", e.title},
             {"subtitle", e.subtitle},
             {"fields", fieldList(e.fields)},
             {"body", e.body},
-            {"source", src ? src->label : std::string()},
-            {"homebrew", src && src->homebrew},
-            {"page", page}};
+            {"source", src && src->homebrew ? src->label : std::string()},
+            {"homebrew", src && src->homebrew}};
 }
 
 json characterView(const Character& c, const ContentStore& cs, const Party* party) {
@@ -208,14 +205,27 @@ json partyView(const Party& party, const std::function<const Character*(const st
 }
 
 json contentSummary(const ContentStore& cs) {
-    json types = json::array(), packs = json::array();
+    json types = json::array(), packs = json::array(), rules = json::array();
     for (const ContentType& t : kTypes) types.push_back({{"id", t.id}, {"label", t.label}, {"count", cs.count(t.kind)}});
     for (const PackInfo& p : cs.packs()) {
         int shown = 0;                                   // a pack that only brings rules or tables has nothing to show here
         for (const ContentType& t : kTypes) shown += p.counts[static_cast<int>(t.kind)];
         if (p.loaded && shown > 0) packs.push_back({{"id", p.id}, {"name", p.name}, {"version", p.version}, {"core", p.core}});
     }
-    return {{"types", types}, {"packs", packs}};
+    // Intro-only chapters: spells (Magic) and skills (Skills) surfaced in the Rules tab
+    for (const ContentType& t : kTypes) {
+        if (t.kind != Kind::Spell && t.kind != Kind::Skill) continue;
+        const Intro& intro = cs.introOf(t.kind);
+        if (intro.empty()) continue;
+        const char* title = t.kind == Kind::Spell ? "Magic" : "Skills";
+        rules.push_back({{"key", t.id}, {"title", title}, {"introOnly", true}});
+    }
+    for (const RuleNode& n : cs.rules()) {
+        if (n.parent != 0 || n.prop("nav").empty() || !n.prop("web_hide").empty()) continue;
+        const std::string key = n.key.substr(n.key.find_last_of('/') + 1);
+        rules.push_back({{"key", key}, {"title", n.title}});
+    }
+    return {{"types", types}, {"packs", packs}, {"rules", rules}};
 }
 
 bool contentList(const ContentStore& cs, const std::string& typeId, const std::string& query, json& out) {
@@ -231,7 +241,45 @@ bool contentList(const ContentStore& cs, const std::string& typeId, const std::s
         for (const Hit& h : cs.search(q, 60, {type->kind}))
             if (const Entry* e = cs.entry(type->kind, h.id)) entries.push_back(publicCard(cs, *e));
     }
-    out = {{"type", type->id}, {"label", type->label}, {"entries", entries}};
+    const Intro& intro = cs.introOf(type->kind);
+    json introJson = nullptr;
+    if (!intro.empty()) {
+        json sects = json::array();
+        for (const auto& s : intro.sections) sects.push_back({{"title", s.title}, {"body", s.body}});
+        introJson = {{"body", intro.body}, {"sections", sects}};
+    }
+    out = {{"type", type->id}, {"label", type->label}, {"entries", entries}, {"intro", introJson}};
+    return true;
+}
+
+bool rulesChapter(const ContentStore& cs, const std::string& keyId, json& out) {
+    const RuleNode* chapter = nullptr;
+    for (const RuleNode& n : cs.rules()) {
+        if (n.parent != 0 || n.prop("nav").empty()) continue;
+        const std::string k = n.key.substr(n.key.find_last_of('/') + 1);
+        if (k == keyId) { chapter = &n; break; }
+    }
+    if (!chapter) return false;
+    std::unordered_set<int> inChapter;
+    inChapter.insert(chapter->id);
+    bool changed = true;
+    while (changed) {
+        changed = false;
+        for (const RuleNode& n : cs.rules())
+            if (!inChapter.count(n.id) && inChapter.count(n.parent))
+                { inChapter.insert(n.id); changed = true; }
+    }
+    json rules = json::array();
+    for (const RuleNode& n : cs.rules()) {
+        if (!inChapter.count(n.id)) continue;
+        if (n.id == chapter->id && n.body.empty() && n.sections.empty()) continue;
+        if (!n.prop("web_hide").empty()) continue;
+        json sects = json::array();
+        for (const auto& s : n.sections) sects.push_back({{"title", s.title}, {"body", s.body}});
+        rules.push_back({{"key", n.key}, {"title", n.title}, {"step", n.prop("step")},
+                         {"body", n.body}, {"sections", sects}, {"parentId", n.parent}});
+    }
+    out = {{"key", keyId}, {"title", chapter->title}, {"rules", rules}};
     return true;
 }
 

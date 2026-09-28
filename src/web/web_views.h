@@ -23,6 +23,8 @@ json partyView(const Party& party, const std::function<const Character*(const st
 // The rules a player may look up.
 json contentSummary(const ContentStore& content);
 bool contentList(const ContentStore& content, const std::string& typeId, const std::string& query, json& out);
+// Rule chapters that have a nav page of their own (Combat & Damage, Character Creation...).
+bool rulesChapter(const ContentStore& content, const std::string& key, json& out);
 
 json publicCard(const ContentStore& content, const Entry& e);
 

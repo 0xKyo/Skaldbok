@@ -17,7 +17,7 @@ const chat = ref({ messages: [], gmRead: '', playerRead: '' });
 const problem = ref(''); // why the link does not work
 const offline = ref(false);
 const lastUpdate = ref(null);
-const tab = ref(['sheet', 'party', 'chat', 'rules'].includes(window.location.hash.slice(1)) ? window.location.hash.slice(1) : 'sheet');
+const tab = ref(['sheet', 'party', 'chat', 'tables', 'rules'].includes(window.location.hash.slice(1)) ? window.location.hash.slice(1) : 'sheet');
 const rulesJump = ref(null); // {key, type} forwarded to RulesView
 let timer = null;
 
@@ -27,6 +27,7 @@ const tabs = computed(() => [
   { id: 'sheet', label: 'My character' },
   { id: 'party', label: 'Party' },
   { id: 'chat', label: unread.value && tab.value !== 'chat' ? `Chat (${unread.value})` : 'Chat' },
+  { id: 'tables', label: 'Tables' },
   { id: 'rules', label: 'Rules' },
 ]);
 
@@ -52,12 +53,22 @@ function pick(id, replace = false) {
 
 const onPopState = () => {
   const id = window.location.hash.slice(1);
-  if (['sheet', 'party', 'chat', 'rules'].includes(id)) tab.value = id;
+  if (['sheet', 'party', 'chat', 'tables', 'rules'].includes(id)) tab.value = id;
 };
 
 function goToRules(target) {
   rulesJump.value = target;
-  pick('rules');
+  pick('tables');
+}
+
+// A [[link]] from a rules/tables view that wasn't resolved in-tab: switch to the other tab and let it try
+function followKey(key) {
+  if (tab.value === 'rules') {
+    rulesJump.value = { key, type: '' };
+    pick('tables');
+  } else {
+    pick('rules');
+  }
 }
 
 async function refresh() {
@@ -147,7 +158,8 @@ watchEffect(() => {
       <SheetView v-if="tab === 'sheet'" :me="me" :token="token" @updated="(fresh) => (me = fresh)" @goto-rules="goToRules" />
       <PartyView v-else-if="tab === 'party'" :party="party" />
       <ChatView v-else-if="tab === 'chat'" :thread="chat" :token="token" @sent="refresh" />
-      <RulesView v-else :token="token" :jump-to="rulesJump" />
+      <RulesView v-else-if="tab === 'tables'" :token="token" :jump-to="rulesJump" mode="tables" @follow-key="followKey" />
+      <RulesView v-else-if="tab === 'rules'" :token="token" mode="rules" @follow-key="followKey" />
     </template>
   </main>
 </template>

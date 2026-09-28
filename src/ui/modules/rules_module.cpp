@@ -146,6 +146,21 @@ public:
 
     void drawFull() override {
         consumePendingRule();
+
+        // A chapter page with exactly one root: skip the filter bar and the outer tab wrapper —
+        // the single root's children are the real content (e.g. the 13 steps of Character Creation).
+        if (!key_.empty() && roots_.size() == 1) {
+            if (!children_[roots_[0]].empty())
+                drawSubTabs(roots_[0]);
+            else {
+                ImGui::BeginChild("##tabdetail", ImVec2(0, 0), ImGuiChildFlags_AlwaysUseWindowPadding);
+                drawRuleBody();
+                ImGui::EndChild();
+            }
+            scrollToSelected_ = false;
+            return;
+        }
+
         inputStr("##rulefilter", filter_, -FLT_MIN, hint_.c_str());
 
         if (!filter_.empty()) {
@@ -288,7 +303,6 @@ private:
             p = up.parent;
         }
         if (!path.empty()) ImGui::TextColored(kGrey, "%s", path.c_str());
-        sourceBadge(host_, n.sourceId);
         if (!n.editedBy.empty()) {
             ImGui::SameLine();
             ImGui::TextColored(kGold, "Changed by %s", n.editedBy.c_str());
@@ -319,7 +333,10 @@ private:
         }
         drawSee(n);
         ImGui::Spacing();
-        pageLink(host_, n.sourceId, n.ref, n.pageNote);
+        {
+            const SourceInfo* src = host_.content().source(n.sourceId);
+            if (src && src->homebrew) pageLink(host_, n.sourceId, n.ref, n.pageNote);
+        }
         if (focusTable_ && --focusFrames_ <= 0) focusTable_ = 0;
         ImGui::EndChild();
     }
@@ -400,7 +417,7 @@ private:
         }
         ImGui::Spacing();
         tableGrid(t, roll.row);
-        if (t.ref.valid() || !(src && src->homebrew)) pageLink(host_, t.sourceId, t.ref, t.pageNote);
+        if (src && src->homebrew) pageLink(host_, t.sourceId, t.ref, t.pageNote);
         else if (!t.pageNote.empty()) ImGui::TextColored(kGrey, "%s", t.pageNote.c_str());
         ImGui::PopID();
     }
