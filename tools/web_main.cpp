@@ -48,11 +48,13 @@ bool processAlive(long long pid) {
 }
 
 // The GM app reads this to show whether the server is up and at which address (it deletes the file when it stops us).
-void writeStatus(const gm::WebConfig& config, bool running, const std::string& error) {
+void writeStatus(const gm::WebConfig& config, bool running, const std::string& error,
+                 const std::string& gmLink = "") {
     gm::json j = {{"running", running},
                   {"port", config.port},
                   {"url", config.publicUrl},
                   {"local_url", "http://localhost:" + std::to_string(config.port)},
+                  {"gm_link", gmLink},
                   {"error", error}};
     const std::string text = gm::jsonToYaml(j);
     const std::string file = config.prefsDir + "/web-status.yaml";
@@ -139,7 +141,7 @@ int main(int argc, char** argv) {
         writeStatus(config, false, why);
         return 3;
     }
-    writeStatus(config, true, "");
+    writeStatus(config, true, "", app.access().gmLink());
     std::printf("Skaldbok web listening on %s (http://%s:%d)\n", config.publicUrl.c_str(), config.host.c_str(), config.port);
     std::printf("  GM files:   %s\n  Books/Core: %s\n  Client:     %s\n", config.prefsDir.c_str(), config.dataDir.c_str(), config.staticDir.c_str());
     std::printf("  GM link:    %s\n", app.access().gmLink().c_str());

@@ -285,6 +285,108 @@ bool rulesChapter(const ContentStore& cs, const std::string& keyId, json& out) {
     return true;
 }
 
+// --------------------------------------------------------------------------- GM-only views
+
+json contentSummaryGm(const ContentStore& cs) {
+    json types = json::array(), packs = json::array(), rules = json::array();
+    for (const ContentType& t : kTypes) types.push_back({{"id", t.id}, {"label", t.label}, {"count", cs.count(t.kind)}});
+    types.push_back({{"id", "creatures"}, {"label", "Creatures"}, {"count", static_cast<int>(cs.monsters().size())}});
+    for (const PackInfo& p : cs.packs()) {
+        int shown = 0;
+        for (const ContentType& t : kTypes) shown += p.counts[static_cast<int>(t.kind)];
+        if (p.loaded && shown > 0) packs.push_back({{"id", p.id}, {"name", p.name}, {"version", p.version}, {"core", p.core}});
+    }
+    for (const ContentType& t : kTypes) {
+        if (t.kind != Kind::Spell && t.kind != Kind::Skill) continue;
+        const Intro& intro = cs.introOf(t.kind);
+        if (intro.empty()) continue;
+        const char* title = t.kind == Kind::Spell ? "Magic" : "Skills";
+        rules.push_back({{"key", t.id}, {"title", title}, {"introOnly", true}});
+    }
+    for (const RuleNode& n : cs.rules()) {
+        if (n.parent != 0 || n.prop("nav").empty()) continue;
+        const std::string key = n.key.substr(n.key.find_last_of('/') + 1);
+        rules.push_back({{"key", key}, {"title", n.title}});
+    }
+    return {{"types", types}, {"packs", packs}, {"rules", rules}};
+}
+
+bool rulesChapterGm(const ContentStore& cs, const std::string& keyId, json& out) {
+    const RuleNode* chapter = nullptr;
+    for (const RuleNode& n : cs.rules()) {
+        if (n.parent != 0 || n.prop("nav").empty()) continue;
+        const std::string k = n.key.substr(n.key.find_last_of('/') + 1);
+        if (k == keyId) { chapter = &n; break; }
+    }
+    if (!chapter) return false;
+    std::unordered_set<int> inChapter;
+    inChapter.insert(chapter->id);
+    bool changed = true;
+    while (changed) {
+        changed = false;
+        for (const RuleNode& n : cs.rules())
+            if (!inChapter.count(n.id) && inChapter.count(n.parent))
+                { inChapter.insert(n.id); changed = true; }
+    }
+    json rules = json::array();
+    for (const RuleNode& n : cs.rules()) {
+        if (!inChapter.count(n.id)) continue;
+        if (n.id == chapter->id && n.body.empty() && n.sections.empty()) continue;
+        json sects = json::array();
+        for (const auto& s : n.sections) sects.push_back({{"title", s.title}, {"body", s.body}});
+        rules.push_back({{"key", n.key}, {"title", n.title}, {"step", n.prop("step")},
+                         {"body", n.body}, {"sections", sects}, {"parentId", n.parent}});
+    }
+    out = {{"key", keyId}, {"title", chapter->title}, {"rules", rules}};
+    return true;
+}
+
+static std::string lowerAscii(const std::string& s) {
+    std::string out = s;
+    for (char& c : out) c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
+    return out;
+}
+
+json monsterDetail(const ContentStore& /*cs*/, const Monster& m) {
+    json blocks = json::array();
+    for (const StatBlock& b : m.blocks) {
+        json fields = json::array();
+        for (const Field& f : b.fields) fields.push_back({{"label", f.label}, {"value", f.value}});
+        blocks.push_back({{"variant", b.variant}, {"fields", fields}});
+    }
+    json attacks = json::array();
+    for (const Attack& a : m.attacks)
+        attacks.push_back({{"rollMin", a.rollMin}, {"rollMax", a.rollMax}, {"rollText", a.rollText},
+                           {"name", a.name}, {"text", a.text}});
+    json abilities = json::array();
+    for (const NamedText& a : m.abilities)
+        abilities.push_back({{"name", a.name}, {"kind", a.kind}, {"text", a.text}});
+    json tables = json::array();
+    for (const TableRef& t : m.tables) tables.push_back({{"id", t.id}, {"title", t.title}});
+    return {{"id", m.id}, {"key", m.key}, {"name", m.name}, {"kind", m.kind},
+            {"category", m.category}, {"description", m.description}, {"quote", m.quote},
+            {"randomEncounter", m.randomEncounter}, {"adventureSeed", m.adventureSeed},
+            {"statsRef", m.statsRef}, {"blocks", blocks}, {"attacks", attacks},
+            {"abilities", abilities}, {"tables", tables}};
+}
+
+json monsterList(const ContentStore& cs, const std::string& query) {
+    const std::string q = lowerAscii(trimmed(query));
+    json list = json::array();
+    for (const Monster& m : cs.monsters()) {
+        if (!q.empty() && lowerAscii(m.name).find(q) == std::string::npos) continue;
+        std::string sub = m.category;
+        if (m.kind == "npc") sub = sub.empty() ? "NPC" : "NPC · " + sub;
+        else if (m.kind == "animal") sub = "Animal";
+        list.push_back({{"id", m.id}, {"key", m.key}, {"name", m.name}, {"sub", sub}});
+    }
+    // Sort by name
+    std::sort(list.begin(), list.end(), [](const json& a, const json& b) {
+        return lowerAscii(a["name"].get<std::string>()) < lowerAscii(b["name"].get<std::string>());
+    });
+    return {{"creatures", list}};
+}
+
 json characterSummary(const Character& c, const ContentStore& /*content*/, const std::string& link) {
     json conditions = json::array();
     for (int i = 0; i < 6; ++i)

@@ -482,8 +482,8 @@ WebResponse WebApp::gmApi(const WebRequest& request, long long now) {
         }
     }
 
-    // ---- content + rules (same data, GM may access directly) ----
-    if (sub == "/gm/content") return jsonResponse(200, contentSummary(content_));
+    // ---- content + rules (GM sees all, including web_hide chapters) ----
+    if (sub == "/gm/content") return jsonResponse(200, contentSummaryGm(content_));
     if (sub.starts_with("/gm/content/")) {
         std::string q;
         if (auto it = request.query.find("q"); it != request.query.end()) q = it->second.substr(0, 100);
@@ -493,8 +493,21 @@ WebResponse WebApp::gmApi(const WebRequest& request, long long now) {
     }
     if (sub.starts_with("/gm/rules/")) {
         json out;
-        if (!rulesChapter(content_, sub.substr(10), out)) return errorResponse(404, "Unknown rules chapter.");
+        if (!rulesChapterGm(content_, sub.substr(10), out)) return errorResponse(404, "Unknown rules chapter.");
         return jsonResponse(200, out);
+    }
+
+    // ---- creatures (GM only) ----
+    if (sub == "/gm/creatures" && reading) {
+        std::string q;
+        if (auto it = request.query.find("q"); it != request.query.end()) q = it->second.substr(0, 100);
+        return jsonResponse(200, monsterList(content_, q));
+    }
+    if (sub.starts_with("/gm/creatures/") && reading) {
+        const std::string key = sub.substr(14);
+        for (const Monster& m : content_.monsters())
+            if (m.key == key) return jsonResponse(200, monsterDetail(content_, m));
+        return errorResponse(404, "Creature not found.");
     }
 
     // ---- links ----

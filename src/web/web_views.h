@@ -23,11 +23,16 @@ json characterSummary(const Character& c, const ContentStore& content, const std
 // The party as its own members see it: who is in it and how they are doing. Skills, gear and notes stay private.
 json partyView(const Party& party, const std::function<const Character*(const std::string&)>& findCharacter, const std::string& meId);
 
-// The rules a player may look up.
+// Content visible to players.
 json contentSummary(const ContentStore& content);
 bool contentList(const ContentStore& content, const std::string& typeId, const std::string& query, json& out);
-// Rule chapters that have a nav page of their own (Combat & Damage, Character Creation...).
 bool rulesChapter(const ContentStore& content, const std::string& key, json& out);
+
+// GM-only content: includes creatures count and web_hide chapters/nodes.
+json contentSummaryGm(const ContentStore& content);
+bool rulesChapterGm(const ContentStore& content, const std::string& key, json& out);
+json monsterList(const ContentStore& content, const std::string& query);
+json monsterDetail(const ContentStore& content, const Monster& m);
 
 json publicCard(const ContentStore& content, const Entry& e);
 

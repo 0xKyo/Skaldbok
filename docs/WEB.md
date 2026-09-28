@@ -1,22 +1,31 @@
-# Web para jugadores
+# Web: GM y jugadores
 
-La app de C++ es la herramienta del máster. La **web** es la vista de los jugadores: cada uno abre **su enlace personal** y
-ve su ficha completa, el estado de su party y las reglas (hechizos, aptitudes, equipo…). Se actualiza sola cada pocos segundos:
-lo que el máster cambia en la app (PV, condiciones, equipo) aparece en el teléfono del jugador.
+El servidor `skaldbok_web` sirve **dos interfaces** desde la misma página Vue:
+
+* **Vista del máster** — se abre con `/?gm=<token>`. Es la interfaz principal del máster desde el browser: lista de personajes y parties en la barra lateral, y para cada personaje las pestañas Ficha / Chat / Tablas / Reglas. La pantalla de **General Settings** (la primera en cargar) muestra el enlace del propio máster y todos los enlaces de los jugadores, listos para copiar y enviar.
+* **Vista del jugador** — se abre con `/?t=<token>`. Cada jugador ve solo su ficha, su party y las reglas; no puede ver ni modificar nada de los demás.
 
 ```
-app del máster (C++)  ──escribe──►  characters/  parties/  packs/  settings.json     (carpeta del usuario)
-                                            │ lee y escribe
-                                            ▼
-                     skaldbok_web  (C++, sin ventana)  ──JSON──►  web/client (Vue 3, ya compilado)  ──► teléfonos
+skaldbok_web  (C++, sin ventana)  ──JSON──►  web/client (Vue 3, ya compilado)  ──► browser del máster
+                                                                                ──► teléfonos de los jugadores
+                  │
+                  │ lee y escribe
+                  ▼
+         characters/  parties/  packs/  settings.json     (carpeta del usuario)
 ```
 
-* **`skaldbok_web`** es un ejecutable aparte, hecho con la misma librería que la app (`gm_core`): carga los mismos packs, usa las
-  mismas reglas y lee los mismos archivos. No tiene base de datos propia ni lógica duplicada. Puede correr aunque la app del
-  máster esté cerrada (los jugadores ven la última ficha guardada), incluso en otra máquina con los archivos sincronizados.
-* **`web/client`** es una página Vue 3 (Vite). Node solo hace falta para *compilarla*; el servidor sirve los archivos ya
-  compilados (`web/client/dist`, o la carpeta `web/` junto al ejecutable en el paquete).
-* Es de **lectura y de escritura acotada**: el jugador solo puede cambiar **su propia** hoja (`PATCH /api/me`) y escribir en **su** chat (`POST /api/chat`); nada más.
+* **`skaldbok_web`** es un ejecutable aparte, hecho con la misma librería que la app de escritorio (`gm_core`): carga los mismos packs, usa las mismas reglas y lee los mismos archivos. No tiene base de datos propia ni lógica duplicada. Puede correr aunque la app de escritorio esté cerrada, incluso en otra máquina con los archivos sincronizados.
+* **`web/client`** es una página Vue 3 (Vite). Node solo hace falta para *compilarla*; el servidor sirve los archivos ya compilados (`web/client/dist`, o la carpeta `web/` junto al ejecutable en el paquete).
+* **Escritura acotada**: el jugador solo puede cambiar su propia hoja (`PATCH /api/me`) y escribir en su chat; el máster puede editar cualquier ficha y gestionar parties vía `/api/gm/*`.
+
+## General Settings (pantalla de inicio del máster)
+
+Al abrir el enlace del máster en el browser, la primera pantalla es **General Settings**:
+
+* **GM Link** — el enlace del propio máster, con botón *Copy*.
+* **Player Links** — uno por personaje, con su nombre y botón *Copy*. Desde aquí el máster copia y envía a cada jugador su enlace personal.
+
+Para volver a esta pantalla en cualquier momento: botón **⚙ General Settings** en la parte superior de la barra lateral.
 
 ## Lo normal: abrir la app y listo
 

@@ -118,7 +118,10 @@ public:
         }
         if (running) {
             ImGui::SameLine();
-            if (ImGui::Button("Open in this browser")) SDL_OpenURL(status_.localUrl.c_str());
+            if (ImGui::Button("Open in this browser")) {
+                const std::string& target = status_.gmLink.empty() ? status_.localUrl : status_.gmLink;
+                SDL_OpenURL(target.c_str());
+            }
         }
 
         // ---- options -------------------------------------------------------------------------------------
@@ -189,7 +192,7 @@ public:
 private:
     struct Status {
         bool running = false;
-        std::string url, localUrl, error;
+        std::string url, localUrl, gmLink, error;
     };
 
     std::string statusFile() const { return host_.paths().prefDir + "web-status.yaml"; }
@@ -200,6 +203,7 @@ private:
             s.running = jsonBool(*j, "running");
             s.url = jsonStr(*j, "url");
             s.localUrl = jsonStr(*j, "local_url");
+            s.gmLink = jsonStr(*j, "gm_link");
             s.error = jsonStr(*j, "error");
         }
         status_ = s;

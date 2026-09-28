@@ -223,20 +223,20 @@ const setInt = (target, key, value, lo, hi) => (target[key] = num(value, lo, hi)
         </select>
         <template v-else>{{ me.age.label }}</template>
       </div>
-      <div class="line"><span class="k">Profession</span>{{ me.profession.name }}<span v-if="me.school" class="muted">&nbsp;· {{ me.school }}</span></div>
-      <div v-if="me.party" class="line"><span class="k">Party</span>{{ me.party }}</div>
-    </div>
-
-    <div class="a-appear lines">
       <div class="line line-top">
         <span class="k">Appearance</span>
         <textarea v-if="editing" v-model="draft.appearance" class="edit" rows="3" maxlength="1500" aria-label="Appearance"></textarea>
-        <template v-else>{{ me.about.appearance }}</template>
+        <span v-else class="line-text">{{ me.about.appearance }}</span>
       </div>
+    </div>
+
+    <div class="a-appear lines">
+      <div class="line"><span class="k">Profession</span>{{ me.profession.name }}<span v-if="me.school" class="muted">&nbsp;· {{ me.school }}</span></div>
+      <div v-if="me.party" class="line"><span class="k">Party</span>{{ me.party }}</div>
       <div class="line line-top">
         <span class="k">Weakness</span>
         <textarea v-if="editing" v-model="draft.weakness" class="edit" rows="1" maxlength="400" aria-label="Weakness"></textarea>
-        <template v-else>{{ me.about.weakness }}</template>
+        <span v-else class="line-text">{{ me.about.weakness }}</span>
       </div>
     </div>
 
@@ -417,7 +417,7 @@ const setInt = (target, key, value, lo, hi) => (target[key] = num(value, lo, hi)
       <div class="coins-row">
         <template v-for="c in ['gold', 'silver', 'copper']" :key="c">
           <div class="coin-cell">
-            <img :src="`/coins/${c}_coin_64.png`" :alt="c" class="coin-icon" />
+            <img :src="`/coins/${c}_coin_32.png`" :alt="c" class="coin-icon" />
             <input v-if="editing" type="number" class="edit coin-val" min="0" max="99999" :value="draft.coins[c]" :aria-label="c" :data-test="`${c}-input`" @input="setCoin(c, $event.target.value)" />
             <span v-else class="coin-val" :data-test="c">{{ eq.coins[c] }}</span>
           </div>
@@ -427,7 +427,7 @@ const setInt = (target, key, value, lo, hi) => (target[key] = num(value, lo, hi)
 
     <div class="a-memento box">
       <span class="k">Memento</span>
-      <input v-if="editing" v-model="draft.memento" class="edit" maxlength="400" aria-label="Memento" />
+      <textarea v-if="editing" v-model="draft.memento" class="edit" rows="3" maxlength="400" aria-label="Memento"></textarea>
       <template v-else>{{ me.about.memento }}</template>
     </div>
     <div class="a-tiny box">
