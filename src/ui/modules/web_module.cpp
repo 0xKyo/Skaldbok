@@ -118,10 +118,11 @@ public:
         }
         if (running) {
             ImGui::SameLine();
-            if (ImGui::Button("Open in this browser")) {
-                const std::string& target = status_.gmLink.empty() ? status_.localUrl : status_.gmLink;
-                SDL_OpenURL(target.c_str());
-            }
+            if (ImGui::Button("Open in this browser")) SDL_OpenURL(status_.localUrl.c_str());
+            ImGui::SameLine();
+            ImGui::BeginDisabled(status_.gmLink.empty());
+            if (ImGui::Button("Open as GM")) SDL_OpenURL(status_.gmLink.c_str());     // the link carries the GM token
+            ImGui::EndDisabled();
         }
 
         // ---- options -------------------------------------------------------------------------------------

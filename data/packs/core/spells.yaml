@@ -17,7 +17,7 @@ spells:
     source: rulebook
     school: Animism
     trick: true
-    description: You automatically succeed at cooking food (page 103) without a BUSHCRAFT roll, and it happens instantly (one action).
+    description: You automatically succeed at cooking food without a BUSHCRAFT roll, and it happens instantly (one action).
   - id: floral-trail
     name: Floral Trail
     source: rulebook
@@ -101,7 +101,7 @@ spells:
     casting_time: Action
     range: 10 meters (sphere)
     duration: Shift
-    description: You call upon the spirits of the forest who quickly make thickets of thorns and roots shoot up from the ground in the area of effect. The area counts as rough terrain (page 44), and everyone except yourself (not monsters) who is in the area of effect when you cast the spell is ensnared by roots and branches, unable to move. Breaking free requires an EVADE roll – with a boon at power level 1, normally at power level 2, and with a bane at power level 3. Each attempt counts as an action in combat. Only one attempt is allowed per round. Other people who are not ensnared can help.
+    description: You call upon the spirits of the forest who quickly make thickets of thorns and roots shoot up from the ground in the area of effect. The area counts as rough terrain, and everyone except yourself (not monsters) who is in the area of effect when you cast the spell is ensnared by roots and branches, unable to move. Breaking free requires an EVADE roll – with a boon at power level 1, normally at power level 2, and with a bane at power level 3. Each attempt counts as an action in combat. Only one attempt is allowed per round. Other people who are not ensnared can help.
   - id: heal-wound
     name: Heal Wound
     source: rulebook
@@ -191,7 +191,7 @@ spells:
     source: rulebook
     school: Elementalism
     trick: true
-    description: The area within 10 meters of you becomes pleasantly warm or cold. The effect protects against cold (page 54) for one shift of time.
+    description: The area within 10 meters of you becomes pleasantly warm or cold. The effect protects against cold for one shift of time.
   - id: ignite
     name: Ignite
     source: rulebook
@@ -239,7 +239,7 @@ spells:
     casting_time: Action
     range: 10 meters (cone)
     duration: Instant
-    description: The spell summons a great gust of wind. All untethered objects and creatures up to human size in the area of effect are pushed 2D4 meter away from you and suffer the same amount of bludgeoning damage. Against a swarm (page 83) the spell deals 2D6 damage. Each additional power level increases the number of dice by one. The spell has no effect on monsters that are Large or Huge (page 83).
+    description: The spell summons a great gust of wind. All untethered objects and creatures up to human size in the area of effect are pushed 2D4 meter away from you and suffer the same amount of bludgeoning damage. Against a swarm the spell deals 2D6 damage. Each additional power level increases the number of dice by one. The spell has no effect on monsters that are Large or Huge.
   - id: pillar
     name: Pillar
     source: rulebook
@@ -251,7 +251,7 @@ spells:
     casting_time: Action
     range: 10 meters
     duration: Shift
-    description: The spell raises a pillar, three meters high and one meter wide, from the ground or a stone floor. If someone is standing in that spot, the victim must make an ACROBATICS roll (not an action) to avoid falling off the pillar. If the pillar is created under a low ceiling and the roll fails, the victim takes 2D6 bludgeoning damage instead. For each additional power level, the height of the pillar increases by three meters, which can mean falling damage to anyone who falls off (page 53).
+    description: The spell raises a pillar, three meters high and one meter wide, from the ground or a stone floor. If someone is standing in that spot, the victim must make an ACROBATICS roll (not an action) to avoid falling off the pillar. If the pillar is created under a low ceiling and the roll fails, the victim takes 2D6 bludgeoning damage instead. For each additional power level, the height of the pillar increases by three meters, which can mean falling damage to anyone who falls off.
   - id: shatter
     name: Shatter
     source: rulebook
@@ -360,7 +360,7 @@ spells:
     range: 4 meters
     duration: Stretch
     description: |
-      The spell summons an earth elemental. The gnome takes the form of a humanoid of gray-brown sand or clay, and counts as a monster in combat (page 84). It follows its creator’s commands (free action) and acts independently with its own initiative, but must stay within sight of the mage.
+      The spell summons an earth elemental. The gnome takes the form of a humanoid of gray-brown sand or clay, and counts as a monster in combat. It follows its creator’s commands (free action) and acts independently with its own initiative, but must stay within sight of the mage.
       GNOME
       Movement: 8 HP: 5 per power level
       Armor: 4
@@ -378,7 +378,7 @@ spells:
     range: 4 meters
     duration: Stretch
     description: |
-      The spell summons a fire elemental. The salamander takes the form of a lizard of fire, and counts as a monster in combat (page 84). It follows its creator’s commands
+      The spell summons a fire elemental. The salamander takes the form of a lizard of fire, and counts as a monster in combat. It follows its creator’s commands
       (free action) and can act independently with its own initiative, but must stay within sight of the mage.
       SALAMANDER
       Movement: 12 HP: 5 per power level
@@ -399,7 +399,7 @@ spells:
     range: 4 meters
     duration: Stretch
     description: |
-      The spell summons a wind elemental. The sylph looks like a storm cloud in the shape of a bird. It counts as a monster in combat (page 84), follows its creator’s commands (free action), and can act independently with its own initiative, but must stay within sight of the mage.
+      The spell summons a wind elemental. The sylph looks like a storm cloud in the shape of a bird. It counts as a monster in combat, follows its creator’s commands (free action), and can act independently with its own initiative, but must stay within sight of the mage.
       SYLPH
       Movement: 24 HP: 5 per power level
       Armor: —
@@ -418,7 +418,7 @@ spells:
     range: 4 meters
     duration: Stretch
     description: |
-      The spell summons a water elemental. The undine looks like a tidal wave whose crest is shaped like a woman composed entirely of water. It counts as a monster in combat (page 84), follows its creator’s commands (free action), and can act independently with its own initiative, but must stay within sight of the mage.
+      The spell summons a water elemental. The undine looks like a tidal wave whose crest is shaped like a woman composed entirely of water. It counts as a monster in combat, follows its creator’s commands (free action), and can act independently with its own initiative, but must stay within sight of the mage.
       UNDINE
       Movement: 12 HP: 5 per power level
       Armor: —
@@ -484,7 +484,7 @@ spells:
     casting_time: Action
     range: Touch
     duration: Shift
-    description: You protect a person or place (no larger than a human) from magic. You can cast the spell on yourself. The power level of all spells cast at the person or place is reduced by the power level in PROTECTOR. You can also use the spell to protect against magical attacks from monsters (page 83). In that case, each power level reduces the number of dice rolled for damage by 1.
+    description: You protect a person or place (no larger than a human) from magic. You can cast the spell on yourself. The power level of all spells cast at the person or place is reduced by the power level in PROTECTOR. You can also use the spell to protect against magical attacks from monsters. In that case, each power level reduces the number of dice rolled for damage by 1.
   - id: magic-shield
     name: Magic Shield
     source: rulebook
@@ -496,7 +496,7 @@ spells:
     casting_time: Reaction
     range: 10 meters
     duration: Instant
-    description: You interfere with a spell cast by another mage. This spell is a reaction and breaks the initiative order of combat, but does not replace your action in the round. You cast it after your opponent’s roll to succeed, but before any roll for damage or other effect. If it succeeds, the power level of your opponent’s spell decreases by the power level of your MAGIC SHIELD. If the result is zero or less, your opponent’s spell has no effect at all. You can also use the spell to stop magical attacks from monsters (page 83). In that case, each power level reduces the number of dice rolled for damage by 1.
+    description: You interfere with a spell cast by another mage. This spell is a reaction and breaks the initiative order of combat, but does not replace your action in the round. You cast it after your opponent’s roll to succeed, but before any roll for damage or other effect. If it succeeds, the power level of your opponent’s spell decreases by the power level of your MAGIC SHIELD. If the result is zero or less, your opponent’s spell has no effect at all. You can also use the spell to stop magical attacks from monsters. In that case, each power level reduces the number of dice rolled for damage by 1.
   - id: transfer
     name: Transfer
     source: rulebook

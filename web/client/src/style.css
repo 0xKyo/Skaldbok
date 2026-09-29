@@ -245,6 +245,7 @@ input[type='search']:focus-visible { outline: 2px solid var(--green); }
   border: 4px solid #a9c9bd; box-shadow: 0 2px 0 rgba(0, 0, 0, 0.3), inset 0 0 0 2px var(--green-dark); }
 .gem .ring b { font-family: var(--display); font-size: 1.7rem; line-height: 1; color: var(--ink); }
 .gem .base { font-size: 0.7rem; color: #cfe2da; }
+@media (min-width: 900px) { .gems { grid-template-columns: repeat(6, minmax(0, 1fr)); } .gem .ring { width: 3.6rem; height: 3.6rem; } .gem .ring b { font-size: 1.5rem; } .cond { padding: 2px 6px; letter-spacing: 0.04em; white-space: nowrap; } }
 .cond { display: inline-flex; align-items: center; gap: 5px; margin-top: 2px; padding: 2px 8px; border-radius: 999px; background: #17493e; color: #d6e6df;
   font-family: var(--display); font-weight: 700; font-size: 0.6rem; letter-spacing: 0.08em; text-transform: uppercase; }
 .cond.on { background: var(--red); color: #fff; box-shadow: 0 0 0 2px #fff3; }
@@ -338,8 +339,9 @@ input[type="number"].edit:not(:focus)::-webkit-inner-spin-button { -webkit-appea
 .inv-row { display: flex; align-items: center; gap: 6px; padding: 3px 0; border-bottom: 1px solid var(--line); }
 .inv-row:last-child { border-bottom: 0; }
 .inv-row.drag-over { background: var(--parchment); border-radius: 4px; outline: 2px dashed var(--green); }
-.inv-row input.edit:not(.count) { flex: 1 1 auto; }
+.inv-row input.edit:not(.count):not(.weight) { flex: 1 1 auto; }
 .inv-row .count { flex: 0 0 2.4rem; width: 2.4rem; text-align: center; padding: 2px 4px; }
+.inv-row .weight { flex: 0 0 3.2rem; width: 3.2rem; text-align: center; padding: 2px 4px; color: var(--muted); }
 .drag-handle { cursor: grab; color: var(--muted); font-size: 1rem; flex: 0 0 auto; user-select: none; }
 .inv-add { display: flex; gap: 8px; align-items: center; margin-top: 8px; flex-wrap: wrap; }
 .name-line { display: flex; align-items: baseline; justify-content: center; gap: 10px; flex-wrap: wrap; }

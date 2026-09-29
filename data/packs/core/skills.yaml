@@ -41,7 +41,7 @@ skills:
     source: rulebook
     attribute: STR
     category: core
-    description: As an adventurer, you must often repair your gear if it breaks. Typically, it takes one shift to repair a damaged item, and you need access to the appropriate tools (page 78).
+    description: As an adventurer, you must often repair your gear if it breaks. Typically, it takes one shift to repair a damaged item, and you need access to the appropriate tools.
   - id: evade
     name: Evade
     source: rulebook
@@ -89,7 +89,7 @@ skills:
     source: rulebook
     attribute: AGL
     category: core
-    description: To get up on a horse and ride slowly doesn’t require a skill roll, for but for more advanced maneuvers you need to roll for RIDING. Special rules apply in combat (page 55).
+    description: To get up on a horse and ride slowly doesn’t require a skill roll, for but for more advanced maneuvers you need to roll for RIDING. Special rules apply in combat.
   - id: seamanship
     name: Seamanship
     source: rulebook

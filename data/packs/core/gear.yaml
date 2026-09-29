@@ -6,14 +6,14 @@ gear:
     category: Clothes
     cost: 2 gold
     supply: Uncommon
-    effect: Protects against some journey mishaps (page 102).
+    effect: Protects against some journey mishaps.
   - id: cloak
     name: Cloak
     source: rulebook
     category: Clothes
     cost: 8 silver
     supply: Uncommon
-    effect: Protects against some journey mishaps (page 102).
+    effect: Protects against some journey mishaps.
   - id: fine-garments
     name: Fine Garments
     source: rulebook
@@ -27,7 +27,7 @@ gear:
     category: Clothes
     cost: 1 gold
     supply: Uncommon
-    effect: Boon on BUSHCRAFT for resisting cold (page 54).
+    effect: Boon on BUSHCRAFT for resisting cold.
   - id: rags
     name: Rags
     source: rulebook
@@ -105,7 +105,7 @@ gear:
     cost: 5 silver
     supply: Common
     weight: "1"
-    effect: Required to avoid a bane on rolls to avoid the effects of cold (page 54).
+    effect: Required to avoid a bane on rolls to avoid the effects of cold.
   - id: chess-set
     name: Chess Set
     source: rulebook
@@ -129,7 +129,7 @@ gear:
     cost: 4 gold
     supply: Common
     weight: "2"
-    effect: Boon on BUSHCRAFT rolls for cooking (page 103).
+    effect: Boon on BUSHCRAFT rolls for cooking.
   - id: field-ration
     name: Field Ration
     source: rulebook
@@ -137,7 +137,7 @@ gear:
     cost: 1 silver
     supply: Common
     weight: 1/4
-    effect: One ration must be consumed per day, otherwise you become hungry (page 54).
+    effect: One ration must be consumed per day, otherwise you become hungry.
   - id: grappling-hook
     name: Grappling Hook
     source: rulebook
@@ -505,7 +505,7 @@ gear:
     cost: 20 gold
     supply: Uncommon
     weight: "1"
-    effect: Used for CRAFTING (page 34).
+    effect: Used for CRAFTING.
   - id: carpentry-tools
     name: Carpentry Tools
     source: rulebook
@@ -513,7 +513,7 @@ gear:
     cost: 8 gold
     supply: Uncommon
     weight: "1"
-    effect: Used for CRAFTING (page 34).
+    effect: Used for CRAFTING.
   - id: tanning-tools
     name: Tanning Tools
     source: rulebook
@@ -521,7 +521,7 @@ gear:
     cost: 5 gold
     supply: Uncommon
     weight: "1"
-    effect: Used for CRAFTING (page 34).
+    effect: Used for CRAFTING.
   - id: backpack
     name: Backpack
     source: rulebook
@@ -617,7 +617,7 @@ gear:
     cost: 1 gold
     supply: Uncommon
     weight: "1"
-    effect: Boon on HEALING rolls for resisting disease (page 53).
+    effect: Boon on HEALING rolls for resisting disease.
   - id: healing-potion-dose
     name: Healing Potion (dose)
     source: rulebook
@@ -669,7 +669,7 @@ gear:
     category: Services
     cost: 5 silver
     supply: Common
-    effect: Eliminates the effect of torn clothes (page 102).
+    effect: Eliminates the effect of torn clothes.
   - id: courier
     name: Courier
     source: rulebook
@@ -760,7 +760,7 @@ gear:
     category: Services
     cost: 5 gold/ shift or more
     supply: Uncommon
-    effect: A shift of instruction grants an extra advancement roll (page 29).
+    effect: A shift of instruction grants an extra advancement roll.
   - id: bear-trap
     name: Bear Trap
     source: rulebook
@@ -768,7 +768,7 @@ gear:
     cost: 3 gold
     supply: Uncommon
     weight: "1"
-    effect: Can be used for hunting (page 103).
+    effect: Can be used for hunting.
   - id: fishing-rod
     name: Fishing Rod
     source: rulebook
@@ -776,7 +776,7 @@ gear:
     cost: 8 silver
     supply: Common
     weight: "1"
-    effect: Gives D4 rations of food when fishing (page 103).
+    effect: Gives D4 rations of food when fishing.
   - id: fishing-net
     name: Fishing Net
     source: rulebook
@@ -784,7 +784,7 @@ gear:
     cost: 2 gold
     supply: Common
     weight: "2"
-    effect: Gives D6 rations of food when fishing (page 103).
+    effect: Gives D6 rations of food when fishing.
   - id: snare
     name: Snare
     source: rulebook
@@ -792,7 +792,7 @@ gear:
     cost: 5 copper
     supply: Common
     weight: "1"
-    effect: Can be used for hunting (page 103). Can only be used once.
+    effect: Can be used for hunting. Can only be used once.
   - id: canoe
     name: Canoe
     source: rulebook
@@ -834,7 +834,7 @@ gear:
     category: Animals
     cost: 4 silver
     supply: Common
-    effect: Yields one ration of food when slaughtered. The meat should be cooked (page 103).
+    effect: Yields one ration of food when slaughtered. The meat should be cooked.
   - id: combat-trained-horse
     name: Combat Trained Horse
     source: rulebook
@@ -848,7 +848,7 @@ gear:
     category: Animals
     cost: 10 gold
     supply: Uncommon
-    effect: Yields D4 rations of food (milk) per day, and 2D10 rations of food when slaughtered. The meat should be cooked (page 103).
+    effect: Yields D4 rations of food (milk) per day, and 2D10 rations of food when slaughtered. The meat should be cooked.
   - id: donkey
     name: Donkey
     source: rulebook
@@ -876,7 +876,7 @@ gear:
     category: Animals
     cost: 2 gold
     supply: Common
-    effect: Yields 2D6 rations of food when slaughtered. The meat should be cooked (page 103).
+    effect: Yields 2D6 rations of food when slaughtered. The meat should be cooked.
   - id: riding-horse
     name: Riding Horse
     source: rulebook
@@ -890,4 +890,4 @@ gear:
     category: Animals
     cost: 3 gold
     supply: Common
-    effect: Yields 2D4 rations of food when slaughtered. The meat should be cooked (page 103).
+    effect: Yields 2D4 rations of food when slaughtered. The meat should be cooked.

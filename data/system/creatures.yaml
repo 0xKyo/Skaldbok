@@ -17,7 +17,7 @@ intro:
         * Darkness: Unless otherwise stated, monsters can see in darkness
         * Resistance & Immunity. Some monsters are resistant to certain damage types. This means that all damage of this type is halved, after reduction by armor (rounded up). Some monsters can even be immune to certain types of damage, and therefore take no damage at all from such attacks.
         * Fear & Persuasion: Monsters are too terrifying to get scared themselves, but many of them can certainly instill terror in the player characters. Monsters are also immune to the PERSUASION skill unless otherwise stated.
-        * Toppling: A player character can try to topple a monster (optional rule, page 48), rolling against a default EVADE skill level of 15 for all monsters. If the monster has four legs or more, the attacker gets a [[bane]] on the roll.
+        * Toppling: A player character can try to topple a monster (optional rule), rolling against a default EVADE skill level of 15 for all monsters. If the monster has four legs or more, the attacker gets a [[bane]] on the roll.
         * Movement: Just like player characters, monsters have a Movement score and can move before or after their attack or divide their movement before and after the attack. Note that this score refers to movement per turn for monsters, not per round. Some monsters have different movement rates on land, in water, and in the air. Taking flight or landing are [[free actions|free action]].
     - name: Size
       body: |

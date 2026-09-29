@@ -12,15 +12,15 @@ WebAccess::WebAccess(std::string prefsDir, std::string publicUrl) : publicUrl_(s
     read();
 }
 
+namespace {
+constexpr size_t kTokenLength = 8;
+}
+
 std::string WebAccess::newToken() {
     std::random_device rd;                                       // the operating system's entropy source
-    std::string out;
-    for (int i = 0; i < 4; ++i) {
-        char buf[9];
-        std::snprintf(buf, sizeof buf, "%08x", static_cast<unsigned>(rd()));
-        out += buf;
-    }
-    return out;
+    char buf[9];
+    std::snprintf(buf, sizeof buf, "%08x", static_cast<unsigned>(rd()));
+    return buf;
 }
 
 void WebAccess::read() {
@@ -55,10 +55,15 @@ void WebAccess::write() {
 
 bool WebAccess::sync(const std::vector<std::string>& readable, const std::set<std::string>& existing) {
     bool changed = false;
-    if (gmToken_.empty()) {
+    if (gmToken_.size() != kTokenLength) {      // empty, or from the days of 32-digit tokens
         gmToken_ = newToken();
         changed = true;
     }
+    for (auto& [id, token] : tokens_)
+        if (token.size() != kTokenLength) {
+            token = newToken();
+            changed = true;
+        }
     for (const std::string& id : readable)
         if (!tokens_.count(id)) {
             tokens_[id] = newToken();
@@ -86,7 +91,7 @@ std::string WebAccess::regenerate(const std::string& characterId) {
 }
 
 std::string WebAccess::characterFor(const std::string& token) const {
-    if (token.size() < 16 || token.size() > 128) return {};
+    if (token.size() < 8 || token.size() > 128) return {};
     auto it = byToken_.find(token);
     return it == byToken_.end() ? std::string() : it->second;
 }
@@ -97,7 +102,7 @@ std::string WebAccess::linkFor(const std::string& characterId) const {
 }
 
 bool WebAccess::isGm(const std::string& token) const {
-    return !gmToken_.empty() && token.size() >= 16 && token == gmToken_;
+    return !gmToken_.empty() && token.size() >= 8 && token == gmToken_;
 }
 
 std::string WebAccess::gmLink() const {

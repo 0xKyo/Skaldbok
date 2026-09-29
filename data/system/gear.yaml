@@ -17,7 +17,7 @@ intro:
     - name: Food
       body: Up to four rations of food count as one item in terms of encumbrance. Always record the number of rations you have left in your Inventory.
     - name: Torches & Lanterns
-      body: A torch, lamp, or lantern is an item. Their fire may go out (page 52). Lamps and lanterns can be refilled with lamp oil.
+      body: A torch, lamp, or lantern is an item. Their fire may go out. Lamps and lanterns can be refilled with lamp oil.
     - name: Arrows & Slingstones
       body: You do not have to count every arrow you are carrying. Instead, each quiver of arrows counts as a single item. As long as you have the quiver, you can use your weapon. Slingstones do not need to be noted down at all – you are assumed to have enough of those.
     - name: Backpack

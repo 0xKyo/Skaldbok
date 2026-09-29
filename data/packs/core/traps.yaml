@@ -15,4 +15,4 @@ traps:
     name: Poison Dart Trap
     source: rulebook
     roll: AWARENESS
-    description: "Darts dipped in [[poison]] shoot out from the wall, hitting all nearby player characters who fail an AWARENESS roll. The GM decides the potency and whether it is a lethal, paralyzing, or sleeping poison (page 52)."
+    description: "Darts dipped in [[poison]] shoot out from the wall, hitting all nearby player characters who fail an AWARENESS roll. The GM decides the potency and whether it is a lethal, paralyzing, or sleeping poison."

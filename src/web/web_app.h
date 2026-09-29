@@ -16,6 +16,7 @@
 #include <vector>
 
 #include "game/character.h"
+#include "game/dice.h"
 #include "parsing/content.h"
 #include "game/changelog.h"
 #include "game/messages.h"
@@ -98,6 +99,7 @@ private:
     std::string error_;
     std::mutex mutex_;
     ContentStore content_;
+    Dice dice_;                                          // for the creator: gear dice the browser did not roll
     std::unique_ptr<PackManager> packs_;
     std::string contentSignature_;
     DirCache<Character> characters_;

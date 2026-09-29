@@ -31,6 +31,7 @@ std::string validateItem(const json& v, const char* what) {
     if (v.contains("key") && !isText(v["key"], 120)) return std::string(what) + " has a bad key";
     if (v.contains("count") && !isInt(v["count"], 1, 999)) return std::string(what) + " count must be 1 to 999";
     if (v.contains("note") && !isText(v["note"], 200)) return std::string(what) + " note is too long";
+    if (v.contains("weight") && !(v["weight"].is_number() && v["weight"].get<double>() >= 0 && v["weight"].get<double>() <= 99)) return std::string(what) + " weight must be 0 to 99";
     return {};
 }
 

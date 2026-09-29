@@ -62,11 +62,11 @@ intro:
     - name: Prerequisites
       body: Some spells have a prerequisite that must be met in order to learn them. It is usually a [[school of magic]] or knowing another spell.
     - name: Teachers
-      body: The easiest (but often most expensive) way to learn a spell is from a teacher who already knows it. The lesson takes one shift, but you cannot activate the new spell until the end of the game session. You must then use an [[advancement mark]] (page 29) for the school to learn the new spell instead of trying to increase your [[skill level]] in the school. Make a roll against INT, with a [[boon]]. On success you learn the spell, otherwise you do not.
+      body: The easiest (but often most expensive) way to learn a spell is from a teacher who already knows it. The lesson takes one shift, but you cannot activate the new spell until the end of the game session. You must then use an [[advancement mark]] for the school to learn the new spell instead of trying to increase your [[skill level]] in the school. Make a roll against INT, with a [[boon]]. On success you learn the spell, otherwise you do not.
     - name: Grimoires
       body: If you are lucky, you can find spells in other mages’ [[grimoires|grimoire]]. You can learn them on your own. This works the same way as with a teacher, but you roll against LANGUAGES instead of INT, without the [[boon]].
     - name: Schools of Magic
-      body: You can learn additional [[schools of magic|school of magic]] by first acquiring the [[heroic ability]] Magic Talent (page 38), and then studying under a teacher with a [[skill level]] in the school for at least a week. At the end of the week you make a roll against INT. On a success you get your base chance (INT) as the skill level in the school. On failure you may try again after another week of study. Even non-mages can learn magic this way.
+      body: You can learn additional [[schools of magic|school of magic]] by first acquiring the [[heroic ability]] Magic Talent, and then studying under a teacher with a [[skill level]] in the school for at least a week. At the end of the week you make a roll against INT. On a success you get your base chance (INT) as the skill level in the school. On failure you may try again after another week of study. Even non-mages can learn magic this way.
     - name: Spell List
       body: The following pages list all [[magic tricks|magic trick]] and spells in the Dragonbane core game. First up is General Magic, followed by the three schools of Animism, Elementalism, and Mentalism.
     - name: Magic Tricks
@@ -87,7 +87,7 @@ intro:
       kind: rule
       category: Casting Spells
       fields:
-        Description: Spells are complicated, and the maximum number of spells you can hold prepared in your memory at the same time is equal to your base chance for INT. When you have reached your limit and want to prepare another spell, you need to replace a spell. To prepare spells, you need to study them in a [[grimoire]]. This takes a shift of time, regardless of the number of spells. It can be done during a [[shift rest]]. You can only prepare spells that you have learned (page 61). Mark your prepared spells with an X on your character sheet.
+        Description: Spells are complicated, and the maximum number of spells you can hold prepared in your memory at the same time is equal to your base chance for INT. When you have reached your limit and want to prepare another spell, you need to replace a spell. To prepare spells, you need to study them in a [[grimoire]]. This takes a shift of time, regardless of the number of spells. It can be done during a [[shift rest]]. You can only prepare spells that you have learned. Mark your prepared spells with an X on your character sheet.
     - name: Grimoire
       kind: rule
       category: Casting Spells
@@ -119,7 +119,7 @@ intro:
       kind: rule
       category: Casting Spells
       fields:
-        Description: Metal has an anti-magical effect, which means that you cannot use magic if you are wearing metal armor or have a metal weapon at hand (page 45). This includes partially metal items such as axes, spears, studded leather, and arrows (but not staves, clubs, or slings). Items in your inventory do not count.
+        Description: Metal has an anti-magical effect, which means that you cannot use magic if you are wearing metal armor or have a metal weapon at hand. This includes partially metal items such as axes, spears, studded leather, and arrows (but not staves, clubs, or slings). Items in your inventory do not count.
     - name: Rank
       kind: rule
       category: Casting Spells

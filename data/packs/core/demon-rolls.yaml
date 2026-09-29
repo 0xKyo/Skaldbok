@@ -8,7 +8,7 @@ entities:
     category: Demon Roll in Melee
     legacy_key: "#38"
     description: Picking it up is an action.
-  - name: You expose yourself to the enemy, who gets a free attack (page 43) that cannot be dodged or parried.
+  - name: You expose yourself to the enemy, who gets a free attack that cannot be dodged or parried.
     kind: effect
     category: Demon Roll in Melee
   - name: Your weapon cuts so deep into an object that it gets stuck

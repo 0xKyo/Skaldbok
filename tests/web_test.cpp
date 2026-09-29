@@ -313,6 +313,85 @@ void chat() {
     seenByGm.setPrefDir(e.prefs + "/");
     check(seenByGm.thread(brennaId).messages.size() == 3 && seenByGm.thread(brennaId).messages.back().from == "player" && seenByGm.unread(brennaId, true) == 1, "and the GM's side reads it, as unread");
     check(body(get(app, "/api/chat", garmander))["messages"].size() == 1, "nobody else sees it: players never write to each other");
+    {
+        // the GM web page writes to a whole party: a broadcast into the conversation of each of its characters
+        const std::string gmTok = app.access().gmToken();
+        const json parties = body(get(app, "/api/gm/parties", gmTok))["parties"];
+        const std::string pid = parties.empty() ? std::string() : parties[0]["id"].get<std::string>();
+        const std::string partyName = parties.empty() ? std::string() : parties[0]["name"].get<std::string>();
+        const std::string route = "/api/gm/parties/" + pid + "/message";
+        const size_t before = body(get(app, "/api/chat", garmander))["messages"].size();
+        const WebResponse toParty = get(app, route, gmTok, "10.0.0.1", "POST", R"({"text": "Meet at the inn."})");
+        const json afterMsgs = body(get(app, "/api/chat", garmander))["messages"];
+        check(!pid.empty() && toParty.status == 201 && body(toParty)["sent"].get<int>() >= 1 && afterMsgs.size() == before + 1 &&
+                  afterMsgs.back()["kind"] == "broadcast" && afterMsgs.back()["to"] == partyName && afterMsgs.back()["text"] == "Meet at the inn.",
+              "a message to a party reaches each of its characters as a broadcast that names the party");
+        check(get(app, route, gmTok, "10.0.0.1", "POST", R"({"text": ""})").status == 400 && get(app, "/api/gm/parties/no-such-party/message", gmTok, "10.0.0.1", "POST", R"({"text": "x"})").status == 404 &&
+                  get(app, route, brenna, "10.0.0.1", "POST", R"({"text": "x"})").status != 201,
+              "an empty text is refused, so is an unknown party, and a player cannot write to a party");
+        // what the GM page creates must be read back: a new party and a new character show up in the lists, and members can be added
+        const WebResponse made = get(app, "/api/gm/parties", gmTok, "10.0.0.1", "POST", R"({"name": "Test"})");
+        const std::string newParty = body(made).value("id", "");
+        auto partyNamed = [&](const std::string& id) -> json {
+            for (const json& p : body(get(app, "/api/gm/parties", gmTok))["parties"])
+                if (p["id"] == id) return p;
+            return json(nullptr);
+        };
+        check(made.status == 201 && !newParty.empty() && partyNamed(newParty).is_object() && partyNamed(newParty)["name"] == "Test", "a party created from the GM page is listed afterwards");
+        get(app, "/api/gm/parties/" + newParty, gmTok, "10.0.0.1", "PATCH", "{\"addMember\": \"" + brennaId + "\"}");
+        check(partyNamed(newParty).is_object() && partyNamed(newParty)["members"].size() == 1 && partyNamed(newParty)["members"][0] == brennaId, "and a character can be added to it (one character can be in several parties)");
+        check(get(app, "/api/gm/parties/" + newParty, gmTok, "10.0.0.1", "PATCH", R"({"name": "  Renamed  "})").status == 200 && partyNamed(newParty)["name"] == "Renamed" &&
+                  get(app, "/api/gm/parties/" + newParty, gmTok, "10.0.0.1", "PATCH", R"({"name": "   "})").status == 400 && partyNamed(newParty)["name"] == "Renamed",
+              "a party can be renamed (trimmed), and an empty name is refused");
+        const WebResponse newChar = get(app, "/api/gm/characters", gmTok, "10.0.0.1", "POST", R"({"name": "Newcomer"})");
+        bool listed = false;
+        for (const json& c : body(get(app, "/api/gm/characters", gmTok))["characters"]) listed |= c["name"] == "Newcomer";
+        check(newChar.status == 201 && listed, "a character created from the GM page is listed afterwards");
+        // the creator: its catalog, a random character that is valid, and building it from the choices
+        const json catalog = body(get(app, "/api/gm/creation", gmTok));
+        check(catalog["kins"].size() >= 2 && !catalog["professions"].empty() && catalog["ages"].size() == 3 && catalog["attributes"].size() == 6 && catalog["baseChance"].size() == 19 &&
+                  catalog["tables"].contains("kin") && !catalog["professions"][0]["gearSets"].empty(),
+              "the creator's catalog lists kin, professions with their gear sets, ages and attributes");
+        const WebResponse rnd = get(app, "/api/gm/creation/random", gmTok, "10.0.0.1", "POST", "{}");
+        const json random = body(rnd);
+        const json preview = body(get(app, "/api/gm/creation/preview", gmTok, "10.0.0.1", "POST", random.dump()));
+        check(rnd.status == 200 && preview["problems"].empty() && !preview["summary"].get<std::string>().empty() && preview["attributes"].size() == 6, "a random character passes the same check the wizard uses");
+        json unnamed = random;
+        unnamed["name"] = "";
+        check(!body(get(app, "/api/gm/creation/preview", gmTok, "10.0.0.1", "POST", unnamed.dump()))["problems"].empty() &&
+                  get(app, "/api/gm/characters", gmTok, "10.0.0.1", "POST", json({{"creation", unnamed}}).dump()).status == 400,
+              "a creation with a problem is reported and refused");
+        const WebResponse built = get(app, "/api/gm/characters", gmTok, "10.0.0.1", "POST", json({{"creation", random}}).dump());
+        const std::string builtId = body(built).value("id", "");
+        const json sheet = body(get(app, "/api/gm/characters/" + builtId, gmTok));
+        check(built.status == 201 && !builtId.empty() && sheet["name"] == random["name"] && !sheet["skills"].empty(), "the creator's choices become a sheet with its skills");
+        // custom gear: any weapon of the rules, chosen freely, ends up on the sheet
+        const json weaponCards = body(get(app, "/api/gm/content/weapons", gmTok))["entries"];
+        json custom = random;
+        custom["gearSet"] = -1;
+        custom["gear"] = json::array();
+        custom["customGear"] = weaponCards.empty() ? json::array() : json::array({{{"key", weaponCards[0]["key"]}, {"count", 1}}, {{"key", "no/such/thing"}, {"count", 1}}});
+        const WebResponse withCustom = get(app, "/api/gm/characters", gmTok, "10.0.0.1", "POST", json({{"creation", custom}}).dump());
+        const std::string customId = body(withCustom).value("id", "");
+        const json customSheet = body(get(app, "/api/gm/characters/" + customId, gmTok))["equipment"];
+        const std::string wanted = weaponCards.empty() ? "" : weaponCards[0]["name"].get<std::string>();
+        bool carried = false;
+        for (const char* where : {"weapons", "inventory"})
+            for (const json& it : customSheet[where]) carried |= it["name"] == wanted;
+        check(withCustom.status == 201 && !weaponCards.empty() && carried, "custom gear chosen freely is on the sheet, and an unknown key is ignored");
+        get(app, "/api/gm/characters/" + customId, gmTok, "10.0.0.1", "DELETE");
+        check(get(app, "/api/gm/creation", brenna).status != 200 && get(app, "/api/gm/creation/random", brenna, "10.0.0.1", "POST", "{}").status != 200, "players cannot use the creator");
+        get(app, "/api/gm/characters/" + builtId, gmTok, "10.0.0.1", "DELETE");
+        // and what it deletes is gone: a deleted party disappears, a deleted character leaves the list and every party it was in
+        const std::string newCharId = body(newChar).value("id", "");
+        get(app, "/api/gm/parties/" + newParty, gmTok, "10.0.0.1", "PATCH", "{\"addMember\": \"" + newCharId + "\"}");
+        check(!newCharId.empty() && partyNamed(newParty)["members"].size() == 2, "the new character joins the party");
+        check(get(app, "/api/gm/characters/" + newCharId, gmTok, "10.0.0.1", "DELETE").status == 200, "a character can be deleted from the GM page");
+        bool stillListed = false;
+        for (const json& c : body(get(app, "/api/gm/characters", gmTok))["characters"]) stillListed |= c["id"] == newCharId;
+        check(!stillListed && partyNamed(newParty)["members"].size() == 1, "a deleted character is no longer listed and leaves its parties");
+        check(get(app, "/api/gm/parties/" + newParty, gmTok, "10.0.0.1", "DELETE").status == 200 && partyNamed(newParty).is_null(), "a deleted party is no longer listed");
+    }
     sent = get(app, "/api/chat", brenna, "10.0.0.1", "POST", "{\"image\": \"" + base64(kPng) + "\"}");
     const std::string sentImage = body(sent)["message"]["image"].is_null() ? "" : body(sent)["message"]["image"].get<std::string>();
     check(sent.status == 201 && !sentImage.empty() && get(app, "/api" + sentImage, brenna).body == kPng && get(app, "/api" + sentImage, garmander).status == 404, "a picture from the player is stored and served only to them (and the GM's app)");
@@ -536,10 +615,10 @@ void tokens() {
     std::set<std::string> distinct;
     for (auto it = saved["tokens"].begin(); it != saved["tokens"].end(); ++it) {
         const std::string t = it.value();
-        shape &= t.size() == 32 && t.find_first_not_of("0123456789abcdef") == std::string::npos;
+        shape &= t.size() == 8 && t.find_first_not_of("0123456789abcdef") == std::string::npos;
         distinct.insert(t);
     }
-    check(shape && distinct.size() == 4, "128 random bits each, all different");
+    check(shape && distinct.size() == 4, "8 hex digits each, all different");
     const std::string brennaId = byName(app, "Brenna")->id;
     check(app.access().linkFor(brennaId) == "http://players.test/?t=" + std::string(saved["tokens"][brennaId]), "the personal link");
 
@@ -565,7 +644,7 @@ void tokens() {
     test::write(e.prefs + "/characters/c-newcomer.yaml", c.dump()); // JSON is valid YAML
     get(app, "/api/me", fresh);                          // any request notices the new file
     const std::string token = app.access().tokens().count("c-newcomer") ? app.access().tokens().at("c-newcomer") : std::string();
-    check(token.size() == 32 && body(get(app, "/api/me", token))["name"] == "Newcomer", "a new character gets a link and can use it immediately");
+    check(token.size() == 8 && body(get(app, "/api/me", token))["name"] == "Newcomer", "a new character gets a link and can use it immediately");
 }
 
 void guessing() {

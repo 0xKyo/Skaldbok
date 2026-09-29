@@ -337,6 +337,23 @@ Creation randomCreation(const ContentStore& content, Dice& dice) {
 
 // ---------------------------------------------------------------------------------------- building
 
+double catalogWeight(const Entry& e) {
+    for (const Field& f : e.fields)
+        if (f.label == "Weight") return weightFromText(f.value);
+    return -1;
+}
+
+void fillWeights(Character& c, const ContentStore& content) {
+    for (Item& it : c.inventory) {
+        if (it.weight >= 0 || it.key.empty()) continue;
+        for (Kind k : {Kind::Gear, Kind::Weapon, Kind::Armor})
+            if (const Entry* e = content.entry(k, content.idByKey(k, it.key))) {
+                it.weight = catalogWeight(*e);
+                break;
+            }
+    }
+}
+
 Character buildCharacter(const Creation& cr, const ContentStore& content, Dice& dice) {
     Character c;
     const Entry* kin = content.entry(Kind::Kin, content.idByKey(Kind::Kin, cr.kinKey));
@@ -377,7 +394,20 @@ Character buildCharacter(const Creation& cr, const ContentStore& content, Dice& 
         if (e) c.spells.push_back(refOf(e, ""));
     }
 
-    // gear
+    // gear: a piece of armor or a weapon goes where it is worn or held; everything else is carried
+    auto place = [&](const Entry* e, const std::string& name, int count) {
+        Item it;
+        it.name = e ? e->title : capitalized(name);
+        it.key = e ? e->key : std::string();
+        if (e) it.weight = catalogWeight(*e);                                    // what the book says it weighs
+        if (e && e->kind == Kind::Armor && e->prop("slot") == "helmet" && c.helmet.name.empty()) c.helmet = it;
+        else if (e && e->kind == Kind::Armor && c.armor.name.empty()) c.armor = it;
+        else if (e && e->kind == Kind::Weapon && c.weapons.size() < 3) c.weapons.push_back(it);
+        else {
+            it.count = std::max(1, count);
+            c.inventory.push_back(it);
+        }
+    };
     std::vector<GearPick> picks = cr.gear;
     for (GearPick& p : picks) {
         if (p.diceSides > 0) {
@@ -395,14 +425,15 @@ Character buildCharacter(const Creation& cr, const ContentStore& content, Dice& 
             continue;
         }
         const std::string text = p.options[static_cast<size_t>(std::clamp(p.choice, 0, static_cast<int>(p.options.size()) - 1))];
-        const Entry* e = matchGear(content, text);
-        Item it;
-        it.name = e ? e->title : capitalized(text);
-        it.key = e ? e->key : std::string();
-        if (e && e->kind == Kind::Armor && e->prop("slot") == "helmet" && c.helmet.name.empty()) c.helmet = it;
-        else if (e && e->kind == Kind::Armor && c.armor.name.empty()) c.armor = it;
-        else if (e && e->kind == Kind::Weapon && c.weapons.size() < 3) c.weapons.push_back(it);
-        else c.inventory.push_back(it);
+        place(matchGear(content, text), text, 1);
+    }
+    for (const auto& [key, count] : cr.customGear) {
+        const Entry* e = nullptr;
+        for (Kind k : {Kind::Weapon, Kind::Armor, Kind::Gear})
+            if (!e) e = content.entry(k, content.idByKey(k, key));
+        if (!e) continue;
+        const bool single = e->kind != Kind::Gear;              // the sheet holds one weapon or armor per slot; a second one is carried
+        for (int i = 0; i < (single ? std::clamp(count, 1, 10) : 1); ++i) place(e, e->title, single ? 1 : count);
     }
     return c;
 }

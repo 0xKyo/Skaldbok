@@ -66,21 +66,21 @@ intro:
       source: rulebook
       fields:
         DURATION: 10 seconds
-        ENOUGH TIME TO: Perform an action in combat, take a round rest (page 52).
+        ENOUGH TIME TO: Perform an action in combat, take a round rest.
     - name: Stretch
       kind: unit-of-time
       category: Measuring Time
       source: rulebook
       fields:
         DURATION: 15 minutes
-        ENOUGH TIME TO: Explore a room, take a stretch rest (page 52).
+        ENOUGH TIME TO: Explore a room, take a stretch rest.
     - name: Shift
       kind: unit-of-time
       category: Measuring Time
       source: rulebook
       fields:
         DURATION: 6 hours
-        ENOUGH TIME TO: Hike for 15 kilometers, take a shift rest (page 52).
+        ENOUGH TIME TO: Hike for 15 kilometers, take a shift rest.
     - name: Exhausted
       kind: condition
       category: Conditions

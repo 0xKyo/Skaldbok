@@ -3,7 +3,7 @@ entities:
   - name: Cramped
     kind: terrain
     category: Terrain
-    description: There is little space or a low ceiling. All melee weapons except piercing weapons (page 73) and subtle weapons get a bane on all rolls.
+    description: There is little space or a low ceiling. All melee weapons except piercing weapons and subtle weapons get a bane on all rolls.
   - name: Rough
     kind: terrain
     category: Terrain

@@ -96,6 +96,17 @@ int main(int argc, char** argv) {
     check(pick("open helmet") && pick("open helmet")->prop("slot") == "helmet", "'open helmet' is a helmet");
     check(pick("snow goggles") && pick("snow goggles")->key == "frostmarch/gear/snow-goggles", "homebrew gear is matched too");
 
+    // what an item weighs: its own weight when set, else 1 (food rations 1/4); the book's "Weight" is read from the card
+    check(weightFromText("1") == 1 && weightFromText("1/4") == 0.25 && weightFromText("2") == 2 && weightFromText("\xE2\x80\x94") == 0 && weightFromText("heavy") < 0 && weightFromText("") < 0, "the book's weights: 1, 1/4, 2, an em dash (nothing) and words nobody can add up");
+    {
+        Character w;
+        w.inventory = {Item{"Rope", "", 1, "", -1}, Item{"Food rations", "", 8, "", -1}, Item{"Anvil", "", 1, "", 3}, Item{"Feather", "", 5, "", 0}, Item{"Coin purse", "", 3, "", 0.5}};
+        check(itemWeight(w.inventory[0]) == 1 && itemWeight(w.inventory[1]) == 0.25 && itemWeight(w.inventory[2]) == 3, "an item weighs 1, food rations 1/4, unless it says otherwise");
+        check(carriedItems(w) == 1 + 2 + 3 + 0 + 2, "the load is each row's weight x count, rounded up per row: 1 + 2 + 3 + 0 + 2");
+        Character back;
+        std::string error;
+        check(Character::fromJson(w.toJson(), back, &error) && back.inventory[2].weight == 3 && back.inventory[0].weight < 0 && back.inventory[3].weight == 0, "a weight set by hand is saved and read back, one never set stays unset");
+    }
     auto set = parseGearSet("Broadsword/battle axe/morning star, small shield, chainmail, torch, D6 food rations, D6 silver");
     check(set.size() == 6 && set[0].options.size() == 3 && set[4].diceSides == 6 && set[4].what == "food rations" && set[5].what == "silver",
           "gear set parsing: choices and dice");

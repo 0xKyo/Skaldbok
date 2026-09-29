@@ -11,6 +11,7 @@
 #include "game/sheet_edit.h"
 #include "game/settings.h"
 #include "web/web_views.h"
+#include "web/web_creation.h"
 
 namespace gm {
 namespace {
@@ -169,7 +170,7 @@ std::pair<std::string, std::string> WebApp::nameAndLink(const Character& c) cons
 
 // ---------------------------------------------------------------------------- guessing
 
-// Remembers failed token attempts per address, so guessing is pointless (tokens are 128 random bits anyway).
+// Remembers failed token attempts per address, so guessing is pointless (tokens are 8 hex digits, so the attempt limit is what makes guessing impractical).
 bool WebApp::blocked(const std::string& ip, long long now) {
     auto& list = failures_[ip];
     std::erase_if(list, [&](long long t) { return now - t >= config_.failureWindowMs; });
@@ -335,6 +336,15 @@ WebResponse WebApp::gmApi(const WebRequest& request, long long now) {
 
     if (sub == "/gm/me") return jsonResponse(200, {{"ok", true}, {"gmLink", access_.gmLink()}});
 
+    // ---- the character creator: what each step offers, and a check of the choices so far ----
+    if (sub == "/gm/creation" && reading) return jsonResponse(200, creationCatalog(content_));
+    if (sub == "/gm/creation/random" && request.method == "POST") return jsonResponse(200, creationToJson(randomCreation(content_, dice_)));
+    if (sub == "/gm/creation/preview" && request.method == "POST") {
+        json body;
+        if (!jsonParse(request.body, body, nullptr) || !body.is_object()) return errorResponse(400, "Send a JSON object.");
+        return jsonResponse(200, creationPreview(creationFromJson(body, content_), content_, dice_));
+    }
+
     // ---- characters ----
     if (sub == "/gm/characters") {
         if (reading) {
@@ -347,11 +357,18 @@ WebResponse WebApp::gmApi(const WebRequest& request, long long now) {
             json body;
             if (!jsonParse(request.body, body, nullptr) || !body.is_object()) body = json::object();
             Character c;
+            if (const json* wizard = jsonFind(body, "creation"); wizard && wizard->is_object()) {     // the creator's choices: built by the book's rules
+                const Creation choices = creationFromJson(*wizard, content_);
+                const std::vector<std::string> problems = validateCreation(choices, content_);
+                if (!problems.empty()) return errorResponse(400, problems.front());
+                c = buildCharacter(choices, content_, dice_);
+            } else {
+                c.name = jsonStr(body, "name");
+            }
             c.id = fs::stampedId("c");
-            c.name = jsonStr(body, "name");
             c.createdAt = c.updatedAt = nowIso();
             const std::string path = config_.prefsDir + "/characters/" + c.id + ".yaml";
-            if (!fs::writeFile(path, jsonToYaml(c.toJson()))) return errorResponse(500, "Could not create character.");
+            if (!fs::writeFile(path, c.toJson())) return errorResponse(500, "Could not create character.");
             refreshedAt_ = -1;
             refresh(now);
             return jsonResponse(201, characterSummary(c, content_, access_.linkFor(c.id)));
@@ -377,6 +394,13 @@ WebResponse WebApp::gmApi(const WebRequest& request, long long now) {
             const std::string path = config_.prefsDir + "/characters/" + cid + ".yaml";
             if (!fs::isFile(path)) return errorResponse(404, "No such character.");
             SDL_RemovePath(path.c_str());
+            for (const auto& [partyId, item] : parties_.items) {        // a deleted character leaves every party it was in
+                if (!std::ranges::contains(item.doc.members, cid)) continue;
+                Party updated = item.doc;
+                std::erase(updated.members, cid);
+                updated.updatedAt = nowIso();
+                fs::writeFile(config_.prefsDir + "/parties/" + partyId + ".yaml", updated.toJson());
+            }
             refreshedAt_ = -1;
             refresh(now);
             return jsonResponse(200, {{"ok", true}});
@@ -404,7 +428,7 @@ WebResponse WebApp::gmApi(const WebRequest& request, long long now) {
             p.name = name;
             p.createdAt = p.updatedAt = nowIso();
             const std::string path = config_.prefsDir + "/parties/" + p.id + ".yaml";
-            if (!fs::writeFile(path, jsonToYaml(p.toJson()))) return errorResponse(500, "Could not create party.");
+            if (!fs::writeFile(path, p.toJson())) return errorResponse(500, "Could not create party.");
             refreshedAt_ = -1;
             refresh(now);
             return jsonResponse(201, {{"id", p.id}, {"name", p.name}, {"members", json::array()}});
@@ -413,15 +437,39 @@ WebResponse WebApp::gmApi(const WebRequest& request, long long now) {
 
     static const std::string kParties = "/gm/parties/";
     if (sub.starts_with(kParties)) {
-        const std::string pid = sub.substr(kParties.size());
-        if (pid.find('/') != std::string::npos || !fs::safeId(pid)) return errorResponse(400, "Invalid party id.");
+        const std::string rest = sub.substr(kParties.size());
+        const auto slash = rest.find('/');
+        const std::string pid = slash == std::string::npos ? rest : rest.substr(0, slash);
+        const std::string tail = slash == std::string::npos ? std::string() : rest.substr(slash);
+        if (!fs::safeId(pid)) return errorResponse(400, "Invalid party id.");
+        // a message to the whole party: a broadcast into the conversation of each of its characters
+        if (tail == "/message" && request.method == "POST") {
+            const Party* p = parties_.find(pid);
+            if (!p) return errorResponse(404, "No such party.");
+            json body;
+            if (!jsonParse(request.body, body, nullptr) || !body.is_object()) return errorResponse(400, "Send {\"text\": \"...\"}.");
+            const json* text = jsonFind(body, "text");
+            if (!text || !text->is_string() || text->get<std::string>().empty()) return errorResponse(400, "Text is required.");
+            std::vector<std::string> ids;
+            for (const std::string& m : p->members)
+                if (characters_.items.count(m)) ids.push_back(m);
+            if (ids.empty()) return errorResponse(400, "This party has no characters to write to.");
+            std::string error;
+            if (!chat_.sendFromGm(ids, true, p->name, text->get<std::string>(), "", &error)) return errorResponse(400, "Could not send: " + error + ".");
+            return jsonResponse(201, {{"sent", static_cast<int>(ids.size())}});
+        }
+        if (!tail.empty()) return errorResponse(404, "Not found.");
         if (request.method == "PATCH") {
             const Party* p = parties_.find(pid);
             if (!p) return errorResponse(404, "No such party.");
             Party updated = *p;
             json body;
             if (!jsonParse(request.body, body, nullptr) || !body.is_object()) return errorResponse(400, "Send a JSON object.");
-            if (const json* n = jsonFind(body, "name"); n && n->is_string()) updated.name = n->get<std::string>();
+            if (const json* n = jsonFind(body, "name"); n && n->is_string()) {
+                const std::string name = trimmed(n->get<std::string>());
+                if (name.empty() || name.size() > 80) return errorResponse(400, "A party needs a name (up to 80 characters).");
+                updated.name = name;
+            }
             if (const json* add = jsonFind(body, "addMember"); add && add->is_string()) {
                 const std::string mid = add->get<std::string>();
                 if (!std::ranges::contains(updated.members, mid)) updated.members.push_back(mid);
@@ -429,7 +477,7 @@ WebResponse WebApp::gmApi(const WebRequest& request, long long now) {
             if (const json* rem = jsonFind(body, "removeMember"); rem && rem->is_string())
                 std::erase(updated.members, rem->get<std::string>());
             updated.updatedAt = nowIso();
-            if (!fs::writeFile(config_.prefsDir + "/parties/" + pid + ".yaml", jsonToYaml(updated.toJson()))) return errorResponse(500, "Could not update party.");
+            if (!fs::writeFile(config_.prefsDir + "/parties/" + pid + ".yaml", updated.toJson())) return errorResponse(500, "Could not update party.");
             refreshedAt_ = -1;
             refresh(now);
             json members = json::array();

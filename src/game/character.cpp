@@ -2,6 +2,8 @@
 
 #include <algorithm>
 #include <cctype>
+#include <cmath>
+#include <cstdlib>
 #include <cstdio>
 
 #include <SDL3/SDL.h>
@@ -9,6 +11,7 @@
 #include "game/encounter.h"
 #include "parsing/fsutil.h"
 #include "game/sheet_edit.h"
+#include "parsing/fts.h"
 #include "parsing/jsonutil.h"
 
 namespace gm {
@@ -104,13 +107,29 @@ int encumbranceLimit(const Character& c) {
     return limit;
 }
 
+double itemWeight(const Item& it) {
+    if (it.weight >= 0) return it.weight;
+    std::string name;
+    for (char ch : it.name) name += static_cast<char>(std::tolower(static_cast<unsigned char>(ch)));
+    return name.contains("food ration") ? 0.25 : 1.0;
+}
+
+double weightFromText(const std::string& text) {
+    const std::string t = trimmed(text);
+    if (t == "\xE2\x80\x94" || t == "-" || t == "0") return 0;                      // "—": weighs nothing
+    const auto slash = t.find('/');
+    char* end = nullptr;
+    if (slash != std::string::npos) {
+        const double num = std::strtod(t.c_str(), &end), den = std::strtod(t.c_str() + slash + 1, nullptr);
+        return den > 0 && num >= 0 ? num / den : -1;
+    }
+    const double v = std::strtod(t.c_str(), &end);
+    return end != t.c_str() && *end == '\0' && v >= 0 ? v : -1;
+}
+
 int carriedItems(const Character& c) {
     int n = 0;
-    for (const Item& it : c.inventory) {
-        std::string name;
-        for (char ch : it.name) name += static_cast<char>(std::tolower(static_cast<unsigned char>(ch)));
-        n += name.contains("food ration") ? (it.count + 3) / 4 : std::max(1, it.count);
-    }
+    for (const Item& it : c.inventory) n += static_cast<int>(std::ceil(itemWeight(it) * std::max(1, it.count) - 1e-9));
     return n;
 }
 
@@ -161,6 +180,7 @@ json itemJson(const Item& it) {
     if (!it.key.empty()) j["key"] = it.key;
     if (it.count != 1) j["count"] = it.count;
     if (!it.note.empty()) j["note"] = it.note;
+    if (it.weight >= 0) j["weight"] = it.weight;
     return j;
 }
 
@@ -174,6 +194,7 @@ Item itemFrom(const json& j) {
     it.key = jsonStr(j, "key");
     it.count = std::max(1, jsonInt(j, "count", 1));
     it.note = jsonStr(j, "note");
+    if (const json* w = jsonFind(j, "weight"); w && w->is_number() && w->get<double>() >= 0) it.weight = w->get<double>();
     return it;
 }
 

@@ -43,7 +43,7 @@ entities:
     kind: magical-mishap
     category: Magical Mishaps
     description: Roll D4 every morning. On a 1, the effect wears off. It can also be lifted with DISPEL.
-  - name: The spell blinds you, and you act as if in total darkness (page 52)
+  - name: The spell blinds you, and you act as if in total darkness
     kind: magical-mishap
     category: Magical Mishaps
     description: Roll D4 every morning. On a 1, you recover. The effect can also be lifted with DISPEL.
@@ -71,7 +71,7 @@ entities:
     kind: magical-mishap
     category: Magical Mishaps
     description: Your attributes and derived ratings change as per the table on page 24, but your skill levels do not. If you were already old, you become very frail and get −2 STR and CON. The effect is permanent and you age normally from your new age.
-  - name: Your magic attracts a demon (page 85) from another dimension
+  - name: Your magic attracts a demon from another dimension
     kind: magical-mishap
     category: Magical Mishaps
     description: The demon shows up within the next shift and attacks or causes some kind of trouble. The details are up to the GM.

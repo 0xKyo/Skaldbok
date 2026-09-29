@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <unordered_set>
 
+#include "game/creation.h"
 #include "game/encounter.h"
 #include "game/sheet_edit.h"
 #include "parsing/fts.h"
@@ -77,7 +78,7 @@ json itemView(const ContentStore& cs, const Item& it) {
         if (!effect && !it.name.empty()) effect = cs.findByName(k, it.name);
     const std::vector<std::string> banes = effect ? effect->list("banes") : std::vector<std::string>();
     const bool ranged = effect && effect->kind == Kind::Weapon && effect->prop("kind") == "ranged";
-    return {{"name", it.name}, {"count", it.count}, {"note", it.note}, {"stats", stats}, {"banes", banes}, {"ranged", ranged},
+    return {{"name", it.name}, {"count", it.count}, {"note", it.note}, {"weight", it.weight >= 0 || !card ? itemWeight(it) : (catalogWeight(*card) >= 0 ? catalogWeight(*card) : itemWeight(it))}, {"stats", stats}, {"banes", banes}, {"ranged", ranged},
             {"description", card ? card->body : std::string()}};
 }
 
@@ -228,6 +229,8 @@ json characterView(const Character& c, const ContentStore& cs, const Party* part
     const Entry* profession = resolve(cs, Kind::Profession, c.profession);
     const int kinMovement = kin ? std::atoi(kin->prop("movement").c_str()) : 0;
     const AgeRule& age = ageRule(c.age);
+    Character weighed = c;                            // items never weighed by hand weigh what their card says
+    fillWeights(weighed, cs);
 
     json attributes = json::array();
     for (int i = 0; i < kAttrCount; ++i)
@@ -256,7 +259,7 @@ json characterView(const Character& c, const ContentStore& cs, const Party* part
             {"derived",
              {{"movement", kinMovement > 0 ? json(kinMovement + movementModifier(c.attr[2])) : json(nullptr)},
               {"damageBonus", {{"str", damageBonus(c.attr[0])}, {"agl", damageBonus(c.attr[2])}}},
-              {"encumbrance", {{"carried", carriedItems(c)}, {"limit", encumbranceLimit(c)}}},
+              {"encumbrance", {{"carried", carriedItems(weighed)}, {"limit", encumbranceLimit(c)}}},
               {"trainedSkills", age.trainedSkills}}},
             {"skills", skillRows(c, cs)},
             {"abilities", abilities},

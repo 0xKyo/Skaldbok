@@ -109,6 +109,17 @@ bool lineInt(const char* id, int& v, int lo, int hi, float width) {
 }
 
 
+// what one of an item weighs, set by hand (the encumbrance of a row is this times its count)
+bool lineWeight(const char* id, Item& it, float width) {
+    BlankStyle style;
+    float f = static_cast<float>(itemWeight(it));
+    ImGui::SetNextItemWidth(width);
+    const bool changed = ImGui::InputFloat(id, &f, 0.0f, 0.0f, "%g", ImGuiInputTextFlags_CharsDecimal);
+    if (changed) it.weight = std::clamp(f, 0.0f, 99.0f);
+    underline();
+    return changed;
+}
+
 std::string statText(const Entry* e, const char* label) {
     if (e)
         for (const Field& f : e->fields)
@@ -654,7 +665,7 @@ void CharacterSheet::inventory(Character& c, bool& changed, float w) {
         centeredLabel(bw, text, ImGui::GetStyle().Colors[ImGuiCol_Text]);
         ImGui::PopStyleColor();
     });
-    ImGui::TextColored(kGrey, "Encumbrance limit %d", limit);
+    ImGui::TextColored(kGrey, "Encumbrance limit %d (each item's weight is the small number at the end of its line)", limit);
 
     const float numberW = U(20);
     const size_t lines = std::max<size_t>({8u, c.inventory.size() + 1, static_cast<size_t>(limit)});
@@ -665,9 +676,12 @@ void CharacterSheet::inventory(Character& c, bool& changed, float w) {
         ImGui::SameLine(numberW);
         if (i < c.inventory.size()) {
             Item& it = c.inventory[i];
-            changed |= lineText("##n", it.name, w - numberW - U(76));
+            changed |= lineText("##n", it.name, w - numberW - U(128));
             ImGui::SameLine(0, U(4));
             changed |= lineInt("##c", it.count, 1, 999, 36);
+            ImGui::SameLine(0, U(4));
+            changed |= lineWeight("##w", it, U(44));
+            if (ImGui::IsItemHovered()) ImGui::SetTooltip("Weight of one, for the encumbrance limit (0 weighs nothing)");
             ImGui::SameLine(0, U(4));
             if (ImGui::SmallButton("x")) {
                 c.inventory.erase(c.inventory.begin() + static_cast<std::ptrdiff_t>(i));
@@ -676,7 +690,7 @@ void CharacterSheet::inventory(Character& c, bool& changed, float w) {
                 break;
             }
         } else if (i == c.inventory.size()) {                       // the free line: typing in it adds an item
-            if (lineText("##new", newItem_, w - numberW - U(76), "type to add an item")) {
+            if (lineText("##new", newItem_, w - numberW - U(128), "type to add an item")) {
                 c.inventory.push_back(Item{newItem_, "", 1, ""});
                 newItem_.clear();
                 changed = true;

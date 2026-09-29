@@ -55,21 +55,21 @@ abilities:
     type: heroic
     requirement: Knives 12
     wp_cost: "3"
-    description: Your sneak attack (page 43) deals an extra D8 damage. This heroic ability can be combined with the heroic ability Backstabbing. You activate this ability after you roll to hit, but before you roll for damage.
+    description: Your sneak attack deals an extra D8 damage. This heroic ability can be combined with the heroic ability Backstabbing. You activate this ability after you roll to hit, but before you roll for damage.
   - id: backstabbing
     name: Backstabbing
     source: rulebook
     type: heroic
     requirement: Knives 12
     wp_cost: "3"
-    description: You can activate this ability when making a melee attack against an enemy that is also within 2 meters of another player character. Your attack then counts as a sneak attack, which means it cannot be dodged or parried, you get a boon to the roll, and the number of dice rolled for the damage is increased by one (i.e. 2D8 instead of D8). This ability can only be used with a subtle weapon (page 74). Activating this ability does not count as an action.
+    description: You can activate this ability when making a melee attack against an enemy that is also within 2 meters of another player character. Your attack then counts as a sneak attack, which means it cannot be dodged or parried, you get a boon to the roll, and the number of dice rolled for the damage is increased by one (i.e. 2D8 instead of D8). This ability can only be used with a subtle weapon. Activating this ability does not count as an action.
   - id: battle-cry
     name: Battle Cry
     source: rulebook
     type: heroic
     requirement: —
     wp_cost: "3"
-    description: You can, as an action in combat, let out a battle cry that inspires your friends. All other player characters within earshot immediately heal a condition of their choice (page 51). This heroic ability can only be used in combat.
+    description: You can, as an action in combat, let out a battle cry that inspires your friends. All other player characters within earshot immediately heal a condition of their choice. This heroic ability can only be used in combat.
   - id: berserker
     name: Berserker
     source: rulebook
@@ -83,7 +83,7 @@ abilities:
     type: heroic
     requirement: Acrobatics 12
     wp_cost: Varies
-    description: The number of D6 rolled for damage from a fall (page 53) decreases by one for each WP spent. You can first make an ACROBATICS roll and then activate this heroic ability.
+    description: The number of D6 rolled for damage from a fall decreases by one for each WP spent. You can first make an ACROBATICS roll and then activate this heroic ability.
   - id: companion
     name: Companion
     source: rulebook
@@ -104,7 +104,7 @@ abilities:
     type: heroic
     requirement: Any melee weapon skill 12
     wp_cost: "3"
-    description: You may attempt to parry an attack (page 46) without consuming your action for the round. The bonus parry can be used at any time during the round. You may only try to parry the same attack once and you cannot try to dodge and parry the same attack. This ability can be used multiple times per round, as long as you have enough WP.
+    description: You may attempt to parry an attack without consuming your action for the round. The bonus parry can be used at any time during the round. You may only try to parry the same attack once and you cannot try to dodge and parry the same attack. This ability can be used multiple times per round, as long as you have enough WP.
   - id: deflect-arrow
     name: Deflect Arrow
     source: rulebook
@@ -146,14 +146,14 @@ abilities:
     type: heroic
     requirement: Awareness 12
     wp_cost: "2"
-    description: You can see a person or object up to 200 meters away in great detail, as if standing right next to it. The effect lasts for one stretch. In combat you can also shoot at a target beyond the weapon’s effective range (page 49) without getting a bane to your roll. This heroic ability must be activated for each new target.
+    description: You can see a person or object up to 200 meters away in great detail, as if standing right next to it. The effect lasts for one stretch. In combat you can also shoot at a target beyond the weapon’s effective range without getting a bane to your roll. This heroic ability must be activated for each new target.
   - id: fast-footwork
     name: Fast Footwork
     source: rulebook
     type: heroic
     requirement: Evade 12
     wp_cost: "3"
-    description: You may attempt to dodge an attack (page 47) without consuming your action for the round. The bonus dodge can be performed at any time during the round. You may only try to dodge the same attack once and you cannot try to dodge and parry the same attack. This ability can be used multiple times per round, as long as you have enough WP.
+    description: You may attempt to dodge an attack without consuming your action for the round. The bonus dodge can be performed at any time during the round. You may only try to dodge the same attack once and you cannot try to dodge and parry the same attack. This ability can be used multiple times per round, as long as you have enough WP.
   - id: fast-healer
     name: Fast Healer
     source: rulebook
@@ -167,7 +167,7 @@ abilities:
     type: heroic
     requirement: —
     wp_cost: "2"
-    description: You automatically resist fear (page 52), without a WIL roll.
+    description: You automatically resist fear, without a WIL roll.
   - id: focused
     name: Focused
     source: rulebook
@@ -216,14 +216,14 @@ abilities:
     type: heroic
     requirement: Evade 12
     wp_cost: "2"
-    description: When drawing initiative card at the start of a combat round (page 41), you may draw two cards instead of one and choose which one you want. You can only activate this heroic ability once per round.
+    description: When drawing initiative card at the start of a combat round, you may draw two cards instead of one and choose which one you want. You can only activate this heroic ability once per round.
   - id: lone-wolf
     name: Lone Wolf
     source: rulebook
     type: heroic
     requirement: Bushcraft 12
     wp_cost: —
-    description: You can take a shift rest in the wilderness without first rolling for BUSHCRAFT to make camp (page 103). The effect only applies to you, even if you have a tent.
+    description: You can take a shift rest in the wilderness without first rolling for BUSHCRAFT to make camp. The effect only applies to you, even if you have a tent.
   - id: magic-talent
     name: Magic Talent
     source: rulebook
@@ -258,7 +258,7 @@ abilities:
     type: heroic
     requirement: —
     wp_cost: "1"
-    description: You automatically succeed at cooking food (page 103) without rolling BUSHCRAFT.
+    description: You automatically succeed at cooking food without rolling BUSHCRAFT.
   - id: master-spellcaster
     name: Master Spellcaster
     source: rulebook
@@ -300,7 +300,7 @@ abilities:
     type: heroic
     requirement: Bushcraft 12
     wp_cost: "1"
-    description: You are good at finding suitable campsites. You automatically succeed at making camp during journeys (page 103).
+    description: You are good at finding suitable campsites. You automatically succeed at making camp during journeys.
   - id: robust
     name: Robust
     source: rulebook
@@ -314,7 +314,7 @@ abilities:
     type: heroic
     requirement: Swim 12
     wp_cost: "1"
-    description: You can activate this ability (not an action) when performing an action in water, even if only waist deep. You are then safe from all negative effects of being in water (page 53) for one round, including the risk of drowning.
+    description: You can activate this ability (not an action) when performing an action in water, even if only waist deep. You are then safe from all negative effects of being in water for one round, including the risk of drowning.
   - id: shield-block
     name: Shield Block
     source: rulebook

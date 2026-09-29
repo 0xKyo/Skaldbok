@@ -29,6 +29,7 @@ struct Item {
     std::string key;                 // links to a weapon / armor / gear entry when there is one
     int count = 1;
     std::string note;
+    double weight = -1;              // encumbrance of one; negative = the usual (1, or 1/4 for food rations). 0 = weighs nothing
 };
 
 struct SkillEntry {
@@ -84,7 +85,9 @@ int baseChance(int attribute);                        // skill base chance: 1-5:
 int movementModifier(int agl);                        // AGL 1-6:-4, 7-9:-2, 10-12:0, 13-15:+2, 16-18:+4
 std::string damageBonus(int strOrAgl);                // "" up to 12, "D4" 13-16, "D6" 17+
 int encumbranceLimit(const Character& c);             // half STR rounded up, +2 with a backpack
-int carriedItems(const Character& c);                 // rows of the inventory; food rations count one item per four
+double itemWeight(const Item& it);                    // what one of them weighs: its own weight, else 1 (food rations 1/4)
+double weightFromText(const std::string& text);       // a catalog "Weight" ("1", "1/4", "—" = 0); negative if it says nothing usable
+int carriedItems(const Character& c);                 // encumbrance of the inventory: each row weighs its weight x count, rounded up
 int maxHp(const Character& c);                        // CON (+ bonus)
 int maxWp(const Character& c);                        // WIL (+ bonus)
 

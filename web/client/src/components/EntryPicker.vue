@@ -7,6 +7,7 @@ const props = defineProps({
   token: { type: String, required: true },
   type: { type: String, required: true }, // spells | abilities | weapons | armor | gear
   label: { type: String, required: true },
+  prefix: { type: String, default: '' },   // '/gm' when the GM is signed in
 });
 const emit = defineEmits(['pick']);
 
@@ -21,7 +22,7 @@ async function load() {
   const mine = ++request;
   try {
     const q = query.value.trim();
-    const res = await apiGet(`/content/${props.type}${q ? `?q=${encodeURIComponent(q)}` : ''}`, props.token);
+    const res = await apiGet(`${props.prefix}/content/${props.type}${q ? `?q=${encodeURIComponent(q)}` : ''}`, props.token);
     if (mine === request) {
       entries.value = res.entries.slice(0, 40);
       error.value = '';
@@ -37,8 +38,17 @@ watch([open, query], () => {
 });
 onBeforeUnmount(() => clearTimeout(timer));
 
+// what the book says one weighs ("1", "1/4", "—" = nothing); undefined when it says nothing usable
+function weightOf(entry) {
+  const text = (entry.fields ?? []).find((f) => f.label === 'Weight')?.value?.trim() ?? '';
+  if (text === '—' || text === '-') return 0;
+  const frac = /^(\d+)\s*\/\s*(\d+)$/.exec(text);
+  if (frac && Number(frac[2]) > 0) return Number(frac[1]) / Number(frac[2]);
+  return /^\d+(\.\d+)?$/.test(text) ? Number(text) : undefined;
+}
+
 function choose(entry) {
-  emit('pick', { key: entry.key, name: entry.name });
+  emit('pick', { key: entry.key, name: entry.name, weight: weightOf(entry) });
   open.value = false;
   query.value = '';
 }

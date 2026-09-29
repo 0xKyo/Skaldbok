@@ -3,6 +3,7 @@
 #pragma once
 
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "game/character.h"
@@ -38,6 +39,7 @@ struct Creation {
     std::vector<std::string> spells;                       // spell and trick keys (mages)
     int gearSet = -1;                                      // 0..2
     std::vector<GearPick> gear;                            // the picks of that set
+    std::vector<std::pair<std::string, int>> customGear;   // instead of a set: weapon / armor / gear entry keys chosen freely, with how many
     std::string name, nickname, player, weakness, memento, appearance;
 };
 
@@ -51,6 +53,10 @@ std::vector<std::string> professionSkillOptions(const Entry& profession, const s
 std::vector<const Entry*> selectableSkills(const ContentStore& content);
 // Spells a mage may choose: rank-1 spells (or tricks) of the school or General Magic.
 std::vector<const Entry*> magicChoices(const ContentStore& content, const Entry& profession, const std::string& school, bool tricks);
+// What the book says one of these weighs (the "Weight" of its card: "1", "1/4", "—"), negative if it says nothing usable.
+double catalogWeight(const Entry& e);
+// Gives the inventory items that were never weighed the weight of their card, so the encumbrance follows the book.
+void fillWeights(Character& c, const ContentStore& content);
 // Builds the sheet. Dice picks that were not rolled yet are rolled now. Call validateCreation first.
 Character buildCharacter(const Creation& c, const ContentStore& content, Dice& dice);
 // Picks a random row's first cell from a table; empty if the table has no rows.

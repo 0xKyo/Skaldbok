@@ -45,11 +45,11 @@ entities:
   - name: Puddle
     kind: effect
     category: Cave
-    description: ✦Roll to topple the enemy (page 48). ✦If you succeed, the enemy must spend one action and make an ACROBATICS roll to get back up.
+    description: ✦Roll to topple the enemy. ✦If you succeed, the enemy must spend one action and make an ACROBATICS roll to get back up.
   - name: Crevice
     kind: effect
     category: Cave
-    description: ✦Roll to topple the enemy (page 48). ✦If you succeed, the enemy falls into a 2D6 meter deep crevice and suffers falling damage. ✦Climbing up requires an ACROBATICS roll.
+    description: ✦Roll to topple the enemy. ✦If you succeed, the enemy falls into a 2D6 meter deep crevice and suffers falling damage. ✦Climbing up requires an ACROBATICS roll.
   - name: Bats
     kind: effect
     category: Cave
@@ -66,7 +66,7 @@ entities:
   - name: Gnarled Roots
     kind: effect
     category: Forest
-    description: ✦Roll to topple the enemy (page 48). ✦If you succeed, the enemy must spend one action and make an ACROBATICS roll to get back up.
+    description: ✦Roll to topple the enemy. ✦If you succeed, the enemy must spend one action and make an ACROBATICS roll to get back up.
   - name: Boulder
     kind: effect
     category: Forest

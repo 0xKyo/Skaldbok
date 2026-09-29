@@ -41,6 +41,30 @@ Las tablas con dado (las categorías `rollable` de los yaml, o con `dice`) tiene
 
 **Reference › Creatures** lista las criaturas con buscador y muestra su ficha completa (estadísticas, ataques, habilidades, texto) **con su ilustración** si la tiene. Arriba de la lista hay tres etiquetas para filtrar, **NPC**, **Animal** y **Monster** (todo lo que no es NPC ni animal); se pueden combinar y, sin ninguna activa, se ve todo. `GET /api/gm/creatures/<key>` trae `image` (la ruta de la imagen, o `null`) y `GET /api/gm/creatures/<key>/image` sirve el archivo; el navegador la pide con el token del máster, igual que las fotos del chat.
 
+## Parties y personajes (máster)
+
+En la barra lateral, **Characters** trae la categoría **Solo**: los personajes que no están en ninguna party. **Parties** es un desplegable (el título se pliega y se despliega); cada party es a su vez un desplegable con sus personajes, y un personaje puede estar en varias parties (aparece bajo cada una). Al hacer clic en una party se abre a la derecha su página:
+
+* el **nombre** y todos sus **miembros** (clic en un nombre abre su ficha; la **×** lo saca de la party);
+* **Add to Party**: elige entre los personajes que todavía no están en ella;
+* **Message to the whole party**: escribe a todos los miembros a la vez. Llega a la conversación de cada uno como un *broadcast* que nombra la party (`POST /api/gm/parties/<id>/message`, `{text}`; responde `{sent}`). Los miembros se cambian con `PATCH /api/gm/parties/<id>` (`addMember` / `removeMember`).
+* **Rename** (botón junto al nombre): cambia el nombre de la party (`PATCH` con `{name}`; un nombre vacío se rechaza).
+* **Delete party** (con confirmación): borra la party y **conserva a sus personajes** (`DELETE /api/gm/parties/<id>`).
+
+En la ficha de un personaje, **Delete character** (con confirmación) borra su archivo y lo saca de todas las parties en las que estaba (`DELETE /api/gm/characters/<id>`).
+
+En el inventario de la ficha, cada objeto tiene su **peso** (el número junto a la cantidad, editable): cuenta para el límite de carga como peso × cantidad. Un objeto que se agrega desde las reglas trae el «Weight» de su tarjeta (1/4 la ración, — no pesa); uno escrito a mano pesa 1.
+
+## Creador de personajes (máster)
+
+El **+** de **Characters** abre el creador con los mismos 9 pasos que la app (Kin, Profession, Age, Attributes, Skills, Ability & magic, Gear, Name & details, Review), con sus botones de tirada (D12, D10, D6, 4D6, tablas de weakness/memento/appearance). **Next** se habilita al terminar cada paso; **Create character** en Review guarda la ficha y la abre. **Random character** (dentro del creador) y el **🎲** de la barra lateral generan un personaje completo y válido y lo dejan en Review para retocarlo o crearlo.
+
+Donde se elige una opción (kin, profession, age, heroic ability, gear set) se ve como en la Reference: la lista a la izquierda y a la derecha los datos de la elegida (campos, texto y tablas, las mismas tarjetas de `GET /api/gm/content/<tipo>`). Skills y hechizos, que son de selección múltiple, siguen siendo listas con casillas.
+
+En **Gear**, además de los sets, hay **Custom**: se busca y se agrega cualquier arma, armadura o equipo de las reglas (con cantidad) y se suma lo que cuesta todo (oro, plata y cobre; lo que no tiene un precio simple, como un servicio por día, no se cuenta y se avisa). Va en `customGear: [{key, count}]` de la creación. En **Attributes** lo que se escribe se respeta tal cual: fuera de 3 a 18 se marca en rojo y no deja avanzar.
+
+Las reglas son las de la app (`game/creation.cpp`); la web solo junta las elecciones: `GET /api/gm/creation` (todo lo que ofrece cada paso, con las tablas del libro cara por cara), `POST /api/gm/creation/preview` (problemas, atributos con la edad, HP/WP/movimiento y la hoja en texto), `POST /api/gm/creation/random` (una creación aleatoria) y `POST /api/gm/characters` con `{creation: {...}}` (400 con el primer problema si algo falta). Solo con el token del máster.
+
 ## NPC Creator (solo máster)
 
 En **Reference › World**, debajo de *Non-Player Characters*, hay una entrada **NPC Creator**: el botón **Create Random NPC** saca un valor al azar de cada lista de *Creating NPCs* (nombre, attitude, kin, motivation, profession y trait) y cada resultado tiene su propio botón **Re-roll**. Las listas salen de `data/system/npcs.yaml` (`GET /api/gm/npcs`); la entrada es un nodo de `rules.yaml` con `tool: npc-creator` y `web_hide: true`, así que los jugadores no la ven.
@@ -172,7 +196,7 @@ otros jugadores (solo su resumen de party), ni los tokens. Un pack que el máste
 
 Seguridad:
 
-* El token son 128 bits aleatorios; identifica **un** personaje y el personaje lo elige el servidor por el token, nunca un parámetro.
+* El token son 8 caracteres hex (32 bits aleatorios; lo que frena las adivinanzas es el límite de intentos fallidos por dirección; al arrancar, el servidor reemplaza los tokens viejos más largos por otros de 8, así que esos links dejan de valer); identifica **un** personaje y el personaje lo elige el servidor por el token, nunca un parámetro.
 * El token va en la cabecera `Authorization: Bearer` (nunca en la URL de la API, para que no quede en registros). La página lo
   guarda en el navegador y lo **borra de la barra de direcciones** al abrir el enlace.
 * Tras 20 intentos fallidos desde una dirección se bloquea unos minutos. Los mensajes de error no dicen por qué falló.
@@ -200,9 +224,9 @@ Errores: `401` enlace no válido, `429` demasiados intentos, `404` ruta o tipo d
 
 ```
 cd web
-npm run dev          # http://localhost:5173, reenvía /api a http://localhost:8080 (API_URL para otro)
-npm test             # Vitest: enlace y token, la ficha, el refresco, la desconexión, las tabs
-npm run build        # web/client/dist
+pm run dev          # http://localhost:5173, reenvía /api a http://localhost:8080 (API_URL para otro)
+pm test             # Vitest: enlace y token, la ficha, el refresco, la desconexión, las tabs
+pm run build        # web/client/dist
 ```
 
 Con `skaldbok_web` corriendo en el puerto 8080, `npm run dev` recarga la página al vuelo. Las pruebas del cliente usan

@@ -123,7 +123,7 @@ actions:
     group: movement
     description: |
       If you are standing within 2 meters of an enemy and then voluntarily move away from that enemy, you must make an EVADE roll.
-      The roll does not count as an action, but if it fails, the enemy immediately gets to perform an additional melee attack against you – a {{key: free attack}}. The free attack does not count as an action and can neither be parried nor dodged. A monster that gets a free attack performs a [[monster attack]] (page 83) which also may affect other characters. Note that a free attack is triggered even if you start your movement at a distance but pass by an enemy. Moving around an enemy does not trigger a free attack, as long as you stay within 2 meters. Also note that involuntary movement never triggers a free attack.
+      The roll does not count as an action, but if it fails, the enemy immediately gets to perform an additional melee attack against you – a {{key: free attack}}. The free attack does not count as an action and can neither be parried nor dodged. A monster that gets a free attack performs a [[monster attack]] which also may affect other characters. Note that a free attack is triggered even if you start your movement at a distance but pass by an enemy. Moving around an enemy does not trigger a free attack, as long as you stay within 2 meters. Also note that involuntary movement never triggers a free attack.
   - name: Damage
     group: melee-combat
     description: |

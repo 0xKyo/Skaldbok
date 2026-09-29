@@ -62,12 +62,12 @@ entities:
     kind: injury
     category: "Severe Injuries: Injury"
     fields:
-      EFFECT: "Roll to resist fear (page 52) each shift you sleep. If you fail, the shift doesn’t count as slept. Healing time: 2D6 days."
+      EFFECT: "Roll to resist fear each shift you sleep. If you fail, the shift doesn’t count as slept. Healing time: 2D6 days."
   - name: Changed personality
     kind: injury
     category: "Severe Injuries: Injury"
     fields:
-      EFFECT: Randomly generate a new weakness (optional rule, page 26).
+      EFFECT: Randomly generate a new weakness (optional rule).
   - name: Amnesia
     kind: injury
     category: "Severe Injuries: Injury"

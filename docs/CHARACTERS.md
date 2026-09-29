@@ -37,7 +37,7 @@ Los archivos se guardan en YAML. El bloque de abajo usa la sintaxis JSON (que ta
   "weapons":   [ { "name": "Morningstar", "key": "core/weapon/morningstar" } ],   // a mano; los escudos cuentan como armas
   "armor":     { "name": "Chainmail", "key": "core/armor/chainmail" },           // o null
   "helmet":    null,
-  "inventory": [ { "name": "Torch", "key": "core/gear/torch" }, { "name": "Food rations", "count": 4 } ],
+  "inventory": [ { "name": "Torch", "key": "core/gear/torch" }, { "name": "Food rations", "count": 4, "weight": 0.25 } ],
   "tiny_items": ["a bone whistle"],
   "coins": { "gold": 0, "silver": 3, "copper": 0 },
   "weakness": "…", "memento": "…", "appearance": "…", "notes": "…",
@@ -67,7 +67,7 @@ Del Rulebook, capítulo 2. Están implementados en `src/game/character.cpp` y pr
 | PV máximos / PW máximos | CON / WIL (+ `hp_bonus` / `wp_bonus`) |
 | Movimiento | el de la raza (`movement` del pack) + modificador de AGL: 1–6 → −4, 7–9 → −2, 10–12 → 0, 13–15 → +2, 16–18 → +4 |
 | Bonificación de daño (FUE y AGL, por separado) | hasta 12: ninguna, 13–16: +D4, 17 o más: +D6 |
-| Límite de carga | mitad de FUE redondeada hacia arriba (+2 con mochila); las raciones cuentan 1 objeto cada 4 |
+| Límite de carga | mitad de FUE redondeada hacia arriba (+2 con mochila). Cada objeto pesa 1, o lo que diga su `weight` (0 no pesa; la ración de campo pesa 1/4; un objeto sacado de las reglas trae el «Weight» de su tarjeta). Cada fila pesa peso × cantidad, redondeado hacia arriba |
 
 ## Creación
 

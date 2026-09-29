@@ -34,7 +34,7 @@ entities:
   - name: Downpour
     kind: mishap
     category: Mishaps
-    description: A massive rainfall or blizzard (depending on the season) catches the group unawares. All player characters without a cloak must roll to withstand the cold (page 54). They must also seek shelter until the storm passes and cannot make any progress on the map this shift.
+    description: A massive rainfall or blizzard (depending on the season) catches the group unawares. All player characters without a cloak must roll to withstand the cold. They must also seek shelter until the storm passes and cannot make any progress on the map this shift.
   - name: Wasps
     kind: mishap
     category: Mishaps

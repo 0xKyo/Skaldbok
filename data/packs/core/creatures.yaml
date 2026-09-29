@@ -5,7 +5,7 @@ creatures:
     source: rulebook
     kind: monster
     category: Summoned creatures (Elementalism)
-    description: The spell summons an earth elemental. The gnome takes the form of a humanoid of gray-brown sand or clay, and counts as a monster in combat (page 84). It follows its creator’s commands (free action) and acts independently with its own initiative, but must stay within sight of the mage.
+    description: The spell summons an earth elemental. The gnome takes the form of a humanoid of gray-brown sand or clay, and counts as a monster in combat. It follows its creator’s commands (free action) and acts independently with its own initiative, but must stay within sight of the mage.
     statblocks:
       - fields:
           Movement: "8"
@@ -19,7 +19,7 @@ creatures:
     kind: monster
     category: Summoned creatures (Elementalism)
     description: |
-      The spell summons a fire elemental. The salamander takes the form of a lizard of fire, and counts as a monster in combat (page 84). It follows its creator’s commands
+      The spell summons a fire elemental. The salamander takes the form of a lizard of fire, and counts as a monster in combat. It follows its creator’s commands
       (free action) and can act independently with its own initiative, but must stay within sight of the mage.
     statblocks:
       - fields:
@@ -35,7 +35,7 @@ creatures:
     source: rulebook
     kind: monster
     category: Summoned creatures (Elementalism)
-    description: The spell summons a wind elemental. The sylph looks like a storm cloud in the shape of a bird. It counts as a monster in combat (page 84), follows its creator’s commands (free action), and can act independently with its own initiative, but must stay within sight of the mage.
+    description: The spell summons a wind elemental. The sylph looks like a storm cloud in the shape of a bird. It counts as a monster in combat, follows its creator’s commands (free action), and can act independently with its own initiative, but must stay within sight of the mage.
     statblocks:
       - fields:
           Movement: "24"
@@ -49,7 +49,7 @@ creatures:
     source: rulebook
     kind: monster
     category: Summoned creatures (Elementalism)
-    description: The spell summons a water elemental. The undine looks like a tidal wave whose crest is shaped like a woman composed entirely of water. It counts as a monster in combat (page 84), follows its creator’s commands (free action), and can act independently with its own initiative, but must stay within sight of the mage.
+    description: The spell summons a water elemental. The undine looks like a tidal wave whose crest is shaped like a woman composed entirely of water. It counts as a monster in combat, follows its creator’s commands (free action), and can act independently with its own initiative, but must stay within sight of the mage.
     statblocks:
       - fields:
           Movement: "12"
@@ -145,7 +145,7 @@ creatures:
           Movement: "12"
           Armor: —
           HP: "27"
-          Immunity: Ghosts are immaterial beings and immune to all damage except magic and fire. A defeated ghost is only banished for one shift, after which it returns. The only way to banish the ghost permanently is to cast PURGE (page 64) or solve whatever problem keeps it bound to the world of the living.
+          Immunity: Ghosts are immaterial beings and immune to all damage except magic and fire. A defeated ghost is only banished for one shift, after which it returns. The only way to banish the ghost permanently is to cast PURGE or solve whatever problem keeps it bound to the world of the living.
           Persuadable: Unlike other monsters, ghosts can usually be PERSUADED, albeit with a bane on the roll.
     attacks:
       - roll: "1"
@@ -156,10 +156,10 @@ creatures:
         text: Touch of Death! The ghost sticks its translucent hand into the chest of an unfortunate player character and grasps the victim’s heart. The victim suffers 2D10 points of damage and becomes Scared. Armor has no effect.
       - roll: "3"
         name: Ghost Scream!
-        text: Ghost Scream! The undead face contorts into a horrible grimace and lets out a scream that chills the souls of all adventurers within 10 meters. All of them suffer a fear attack (page 52).
+        text: Ghost Scream! The undead face contorts into a horrible grimace and lets out a scream that chills the souls of all adventurers within 10 meters. All of them suffer a fear attack.
       - roll: "4"
         name: Death Stare!
-        text: Death Stare! The ghost towers over a player character, staring directly into their soul with its dead eyes. The victim sees their life pass before their eyes and is tormented by grotesque visions of all their dead friends and foes. The victim becomes Scared, suffers a fear attack (page 52), and gets a bane on their WIL roll.
+        text: Death Stare! The ghost towers over a player character, staring directly into their soul with its dead eyes. The victim sees their life pass before their eyes and is tormented by grotesque visions of all their dead friends and foes. The victim becomes Scared, suffers a fear attack, and gets a bane on their WIL roll.
       - roll: "5"
         name: Ghostly Embrace!
         text: Ghostly Embrace! The ghost emits an unnatural wheeze and suddenly appears right in front of an adventurer within 10 meters, wrapping them in a deadly embrace to smother their spark of life. The attack inflicts 3D6 bludgeoning damage and leaves the victim Dazed.
@@ -330,7 +330,7 @@ creatures:
     attacks:
       - roll: "1"
         name: Threatening Cackle!
-        text: Threatening Cackle! The harpies shower the adventurers with terrible descriptions of what they will do to them. Everyone within 10 meters must make a WIL roll to resist fear (page 52).
+        text: Threatening Cackle! The harpies shower the adventurers with terrible descriptions of what they will do to them. Everyone within 10 meters must make a WIL roll to resist fear.
       - roll: "2"
         name: Coordinated Attack!
         text: Coordinated Attack! The harpies flock together and attack the player character who wears the most metal. The attack inflicts 2D6 slashing damage. If hit, the victim is also lifted into the air and dropped from a height of D3+3 meters.
@@ -565,7 +565,7 @@ creatures:
     attacks:
       - roll: "1"
         name: Unholy Roar!
-        text: Unholy Roar! The wight’s decomposed skull contorts and lets out a ghastly scream that cuts like a rusty blade through the characters’ souls. Everyone within 10 meters suffers a fear attack (page 52).
+        text: Unholy Roar! The wight’s decomposed skull contorts and lets out a ghastly scream that cuts like a rusty blade through the characters’ souls. Everyone within 10 meters suffers a fear attack.
       - roll: "2"
         name: Dreadful Gaze!
         text: Dreadful Gaze! An unlucky player character stares directly into the wight’s horrible eyes as a wheezing sound is heard from the creature’s throat. The victim becomes Scared, suffers a fear attack, and gets a bane on their WIL roll.
@@ -577,7 +577,7 @@ creatures:
         text: Sweeping Attack! With surprising speed, the wight sweeps its weapon in a deadly attack. All player characters within 2 meters suffer weapon damage. The attack can be parried.
       - roll: "5"
         name: Crippling Cold!
-        text: Crippling Cold! The wight grabs an unfortunate player character who feels the chill of death spread through their body. The victim takes D6 damage (armor has no effect) and must make an EVADE roll (not an action) on their next turn in order to act at all. If the roll fails, a new attempt can be made on the next turn. The victim also becomes cold (page 54) and cannot heal HP or WP until they get warm.
+        text: Crippling Cold! The wight grabs an unfortunate player character who feels the chill of death spread through their body. The victim takes D6 damage (armor has no effect) and must make an EVADE roll (not an action) on their next turn in order to act at all. If the roll fails, a new attempt can be made on the next turn. The victim also becomes cold and cannot heal HP or WP until they get warm.
       - roll: "6"
         name: Power Attack!
         text: Power Attack! With creaking joints, the wight swings its weapon in a powerful attack against a character. The damage is rolled with twice the weapon’s normal number of dice, and the victim is knocked to the ground. The attack can be parried.
@@ -1279,7 +1279,7 @@ creatures:
         text: Pinprick! Several fairies swarm around an opponent and stab them with their needle-sharp daggers. The victim suffers D10 damage (armor has no effect) and gains the Dazed condition.
       - roll: "3"
         name: Blinding Dust!
-        text: Blinding Dust! A fairy throws a fistful of glitter into the air which may blind anyone within 10 meters. Those affected must succeed with an EVADE roll (not an action) or act as if in total darkness for D6 rounds (page 52 in the Rulebook).
+        text: Blinding Dust! A fairy throws a fistful of glitter into the air which may blind anyone within 10 meters. Those affected must succeed with an EVADE roll (not an action) or act as if in total darkness for D6 rounds.
       - roll: "4"
         name: Sweet Dreams!
         text: Sweet Dreams! A fairy sneaks up behind an opponent and stabs them with the poisonous thorn of an enchanted rose. The victim is injected with a paralyzing poison with potency 12.
@@ -1357,7 +1357,7 @@ creatures:
     attacks:
       - roll: "1"
         name: Threatening Cackle!
-        text: Threatening Cackle! The harpies shower the adventurers with terrible descriptions of what they will do to them. Everyone within 10 meters must make a WIL roll to resist fear (Rulebook, page 52).
+        text: Threatening Cackle! The harpies shower the adventurers with terrible descriptions of what they will do to them. Everyone within 10 meters must make a WIL roll to resist fear.
       - roll: "2"
         name: Coordinated Attack!
         text: Coordinated Attack! The harpies flock together and attack the player character who wears the most metal. The attack inflicts 2D6 slashing damage. If hit, the victim is also lifted into the air and dropped from a height of D3+3 meters.
@@ -1968,7 +1968,7 @@ creatures:
           Sensitive to Sunlight: When in direct sunlight, mountain trolls suffer D6 damage per round, and cannot regenerate. A troll that reaches zero HP because of this is turned to stone. Dense foliage, a thick layer of clouds or full-cover clothing are enough to avoid the effect.
           Healing Blood: The mountain troll’s blood is a thick, sweet sap with healing properties. The mountain troll heals D8 HP per turn in a combat, as long as it has not reached zero HP.
           Memories of Ages Past: Mountain trolls have skill level 18 in LANGUAGES and MYTHS & LEGENDS.
-          Troll Staff: The mountain troll’s staff allows it to cast all magic tricks listed under general magic (page 61 in the Rulebook) as well as DIVINATION, FARSIGHT, LONGSTRIDER, and SCRYING. All the spells can be cast at power level 3. The staff has 12 WP that reset every dawn. The staff is bound to the mountain troll’s soul and loses its ability to regain WP if taken from the troll.
+          Troll Staff: The mountain troll’s staff allows it to cast all magic tricks listed under general magic as well as DIVINATION, FARSIGHT, LONGSTRIDER, and SCRYING. All the spells can be cast at power level 3. The staff has 12 WP that reset every dawn. The staff is bound to the mountain troll’s soul and loses its ability to regain WP if taken from the troll.
     attacks:
       - roll: "1"
         name: A Hundred Years of Solitude!
@@ -3118,7 +3118,7 @@ creatures:
           HP: "32"
           Resistance: Vampires only take full damage from silver weapons, magic weapons, and spells. All other damage is halved.
           Vulnerable: In direct sunlight, vampires take D6 damage per round and cannot perform monster attacks. A vampire who reaches zero HP because of this disintegrates.
-          Escape Route: Vampires can use an action to transform into a swarm of bats (page 99 in the Rulebook) that immediately escapes from combat. The escape can only be stopped by sealing the place where the fight occurs. The vampire must then wait until the next sunset before the action can be performed again.
+          Escape Route: Vampires can use an action to transform into a swarm of bats that immediately escapes from combat. The escape can only be stopped by sealing the place where the fight occurs. The vampire must then wait until the next sunset before the action can be performed again.
           Immortal: A vampire that reaches zero HP falls paralyzed to the ground and dissolves into mist after D6 rounds. In mist form, the monster makes its way to its tomb where it is restored to full HP after a shift rest. The vampire can only be killed by sunlight (see above) or by driving a piercing weapon through its heart after reducing it to zero HP, before it dissolves. This requires a successful roll against the SPEARS skill.
     attacks:
       - roll: "1"
@@ -3177,7 +3177,7 @@ creatures:
         text: Sweeping Attack! With surprising speed, the wight sweeps its weapon in a deadly attack. All opponents within 2 meters suffer weapon damage. The attack can be parried.
       - roll: "5"
         name: Crippling Cold!
-        text: Crippling Cold! The wight grabs an unfortunate victim who feels the chill of death spread through their body. The victim takes D6 damage (armor has no effect) and must make an EVADE roll (not an action) on their next turn in order to act at all. If the roll fails, a new attempt can be made on the next turn. The victim also becomes cold (page 54 in the Rulebook) and cannot heal HP or WP until they get warm.
+        text: Crippling Cold! The wight grabs an unfortunate victim who feels the chill of death spread through their body. The victim takes D6 damage (armor has no effect) and must make an EVADE roll (not an action) on their next turn in order to act at all. If the roll fails, a new attempt can be made on the next turn. The victim also becomes cold and cannot heal HP or WP until they get warm.
       - roll: "6"
         name: Power Attack!
         text: Power Attack! With creaking joints, the wight swings its weapon in a powerful attack against an opponent. The damage is rolled with twice the weapon’s normal number of dice, and the victim is knocked to the ground. The attack can be parried.
@@ -3448,7 +3448,7 @@ creatures:
           Movement: "14"
           Armor: "2"
           HP: "48"
-          Undead Minions: A blood demon can raise D6 living dead (page 110) per day if corpses are available. These are fully controlled by the onaqui and obey its every command. At sunrise they drop dead to the ground, but the blood demon can always reanimate them again.
+          Undead Minions: A blood demon can raise D6 living dead per day if corpses are available. These are fully controlled by the onaqui and obey its every command. At sunrise they drop dead to the ground, but the blood demon can always reanimate them again.
           Resistance: Onaquis take half damage from non-magical weapons, except those made of jade.
           Strong Heartbeat: The monster’s heart beats so loudly that any AWARENESS roll to detect it is made with a boon.
           Wings: The blood demon’s wings allow it to move freely through the air.
@@ -3949,8 +3949,8 @@ creatures:
     category: Outskirt
     description: |
       ters’ injuries with HEAL WOUND at the price of 5 gold coins per power level.
-      and succeed with a PERSUASION roll or offer him mead or sweets, Dranath can tell them the following: – The legend of Um-Durman (page 9). – A thousand years ago the Misty Vale was ruled by a warlock named Azrahel Koth who served the demon prince Sathmog. Azrahel Koth resided in an unholy fortress on the mist-shrouded island in Mirror Lake. His remains are said to rest in a labyrinthine burial chamber beneath the island. – Azrahel Koth was defeated by the hero Eledain with the help of ancient dragons. Eledain then declared himself emperor of a dragon-worshiping empire that would rule all of the known world. The temple ruin in Outskirt originates from that empire. – A mysterious woman is sneaking around the temple area at night, seemingly looking for something she lost. Dranath has heard her speak in an ancient language to another creature, which responded with a squeak and flew off.
-      can teach the player characters his skills and spells (page 29 in the Rulebook).
+      and succeed with a PERSUASION roll or offer him mead or sweets, Dranath can tell them the following: – The legend of Um-Durman. – A thousand years ago the Misty Vale was ruled by a warlock named Azrahel Koth who served the demon prince Sathmog. Azrahel Koth resided in an unholy fortress on the mist-shrouded island in Mirror Lake. His remains are said to rest in a labyrinthine burial chamber beneath the island. – Azrahel Koth was defeated by the hero Eledain with the help of ancient dragons. Eledain then declared himself emperor of a dragon-worshiping empire that would rule all of the known world. The temple ruin in Outskirt originates from that empire. – A mysterious woman is sneaking around the temple area at night, seemingly looking for something she lost. Dranath has heard her speak in an ancient language to another creature, which responded with a squeak and flew off.
+      can teach the player characters his skills and spells.
     statblocks:
       - fields:
           Movement: "8"
@@ -4310,7 +4310,7 @@ creatures:
     category: Oracle Cave
     description: |
       In this lair dwell the older offspring of the ancient female – giant spiders with stats as per page 89 in the Rulebook. They are half as many as the player characters, rounded up.
-      Lurking in dark crevices, they wait for the player characters to start exploring the room before they attack. The attack counts as an ambush (page 43 of the Rulebook) and the player characters get a bane on their AWARENESS rolls.
+      Lurking in dark crevices, they wait for the player characters to start exploring the room before they attack. The attack counts as an ambush and the player characters get a bane on their AWARENESS rolls.
       dead humans and orcs in thick web cocoons to be eaten later. The bodies have no visible injuries as they were killed by spider venom, which a successful HEALING roll can reveal. Player characters who examine the corpses can find valuables equivalent to one treasure card.
     stats_ref: In this lair dwell the older offspring of the ancient female – giant spiders with stats as per page 89 in the Rulebook.
   - id: adventure-the-surviving-brigand
@@ -4325,7 +4325,7 @@ creatures:
     kind: monster
     category: Oracle Cave
     description: |
-      the Misty Vale and can pass on the legend of Um-Durman (page 9) as well as the rumors about the other adventure sites (page 17).
+      the Misty Vale and can pass on the legend of Um-Durman as well as the rumors about the other adventure sites.
       cave are countless treasures that Saak’shal has amassed over the years. The entire treasure is equivalent to six treasure cards but cannot be accessed without killing the ancient spider.
     statblocks:
       - fields:
@@ -4342,7 +4342,7 @@ creatures:
     description: |
       The terrified child is hanging in the cocoon of cobweb behind the she-spider, saved for later as a particularly delicious treat. It is possible to SNEAK over there if Saak’shal is distracted, but she reacts with violent fury if she notices it.
       are looking for young Roric and/or a piece of Eledain’s dragon statuette, Saak’shal offers them a deal – they will get what they want if they first kill a group of orcs who have settled in another part of the cave (location #12, the keep). She will keep her promise if they carry out the mission.
-      Emperor Eledain’s statuette here (page 8), Saak’shal reveals that she has it. Even if there is no statuette piece, the old she-spider can tell the player characters where to find one, in exchange for them carrying out her mission.
+      Emperor Eledain’s statuette here, Saak’shal reveals that she has it. Even if there is no statuette piece, the old she-spider can tell the player characters where to find one, in exchange for them carrying out her mission.
   - id: adventure-agra
     name: Agra
     source: adventure
@@ -4458,7 +4458,7 @@ creatures:
     source: adventure
     kind: npc
     category: Dead Eyes Cave
-    description: A thick viper, almost two meters long, coiled in a nest in the rock wall. It has a black pattern, glowing yellow eyes, and fangs dripping with venom. Mechanically, the snake is handled as an animal (page 99 in the Rulebook), not a monster.
+    description: A thick viper, almost two meters long, coiled in a nest in the rock wall. It has a black pattern, glowing yellow eyes, and fangs dripping with venom. Mechanically, the snake is handled as an animal, not a monster.
     image: images/adventure/demon-cultists-156.jpg
     image_page: 78
     statblocks:
@@ -4827,7 +4827,7 @@ creatures:
     source: adventure
     kind: monster
     category: The Isle of Mist
-    description: The demon worshiper Verkon served Sathmog back when he ruled the Misty Vale (page 6), but lost his life in a ritual gone awry. His restless spirit attacks whoever takes the medallion from his earthly remains. He is a shimmering blue shadow of his living self, robed, with staring eyes and the black mark of Sathmog burned into his forehead. Verkon hisses “All power to Sathmog, our three-tongued liberator” to the player characters, but it takes a successful LANGUAGES roll to understand what he is saying. He is a ghost with stats as per page 96 in the Rulebook. Verkon will leave the player characters alone if they drop his medallion.
+    description: The demon worshiper Verkon served Sathmog back when he ruled the Misty Vale, but lost his life in a ritual gone awry. His restless spirit attacks whoever takes the medallion from his earthly remains. He is a shimmering blue shadow of his living self, robed, with staring eyes and the black mark of Sathmog burned into his forehead. Verkon hisses “All power to Sathmog, our three-tongued liberator” to the player characters, but it takes a successful LANGUAGES roll to understand what he is saying. He is a ghost with stats as per page 96 in the Rulebook. Verkon will leave the player characters alone if they drop his medallion.
     stats_ref: He is a ghost with stats as per page 96 in the Rulebook.
   - id: adventure-the-demon-akrae
     name: The Demon Akrae
@@ -4852,10 +4852,10 @@ creatures:
         text: Salt Spew! A player character within 4 meters who has not yet acted in the round is hit by a jet of stinking goo and loses their turn in the round.
       - roll: "3"
         name: Chilling Roar!
-        text: Chilling Roar! A demonic roar forces everyone within 10 meters to succeed with a WIL roll or suffer a fear attack (page 52 in the Rulebook).
+        text: Chilling Roar! A demonic roar forces everyone within 10 meters to succeed with a WIL roll or suffer a fear attack.
       - roll: "4"
         name: Arm Pinch!
-        text: Arm Pinch! The demon almost pinches a player character’s arm off with its claw. The attack inflicts 2D8 slashing damage but can be parried. If you are using the rules for severe injuries (page 51 in the Rulebook), the victim also suffers a broken arm if they take at least one point of damage.
+        text: Arm Pinch! The demon almost pinches a player character’s arm off with its claw. The attack inflicts 2D8 slashing damage but can be parried. If you are using the rules for severe injuries, the victim also suffers a broken arm if they take at least one point of damage.
       - roll: "5"
         name: Cascade!
         text: Cascade! The demon whips up a magical waterspout that hits all player characters within 6 meters and flings them into the freezing water (unless they dodge the attack).
@@ -4888,7 +4888,7 @@ creatures:
     source: adventure
     kind: npc
     category: The Isle of Mist
-    description: Eight hundred years ago, the Dragon Emperor had a band of warriors locked in Azrahel Koth’s crypt to guard the demon sorcerer until the end of time. Their lives were extended through necromantic spells, but these did not stop the warriors’ physical and mental decay. Now the once-great warriors have been reduced to walking skeletons with grinning skulls. Azrahel Koth has taken control of their weakened minds and turned them into obedient puppets. The player characters can run into these undead warriors as a random event (page 103) and in Azrahel Koth’s mausoleum (#20). You can also have a patrol show up if the player characters make a lot of noise or whenever you need to give them an additional challenge. The guards are moving all around the cave complex. Clever player characters can SNEAK after a patrol to figure out how to get past the labyrinth’s many traps. This requires a successful roll per room.
+    description: Eight hundred years ago, the Dragon Emperor had a band of warriors locked in Azrahel Koth’s crypt to guard the demon sorcerer until the end of time. Their lives were extended through necromantic spells, but these did not stop the warriors’ physical and mental decay. Now the once-great warriors have been reduced to walking skeletons with grinning skulls. Azrahel Koth has taken control of their weakened minds and turned them into obedient puppets. The player characters can run into these undead warriors as a random event and in Azrahel Koth’s mausoleum (#20). You can also have a patrol show up if the player characters make a lot of noise or whenever you need to give them an additional challenge. The guards are moving all around the cave complex. Clever player characters can SNEAK after a patrol to figure out how to get past the labyrinth’s many traps. This requires a successful roll per room.
     statblocks:
       - fields:
           Movement: "8"
@@ -4904,7 +4904,7 @@ creatures:
     source: adventure
     kind: npc
     category: The Isle of Mist
-    description: "Kretscha was captured by Azrahel Koth’s guards near Mirror Lake. He is keeping the orc alive to obtain information about Um-Durman. If the player characters have met Maladûk and forged an alliance with her (page 46), Kretscha is aware of this. If they free her, she tells them that Azrahel Koth cannot leave the labyrinth without Um-Durman – nor can he be killed by anything other than this mighty weapon. He bragged about this during the long interrogations. If the player characters ask for the password to the east door of room #9, Kretscha says she heard the undead guards hiss it, and she can repeat it word for word. If the player characters do not have an alliance with Maladûk, it takes a PERSUASION roll to obtain the information above. Kretscha is not willing to stay and fight alongside the player characters and would rather go back and report to Maladûk, but she can be PERSUADED to stay. You can also have Kretscha show up and save the day if the player characters find themselves in a tight spot."
+    description: "Kretscha was captured by Azrahel Koth’s guards near Mirror Lake. He is keeping the orc alive to obtain information about Um-Durman. If the player characters have met Maladûk and forged an alliance with her, Kretscha is aware of this. If they free her, she tells them that Azrahel Koth cannot leave the labyrinth without Um-Durman – nor can he be killed by anything other than this mighty weapon. He bragged about this during the long interrogations. If the player characters ask for the password to the east door of room #9, Kretscha says she heard the undead guards hiss it, and she can repeat it word for word. If the player characters do not have an alliance with Maladûk, it takes a PERSUASION roll to obtain the information above. Kretscha is not willing to stay and fight alongside the player characters and would rather go back and report to Maladûk, but she can be PERSUADED to stay. You can also have Kretscha show up and save the day if the player characters find themselves in a tight spot."
     statblocks:
       - fields:
           Movement: "10"
@@ -4918,7 +4918,7 @@ creatures:
     source: adventure
     kind: npc
     category: The Isle of Mist
-    description: "Emrys is a knight who serves the Keepers of the Immaculate Flame (page 8). Repeated interrogations have left him on the verge of death. Someone must succeed with a HEALING roll within a stretch, or Emrys will draw his last breath. Only one attempt is allowed. The emaciated Emrys alternates between mumbling prayers to Eledain and cursing Azrahel Koth. If the player characters make themselves known, he explains that he came here to rescue his sister Tuviel, also a dragon knight, who was kidnapped by servants of Sathmog. Before he left, Emrys sent word to Cadal, his sister’s betrothed, hoping that he would join him. Emrys demands that the player characters rescue Tuviel. If he learns of her fate (room #11), he flares into a rage and demands that Azrahel Koth be killed at all costs. Emrys has heard the undead guards hiss the password to the east door of room #9, but only remembers the beginning: “Rotar Ebil Dough-Not Ert Ruo, Gomtas…” Clever players can use this to figure out the full password, if they do not get it from Kretscha. If the player characters save Emrys’ life, he can join them on their quest but is of limited use due to his severe injuries. He may sacrifice himself at some crucial stage if the player characters find themselves in dire straits."
+    description: "Emrys is a knight who serves the Keepers of the Immaculate Flame. Repeated interrogations have left him on the verge of death. Someone must succeed with a HEALING roll within a stretch, or Emrys will draw his last breath. Only one attempt is allowed. The emaciated Emrys alternates between mumbling prayers to Eledain and cursing Azrahel Koth. If the player characters make themselves known, he explains that he came here to rescue his sister Tuviel, also a dragon knight, who was kidnapped by servants of Sathmog. Before he left, Emrys sent word to Cadal, his sister’s betrothed, hoping that he would join him. Emrys demands that the player characters rescue Tuviel. If he learns of her fate (room #11), he flares into a rage and demands that Azrahel Koth be killed at all costs. Emrys has heard the undead guards hiss the password to the east door of room #9, but only remembers the beginning: “Rotar Ebil Dough-Not Ert Ruo, Gomtas…” Clever players can use this to figure out the full password, if they do not get it from Kretscha. If the player characters save Emrys’ life, he can join them on their quest but is of limited use due to his severe injuries. He may sacrifice himself at some crucial stage if the player characters find themselves in dire straits."
     statblocks:
       - fields:
           Movement: "10"
@@ -4987,7 +4987,7 @@ creatures:
     category: The Isle of Mist
     description: |
       If the trap is triggered, secret doors open in the walls and twice as many skeletons as there are player characters step out into the corridor. They attack immediately and have stats as Skeleton Warriors on page 95 in the Rulebook. The corridor is only wide enough for two skeletons (and player characters) to fight shoulder to shoulder; the others end up behind them.
-      12) or pushed open by making a STR roll with bane or casting the PILLAR spell. Otherwise, it is raised automatically after a shift, when a patrol of undead guards (page 108), as many as the player characters, comes to check the trap.
+      12) or pushed open by making a STR roll with bane or casting the PILLAR spell. Otherwise, it is raised automatically after a shift, when a patrol of undead guards, as many as the player characters, comes to check the trap.
     stats_ref: They attack immediately and have stats as Skeleton Warriors on page 95 in the Rulebook.
   - id: adventure-vampire-bats
     name: Vampire Bats
@@ -5034,11 +5034,11 @@ creatures:
         text: Dominating Gaze! Azrahel Koth fixes his eyes on a player character, who must make a roll against WIL (not an action). On failure, the victim must immediately perform an attack against another player character and loses their turn in the round (unless they already had it). The attack cannot be dodged, but a player character wearing Um-Durman is immune.
       - roll: 7–8
         name: Fight for Um-Durman!
-        text: Fight for Um-Durman! If Azrahel Koth does not have Um-Durman, he storms up to whoever carries the sword and tries to tear the weapon from the player character’s hands. The victim must make a SWORDS roll with a bane (not an action) – on failure, Azrahel Koth takes the sword! The attack cannot be dodged. If Um-Durman is on the ground, Azrahel Koth simply picks it up. If Azrahel Koth gets hold of Um-Durman, he can be disarmed (page 48 in the Rulebook) with a successful roll for any weapon skill, with a bane. Attack with Um-Durman! If Azrahel Koth already has Um-Durman in his hand, he attacks a player character with the sword instead. The attack inflicts 3D10 slashing damage but can be parried.
+        text: Fight for Um-Durman! If Azrahel Koth does not have Um-Durman, he storms up to whoever carries the sword and tries to tear the weapon from the player character’s hands. The victim must make a SWORDS roll with a bane (not an action) – on failure, Azrahel Koth takes the sword! The attack cannot be dodged. If Um-Durman is on the ground, Azrahel Koth simply picks it up. If Azrahel Koth gets hold of Um-Durman, he can be disarmed with a successful roll for any weapon skill, with a bane. Attack with Um-Durman! If Azrahel Koth already has Um-Durman in his hand, he attacks a player character with the sword instead. The attack inflicts 3D10 slashing damage but can be parried.
     abilities:
       - name: Regeneration
         kind: ability
         text: Inside his mausoleum, Azrahel Koth heals all damage in one stretch.
       - name: Um-Durman
         kind: ability
-        text: Azrahel Koth dies if an attack with the sword Um-Durman reduces him to zero HP. His body collapses inwards like an empty bellows until only a shriveled husk remains. If reduced to zero HP by any other weapon, he wakes up with full HP after one stretch. A killing blow can be delivered with Um-Durman even if he is brought down by other damage. Note that Azrahel Koth is not a demon himself, so he is not affected by Um-Durman’s special effect against dragons and demons (page 27). However, the sword does count as a magical weapon.
+        text: Azrahel Koth dies if an attack with the sword Um-Durman reduces him to zero HP. His body collapses inwards like an empty bellows until only a shriveled husk remains. If reduced to zero HP by any other weapon, he wakes up with full HP after one stretch. A killing blow can be delivered with Um-Durman even if he is brought down by other damage. Note that Azrahel Koth is not a demon himself, so he is not affected by Um-Durman’s special effect against dragons and demons. However, the sword does count as a magical weapon.

@@ -30,7 +30,7 @@ public:
     std::string gmLink() const;
     std::string gmToken() const { return gmToken_; }
 
-    static std::string newToken();                              // 128 random bits, as 32 hex digits
+    static std::string newToken();                              // 32 random bits, as 8 hex digits
     static std::string fileName() { return "web-access.yaml"; }
 
 private:

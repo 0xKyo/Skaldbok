@@ -18,6 +18,8 @@ const props = defineProps({
   token: { type: String, default: '' },
   patchPath: { type: String, default: '/me' }, // '/me' for player, '/gm/characters/:id' for GM
 });
+// the GM reads the rules through /gm/*, a player through the plain routes
+const apiPrefix = computed(() => (props.patchPath.startsWith('/gm/') ? '/gm' : ''));
 const emit = defineEmits(['updated', 'goto-rules']);
 
 function typeFromKey(key) {
@@ -178,6 +180,13 @@ function toggleMark(s) {
 const removeAt = (list, i) => list.splice(i, 1);
 const addItem = (list) => list.push({ name: '', count: 1 });
 const addRef = (list, entry) => list.push({ key: entry.key, name: entry.name });
+// an item taken from the rules brings the weight the book gives it, which counts towards the encumbrance limit
+const addGear = (list, entry) => list.push({ key: entry.key, name: entry.name, ...(entry.weight === undefined ? {} : { weight: entry.weight }) });
+const setWeight = (item, value) => {
+  const n = Number.parseFloat(value);
+  if (Number.isNaN(n)) delete item.weight;
+  else item.weight = Math.min(99, Math.max(0, n));
+};
 const addWeapon = (entry) => draft.value.weapons.push({ key: entry.key, name: entry.name });
 const chooseGear = (which, entry) => (draft.value[which] = { key: entry.key, name: entry.name });
 const setInt = (target, key, value, lo, hi) => (target[key] = num(value, lo, hi));
@@ -328,13 +337,13 @@ const setInt = (target, key, value, lo, hi) => (target[key] = num(value, lo, hi)
           <button type="button" class="link" @click="gotoRules(a.key)">{{ a.name }}</button>
           <button type="button" class="x" :aria-label="`Remove ${a.name}`" @click="removeAt(draft.abilities, i)">×</button>
         </div>
-        <EntryPicker :token="token" type="abilities" label="Add an ability…" @pick="(e) => addRef(draft.abilities, e)" />
+        <EntryPicker :token="token" :prefix="apiPrefix" type="abilities" label="Add an ability…" @pick="(e) => addRef(draft.abilities, e)" />
         <div class="skill-head">Spells{{ me.school ? ` · ${me.school}` : '' }}</div>
         <div v-for="(a, i) in draft.spells" :key="'s' + i" class="edit-row">
           <button type="button" class="link" @click="gotoRules(a.key)">{{ a.name }}</button>
           <button type="button" class="x" :aria-label="`Remove ${a.name}`" @click="removeAt(draft.spells, i)">×</button>
         </div>
-        <EntryPicker :token="token" type="spells" label="Add a spell…" @pick="(e) => addRef(draft.spells, e)" />
+        <EntryPicker :token="token" :prefix="apiPrefix" type="spells" label="Add a spell…" @pick="(e) => addRef(draft.spells, e)" />
       </template>
       <template v-else>
         <button v-for="a in me.abilities" :key="a.key || a.name" class="entry-link" @click="gotoRules(a.key)">
@@ -365,7 +374,7 @@ const setInt = (target, key, value, lo, hi) => (target[key] = num(value, lo, hi)
         <div v-if="w.ranged && rangedBane" class="bane" data-test="weapon-bane"><b>Bane on:</b> Ranged attacks</div>
         <div v-if="w.description" class="muted small">{{ w.description }}</div>
       </div>
-      <EntryPicker v-if="editing" :token="token" type="weapons" label="Add a weapon…" @pick="addWeapon" />
+      <EntryPicker v-if="editing" :token="token" :prefix="apiPrefix" type="weapons" label="Add a weapon…" @pick="addWeapon" />
     </div>
 
     <div class="a-armor block">
@@ -375,7 +384,7 @@ const setInt = (target, key, value, lo, hi) => (target[key] = num(value, lo, hi)
         <input v-if="editing" class="edit name" :value="draft.armor?.name ?? ''" maxlength="80" aria-label="Armor" data-test="armor-input" @input="draft.armor = $event.target.value ? { ...(draft.armor ?? {}), name: $event.target.value } : null" />
         <span v-else class="name" data-test="armor">{{ eq.armor?.name ?? 'None' }}</span>
       </div>
-      <EntryPicker v-if="editing" :token="token" type="armor" label="Pick armor…" @pick="(e) => chooseGear('armor', e)" />
+      <EntryPicker v-if="editing" :token="token" :prefix="apiPrefix" type="armor" label="Pick armor…" @pick="(e) => chooseGear('armor', e)" />
       <div v-if="eq.armor?.banes?.length" class="bane" data-test="armor-bane"><b>Bane on:</b> {{ eq.armor.banes.join(' · ') }}</div>
     </div>
 
@@ -386,7 +395,7 @@ const setInt = (target, key, value, lo, hi) => (target[key] = num(value, lo, hi)
         <input v-if="editing" class="edit name" :value="draft.helmet?.name ?? ''" maxlength="80" aria-label="Helmet" @input="draft.helmet = $event.target.value ? { ...(draft.helmet ?? {}), name: $event.target.value } : null" />
         <span v-else class="name" data-test="helmet">{{ eq.helmet?.name ?? 'None' }}</span>
       </div>
-      <EntryPicker v-if="editing" :token="token" type="armor" label="Pick a helmet…" @pick="(e) => chooseGear('helmet', e)" />
+      <EntryPicker v-if="editing" :token="token" :prefix="apiPrefix" type="armor" label="Pick a helmet…" @pick="(e) => chooseGear('helmet', e)" />
       <div v-if="eq.helmet?.banes?.length" class="bane" data-test="helmet-bane"><b>Bane on:</b> {{ eq.helmet.banes.join(' · ') }}</div>
     </div>
 
@@ -409,10 +418,11 @@ const setInt = (target, key, value, lo, hi) => (target[key] = num(value, lo, hi)
         <input v-if="!it.key" v-model="it.name" class="edit" maxlength="80" :aria-label="`Item ${i + 1}`" data-test="item-input" />
         <span v-else class="inv-name">{{ it.name }}</span>
         <input type="number" class="edit count" min="1" max="999" :value="it.count ?? 1" :aria-label="`Number of ${it.name}`" @input="setInt(it, 'count', $event.target.value, 1, 999)" />
+        <input type="number" class="edit weight" min="0" max="99" step="0.25" :value="it.weight ?? 1" :title="`What one ${it.name || 'item'} weighs, for the encumbrance limit (0 weighs nothing)`" :aria-label="`Weight of ${it.name}`" data-test="item-weight" @input="setWeight(it, $event.target.value)" />
         <button type="button" class="x" :aria-label="`Remove ${it.name}`" @click="removeAt(draft.inventory, i)">×</button>
       </div>
       <div v-if="editing" class="inv-add">
-        <EntryPicker :token="token" type="gear" label="Add an item…" @pick="(e) => addRef(draft.inventory, e)" />
+        <EntryPicker :token="token" :prefix="apiPrefix" type="gear" label="Add an item…" @pick="(e) => addGear(draft.inventory, e)" />
         <button type="button" class="btn secondary small-btn" data-test="add-item" @click="addItem(draft.inventory)">+ Custom</button>
       </div>
     </div>
