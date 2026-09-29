@@ -27,6 +27,12 @@ Al abrir el enlace del máster en el browser, la primera pantalla es **General S
 
 Para volver a esta pantalla en cualquier momento: botón **⚙ General Settings** en la parte superior de la barra lateral.
 
+## Cómo se ve cada categoría
+
+Todas las páginas de Reference (también Creatures, cuyo texto general del Bestiary es la pestaña **General Info**) tienen la misma estructura, de arriba a abajo: **pestañas** (solo si la entrada las tiene, como Gear o Skills), **barra de búsqueda**, **intro** (el texto general de la categoría o el texto propio del capítulo, siempre desplegado) y la **lista con la descripción al lado**. No hay título encima. En los capítulos de reglas la búsqueda filtra en el navegador por título, texto y contenido de las tablas; la respuesta de `GET /api/rules/<cap>` (y `/api/gm/rules/<cap>`) trae el texto de la raíz del capítulo como `intro`, y `GET /api/gm/creatures` trae el `intro` del Bestiary.
+
+**Capítulos con pestañas** (`layout: tabs`, como **Actions**, que sale de `actions.yaml`): cada entrada del capítulo es una pestaña; debajo van su texto, la búsqueda y la **lista con las filas de su tabla** (Dash, Melee Attack…), con la información de la fila elegida al lado. La respuesta de `GET /api/rules/<cap>` trae `layout`.
+
 ## Creatures (solo máster)
 
 **Reference › Creatures** lista las criaturas con buscador y muestra su ficha completa (estadísticas, ataques, habilidades, texto) **con su ilustración** si la tiene. Arriba de la lista hay tres etiquetas para filtrar, **NPC**, **Animal** y **Monster** (todo lo que no es NPC ni animal); se pueden combinar y, sin ninguna activa, se ve todo. `GET /api/gm/creatures/<key>` trae `image` (la ruta de la imagen, o `null`) y `GET /api/gm/creatures/<key>/image` sirve el archivo; el navegador la pide con el token del máster, igual que las fotos del chat.
@@ -155,7 +161,7 @@ archivos del máster **sigue siendo privado** hasta que se añade a propósito.
 |---|---|
 | Su ficha completa: atributos, PV/PW, condiciones, habilidades, aptitudes y hechizos con su texto, equipo con sus estadísticas, monedas, debilidad, recuerdo, apariencia y las **notas de la ficha** | El nombre de la party y de cada miembro: raza, profesión, edad, PV, PW y condiciones |
 
-Además, las **reglas**: una sola pestaña **Rules** con el mismo índice que usa el máster en su barra lateral (tipos de contenido con su cantidad y capítulos de reglas, en orden alfabético). Un capítulo con el mismo título que un tipo (p. ej. Skills) se fusiona en una entrada con dos pestañas: "All skills" y "General info". **Gear** agrupa tres pestañas: General, Weapons y Armor (ya no hay entradas sueltas de Weapons y Armor). Todo del Core y los packs de homebrew **activos**. El código es compartido con la vista del máster (`reference.js`, `ReferenceIndex.vue`, `ReferencePanel.vue`).
+Además, las **reglas**: una sola pestaña **Rules** con el mismo índice que usa el máster en su barra lateral (tipos de contenido con su cantidad y capítulos de reglas, en orden alfabético). Un capítulo con el mismo título que un tipo (p. ej. Skills) se fusiona en una entrada con dos pestañas: "All skills" y "General info". **Magic** reúne Spells y el texto general (pestañas Spells y General Info). **Gear** agrupa cuatro pestañas: General, Weapons, Armor y General Info (el texto general de Gear, con Supply y Encumbrance) (ya no hay entradas sueltas de Weapons y Armor). Todo del Core y los packs de homebrew **activos**. El código es compartido con la vista del máster (`reference.js`, `ReferenceIndex.vue`, `ReferencePanel.vue`).
 
 **Nunca**: criaturas y tablas (son del máster), las notas de la party, las conversaciones de otros jugadores, las fichas de
 otros jugadores (solo su resumen de party), ni los tokens. Un pack que el máster apaga o quita deja de verse en la web.

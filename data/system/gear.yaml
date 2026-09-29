@@ -8,3 +8,29 @@ intro:
         ✦Uncommon: Can usually only be purchased from the artisan making it, which does not necessarily mean it will be available in every village.
         ✦Rare: Must generally be specially ordered from artisans.
         ✦Unique: Can only be obtained in treasure troves or from the person who found the precious item.
+    - name: Encumbrance
+      body: "You can carry a number of items equal to half your STR (rounded up) in your Inventory without difficulty. Only the items written down in your Inventory box count towards your {{key: encumbrance}}."
+    - name: Weapons at Hand
+      body: You can have up to three weapons at hand, which means that they are worn on your belt or otherwise readily available for use in combat. Weapons kept at hand are recorded under Weapons on the character sheet and do not count toward your encumbrance. Shields count as weapons and are also recorded here.
+    - name: Helmet & Armor
+      body: Any helmet or armor worn on your body is recorded in its respective section and does not count toward your encumbrance.
+    - name: Food
+      body: Up to four rations of food count as one item in terms of encumbrance. Always record the number of rations you have left in your Inventory.
+    - name: Torches & Lanterns
+      body: A torch, lamp, or lantern is an item. Their fire may go out (page 52). Lamps and lanterns can be refilled with lamp oil.
+    - name: Arrows & Slingstones
+      body: You do not have to count every arrow you are carrying. Instead, each quiver of arrows counts as a single item. As long as you have the quiver, you can use your weapon. Slingstones do not need to be noted down at all – you are assumed to have enough of those.
+    - name: Backpack
+      body: A backpack increases your carrying capacity by 2. It does not count toward your encumbrance, but you can only carry one backpack at a time.
+    - name: Heavy Items
+      body: Really heavy items count as two, three, or even more normal items in terms of encumbrance. These will be indicated as having weight 2, 3, 4, and so on. In your inventory, heavy items take up a number of rows equal to their weight. If no weight is specified, it is always 1.
+    - name: Tiny Items
+      body: |
+        Small and light items that can be hidden in a closed fist are called tiny. Items of this size do not affect your encumbrance at all. Tiny items are recorded in their own section on the character sheet and do not take up any space in your Inventory.
+        Single coins count as tiny items and do not affect your encumbrance as long as they are fewer than 100. 100– 199 coins count as one item, 200–299 as two, and so on.
+    - name: Over-Encumbered
+      body: |
+        You can temporarily carry more than your normal encumbrance limit. In that case you must make a STR roll whenever you want to move in a round of combat or walk for a shift of travel. If the roll fails, you must either drop what you are carrying or stay where you are.
+        While carrying another person, you automatically count as over-encumbered and cannot fight in combat.
+    - name: Riding Animals & Vehicles
+      body: If you have a horse or some other riding animal, the animal can carry your gear for you. Wagons and boats can carry even heavier loads. You can find them in the gear lists on page 81.

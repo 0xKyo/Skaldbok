@@ -39,10 +39,10 @@ const isRulesChapter = computed(() => currentChapter.value !== null);
 // An intro-only chapter surfaces a content type's intro as a rules chapter
 const isIntroOnly = computed(() => currentChapter.value?.introOnly === true);
 
-// In Tables mode a type's intro is always shown above the list, except spells and skills: theirs lives in the "General info" tab.
-const rulesIntroTypes = ['spells', 'skills'];
+// In Tables mode a type's intro is always shown above the list, except spells, skills and gear: theirs lives in the "General Info" tab.
+const rulesIntroTypes = ['spells', 'skills', 'gear'];
 const showInlineIntro = computed(() =>
-  props.mode === 'tables' && !rulesIntroTypes.includes(type.value) && intro.value !== null,
+  intro.value !== null && (props.mode === 'rules' ? !isIntroOnly.value : !rulesIntroTypes.includes(type.value)),
 );
 
 const paragraphs = computed(() =>
@@ -50,9 +50,47 @@ const paragraphs = computed(() =>
 );
 const selectedSections = computed(() => selected.value?.sections ?? []);
 
+// Rules chapters are filtered here (title, text, sections and table contents); the other types are searched by the server
+const haystack = (e) => [
+  e.title, e.name, e.body,
+  ...(e.sections ?? []).flatMap((s) => [s.title, s.body]),
+  ...(e.tables ?? []).flatMap((t) => [t.title, ...(t.columns ?? []), ...t.rows.flatMap((r) => r.cells)]),
+].filter(Boolean).join('\n').toLowerCase();
+const shownEntries = computed(() => {
+  const q = query.value.trim().toLowerCase();
+  if (props.mode !== 'rules' || !q || tabbed.value) return entries.value;
+  return entries.value.filter((e) => haystack(e).includes(q));
+});
+
+// Chapters with `layout: tabs` (Actions): every entry is a tab, and the rows of its table are the list, with each row's info beside it.
+const layout = ref('');
+const tabbed = computed(() => props.mode === 'rules' && layout.value === 'tabs' && entries.value.length > 0);
+const tab = ref(0);
+const row = ref(null);
+const activeEntry = computed(() => (tabbed.value ? entries.value[tab.value] ?? null : null));
+const activeTable = computed(() => activeEntry.value?.tables?.[0] ?? null);
+const rowMatches = (r, q) => !q || r.cells.join('\n').toLowerCase().includes(q);
+const shownRows = computed(() => {
+  const q = query.value.trim().toLowerCase();
+  return (activeTable.value?.rows ?? []).filter((r) => rowMatches(r, q));
+});
+const paragraphsOf = (text) => (text ?? '').split('\n').filter((l) => l.trim());
+watch(shownRows, () => {
+  if (!tabbed.value) return;
+  const q = query.value.trim().toLowerCase();
+  if (q && !shownRows.value.length) {                       // nothing here: go to the first tab that has a match
+    const other = entries.value.findIndex((e) => (e.tables?.[0]?.rows ?? []).some((r) => rowMatches(r, q)));
+    if (other >= 0 && other !== tab.value) { tab.value = other; return; }
+  }
+  if (!shownRows.value.includes(row.value)) row.value = shownRows.value[0] ?? null;
+}, { immediate: true });
+
 async function load() {
   selected.value = null;
   intro.value = null;
+  layout.value = '';
+  tab.value = 0;
+  row.value = null;
   if (!type.value) return;
   const mine = ++request;
   loading.value = true;
@@ -81,6 +119,8 @@ async function load() {
     } else if (isRulesChapter.value) {
       res = await apiGet(`${props.gmPrefix}/rules/${type.value}`, props.token);
       entries.value = res.rules ?? [];
+      intro.value = res.intro ?? null;
+      layout.value = res.layout ?? '';
       if (entries.value.length) {
         selected.value = pendingKey
           ? (entries.value.find((e) => e.key === pendingKey || e.title?.toLowerCase() === pendingKey) ?? entries.value[0])
@@ -159,6 +199,11 @@ onBeforeUnmount(() => clearTimeout(timer));
 
 watch(type, load);
 watch(query, () => {
+  if (props.mode === 'rules') {
+    // chapters are already loaded: filter them here, and keep something valid selected
+    if (selected.value && !shownEntries.value.includes(selected.value)) selected.value = shownEntries.value[0] ?? null;
+    return;
+  }
   clearTimeout(timer);
   timer = setTimeout(load, 250);
 });
@@ -180,8 +225,10 @@ watch(
   <section aria-label="Rules" class="rules-root">
     <!-- toolbar: search (tables non-rules types only) + type tabs -->
     <div class="rules-bar">
+      <div v-if="tabbed" class="subtabs" role="group" aria-label="Sections">
+        <button v-for="(e, i) in entries" :key="e.key" :aria-pressed="tab === i" data-test="chapter-tab" @click="tab = i">{{ e.title }}</button>
+      </div>
       <input
-        v-if="mode === 'tables' && !isRulesChapter"
         v-model="query"
         type="search"
         placeholder="Search…"
@@ -214,26 +261,53 @@ watch(
     <div v-if="showInlineIntro" class="inline-intro panel">
       <template v-for="(b, i) in textBlocks(intro.body, intro.tables)" :key="'b' + i">
         <DataTable v-if="b.table" :table="b.table" />
+        <ul v-else-if="b.list" class="rule-list"><li v-for="(it, k) in b.list" :key="k"><RuleText :text="it" @follow="followLink" /></li></ul>
         <p v-else class="intro-p"><RuleText :text="b.text" @follow="followLink" /></p>
       </template>
       <template v-for="(s, si) in intro.sections" :key="si">
         <p class="intro-section-name">{{ s.title }}</p>
         <template v-for="(b, pi) in textBlocks(s.body, intro.tables)" :key="pi">
           <DataTable v-if="b.table" :table="b.table" />
+          <ul v-else-if="b.list" class="rule-list"><li v-for="(it, k) in b.list" :key="k"><RuleText :text="it" @follow="followLink" /></li></ul>
           <p v-else class="intro-p"><RuleText :text="b.text" @follow="followLink" /></p>
         </template>
       </template>
       <DataTable v-for="t in unplacedTables([intro.body, ...intro.sections.map((s) => s.body)], intro.tables)" :key="t.title" :table="t" />
     </div>
 
+    <!-- tabbed chapter: the tab's own text as its intro, then the rows of its table with the info of the chosen one beside them -->
+    <template v-if="tabbed && activeEntry">
+      <div v-if="paragraphsOf(activeEntry.body).some((l) => !l.trim().startsWith('{{table:'))" class="inline-intro panel">
+        <template v-for="(b, i) in textBlocks(activeEntry.body, [])" :key="i">
+          <ul v-if="b.list" class="rule-list"><li v-for="(it, k) in b.list" :key="k"><RuleText :text="it" @follow="followLink" /></li></ul>
+          <p v-else class="intro-p"><RuleText :text="b.text" @follow="followLink" /></p>
+        </template>
+      </div>
+      <div class="rows-layout">
+        <nav class="rules-list" aria-label="Entries">
+          <p v-if="!shownRows.length" class="muted" style="padding: 8px 12px;">Nothing found.</p>
+          <button v-for="(r, i) in shownRows" :key="i" class="rules-row" :class="{ active: row === r }" data-test="table-row" @click="row = r">
+            <span class="rules-row-name">{{ r.cells[0] }}</span>
+          </button>
+        </nav>
+        <article v-if="row" class="rules-detail panel">
+          <h2 class="rules-detail-name">{{ row.cells[0] }}</h2>
+          <template v-for="(cell, ci) in row.cells.slice(1)" :key="ci">
+            <h3 v-if="activeTable.columns.length > 2" class="rules-section-title">{{ activeTable.columns[ci + 1] }}</h3>
+            <p v-for="(line, li) in paragraphsOf(cell)" :key="li" style="margin: 0 0 0.6em;"><RuleText :text="line" @follow="followLink" /></p>
+          </template>
+        </article>
+      </div>
+    </template>
+
     <!-- list + detail layout -->
-    <div class="rules-layout" :class="{ 'detail-open': showDetail }">
+    <div v-else class="rules-layout" :class="{ 'detail-open': showDetail }">
 
       <!-- left: the list -->
       <nav class="rules-list" aria-label="Entries">
-        <p v-if="!loading && !entries.length" class="muted" style="padding: 8px 12px;">Nothing found.</p>
+        <p v-if="!loading && !shownEntries.length" class="muted" style="padding: 8px 12px;">Nothing found.</p>
         <button
-          v-for="e in entries"
+          v-for="e in shownEntries"
           :key="e.key"
           class="rules-row"
           :class="{ active: selected?.key === e.key }"
@@ -270,12 +344,14 @@ watch(
         </dl>
         <template v-for="(b, i) in textBlocks(selected.body, selected.tables)" :key="i">
           <DataTable v-if="b.table" :table="b.table" />
+          <ul v-else-if="b.list" class="rule-list"><li v-for="(it, k) in b.list" :key="k"><RuleText :text="it" @follow="followLink" /></li></ul>
           <p v-else style="margin: 0 0 0.6em;"><RuleText :text="b.text" @follow="followLink" /></p>
         </template>
         <template v-for="(s, si) in selectedSections" :key="si">
           <h3 class="rules-section-title">{{ s.title }}</h3>
           <template v-for="(b, pi) in textBlocks(s.body, selected.tables)" :key="pi">
             <DataTable v-if="b.table" :table="b.table" />
+            <ul v-else-if="b.list" class="rule-list"><li v-for="(it, k) in b.list" :key="k"><RuleText :text="it" @follow="followLink" /></li></ul>
             <p v-else style="margin: 0 0 0.6em;"><RuleText :text="b.text" @follow="followLink" /></p>
           </template>
         </template>
@@ -283,7 +359,7 @@ watch(
         <NpcCreator v-if="selected.tool === 'npc-creator'" :token="token" :gm-prefix="gmPrefix" />
       </article>
 
-      <div v-else-if="!loading && entries.length === 0" class="rules-detail panel muted" style="display:flex;align-items:center;justify-content:center;">
+      <div v-else-if="!loading && shownEntries.length === 0" class="rules-detail panel muted" style="display:flex;align-items:center;justify-content:center;">
         Nothing found.
       </div>
     </div>
@@ -304,6 +380,12 @@ watch(
 .inline-intro { margin-bottom: 10px; }
 .intro-p { font-size: 0.88rem; color: var(--ink); margin: 0 0 0.5em; line-height: 1.5; }
 .intro-section-name { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--brown); margin: 0.6em 0 0.2em; }
+
+/* tabbed chapter: list and info always shown together (stacked on a phone) */
+.rows-layout { display: grid; grid-template-columns: 1fr; gap: 10px; }
+@media (min-width: 640px) {
+  .rows-layout { grid-template-columns: minmax(200px, 300px) 1fr; align-items: start; }
+}
 
 /* list + detail side-by-side on wide screens */
 .rules-layout { display: grid; grid-template-columns: 1fr; gap: 10px; }

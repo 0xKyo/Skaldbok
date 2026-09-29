@@ -204,8 +204,6 @@ std::vector<PackSpec> PackManager::specs(const std::set<std::string>& disabled) 
 }
 
 std::string packSignature(const std::vector<PackSpec>& specs) {
-    std::vector<std::string> files = {"manifest"};
-    files.insert(files.end(), packDataFiles().begin(), packDataFiles().end());
     auto stamp = [](const std::string& path) {
         SDL_PathInfo info;
         return pathInfo(path, info) ? std::to_string(info.modify_time) + ":" + std::to_string(info.size) + ";" : std::string("-;");
@@ -213,9 +211,12 @@ std::string packSignature(const std::vector<PackSpec>& specs) {
     std::string sig;
     for (const PackSpec& s : specs) {
         sig += s.dir + (s.enabled ? "+" : "-") + "|";
-        for (const std::string& f : files) sig += stamp(s.dir + "/" + f + ".yaml");
-        if (s.core)
-            for (const std::string& f : files) sig += stamp(systemDirOf(s.dir) + "/" + f + ".yaml");
+        // every yaml file of the pack (and Core's system folder): any of them may carry data, loose tables included
+        std::vector<std::string> dirs = {s.dir};
+        if (s.core) dirs.push_back(systemDirOf(s.dir));
+        for (const std::string& dir : dirs)
+            for (const std::string& name : listDir(dir))
+                if (name.ends_with(".yaml")) sig += name + ":" + stamp(dir + "/" + name);
         if (s.core || !s.enabled) continue;
         for (const std::string& name : listDir(s.dir + "/images")) sig += name + ":" + stamp(s.dir + "/images/" + name);
     }

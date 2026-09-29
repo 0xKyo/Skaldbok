@@ -1,0 +1,118 @@
+format: 1
+source: rulebook
+intro: On your turn in the round, you can move and perform one action. You simply explain how you want to move and what action you want to perform. If necessary, you also roll dice to see whether you succeed. You decide whether to move before you act or vice versa. You can even use part of your movement, perform your action, and then finish the movement. You must perform your action and move on your turn – you cannot save any of them for later (but see Waiting on the previous page).
+groups:
+  - id: actions
+    name: Actions
+    intro: |
+        An action in combat can be many different things, but the most common ones are summarized below.
+  - id: free-actions
+    name: Free Actions
+    intro: |
+        Minor actions such as drawing a weapon kept at hand, dropping to the ground, or shouting a few words are all {{key: free actions | free action}}. Free actions do not count as your action in the round but you can only perform one of each type per round, and only on your own turn. For example, you can drop down or get up on your turn, but not both.
+  - id: movement
+    name: Movement
+    table: Movement Actions
+    intro: |
+        * When performing a reaction, you also lose your movement in the round. Several reactions, such as dodging or parrying, give you a certain movement as part of the action.
+        * Under normal circumstances, you can move as many meters as your Movement rate.
+        * Moving away from an enemy within 2 meters requires an EVADE roll; on failure the enemy gets a {{key: free attack}}.
+  - id: melee-combat
+    name: Melee Combat
+    table: Melee Combat Actions
+actions:
+  - name: Dash
+    group: actions
+    description: This action doubles your movement rate in the round.
+  - name: Melee Attack
+    group: actions
+    description: These can be performed against an enemy within 2 meters (4 meters for long weapons).
+  - name: Ranged Attack
+    group: actions
+    description: Attacks with a ranged weapon can be made against targets within the weapon’s range.
+  - name: Parry
+    group: actions
+    description: Both melee and ranged attacks can be parried, but the latter requires a shield. Parrying is a reaction that takes place outside your turn and replaces your normal turn in the round.
+  - name: Dodge
+    group: actions
+    description: Dodging a melee or ranged attack is also a reaction that takes place outside your turn and replaces your normal turn in the round.
+  - name: Pick Up Item
+    group: actions
+    description: Pick up an item from the ground within 2 meters, or from your Inventory.
+  - name: Equip/Unequip Armor/Helmet
+    group: actions
+    description: Suits of armor and helmets protect you from damage, but also restrict your movement.
+  - name: First Aid
+    group: actions
+    description: The HEALING skill is used to save the life of someone who has had their HP reduced to zero and is at risk of dying.
+  - name: Rally
+    group: actions
+    description: You can PERSUADE another player character at zero HP to rally and keep fighting.
+  - name: Break Down Door
+    group: actions
+    description: Doors can take a certain amount of damage before they break down.
+  - name: Pick Lock
+    group: actions
+    description: Picking a lock requires a SLEIGHT OF HAND roll. Doing so without lockpicks gives you a bane.
+  - name: Use Item
+    group: actions
+    description: Use a potion or some other item within 2 meters.
+  - name: Activate Ability
+    group: actions
+    description: Use an innate or heroic ability.
+  - name: Cast Spell
+    group: actions
+    description: In most cases, casting a spell counts as an action. This includes magic tricks. Some spells are reactions and do not require an action, while others are more time-consuming. For more on magic, see chapter 5.
+  - name: Helping
+    group: actions
+    description: Helping another character gives them a boon to a roll in the same round.
+  - name: Round Rest
+    group: actions
+    description: You rest and recover D6 WP. This can only be done once per shift.
+  - name: Draw Weapon
+    group: free-actions
+    description: Draw, exchange, or put away a weapon kept at hand.
+  - name: Change Position
+    group: free-actions
+    description: Throw yourself to the ground or get up.
+  - name: Drop Item
+    group: free-actions
+    description: Drop an item on the ground.
+  - name: Shout
+    group: free-actions
+    description: Say or shout a few words.
+  - name: Stand/Crouch
+    group: free-actions
+    description: |
+      You can drop to the ground or get up as part of your movement.
+      These are free actions and do not affect your movement per se, but can only be done on your turn.
+  - name: Leaping
+    group: movement
+    description: |
+      As part of your movement, you can make a horizontal leap as long as half your movement rate with a successful ACROBATICS roll.
+      If the distance is a quarter of your movement rate or less, you don’t need to roll to leap it..
+  - name: Door
+    group: movement
+    description: |
+      Passing through a closed but unlocked door costs half your movement in the round. 
+      If you cannot move any further, you remain standing by the now open door. A locked door must either be picked open or broken down..
+  - name: Enemies
+    group: movement
+    description: |
+      You cannot move past a standing enemy who wants to stop you.
+      A humanoid creature of human size can block an area of roughly 2x2 meters. Monsters can block larger areas.
+      To move past an enemy who is blocking the way, you must first bring it to the ground or reduce its [[HP]] to zero.
+      Friendly individuals can be passed without any problem.
+  - name: Free Attack
+    group: movement
+    description: |
+      If you are standing within 2 meters of an enemy and then voluntarily move away from that enemy, you must make an EVADE roll.
+      The roll does not count as an action, but if it fails, the enemy immediately gets to perform an additional melee attack against you – a {{key: free attack}}. The free attack does not count as an action and can neither be parried nor dodged. A monster that gets a free attack performs a [[monster attack]] (page 83) which also may affect other characters. Note that a free attack is triggered even if you start your movement at a distance but pass by an enemy. Moving around an enemy does not trigger a free attack, as long as you stay within 2 meters. Also note that involuntary movement never triggers a free attack.
+  - name: Damage
+    group: melee-combat
+    description: |
+      If the attack hits, your weapon determines which dice you should roll to see how much damage you inflict on the enemy. The damage can be increased by your damage bonus and a [[dragon roll|dragon]] and decreased by armor.
+  - name: Damage Bonus
+    group: melee-combat
+    description: |
+      Your damage bonus is determined by your score in the [[attribute]] on which your weapon skill is based – AGL or STR.

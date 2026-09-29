@@ -58,50 +58,71 @@ intro:
       body: Non-[[player characters|player character]] use skills in the same way as player characters. The GM rolls dice for them, but only for actions that affect a player character directly – for example, if the [[NPC]] is attacking a player character or attempting to save them. When an NPC performs an action that does not directly affect a player character, the GM can simply decide what happens. NPC stat blocks don’t list all skills – when rolling for an NPC against an unlisted skill, the GM uses a default [[skill level]] of 5.
     - name: Schools of Magic
       body: There are different [[schools of magic|school of magic]], and each school is a separate secondary skill. For more information on magic, see chapter 5.
-  tables:
-    - id: measuring-time-rule
-      name: Measuring Time
-      source: rulebook
-      columns:
-        - UNIT OF TIME
-        - DURATION
-        - ENOUGH TIME TO
-      rows:
-        - cells:
-            - Round
-            - 10 seconds
-            - Perform an action in combat, take a round rest (page 52).
-        - cells:
-            - Stretch
-            - 15 minutes
-            - Explore a room, take a stretch rest (page 52).
-        - cells:
-            - Shift
-            - 6 hours
-            - Hike for 15 kilometers, take a shift rest (page 52).
+  entities:
+    - id: measuring-time-1
+      name: Round
+      kind: unit-of-time
+      category: Measuring Time
       legacy_key: "#1"
-    - id: conditions-pushing-table
-      name: Conditions
       source: rulebook
-      columns:
-        - CONDITION
-        - ATTRIBUTE
-      rows:
-        - cells:
-            - Exhausted
-            - STR
-        - cells:
-            - Angry
-            - INT
-        - cells:
-            - Sickly
-            - CON
-        - cells:
-            - Scared
-            - WIL
-        - cells:
-            - Dazed
-            - AGL
-        - cells:
-            - Disheartened
-            - CHA
+      fields:
+        DURATION: 10 seconds
+        ENOUGH TIME TO: Perform an action in combat, take a round rest (page 52).
+    - id: measuring-time-2
+      name: Stretch
+      kind: unit-of-time
+      category: Measuring Time
+      source: rulebook
+      fields:
+        DURATION: 15 minutes
+        ENOUGH TIME TO: Explore a room, take a stretch rest (page 52).
+    - id: measuring-time-3
+      name: Shift
+      kind: unit-of-time
+      category: Measuring Time
+      source: rulebook
+      fields:
+        DURATION: 6 hours
+        ENOUGH TIME TO: Hike for 15 kilometers, take a shift rest (page 52).
+    - id: conditions-1
+      name: Exhausted
+      kind: condition
+      category: Conditions
+      source: rulebook
+      fields:
+        ATTRIBUTE: STR
+    - id: conditions-2
+      name: Angry
+      kind: condition
+      category: Conditions
+      source: rulebook
+      fields:
+        ATTRIBUTE: INT
+    - id: conditions-3
+      name: Sickly
+      kind: condition
+      category: Conditions
+      source: rulebook
+      fields:
+        ATTRIBUTE: CON
+    - id: conditions-4
+      name: Scared
+      kind: condition
+      category: Conditions
+      source: rulebook
+      fields:
+        ATTRIBUTE: WIL
+    - id: conditions-5
+      name: Dazed
+      kind: condition
+      category: Conditions
+      source: rulebook
+      fields:
+        ATTRIBUTE: AGL
+    - id: conditions-6
+      name: Disheartened
+      kind: condition
+      category: Conditions
+      source: rulebook
+      fields:
+        ATTRIBUTE: CHA

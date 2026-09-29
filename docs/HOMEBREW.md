@@ -15,6 +15,8 @@ mi-pack/
   manifest.yaml        opcional: sin él, el id es el nombre de la carpeta (para importar el pack, hace falta)
   rules.yaml           un archivo YAML por tipo; todos opcionales (las homerules van aquí)
   world.yaml           reglas como las de rules.yaml (mismo formato, bajo la clave `world:`), para el mundo del juego: en Core, el capítulo World (viajes, PNJ, NPC Creator)
+  actions.yaml         grupos de acciones (Actions, Free Actions, Movement…) y sus acciones; otro pack puede sumar acciones a un grupo o traer los suyos
+  <cualquier>.yaml     con una lista `entities:` en su primer nivel: datos sueltos que la vista muestra como tablas (ver Entidades)
   creatures.yaml
   spells.yaml
   abilities.yaml
@@ -276,7 +278,7 @@ creatures:
 * `image`: ruta **relativa a la carpeta del pack**, dentro de ella. Una ruta con `..` o absoluta se ignora con un aviso.
 * `stats_ref`: para criaturas cuyas estadísticas están en otra página («stats as per page 87»).
 
-### tables.yaml — tablas
+### tables.yaml — tablas (forma antigua)
 ```yaml
 tables:
   - name: Frostmarch Weather
@@ -326,6 +328,51 @@ del árbol. Buscar una tabla (`Ctrl+K`), abrirla desde una criatura o desde el M
 su tabla con `tables: ["First Name"]`; si existe una tabla llamada `<Criatura>: First Name` (por ejemplo `Goblin: First Name`),
 enlaza a esa, y si no, a la primera con ese título.
 
+### Entidades — los datos no son tablas
+
+En el Core no hay ninguna tabla escrita a mano: cada fila de un libro es una **entidad**, un dato como cualquier otro (una criatura,
+un hechizo). Una **tabla** es solo una forma de *mostrar* entidades, y eso es cosa de la vista. Cualquier archivo `.yaml` del pack (y los
+de `data/system` en Core) puede llevar una lista `entities:` en su primer nivel; una carta (`kin`, `professions`…) o la `intro` de un
+archivo puede llevar la suya, y esas entidades pertenecen a esa carta o a esa página.
+```yaml
+entities:
+  - id: fog
+    name: Fog                 # obligatorio
+    kind: weather             # qué es; encabeza la primera columna (WEATHER) y es el rol de la tabla ("weakness"...)
+    category: Odd Weather     # obligatorio: las entidades de una categoría son las filas de una tabla con ese título
+    roll: "1-3"               # opcional: la tirada que da esta entidad; el dado es la tirada más alta (D6)
+    description: Nothing is visible.
+    fields:                   # el resto de columnas, en este orden
+      RANGE: 2 m
+    legacy_key: "#12"         # opcional: la clave que tenía antes (tableros y recientes guardados)
+```
+Una regla muestra la tabla de una categoría donde su texto tiene una línea `{{table: Odd Weather}}`; si ningún texto la coloca,
+aparece en la regla `Tables · <pack>`. Un pack puede sumar entidades a una categoría del Core (o traer categorías propias) con solo
+escribirlas. La forma antigua, una lista `tables:` con `columns` y `rows`, sigue aceptándose (y `tables.yaml`, más abajo).
+
+### actions.yaml — acciones de juego
+
+Las acciones (Actions, Free Actions, Movement…) van en grupos. El cargador las convierte en el capítulo **Actions** de Reference:
+una página (una pestaña) por grupo y, en cada una, las acciones como filas; en la web, cada acción es un elemento de la lista con su
+descripción al lado. Otro pack puede **sumar acciones a un grupo que ya existe** (nombrando su `id`) o traer **grupos propios**.
+```yaml
+format: 1
+source: rulebook            # opcional: la fuente del capítulo
+intro: "Texto general que va arriba de todo el capítulo."
+groups:
+  - id: stealth             # lo que usan las acciones en "group"
+    name: Stealth           # el título de la pestaña
+    table: Stealth Actions  # opcional: título de la tabla (por defecto, el nombre del grupo)
+    intro: |
+      Texto que va antes de la lista de esa pestaña.
+actions:
+  - name: Hide
+    group: stealth
+    description: Slip out of sight.
+```
+Un grupo con un `id` que ya existe no se vuelve a definir: sus acciones se agregan a la tabla del grupo. Una acción sin `name`,
+o de un grupo que no existe, se avisa y se omite.
+
 ### rules.yaml — reglas y homerules
 ```yaml
 rules:
@@ -367,7 +414,7 @@ misma. Las de Core traen el texto de los libros; cualquier otro pack puede sumar
   **clave de otra regla** (`core/rule/melee-combat`). Un `see` que no apunta a nada se avisa al cargar el pack. Así una regla
   puede decir «elegí un kin» y llevar a la lista de Kin, que vive en otro YAML.
 * `nav`: solo en un capítulo de primer nivel. Le da **página propia** en ese grupo de la barra de la izquierda, en vez de estar
-  dentro de Rules: `nav: Reference` (así están *Character Creation*, *Combat & Damage* y *World*). El grupo también puede ser otro texto (aparece como un encabezado nuevo).
+  dentro de Rules: `nav: Reference` (así están *Character Creation*, *Combat & Damage*, *Actions* y *World*). El grupo también puede ser otro texto (aparece como un encabezado nuevo).
   La página aparece al abrir la app (tras un cambio en caliente, al reiniciarla). Si el capítulo
   no tiene texto propio (ni `body`, ni `sections`, ni `tables`), no aparece como entrada: sus `children` son el primer nivel de su
   página (así está *Combat & Damage*).

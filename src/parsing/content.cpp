@@ -9,6 +9,7 @@
 #include <SDL3/SDL.h>
 #include <sqlite3.h>
 
+#include "parsing/fsutil.h"
 #include "parsing/fts.h"
 #include "parsing/jsonutil.h"
 #include "parsing/sql.h"
@@ -164,7 +165,7 @@ static constexpr Kind kLoadOrder[] = {Kind::Spell,  Kind::Ability, Kind::Skill, 
 
 const std::vector<std::string>& packDataFiles() {
     static const std::vector<std::string> files = [] {
-        std::vector<std::string> f = {"rules", "world"};
+        std::vector<std::string> f = {"rules", "world", "actions"};
         for (Kind k : kLoadOrder) f.push_back(kindFile(k));
         return f;
     }();
@@ -403,13 +404,90 @@ struct ContentStore::Loader {
         }
     }
 
-    // "tables": tables that belong to the card (a kin's first names), shown when it is opened
+    // Pure data to a view. Data files describe things (entities), not tables: {"name", "kind", "category", "roll", "fields": {...}}.
+    // Every entity of a category is one row of that category's table: the views (and the rules' "{{table: Category}}" lines) draw them
+    // as a table, so a table is only ever a way of showing entities. The name is the first column, headed by its "kind" ("hazard" ->
+    // HAZARD); "fields" are the other columns, headed by their keys. A "roll" ("3", "4-5") gives the entity when the die is rolled; the die
+    // is the highest roll of the category (or an entity's own "dice"). The entities' kind is also the table's role ("weakness").
+    json tablesFromEntities(const json& list, const std::string& where) {
+        json tables = json::array();
+        if (!list.is_array()) return tables;
+        std::vector<std::string> order;
+        std::map<std::string, std::vector<const json*>> groups;
+        int index = 0;
+        for (const json& e : list) {
+            ++index;
+            const std::string name = e.is_object() ? trimmed(jsonText(e.contains("name") ? e["name"] : json(""))) : std::string();
+            const std::string category = e.is_object() ? trimmed(jsonStr(e, "category")) : std::string();
+            if (name.empty() || category.empty()) {
+                warn(where + ": entity #" + std::to_string(index) + " needs a \"name\" and a \"category\" (skipped)");
+                continue;
+            }
+            if (!groups.count(category)) order.push_back(category);
+            groups[category].push_back(&e);
+        }
+        for (const std::string& category : order) {
+            const std::vector<const json*>& members = groups[category];
+            std::string kind = trimmed(jsonStr(*members.front(), "kind")), dice, source, legacy;
+            std::vector<std::string> keys;
+            int highest = 0;
+            bool described = false;                         // an entity with a "description": a DESCRIPTION column right after the name
+            for (const json* e : members) {
+                described |= !jsonStr(*e, "description").empty();
+                if (const json* f = jsonFind(*e, "fields"); f && f->is_object())
+                    for (auto it = f->begin(); it != f->end(); ++it)
+                        if (std::find(keys.begin(), keys.end(), it.key()) == keys.end()) keys.push_back(it.key());
+                int lo = 0, hi = 0;
+                if (const std::string roll = jsonStr(*e, "roll"); !roll.empty() && parseRoll(roll, lo, hi)) highest = std::max(highest, hi);
+                if (dice.empty()) dice = jsonStr(*e, "dice");
+                if (source.empty()) source = jsonStr(*e, "source");
+                if (legacy.empty()) legacy = jsonStr(*e, "legacy_key");     // the key this category had before (saved boards and recents)
+            }
+            if (dice.empty() && highest > 0) dice = "D" + std::to_string(highest);
+            std::string head = kind.empty() ? "NAME" : kind;
+            for (char& c : head) c = c == '-' ? ' ' : static_cast<char>(std::toupper(static_cast<unsigned char>(c)));
+            json columns = json::array({head});
+            if (described) columns.push_back("DESCRIPTION");
+            for (const std::string& key : keys) columns.push_back(key);
+            json rows = json::array();
+            for (const json* e : members) {
+                json cells = json::array({trimmed(jsonText((*e)["name"]))});
+                if (described) cells.push_back(trimmed(jsonStr(*e, "description")));
+                const json* f = jsonFind(*e, "fields");
+                for (const std::string& key : keys) {
+                    const json* v = f && f->is_object() ? jsonFind(*f, key.c_str()) : nullptr;
+                    cells.push_back(v ? jsonText(*v) : std::string());
+                }
+                json row = {{"cells", cells}};
+                if (const std::string roll = jsonStr(*e, "roll"); !roll.empty()) row["roll"] = roll;
+                rows.push_back(row);
+            }
+            json table = {{"name", category}, {"columns", columns}, {"rows", rows}};
+            if (!dice.empty()) table["dice"] = dice;
+            if (!kind.empty()) table["role"] = kind;
+            if (!source.empty()) table["source"] = source;
+            if (!legacy.empty()) table["legacy_key"] = legacy;
+            tables.push_back(std::move(table));
+        }
+        return tables;
+    }
+
+    // The tables an object writes: its "tables" (the plain form, still accepted) and the ones made from its "entities".
+    json tablesOf(const json& o, const std::string& where) {
+        json all = json::array();
+        if (const json* t = jsonFind(o, "tables"); t && t->is_array())
+            for (const json& x : *t) all.push_back(x);
+        if (const json* ents = jsonFind(o, "entities"))
+            for (json& x : tablesFromEntities(*ents, where)) all.push_back(std::move(x));
+        return all;
+    }
+
+    // "tables"/"entities": tables that belong to the card (a kin's first names), shown when it is opened
     void fillCardTables(Kind k, const json& o, const std::string& name, Entry& e) {
         e.tables.clear();          // a replaced card starts over: any table it had is gone unless this JSON writes its own
-        const json* tables = jsonFind(o, "tables");
-        if (!tables || !tables->is_array()) return;
+        const json tables = tablesOf(o, std::string(kindKey(k)) + " \"" + name + "\"");
         int index = 0;
-        for (const json& t : *tables) {
+        for (const json& t : tables) {
             ++index;
             const std::string tableName = t.is_object() ? trimmed(jsonStr(t, "name")) : std::string();
             if (tableName.empty()) {
@@ -510,9 +588,10 @@ struct ContentStore::Loader {
                                 if (const json* b = jsonFind(sec, "body")) s.body = trimmed(jsonText(*b));
                                 in.sections.push_back(std::move(s));
                             }
-                        if (const json* tabs = jsonFind(*iv, "tables"); tabs && tabs->is_array()) {
+                        {
+                            const json tabs = tablesOf(*iv, file + ".yaml intro");
                             int index = 0;
-                            for (const json& t : *tabs) {
+                            for (const json& t : tabs) {
                                 ++index;
                                 const std::string tableName = t.is_object() ? trimmed(jsonStr(t, "name")) : std::string();
                                 if (tableName.empty()) {
@@ -1013,13 +1092,128 @@ struct ContentStore::Loader {
         }
     }
 
+    // Any data file may carry loose tables of its own: a top-level "tables" list shaped like tables.yaml's (id, name, dice, columns, rows,
+    // browse: false...). That is how a table lives next to what it is about (movement.yaml, hazards.yaml...); a rule shows it where its
+    // text has a "{{table: Name}}" line. Core's data/system files count too; tables.yaml itself is loaded as the Table kind.
+    bool looseTables() {
+        std::vector<std::string> dirs;
+        if (!sysDir.empty()) dirs.push_back(sysDir);
+        dirs.push_back(pk.dir);
+        for (const std::string& dir : dirs)
+            for (const std::string& file : fs::listDir(dir)) {
+                if (!file.ends_with(".yaml")) continue;
+                const std::string stem = file.substr(0, file.size() - 5);
+                if (stem == "manifest" || stem == kindFile(Kind::Table)) continue;
+                std::string text, err;
+                if (!readTextFile(dir + "/" + file, text, &err)) {
+                    pk.error = file + ": " + err;
+                    return false;
+                }
+                if (!text.starts_with("tables:") && text.find("\ntables:") == std::string::npos && !text.starts_with("entities:") && text.find("\nentities:") == std::string::npos) continue;
+                json root;
+                if (!jsonParse(text, root, &err)) {
+                    pk.error = file + ": " + err;
+                    return false;
+                }
+                if (!root.is_object()) continue;
+                const json tables = tablesOf(root, file);
+                int index = 0;
+                for (const json& t : tables) {
+                    ++index;
+                    const std::string name = t.is_object() ? trimmed(jsonStr(t, "name")) : std::string();
+                    if (name.empty()) warn(file + " tables: table #" + std::to_string(index) + " has no \"name\", skipped");
+                    else table(t, name);
+                }
+            }
+        return true;
+    }
+
+    // actions.yaml (docs/HOMEBREW.md): the actions of play, in groups ("Actions", "Free Actions", "Movement"...). They become the "Actions"
+    // chapter of the rules, one page per group with its actions as a table, so they reach every view like any rule. A pack adds actions to
+    // a group an earlier pack defined by naming its id, or brings a group of its own.
+    //   {"intro": "...", "groups": [{"id", "name", "intro"}], "actions": [{"name", "group", "description"}]}
+    bool actions() {
+        const std::string path = pk.dir + "/actions.yaml";
+        if (!isFile(path)) return true;
+        std::string text, err;
+        json root;
+        if (!readTextFile(path, text, &err) || !jsonParse(text, root, &err)) {
+            pk.error = "actions.yaml: " + err;
+            return false;
+        }
+        if (jsonInt(root, "format", kFormat) > kFormat) {
+            pk.error = "actions.yaml: made for a newer version of the app";
+            return false;
+        }
+        const json* groups = root.is_object() ? jsonFind(root, "groups") : nullptr;
+        const json* list = root.is_object() ? jsonFind(root, "actions") : nullptr;
+        const bool hasGroups = groups && groups->is_array(), hasList = list && list->is_array();
+        if (!hasGroups && !hasList) {
+            pk.error = "actions.yaml: expected a \"groups\" list and/or an \"actions\" list";
+            return false;
+        }
+        if (!st.actionsChapter_) {
+            json chapter = {{"id", "actions"}, {"nav", "Reference"}, {"layout", "tabs"}};
+            if (const json* intro = jsonFind(root, "intro")) chapter["body"] = *intro;
+            if (const std::string src = jsonStr(root, "source"); !src.empty()) chapter["source"] = src;
+            addRule(chapter, "Actions", 0, 0, 1);
+            st.actionsChapter_ = static_cast<int>(st.rules_.size());
+        }
+        const int chapterSource = st.rules_[static_cast<size_t>(st.actionsChapter_) - 1].sourceId;
+        if (hasGroups) {
+            int index = 0;
+            for (const json& g : *groups) {
+                ++index;
+                const std::string id = g.is_object() ? slugOf(jsonStr(g, "id")) : std::string();
+                const std::string name = g.is_object() ? trimmed(jsonStr(g, "name")) : std::string();
+                if (id.empty() || name.empty()) {
+                    warn("actions.yaml: group #" + std::to_string(index) + " needs an \"id\" and a \"name\" (skipped)");
+                    continue;
+                }
+                if (st.actionTables_.count(id)) continue;                  // an earlier pack has it: this pack's actions are added to it
+                json page = {{"id", "group-" + id}};
+                if (const json* intro = jsonFind(g, "intro")) page["body"] = *intro;
+                if (const std::string src = jsonStr(g, "source"); !src.empty()) page["source"] = src;
+                // "table": the title of the group's table when it must not be the group's name (the page "Movement" lists the table
+                // "Movement Actions", so "{{table: Movement}}" keeps meaning the kin table)
+                const std::string tableName = jsonStr(g, "table").empty() ? name : trimmed(jsonStr(g, "table"));
+                page["tables"] = json::array({json{{"id", id + "-table"}, {"name", tableName}, {"columns", json::array({"ACTION", "EFFECT"})}, {"rows", json::array()}}});
+                addRule(page, name, st.actionsChapter_, chapterSource, 2);
+                st.actionTables_[id] = st.tables_.back().id;
+            }
+        }
+        if (hasList) {
+            int index = 0;
+            for (const json& a : *list) {
+                ++index;
+                const std::string name = a.is_object() ? trimmed(jsonStr(a, "name")) : std::string();
+                if (name.empty()) {
+                    warn("actions.yaml: action #" + std::to_string(index) + " has no \"name\" (skipped)");
+                    continue;
+                }
+                const std::string group = slugOf(jsonStr(a, "group"));
+                const auto it = st.actionTables_.find(group);
+                if (it == st.actionTables_.end()) {
+                    warn("action \"" + name + "\": the group \"" + jsonStr(a, "group") + "\" does not exist (skipped)");
+                    continue;
+                }
+                TableRow row;
+                row.cells = {name, a.contains("description") ? trimmed(jsonText(a["description"])) : std::string()};
+                st.tables_[static_cast<size_t>(it->second - kPackTableBase) - 1].rows.push_back(std::move(row));
+            }
+        }
+        return true;
+    }
+
     void run() {
         setupSources();
         for (Kind k : kLoadOrder)
             if (!eachObject(kindFile(k), [&](const json& o, const std::string& n) { (this->*loaderFor(k))(o, n); })) return;
+        if (!looseTables()) return;
         // last: it may replace a rule an earlier pack loaded, and a broken pack must not have touched those
         for (const char* file : {"rules", "world"})       // world.yaml: rules like rules.yaml's, for the world of the game (adventures, NPCs)
             if (!eachObject(file, [&](const json& o, const std::string& n) { rule(o, n); })) return;
+        if (!actions()) return;
         npcs();
         pk.loaded = true;
     }
@@ -1031,6 +1225,8 @@ void ContentStore::clear() {
     for (auto& v : entries_) v.clear();
     for (auto& in : intros_) in = Intro();
     npcLists_.clear();
+    actionsChapter_ = 0;
+    actionTables_.clear();
     keywords_.clear();
     for (auto& m : byKey_) m.clear();
     monsters_.clear();
@@ -1240,8 +1436,30 @@ void ContentStore::checkRuleLinks() {
 // of their own per pack, "Tables · <pack>", at the end of the tree.
 void ContentStore::placeTables() {
     std::map<std::string, int> homeOf;                       // pack id -> the rule that holds its loose tables
+    // a loose table that some text already shows with a "{{table: Name}}" line has its place: it needs no listing of its own
+    std::set<std::string> placed;
+    auto scan = [&](const std::string& text) {
+        size_t pos = 0;
+        while (pos <= text.size()) {
+            size_t end = text.find('\n', pos);
+            if (end == std::string::npos) end = text.size();
+            const std::string line = trimmed(text.substr(pos, end - pos));
+            if (line.starts_with("{{table:") && line.ends_with("}}")) placed.insert(lowerCopy(trimmed(line.substr(8, line.size() - 10))));
+            pos = end + 1;
+        }
+    };
+    for (const RuleNode& r : rules_) {
+        scan(r.body);
+        for (const auto& s : r.sections) scan(s.body);
+    }
+    for (const Intro& in : intros_) {
+        scan(in.body);
+        for (const auto& s : in.sections) scan(s.body);
+    }
+    for (const auto& list : entries_)
+        for (const Entry& e : list) scan(e.body);
     for (DataTable& t : tables_) {
-        if (!t.rule && t.browse) {
+        if (!t.rule && t.browse && !placed.count(lowerCopy(t.title))) {
             const std::string packId = t.key.substr(0, t.key.find('/'));
             auto home = homeOf.find(packId);
             if (home == homeOf.end()) {

@@ -98,3 +98,127 @@ npc:
       - Olgrid
       - Idun
       - Nikias
+
+entities:
+  - id: typical-npcs-1
+    name: Guard
+    kind: type
+    category: Typical NPCs
+    legacy_key: "#74"
+    fields:
+      SKILLS: Awareness 10 Swords 12
+      HEROIC ABILITIES: —
+      DAMAGE BONUS: STR +D4
+      HP: "12"
+      WP: —
+      GEAR: Broadsword, studded leather armor
+  - id: typical-npcs-2
+    name: Cultist
+    kind: type
+    category: Typical NPCs
+    fields:
+      SKILLS: Evade 14 Knives 14
+      HEROIC ABILITIES: —
+      DAMAGE BONUS: AGL +D4
+      HP: "12"
+      WP: —
+      GEAR: Dagger
+  - id: typical-npcs-3
+    name: Thief
+    kind: type
+    category: Typical NPCs
+    fields:
+      SKILLS: Evade 12 Knives 12
+      HEROIC ABILITIES: —
+      DAMAGE BONUS: AGL +D4
+      HP: "10"
+      WP: —
+      GEAR: Knife
+  - id: typical-npcs-4
+    name: Villager
+    kind: type
+    category: Typical NPCs
+    fields:
+      SKILLS: Brawling 8
+      HEROIC ABILITIES: —
+      DAMAGE BONUS: —
+      HP: "8"
+      WP: —
+      GEAR: Wooden club
+  - id: typical-npcs-5
+    name: Hunter
+    kind: type
+    category: Typical NPCs
+    fields:
+      SKILLS: Awareness 12 Bows 13
+      HEROIC ABILITIES: —
+      DAMAGE BONUS: AGL +D4
+      HP: "13"
+      WP: —
+      GEAR: Longbow, leather armor
+  - id: typical-npcs-6
+    name: Bandit
+    kind: type
+    category: Typical NPCs
+    fields:
+      SKILLS: Bows 12 Evade 10 Swords 12
+      HEROIC ABILITIES: —
+      DAMAGE BONUS: —
+      HP: "12"
+      WP: —
+      GEAR: Short sword, short bow
+  - id: typical-npcs-7
+    name: Adventurer
+    kind: type
+    category: Typical NPCs
+    fields:
+      SKILLS: Awareness 10 Swords 12
+      HEROIC ABILITIES: —
+      DAMAGE BONUS: STR +D4
+      HP: "13"
+      WP: —
+      GEAR: Broadsword, studded leather armor
+  - id: typical-npcs-8
+    name: Scholar
+    kind: type
+    category: Typical NPCs
+    fields:
+      SKILLS: Languages 13 Myths & Legends 13 Staves 8
+      HEROIC ABILITIES: —
+      DAMAGE BONUS: —
+      HP: "7"
+      WP: —
+      GEAR: A good book
+  - id: typical-npcs-9
+    name: Bandit Chief (Boss)
+    kind: type
+    category: Typical NPCs
+    fields:
+      SKILLS: Awareness 12 Brawling 15 Hammers 15
+      HEROIC ABILITIES: Berserker Robust × 6 Veteran
+      DAMAGE BONUS: STR +D6
+      HP: "30"
+      WP: "16"
+      GEAR: Heavy warhammer, chainmail, open helmet
+  - id: typical-npcs-10
+    name: Knight Champion (Boss)
+    kind: type
+    category: Typical NPCs
+    fields:
+      SKILLS: Brawling 14 Swords 16
+      HEROIC ABILITIES: Defensive Double Slash Focused × 6 Robust × 6
+      DAMAGE BONUS: STR +D6
+      HP: "28"
+      WP: "26"
+      GEAR: Longsword, large shield, plate armor, great helm, combat-trained horse
+  - id: typical-npcs-11
+    name: Archmage (Boss)
+    kind: type
+    category: Typical NPCs
+    fields:
+      SKILLS: Magic School 15 Staves 13
+      HEROIC ABILITIES: Focused × 6 Master Spellcaster Robust × 4
+      DAMAGE BONUS: —
+      HP: "22"
+      WP: "30"
+      GEAR: Staff, grimoire

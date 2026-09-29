@@ -1,0 +1,51 @@
+format: 1
+entities:
+  - id: fear-table-1
+    name: Enfeebled
+    kind: effect
+    category: Fear Table
+    legacy_key: "#41"
+    roll: "1"
+    description: The fear drains your energy and determination. You lose 2D6 WP (to a minimum of zero) and become Disheartened.
+  - id: fear-table-2
+    name: Shaken
+    kind: effect
+    category: Fear Table
+    roll: "2"
+    description: You suffer the Scared condition.
+  - id: fear-table-3
+    name: Panting
+    kind: effect
+    category: Fear Table
+    roll: "3"
+    description: The intense fear leaves you out of breath and makes you Exhausted.
+  - id: fear-table-4
+    name: Pale
+    kind: effect
+    category: Fear Table
+    roll: "4"
+    description: Your face turns white as a sheet. You and all player characters within 10 meters and in sight of you become Scared.
+  - id: fear-table-5
+    name: Scream
+    kind: effect
+    category: Fear Table
+    roll: "5"
+    description: You scream in horror, which causes all player characters who hear the sound to immediately suffer a fear attack as well. Each person only ever needs to make one WIL roll to resist the same fear attack.
+  - id: fear-table-6
+    name: Rage
+    kind: effect
+    category: Fear Table
+    roll: "6"
+    description: Your fear turns to anger, and you are forced to attack its source on your next turn – in melee combat if possible. You also become Angry.
+  - id: fear-table-7
+    name: Paralyzed
+    kind: effect
+    category: Fear Table
+    roll: "7"
+    description: You are petrified with terror and unable to move. You cannot perform any action or movement on your next turn. Make another WIL roll on each subsequent turn (not an action) to break the paralysis.
+  - id: fear-table-8
+    name: Wild Panic
+    kind: effect
+    category: Fear Table
+    roll: "8"
+    description: In a fit of utter panic, you flee the scene as fast as you can. On your next turn you must dash away from the source of your fear. Make another WIL roll on each subsequent turn (not an action) to stop running and act normally again.

@@ -1,0 +1,101 @@
+format: 1
+entities:
+  - id: severe-injuries-injury-1
+    name: Broken nose
+    kind: injury
+    category: "Severe Injuries: Injury"
+    legacy_key: "#40"
+    roll: 1–2
+    fields:
+      EFFECT: "You get a bane on all AWARENESS rolls. Healing time: D6 days."
+  - id: severe-injuries-injury-2
+    name: Scarred face
+    kind: injury
+    category: "Severe Injuries: Injury"
+    roll: 3–4
+    fields:
+      EFFECT: "Bane on all PERFORMANCE and PERSUASION rolls. Healing time: 2D6 days."
+  - id: severe-injuries-injury-3
+    name: Teeth knocked out
+    kind: injury
+    category: "Severe Injuries: Injury"
+    roll: 5–6
+    fields:
+      EFFECT: Your PERFORMANCE and PERSUASION skills levels are permanently reduced by 2 ( to a minimum of 3).
+  - id: severe-injuries-injury-4
+    name: Broken ribs
+    kind: injury
+    category: "Severe Injuries: Injury"
+    roll: 7–8
+    fields:
+      EFFECT: "Bane on all skills based on STR or AGL. Healing time: D6 days."
+  - id: severe-injuries-injury-5
+    name: Concussion
+    kind: injury
+    category: "Severe Injuries: Injury"
+    roll: 9–10
+    fields:
+      EFFECT: "Bane on all skills based on INT. Healing time: D6 days."
+  - id: severe-injuries-injury-6
+    name: Deep wounds
+    kind: injury
+    category: "Severe Injuries: Injury"
+    roll: 11–12
+    fields:
+      EFFECT: "Bane on all skills based on STR or AGL, and every roll against such skill inflicts D6 points of damage. Healing time: 2D6 days."
+  - id: severe-injuries-injury-7
+    name: Broken leg
+    kind: injury
+    category: "Severe Injuries: Injury"
+    roll: "13"
+    fields:
+      EFFECT: "Your movement rate is halved. Healing time: 3D6 days."
+  - id: severe-injuries-injury-8
+    name: Broken arm
+    kind: injury
+    category: "Severe Injuries: Injury"
+    roll: "14"
+    fields:
+      EFFECT: "You cannot use two-handed weapon, nor dual wield, and get a bane on all other actions normally using both arms, such as climbing. Healing time: 3D6 days."
+  - id: severe-injuries-injury-9
+    name: Severed toe
+    kind: injury
+    category: "Severe Injuries: Injury"
+    roll: "15"
+    fields:
+      EFFECT: Movement rate permanently reduced by 2 (to a minimum of 4).
+  - id: severe-injuries-injury-10
+    name: Severed finger
+    kind: injury
+    category: "Severe Injuries: Injury"
+    roll: "16"
+    fields:
+      EFFECT: Your skill levels in all weapon skills are permanently reduced by 1 (to a minimum of 3).
+  - id: severe-injuries-injury-11
+    name: Gouged eye
+    kind: injury
+    category: "Severe Injuries: Injury"
+    roll: "17"
+    fields:
+      EFFECT: Your skill level in SPOT HIDDEN is permanently reduced by 2 (to a minimum of 3).
+  - id: severe-injuries-injury-12
+    name: Nightmares
+    kind: injury
+    category: "Severe Injuries: Injury"
+    roll: "18"
+    fields:
+      EFFECT: "Roll to resist fear (page 52) each shift you sleep. If you fail, the shift doesn’t count as slept. Healing time: 2D6 days."
+  - id: severe-injuries-injury-13
+    name: Changed personality
+    kind: injury
+    category: "Severe Injuries: Injury"
+    roll: "19"
+    fields:
+      EFFECT: Randomly generate a new weakness (optional rule, page 26).
+  - id: severe-injuries-injury-14
+    name: Amnesia
+    kind: injury
+    category: "Severe Injuries: Injury"
+    roll: "20"
+    fields:
+      EFFECT: "You cannot remember who you or the other player characters are. The effect must be roleplayed. Healing time: D6 days."

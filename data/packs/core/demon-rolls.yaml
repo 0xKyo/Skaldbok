@@ -1,0 +1,75 @@
+format: 1
+entities:
+  - id: demon-roll-in-melee-1
+    name: You drop your weapon at your feet
+    kind: effect
+    category: Demon Roll in Melee
+    legacy_key: "#38"
+    roll: "1"
+    description: Picking it up is an action.
+  - id: demon-roll-in-melee-2
+    name: You expose yourself to the enemy, who gets a free attack (page 43) that cannot be dodged or parried.
+    kind: effect
+    category: Demon Roll in Melee
+    roll: "2"
+  - id: demon-roll-in-melee-3
+    name: Your weapon cuts so deep into an object that it gets stuck
+    kind: effect
+    category: Demon Roll in Melee
+    roll: "3"
+    description: Pulling it free requires a STR roll (counts as an action)
+  - id: demon-roll-in-melee-4
+    name: You accidentally toss your weapon D3+3 meters
+    kind: effect
+    category: Demon Roll in Melee
+    roll: "4"
+    description: To pick it up you must move and then perform an action.
+  - id: demon-roll-in-melee-5
+    name: You slam your weapon into something hard and damage it
+    kind: effect
+    category: Demon Roll in Melee
+    roll: "5"
+    description: Any use of the weapon gets a bane until it is repaired by an artisan.
+  - id: demon-roll-in-melee-6
+    name: You hit yourself by mistake
+    kind: effect
+    category: Demon Roll in Melee
+    roll: "6"
+    description: Roll for damage as usual, but without any damage bonus.
+  - id: demon-roll-in-ranged-combat-1
+    name: You drop your weapon at your feet
+    kind: effect
+    category: Demon Roll in Ranged Combat
+    legacy_key: "#39"
+    roll: "1"
+    description: Picking it up is an action.
+  - id: demon-roll-in-ranged-combat-2
+    name: You run out of arrows and must get more before you can use the weapon again
+    kind: effect
+    category: Demon Roll in Ranged Combat
+    roll: "2"
+    description: Re-roll for sling or throwing weapons.
+  - id: demon-roll-in-ranged-combat-3
+    name: You hit a valuable or important item nearby
+    kind: effect
+    category: Demon Roll in Ranged Combat
+    roll: "3"
+    description: The GM decides what it is.
+  - id: demon-roll-in-ranged-combat-4
+    name: You break your weapon
+    kind: effect
+    category: Demon Roll in Ranged Combat
+    roll: "4"
+    description: Any use of the weapon gets a bane until it is repaired by an artisan.
+  - id: demon-roll-in-ranged-combat-5
+    name: You accidentally hit a random player character or friendly NPC
+    kind: effect
+    category: Demon Roll in Ranged Combat
+    roll: "5"
+    description: Roll for damage as usual, including damage bonus.
+  - id: demon-roll-in-ranged-combat-6
+    name: You hit yourself by mistake
+    kind: effect
+    category: Demon Roll in Ranged Combat
+    roll: "6"
+    description: Roll for damage as usual, but without damage bonus.

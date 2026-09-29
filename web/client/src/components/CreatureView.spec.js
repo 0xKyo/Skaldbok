@@ -9,6 +9,7 @@ const creatures = {
     { id: 3, key: 'c', name: 'Dragon', sub: 'Dragons', kind: 'monster' },
     { id: 4, key: 'd', name: 'Troll', sub: 'Trolls', kind: 'monster' },
   ],
+  intro: { body: '', sections: [{ title: 'Monsters', body: 'Monsters act several times a round.' }], tables: [] },
 };
 
 async function mountIt() {
@@ -21,6 +22,22 @@ async function mountIt() {
 const names = (w) => w.findAll('.c-name').map((n) => n.text());
 
 afterEach(() => vi.unstubAllGlobals());
+
+describe('CreatureView page', () => {
+  it('has the tabs first, then the search bar, and the Bestiary text lives in the General Info tab', async () => {
+    const w = await mountIt();
+    const page = w.get('.creature-page');
+    expect(page.element.firstElementChild.classList.contains('subtabs')).toBe(true);
+    expect(w.findAll('[data-test=creature-tab]').map((t) => t.text())).toEqual(['Creatures', 'General Info']);
+    expect(w.find('.c-intro').exists()).toBe(false);
+    expect(names(w)).toHaveLength(4);
+    await w.findAll('[data-test=creature-tab]')[1].trigger('click');
+    expect(w.get('.c-intro').text()).toContain('Monsters act several times a round.');
+    expect(w.get('.c-layout').isVisible()).toBe(false);
+    await w.findAll('[data-test=creature-tab]')[0].trigger('click');
+    expect(w.find('.c-intro').exists()).toBe(false);
+  });
+});
 
 describe('CreatureView tags', () => {
   it('lists everything until a tag is picked, then only that kind', async () => {

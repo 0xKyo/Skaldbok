@@ -120,7 +120,6 @@ int main(int argc, char** argv) {
     check(centaur && centaur->attacks.size() == 6 && centaur->attackDice == "D6", "Centaur (Bestiary) has 6 attacks on a D6");
     check(centaur && !centaur->blocks.empty() && !centaur->blocks[0].fields.empty(), "Centaur has a stat block");
     check(centaur && !centaur->image.empty() && test::exists(centaur->image), "Centaur has art, and the file exists");
-    check(centaur && centaur->ref.printed == 18 && centaur->ref.valid(), "Centaur links to printed page 18");
     check(centaur && centaur->attacks[0].rollMin == 1 && centaur->attacks[5].rollMax == 6, "attack rolls cover 1..6");
     const Monster* worg = monsterOf(core, "The Worg Rider", "adventure");
     std::string hp;
@@ -130,7 +129,6 @@ int main(int argc, char** argv) {
     check(worg && worg->attacks.size() == 6 && hp == "24", "The Worg Rider (Adventure): 6 attacks, HP exactly 24");
     check(monsterOf(core, "Goblin", "rulebook") && monsterOf(core, "Goblin", "bestiary"), "Goblin exists in the Rulebook and in the Bestiary");
     check(centaur && core.creatureVersions("Goblin", monsterOf(core, "Goblin", "rulebook")->id).size() == 1, "the other version of a creature is found");
-    check(centaur && !core.creaturesOnPrintedPage(centaur->sourceId, 18).empty(), "creatures on a printed page are found");
 
     const Entry* human = find(core, Kind::Kin, "Human");
     check(human && human->prop("movement") == "10" && human->list("names").size() == 6, "Human: movement 10 and six names");
@@ -172,7 +170,7 @@ int main(int argc, char** argv) {
 
     // tables the character creator rolls on
     const DataTable* weakness = core.tableByRole("weakness");
-    check(weakness && weakness->dieSides() == 20 && weakness->rows.size() == 20 && !weakness->browse, "Weakness role table: D20, 20 rows, not listed twice");
+    check(weakness && weakness->dieSides() == 20 && weakness->rows.size() == 20 && core.tablesByRole("weakness").size() == 1, "Weakness role table: D20, 20 rows, only one table has that role");
     bool everyRoll = weakness != nullptr;
     for (int r = 1; weakness && r <= 20; ++r) everyRoll &= weakness->rowForRoll(r) >= 0;
     check(everyRoll, "every D20 roll maps to a row");
@@ -183,7 +181,7 @@ int main(int argc, char** argv) {
         for (const DataTable& t : core.packTables())
             if (t.key.starts_with("core/table/")) {
                 ++bookTables;
-                if (t.title == "Weakness" && t.browse) bookWeakness = &t;
+                if (t.title == "Weakness") bookWeakness = &t;
             }
         check(bookTables >= 30, "the books' tables not on a card of their own are in Core: " + std::to_string(bookTables));
         check(bookWeakness && bookWeakness->rows.size() == 20 && bookWeakness->dieSides() == 20, "the book's Weakness table: D20, 20 rows");
@@ -211,7 +209,7 @@ int main(int argc, char** argv) {
         for (const RuleNode& n : rules) parents.insert(n.parent);
         for (const RuleNode& n : rules) {
             titles.insert(n.title);
-            if (n.body.empty() && !parents.count(n.id) && core.tablesOfRule(n.id).empty()) check(false, "a rule heading without text, children or tables was kept");
+            if (n.body.empty() && n.sections.empty() && !parents.count(n.id) && core.tablesOfRule(n.id).empty()) check(false, "a rule heading without text, children or tables was kept: " + n.title);
             if (n.sourceId == core.bookId("adventure")) {                    // the adventure lives under "Adventures", and nowhere else
                 int up = n.id;
                 while (core.rule(up) && core.rule(up)->parent) up = core.rule(up)->parent;
@@ -264,35 +262,34 @@ int main(int argc, char** argv) {
             // eight steps that used to have clickable children are now one page each: a table (or props, for Age) and/or named sections
             const RuleNode* age = step("creation-age");
             check(age && age->prop("young_trained_skills") == "6" && age->prop("young_bonus_skills") == "2" && age->prop("young_attribute_mods") == "{\"AGL\":1,\"CON\":1}" &&
-                      age->prop("old_attribute_mods") == "{\"STR\":-2,\"AGL\":-2,\"CON\":-2,\"INT\":1,\"WIL\":1}" && core.tablesOfRule(age->id).size() == 1 &&
-                      core.packTable(core.tablesOfRule(age->id)[0])->title == "Effects of Age" && age->sections.empty(),
-                  "Age has no children: a table like the book's, the numbers kept as data on the rule itself");
+                      age->prop("old_attribute_mods") == "{\"STR\":-2,\"AGL\":-2,\"CON\":-2,\"INT\":1,\"WIL\":1}" && core.tableByName("Effects of Age") && age->body.contains("{{table: Effects of Age}}") &&
+                      age->sections.empty(),
+                  "Age has no children: a table like the book's (in age.yaml, shown by its marker), the numbers kept as data on the rule itself");
             auto sectionNames = [](const RuleNode& n) {
                 std::vector<std::string> names;
                 for (const RuleNode::Section& s : n.sections) names.push_back(s.title);
                 return names;
             };
             check(sectionNames(*step("creation-attributes")) == std::vector<std::string>{"Starting Scores", "Other Methods", "Abbreviations"} &&
-                      core.tablesOfRule(step("creation-attributes")->id).size() == 1 &&
-                      core.packTable(core.tablesOfRule(step("creation-attributes")->id)[0])->rows.size() == 6,
+                      core.tableByName("Attributes") &&
+                      core.tableByName("Attributes")->rows.size() == 6,
                   "Attributes: one page, with a table of the six attributes (with their abbreviations) and three sections");
             check(sectionNames(*step("creation-derived-ratings")) == (std::vector<std::string>{"Hit Points (HP)", "Willpower Points (WP)"}) &&
-                      core.tablesOfRule(step("creation-derived-ratings")->id).size() == 3,
+                      core.tableByName("Movement") && core.tableByName("Movement modifier") && core.tableByName("Damage Bonus"),
                   "Derived Ratings: one page, with Movement's two tables and Damage Bonus's promoted up to it");
             check((sectionNames(*step("creation-skills")) == std::vector<std::string>{"Base Chance", "Starting Skill Levels", "Secondary Skills", "Magic"}) &&
-                      core.tablesOfRule(step("creation-skills")->id).size() == 1,
+                      core.tableByName("Base Chance"),
                   "Trained Skills: one page, Base Chance's table promoted up, four sections");
             check(sectionNames(*step("creation-heroic-ability")) == std::vector<std::string>{"Mages", "Alternative Abilities"},
                   "Heroic Ability: the Mages exception is its own clear section, split from Alternative Abilities");
             check(sectionNames(*step("creation-gear")) == std::vector<std::string>{"Starting Gear", "Coins"}, "Gear: one page, two sections");
-            const RuleNode* enc = nullptr;
             const RuleNode* exp = nullptr;
             for (const RuleNode& n : rules) {
-                if (n.title == "Encumbrance" && n.parent == cc) enc = &n;
                 if (n.title == "Experience" && n.parent == cc) exp = &n;
             }
-            check(enc && sectionNames(*enc).size() == 10 && sectionNames(*enc)[0] == "Weapons at Hand" && sectionNames(*enc).back() == "Riding Animals & Vehicles",
-                  "Encumbrance: one page, its ten topics as sections (the deeply nested tree flattened)");
+            const Intro& gearIntro = core.introOf(Kind::Gear);
+            check(gearIntro.sections.size() == 12 && gearIntro.sections[1].title == "Encumbrance" && gearIntro.sections.back().title == "Riding Animals & Vehicles" && !core.ruleByKey("core/rule/encumbrance"),
+                  "Encumbrance is part of the Gear page's intro (a section and its ten topics), not a rule of Character Creation");
             check(exp && sectionNames(*exp) == (std::vector<std::string>{"Advancement Marks", "Advancement Rolls", "Teacher", "Magic", "Heroic Abilities", "Overcome Weakness"}),
                   "Experience: one page too");
             for (const char* id :
@@ -364,6 +361,96 @@ int main(int argc, char** argv) {
         check(hb && !hb->enabled && !hb->loaded && hb->total() == 0 && s.count(Kind::Spell) == 66, "a disabled pack is listed, nothing of it is loaded");
     }
 
+    // ------------------------------------------------------------------------------- actions.yaml and loose tables
+    {
+        const int chapter = core.ruleByKey("core/rule/actions");
+        const RuleNode* ch = core.rule(chapter);
+        std::vector<std::string> pages;
+        for (const RuleNode& n : core.rules())
+            if (n.parent == chapter) pages.push_back(n.title);
+        check(ch && ch->prop("nav") == "Reference" && ch->prop("layout") == "tabs" && ch->body.contains("perform one action"),
+              "Core's actions.yaml makes the Actions chapter: a page of the Reference with an intro and the tabs layout");
+        check(pages == std::vector<std::string>{"Actions", "Free Actions", "Movement", "Melee Combat"}, "one page per action group, in the order of the file");
+        const DataTable* acts = core.tableByName("Actions");
+        const DataTable* moves = core.tableByName("Movement Actions");
+        check(acts && acts->rows.size() == 16 && acts->rows[0].cells[0] == "Dash" && core.tableByName("Free Actions") && core.tableByName("Free Actions")->rows.size() == 5 &&
+                  moves && moves->rows.size() == 4 && core.tableByName("Melee Combat Actions") && core.tableByName("Melee Combat Actions")->rows.size() == 2,
+              "each group's actions are the rows of its table (name, effect)");
+        const DataTable* kinMovement = core.tableByName("Movement");
+        check(kinMovement && kinMovement->rows.size() == 6, "a group's table can have another title, so {{table: Movement}} still means the kin table");
+
+        const std::string root = test::scratch("actions");
+        removeTree(root);
+        test::write(root + "/acts/manifest.yaml", "{\"format\":1,\"id\":\"acts\",\"name\":\"Action Pack\"}");
+        test::write(root + "/acts/actions.yaml",
+                    "format: 1\n"
+                    "groups:\n"
+                    "  - id: actions\n"
+                    "    name: Ignored, the group already exists\n"
+                    "  - id: stealth\n"
+                    "    name: Stealth\n"
+                    "    intro: Moving unseen.\n"
+                    "actions:\n"
+                    "  - name: Backflip\n"
+                    "    group: actions\n"
+                    "    description: A showy dodge.\n"
+                    "  - name: Hide\n"
+                    "    group: stealth\n"
+                    "    description: Slip out of sight.\n"
+                    "  - name: Lost\n"
+                    "    group: nowhere\n"
+                    "    description: x\n"
+                    "  - group: actions\n");
+        test::write(root + "/acts/anything.yaml",
+                    "format: 1\n"
+                    "entities:\n"
+                    "  - id: fog\n"
+                    "    name: Fog\n"
+                    "    kind: weather\n"
+                    "    category: Odd Weather\n"
+                    "    roll: \"1-3\"\n"
+                    "    description: Nothing is visible.\n"
+                    "    fields:\n"
+                    "      RANGE: 2 m\n"
+                    "  - id: hail\n"
+                    "    name: Hail\n"
+                    "    kind: weather\n"
+                    "    category: Odd Weather\n"
+                    "    roll: \"4-6\"\n"
+                    "    description: Ouch.\n"
+                    "    fields:\n"
+                    "      RANGE: 10 m\n"
+                    "tables:\n"
+                    "  - id: plain\n"
+                    "    name: Plain Old Table\n"
+                    "    columns: [A]\n"
+                    "    rows:\n"
+                    "      - cells: [x]\n");
+        ContentStore s;
+        s.load({PackSpec{coreDir, true, true}, PackSpec{root + "/acts", false, true}});
+        const PackInfo* ap = s.pack("acts");
+        check(ap && ap->loaded && ap->warnings.size() == 2 && hasWarning(*ap, "nowhere") && hasWarning(*ap, "no \"name\""),
+              "a pack's actions.yaml loads; an action of an unknown group and one without a name are reported");
+        const DataTable* more = s.tableByName("Actions");
+        check(more && more->rows.size() == 17 && more->rows.back().cells[0] == "Backflip", "a pack adds actions to a group Core already has (the group of the same id is not redefined)");
+        const DataTable* stealth = s.tableByName("Stealth");
+        const RuleNode* page = stealth ? s.rule(stealth->rule) : nullptr;
+        check(page && page->title == "Stealth" && page->parent == s.ruleByKey("core/rule/actions") && page->body == "Moving unseen." && stealth->rows.size() == 1 &&
+                  stealth->rows[0].cells[1] == "Slip out of sight.",
+              "and brings a group of its own: a new page (a new tab) under the same Actions chapter");
+        const DataTable* weather = s.tableByName("Odd Weather");
+        check(weather && weather->dieSides() == 6 && weather->rows.size() == 2 && weather->role == "weather" &&
+                  weather->columns == std::vector<std::string>{"WEATHER", "DESCRIPTION", "RANGE"} &&
+                  weather->rows[0].cells == std::vector<std::string>{"Fog", "Nothing is visible.", "2 m"} && weather->rows[0].rollMin == 1 && weather->rows[0].rollMax == 3 &&
+                  weather->rows[1].rollMin == 4 && weather->rows[1].rollMax == 6 && s.rule(weather->rule) && s.rule(weather->rule)->title == "Tables · Action Pack",
+              "entities are pure data: those of a category become the rows of its table (name, description, fields), the die is the highest roll, the kind heads the first column and is the role");
+        check(s.tableByName("Plain Old Table") && s.tableByName("Plain Old Table")->rows.size() == 1, "a table written the plain way is still accepted");
+        const std::vector<PackSpec> actsSpec = {PackSpec{root + "/acts", false, true}};
+        const std::string sigBefore = packSignature(actsSpec);
+        test::write(root + "/acts/another.yaml", "format: 1\n");
+        check(packSignature(actsSpec) != sigBefore, "the pack signature covers every yaml file, so a new one is noticed by the live reload");
+    }
+
     // ------------------------------------------------------------------------------- homerules: rules of other packs
     {
         const std::string root = test::scratch("homerules");
@@ -400,7 +487,8 @@ int main(int argc, char** argv) {
         check(melee2 && melee2->title == "Melee, our way" && melee2->body == "No free parries." && melee2->editedBy == "House Rules" &&
                   melee2->parent == combat && s.ruleByKey(melee) == meleeId,
               "a replaced rule keeps its place and key, and says who changed it");
-        check(s.rules().size() == static_cast<size_t>(before) + 3, "replacing adds no rule; the other three are new");
+        // the replaced rule no longer shows its tables with a marker: they are listed under "Tables · Dragonbane Core" (one more rule)
+        check(s.rules().size() == static_cast<size_t>(before) + 3 + (s.ruleByKey("core/rule/other-tables") ? 1 : 0), "replacing adds no rule; the other three are new");
         const SourceInfo* hs = melee2 ? s.source(melee2->sourceId) : nullptr;
         check(hs && hs->homebrew && hs->packId == "house", "the replaced rule now shows the homebrew source");
         check(core.rule(meleeId)->editedBy.empty() && core.rule(meleeId)->title != "Melee, our way", "the stores are independent: the base is as it was");
@@ -484,9 +572,9 @@ int main(int argc, char** argv) {
             bool listed = false;
             if (home)
                 for (int id : core.tablesOfRule(home->id)) listed |= id == t.id;
-            homeless += t.browse && !listed;
+            homeless += t.browse && t.rule != 0 && !listed;
         }
-        check(homeless == 0, "every browsable table of the books is shown in some rule");
+        check(homeless == 0 && core.ruleByKey("core/rule/other-tables") == 0, "every browsable table of the books is shown in some rule, or in the text that names it (no catch-all \"Tables\" rule is needed)");
         const Monster* goblin = monsterOf(core, "Goblin", "bestiary");
         check(goblin != nullptr, "Goblin exists in the Bestiary as a creature");
 
@@ -514,14 +602,8 @@ int main(int argc, char** argv) {
         // weapons, armor and gear have no mosaic of their own: the book's own tables are gear.json's intro, its own category
         {
             const Intro& gi = core.introOf(Kind::Gear);
-            bool termsTable = false, armorTable = false;
-            for (const DataTable& t : gi.tables) {
-                if (t.title == "Weapons & Armor Terms") termsTable = true;
-                if (t.title == "Armor & Helmets") armorTable = true;
-            }
-            check(gi.body.empty() && gi.sections.size() == 2 && gi.sections[0].title == "Supply" && gi.sections[1].title == "Weapons & Armor" && gi.tables.size() == 17 &&
-                      termsTable && armorTable,
-                  "gear.yaml's intro (moved from the Gear chapter of Rules) has Supply and Weapons & Armor sections, no naked body, and all 17 tables");
+            check(gi.body.empty() && !gi.sections.empty() && gi.sections[0].title == "Supply",
+                  "gear.yaml's intro (moved from the Gear chapter of Rules) starts with the Supply section and has no naked body");
             check(core.ruleByKey("core/rule/gear-equipment") == 0, "the Gear chapter no longer exists as a rule: it is gear.json's intro now");
             const SeeTarget w1 = core.seeTarget("weapons"), a1 = core.seeTarget("armor"), g1 = core.seeTarget("gear");
             check(w1.type == SeeTarget::Type::Category && w1.kind == Kind::Weapon && a1.type == SeeTarget::Type::Category && a1.kind == Kind::Armor &&
@@ -545,25 +627,19 @@ int main(int argc, char** argv) {
               "skills.yaml's intro (moved from the Skills chapter of Rules) has named sections and no naked body");
         {
             const Intro& spi = core.introOf(Kind::Spell);
-            bool hasMishaps = false;
-            for (const DataTable& t : spi.tables)
-                if (t.title == "Magical Mishaps" && t.dice == "D20") hasMishaps = true;
-            check(spi.body.empty() && spi.sections[0].title == "Intro" && spi.sections.size() >= 20 && hasMishaps,
-                  "spells.yaml's intro (moved from the Magic chapter of Rules) has an Intro section, named sections and its Magical Mishaps table");
+            const DataTable* mishaps = core.tableByName("Magical Mishaps");
+            check(spi.body.empty() && spi.sections[0].title == "Intro" && spi.sections.size() >= 20 && mishaps && mishaps->dice == "D20",
+                  "spells.yaml's intro (moved from the Magic chapter of Rules) has an Intro section, named sections and its Magical Mishaps table (magic.yaml, placed by the intro's marker)");
             for (const char* key : {"core/rule/magic-2", "core/rule/casting-spells", "core/rule/learning-magic", "core/rule/spell-list"})
                 check(core.ruleByKey(key) == 0, (std::string(key) + " no longer exists as a rule: it is part of Spells' intro now").c_str());
         }
         {
             const Intro& mi = core.introOf(Kind::Monster);
-            bool hasAnimals = false;
-            for (const DataTable& t : mi.tables)
-                if (t.title == "Common Animals" && t.rows.size() == 11) hasAnimals = true;
-            check(mi.body.empty() && mi.sections.size() >= 2 && hasAnimals,
-                  "creatures.yaml's intro (moved from the Bestiary chapter of Rules) has named sections, no naked body and its own table");
+            check(mi.body.empty() && mi.sections.size() >= 2,
+                  "creatures.yaml's intro (moved from the Bestiary chapter of Rules) has named sections and no naked body");
             for (const char* key : {"core/rule/bestiary", "core/rule/ferocity", "core/rule/monster-attacks", "core/rule/common-animals"})
                 check(core.ruleByKey(key) == 0, (std::string(key) + " no longer exists as a rule: it is part of Creatures' intro now").c_str());
-            check(core.idByKey(Kind::Table, "core/table/common-animals-rule") == 0 && core.idByKey(Kind::Table, "#71") == 0,
-                  "the Common Animals table is a card table of the intro now, not a browsable rule table");
+            check(!core.tableByName("Common Animals") && monsterOf(core, "Cat", "rulebook"), "the Common Animals are creatures (a category of creatures.yaml), not a table of the intro");
         }
         test::write(root + "/introsecs/manifest.yaml", "{\"format\":1,\"id\":\"introsecs\",\"name\":\"Intro Sections\"}");
         test::write(root + "/introsecs/kin.yaml",

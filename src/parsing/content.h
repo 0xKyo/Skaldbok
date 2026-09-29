@@ -187,6 +187,8 @@ private:
     std::vector<Monster> monsters_;
     std::vector<DataTable> tables_;
     std::vector<NpcList> npcLists_;
+    int actionsChapter_ = 0;                          // the "Actions" chapter (a rule) built from the packs' actions.yaml, 0 if there is none
+    std::map<std::string, int> actionTables_;         // action group id -> id of the table that lists its actions
     std::vector<RuleNode> rules_;
     std::map<std::string, int> byKey_[kKindCount];
     std::map<std::string, int> ruleByKey_;

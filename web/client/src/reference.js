@@ -23,7 +23,8 @@ export function useReference(token, gmPrefix = '') {
     const merged = new Set();
     const list = contentTypes.value.map((t) => {
       const group = GROUPS[t.id];
-      const ch = rulesChapters.value.find((r) => sameLabel(r.title, t.label));
+      // the general text of a type is an intro-only chapter with the type's id as key ("Magic" for spells), or a chapter titled like it
+      const ch = rulesChapters.value.find((r) => r.introOnly && r.key === t.id) ?? rulesChapters.value.find((r) => sameLabel(r.title, t.label));
       let tabs = [];
       let count = t.count;
       if (group) {
@@ -35,15 +36,19 @@ export function useReference(token, gmPrefix = '') {
           ];
           parts.forEach((o) => absorbed.add(o.id));
           count = tabs.reduce((n, x) => n + x.count, 0);
+          if (ch) {                                       // the general text of the page is one more tab, not a block above the list
+            merged.add(ch.key);
+            tabs.push({ label: 'General Info', mode: 'rules', type: ch.key });
+          }
         }
       } else if (ch) {
         merged.add(ch.key);
         tabs = [
-          { label: `All ${t.label.toLowerCase()}`, mode: 'tables', type: t.id, count: t.count },
-          { label: 'General info', mode: 'rules', type: ch.key },
+          { label: ch.title === t.label ? `All ${t.label.toLowerCase()}` : t.label, mode: 'tables', type: t.id, count: t.count },
+          { label: 'General Info', mode: 'rules', type: ch.key },
         ];
       }
-      return { mode: 'tables', type: t.id, label: t.label, count, tabs };
+      return { mode: 'tables', type: t.id, label: !group && ch ? ch.title : t.label, count, tabs };
     }).filter((i) => !absorbed.has(i.type));
     for (const r of rulesChapters.value) {
       if (!merged.has(r.key)) list.push({ mode: 'rules', type: r.key, label: r.title, count: null, tabs: [] });
@@ -87,7 +92,17 @@ export function useReference(token, gmPrefix = '') {
     }
     const typeId = target?.type || key;
     const found = hostOf('tables', typeId);
-    if (found) select(found.item, target?.type ? key : null, found.tab);
+    if (found) {
+      select(found.item, target?.type ? key : null, found.tab);
+      return;
+    }
+    // a link to a section of a page's intro ([[Encumbrance]]): open that page, its intro is always shown
+    const owner = contentTypes.value.find((t) => (t.sections ?? []).some((s) => sameLabel(s, key)));
+    const home = owner && hostOf('tables', owner.id);
+    if (home) {
+      const info = home.item.tabs.findIndex((t) => t.mode === 'rules');
+      select(home.item, null, info >= 0 ? info : home.tab);
+    }
   }
 
   return reactive({ contentTypes, rulesChapters, current, items, jump, load, select, goTo });

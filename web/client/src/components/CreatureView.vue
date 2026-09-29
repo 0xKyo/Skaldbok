@@ -2,7 +2,10 @@
 // GM-only creature catalog: searchable list on the left, full stat block on the right.
 import { computed, onMounted, ref, watch } from 'vue';
 import { apiGet } from '../api.js';
+import DataTable from './DataTable.vue';
 import MessageImage from './MessageImage.vue';
+import RuleText from './RuleText.vue';
+import { textBlocks, unplacedTables } from '../lib/ruletables.js';
 
 const props = defineProps({
   token: { type: String, required: true },
@@ -11,6 +14,9 @@ const props = defineProps({
 const TAGS = [{ id: 'npc', label: 'NPC' }, { id: 'animal', label: 'Animal' }, { id: 'monster', label: 'Monster' }];
 
 const list = ref([]);       // [{id, key, name, sub, kind}]
+const intro = ref(null);    // the Bestiary's general text: the General Info tab
+const tab = ref('list');    // 'list' | 'info'
+const showList = computed(() => tab.value === 'list' || !intro.value);
 const tags = ref([]);       // active tag filters; none = every creature
 const shown = computed(() => (tags.value.length ? list.value.filter((c) => tags.value.includes(c.kind)) : list.value));
 
@@ -29,6 +35,7 @@ async function search() {
     const q = query.value.trim();
     const data = await apiGet(`/gm/creatures${q ? `?q=${encodeURIComponent(q)}` : ''}`, props.token);
     list.value = data.creatures ?? [];
+    intro.value = data.intro ?? null;
     if (selected.value && !list.value.find((c) => c.id === selected.value.id)) selected.value = null;
   } finally {
     loading.value = false;
@@ -55,37 +62,52 @@ onMounted(search);
 </script>
 
 <template>
-  <div class="creature-layout">
-    <!-- list panel -->
-    <div class="creature-list-panel">
-      <div class="search-row">
-        <input
-          v-model="query"
-          class="search-input"
-          placeholder="Search creatures…"
-          type="search"
-        />
-      </div>
-      <div class="tag-row" role="group" aria-label="Creature type">
-        <button v-for="t in TAGS" :key="t.id" class="tag" :aria-pressed="tags.includes(t.id)" data-test="creature-tag" @click="toggleTag(t.id)">{{ t.label }}</button>
-      </div>
-      <div v-if="loading" class="muted small" style="padding: 8px 12px;">Loading…</div>
-      <ul class="creature-list">
-        <li
+  <section class="creature-page" aria-label="Creatures">
+    <!-- same page as every category: tabs, search, (filter tags), then the list with the description beside it; the Bestiary text is the General Info tab -->
+    <div v-if="intro" class="subtabs" role="group" aria-label="Sections">
+      <button :aria-pressed="tab === 'list'" data-test="creature-tab" @click="tab = 'list'">Creatures</button>
+      <button :aria-pressed="tab === 'info'" data-test="creature-tab" @click="tab = 'info'">General Info</button>
+    </div>
+
+    <input v-show="showList" v-model="query" class="c-search" placeholder="Search…" aria-label="Search" type="search" />
+    <div v-show="showList" class="tag-row" role="group" aria-label="Creature type">
+      <button v-for="t in TAGS" :key="t.id" class="tag" :aria-pressed="tags.includes(t.id)" data-test="creature-tag" @click="toggleTag(t.id)">{{ t.label }}</button>
+    </div>
+
+    <div v-if="intro && !showList" class="panel c-intro">
+      <template v-for="(b, i) in textBlocks(intro.body, intro.tables)" :key="'b' + i">
+        <DataTable v-if="b.table" :table="b.table" />
+        <ul v-else-if="b.list" class="rule-list"><li v-for="(it, k) in b.list" :key="k"><RuleText :text="it" /></li></ul>
+        <p v-else class="intro-p"><RuleText :text="b.text" /></p>
+      </template>
+      <template v-for="(s, si) in intro.sections" :key="si">
+        <p class="intro-section-name">{{ s.title }}</p>
+        <template v-for="(b, pi) in textBlocks(s.body, intro.tables)" :key="pi">
+          <DataTable v-if="b.table" :table="b.table" />
+          <ul v-else-if="b.list" class="rule-list"><li v-for="(it, k) in b.list" :key="k"><RuleText :text="it" /></li></ul>
+          <p v-else class="intro-p"><RuleText :text="b.text" /></p>
+        </template>
+      </template>
+      <DataTable v-for="t in unplacedTables([intro.body, ...intro.sections.map((s) => s.body)], intro.tables)" :key="t.title" :table="t" />
+    </div>
+
+    <div v-show="showList" class="c-layout">
+      <nav class="c-list" aria-label="Creatures">
+        <p v-if="loading" class="muted small" style="padding: 8px 12px;">Loading…</p>
+        <p v-else-if="!shown.length" class="muted" style="padding: 8px 12px;">Nothing found.</p>
+        <button
           v-for="c in shown"
           :key="c.id"
-          class="creature-item"
+          class="c-row"
           :class="{ active: selected?.id === c.id }"
           @click="pick(c)"
         >
           <span class="c-name">{{ c.name }}</span>
           <span v-if="c.sub" class="c-sub">{{ c.sub }}</span>
-        </li>
-      </ul>
-    </div>
+        </button>
+      </nav>
 
-    <!-- detail panel -->
-    <div class="creature-detail-panel">
+      <div class="creature-detail-panel panel">
       <div v-if="loadingDetail" class="muted" style="padding: 1.5rem;">Loading…</div>
       <div v-else-if="!selected" class="muted placeholder">Select a creature.</div>
       <div v-else class="creature-detail">
@@ -163,78 +185,69 @@ onMounted(search);
           <p>{{ selected.adventureSeed }}</p>
         </details>
       </div>
+      </div>
     </div>
-  </div>
+  </section>
 </template>
 
 <style scoped>
-.creature-layout {
-  display: flex;
-  flex: 1;
+.creature-page { display: flex; flex-direction: column; gap: 10px; }
+
+.c-search { width: 100%; background: #fbf6e6; border: 1px solid var(--line); color: var(--ink);
+  border-radius: 8px; padding: 10px 12px; font: inherit; }
+.c-search:focus-visible { outline: 2px solid var(--green); }
+
+.c-intro .intro-p { font-size: 0.88rem; color: var(--ink); margin: 0 0 0.5em; line-height: 1.5; }
+.c-intro .intro-section-name { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--brown); margin: 0.6em 0 0.2em; }
+
+/* list + detail side by side, like every category */
+.c-layout { display: grid; grid-template-columns: 1fr; gap: 10px; }
+@media (min-width: 640px) {
+  .c-layout { grid-template-columns: minmax(200px, 300px) 1fr; align-items: start; }
+}
+
+.c-list {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--cream);
   overflow: hidden;
-  height: 100%;
-}
-
-/* ---- list panel ---- */
-.creature-list-panel {
-  width: 220px;
-  flex-shrink: 0;
-  border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.search-row {
-  padding: 6px 8px;
-  border-bottom: 1px solid var(--border);
-}
-
-.search-input {
-  width: 100%;
-  box-sizing: border-box;
-  font-size: 0.85rem;
-  padding: 4px 8px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: var(--input-bg, #fff);
-  color: var(--text);
-}
-
-.creature-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+  position: sticky;
+  top: 0;
+  max-height: calc(100vh - 12rem);
   overflow-y: auto;
-  flex: 1;
 }
-
-.creature-item {
-  padding: 5px 12px;
+.c-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 6px;
+  width: 100%;
+  padding: 9px 12px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: none;
+  font: inherit;
+  color: var(--ink);
   cursor: pointer;
-  border-left: 3px solid transparent;
+  text-align: left;
 }
-.creature-item:hover { background: var(--hover-bg, #f5f5f5); }
-.creature-item.active {
-  background: var(--active-bg, #e8f0fe);
-  border-left-color: var(--accent, #2d7a68);
-}
+.c-row:last-child { border-bottom: 0; }
+.c-row:hover { background: var(--parchment); }
+.c-row.active { background: var(--green-dark); color: #f3ead2; }
+.c-row.active .c-sub { color: rgba(243, 234, 210, 0.7); }
 
-.c-name { display: block; font-size: 0.88rem; font-weight: 500; }
-.c-sub { display: block; font-size: 0.73rem; color: var(--muted); }
+.c-name { font-weight: 600; }
+.c-sub { font-size: 0.8rem; color: var(--muted); white-space: nowrap; flex-shrink: 0; }
 
 /* ---- detail panel ---- */
-.creature-detail-panel {
-  flex: 1;
-  overflow-y: auto;
-}
+.creature-detail-panel { max-height: calc(100vh - 12rem); overflow-y: auto; }
 
 .placeholder {
   padding: 2rem;
   font-style: italic;
 }
 
-.creature-detail { padding: 1.25rem 1.5rem; max-width: 700px; }
+.creature-detail { max-width: 700px; }
 
 .tag-row { display: flex; flex-wrap: wrap; gap: 5px; padding: 6px 8px; border-bottom: 1px solid var(--border); }
 .tag { background: var(--parchment); color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px;

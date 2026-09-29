@@ -21,44 +21,52 @@ professions:
       - Master Blacksmith
       - Master Carpenter
       - Master Tanner
-    tables:
-      - name: "Artisan: Gear"
-        dice: D6
-        columns:
-          - GEAR
-        rows:
-          - roll: 1–2
-            cells:
-              - Warhammer (small), leather armor, blacksmith’s tools, torch, flint & tinder, D8 food rations, D8 silver
-          - roll: 3–4
-            cells:
-              - Handaxe, leather armor, carpentry tools, torch, rope (hemp), flint & tinder, D8 food rations, D8 silver
-          - roll: 5–6
-            cells:
-              - Knife, leather armor, tanner’s tools, lantern, lamp oil, flint & tinder, D8 food rations, D8 silver
-      - name: "Artisan: Nickname"
-        dice: D6
-        columns:
-          - NICKNAME
-        rows:
-          - roll: "1"
-            cells:
-              - Stonehammer
-          - roll: "2"
-            cells:
-              - Woodcleaver
-          - roll: "3"
-            cells:
-              - Strongfist
-          - roll: "4"
-            cells:
-              - Barrelmaker
-          - roll: "5"
-            cells:
-              - Bridgebuilder
-          - roll: "6"
-            cells:
-              - Ironmaster
+    entities:
+      - id: artisan-gear-1
+        name: Warhammer (small), leather armor, blacksmith’s tools, torch, flint & tinder, D8 food rations, D8 silver
+        kind: gear
+        category: "Artisan: Gear"
+        roll: 1–2
+      - id: artisan-gear-2
+        name: Handaxe, leather armor, carpentry tools, torch, rope (hemp), flint & tinder, D8 food rations, D8 silver
+        kind: gear
+        category: "Artisan: Gear"
+        roll: 3–4
+      - id: artisan-gear-3
+        name: Knife, leather armor, tanner’s tools, lantern, lamp oil, flint & tinder, D8 food rations, D8 silver
+        kind: gear
+        category: "Artisan: Gear"
+        roll: 5–6
+      - id: artisan-nickname-1
+        name: Stonehammer
+        kind: nickname
+        category: "Artisan: Nickname"
+        roll: "1"
+      - id: artisan-nickname-2
+        name: Woodcleaver
+        kind: nickname
+        category: "Artisan: Nickname"
+        roll: "2"
+      - id: artisan-nickname-3
+        name: Strongfist
+        kind: nickname
+        category: "Artisan: Nickname"
+        roll: "3"
+      - id: artisan-nickname-4
+        name: Barrelmaker
+        kind: nickname
+        category: "Artisan: Nickname"
+        roll: "4"
+      - id: artisan-nickname-5
+        name: Bridgebuilder
+        kind: nickname
+        category: "Artisan: Nickname"
+        roll: "5"
+      - id: artisan-nickname-6
+        name: Ironmaster
+        kind: nickname
+        category: "Artisan: Nickname"
+        roll: "6"
   - id: bard
     name: Bard
     source: rulebook
@@ -78,44 +86,52 @@ professions:
       - Persuasion
     heroic_abilities:
       - Musician
-    tables:
-      - name: "Bard: Gear"
-        dice: D6
-        columns:
-          - GEAR
-        rows:
-          - roll: 1–2
-            cells:
-              - Lyre, knife, oil lamp, lamp oil, flint & tinder, D6 food rations, D8 silver
-          - roll: 3–4
-            cells:
-              - Flute, dagger, rope (hemp), torch, flint & tinder, D6 food rations, D8 silver
-          - roll: 5–6
-            cells:
-              - Horn, knife, torch, flint & tinder, D6 food rations, D8 silver
-      - name: "Bard: Nickname"
-        dice: D6
-        columns:
-          - NICKNAME
-        rows:
-          - roll: "1"
-            cells:
-              - Odemaker
-          - roll: "2"
-            cells:
-              - Talespinner
-          - roll: "3"
-            cells:
-              - Silvervoice
-          - roll: "4"
-            cells:
-              - Gildenclef
-          - roll: "5"
-            cells:
-              - Honeytongue
-          - roll: "6"
-            cells:
-              - Rhymesmith
+    entities:
+      - id: bard-gear-1
+        name: Lyre, knife, oil lamp, lamp oil, flint & tinder, D6 food rations, D8 silver
+        kind: gear
+        category: "Bard: Gear"
+        roll: 1–2
+      - id: bard-gear-2
+        name: Flute, dagger, rope (hemp), torch, flint & tinder, D6 food rations, D8 silver
+        kind: gear
+        category: "Bard: Gear"
+        roll: 3–4
+      - id: bard-gear-3
+        name: Horn, knife, torch, flint & tinder, D6 food rations, D8 silver
+        kind: gear
+        category: "Bard: Gear"
+        roll: 5–6
+      - id: bard-nickname-1
+        name: Odemaker
+        kind: nickname
+        category: "Bard: Nickname"
+        roll: "1"
+      - id: bard-nickname-2
+        name: Talespinner
+        kind: nickname
+        category: "Bard: Nickname"
+        roll: "2"
+      - id: bard-nickname-3
+        name: Silvervoice
+        kind: nickname
+        category: "Bard: Nickname"
+        roll: "3"
+      - id: bard-nickname-4
+        name: Gildenclef
+        kind: nickname
+        category: "Bard: Nickname"
+        roll: "4"
+      - id: bard-nickname-5
+        name: Honeytongue
+        kind: nickname
+        category: "Bard: Nickname"
+        roll: "5"
+      - id: bard-nickname-6
+        name: Rhymesmith
+        kind: nickname
+        category: "Bard: Nickname"
+        roll: "6"
   - id: fighter
     name: Fighter
     source: rulebook
@@ -135,44 +151,52 @@ professions:
       - Swords
     heroic_abilities:
       - Veteran
-    tables:
-      - name: "Fighter: Gear"
-        dice: D6
-        columns:
-          - GEAR
-        rows:
-          - roll: 1–2
-            cells:
-              - Broadsword/battle axe/morning star, small shield, chainmail, torch, flint & tinder, D6 food rations, D6 silver
-          - roll: 3–4
-            cells:
-              - Short sword/handaxe/short spear, light crossbow, quiver, leather armor, torch, flint & tinder, D6 food rations, D6 silver
-          - roll: 5–6
-            cells:
-              - Long spear, studded leather armor, open helmet, torch, flint & tinder, D6 food rations, D6 silver
-      - name: "Fighter: Nickname"
-        dice: D6
-        columns:
-          - NICKNAME
-        rows:
-          - roll: "1"
-            cells:
-              - Gravemaker
-          - roll: "2"
-            cells:
-              - Grimjaw
-          - roll: "3"
-            cells:
-              - Windthaw
-          - roll: "4"
-            cells:
-              - Coldsteel
-          - roll: "5"
-            cells:
-              - The Fearless
-          - roll: "6"
-            cells:
-              - The Butcher
+    entities:
+      - id: fighter-gear-1
+        name: Broadsword/battle axe/morning star, small shield, chainmail, torch, flint & tinder, D6 food rations, D6 silver
+        kind: gear
+        category: "Fighter: Gear"
+        roll: 1–2
+      - id: fighter-gear-2
+        name: Short sword/handaxe/short spear, light crossbow, quiver, leather armor, torch, flint & tinder, D6 food rations, D6 silver
+        kind: gear
+        category: "Fighter: Gear"
+        roll: 3–4
+      - id: fighter-gear-3
+        name: Long spear, studded leather armor, open helmet, torch, flint & tinder, D6 food rations, D6 silver
+        kind: gear
+        category: "Fighter: Gear"
+        roll: 5–6
+      - id: fighter-nickname-1
+        name: Gravemaker
+        kind: nickname
+        category: "Fighter: Nickname"
+        roll: "1"
+      - id: fighter-nickname-2
+        name: Grimjaw
+        kind: nickname
+        category: "Fighter: Nickname"
+        roll: "2"
+      - id: fighter-nickname-3
+        name: Windthaw
+        kind: nickname
+        category: "Fighter: Nickname"
+        roll: "3"
+      - id: fighter-nickname-4
+        name: Coldsteel
+        kind: nickname
+        category: "Fighter: Nickname"
+        roll: "4"
+      - id: fighter-nickname-5
+        name: The Fearless
+        kind: nickname
+        category: "Fighter: Nickname"
+        roll: "5"
+      - id: fighter-nickname-6
+        name: The Butcher
+        kind: nickname
+        category: "Fighter: Nickname"
+        roll: "6"
   - id: hunter
     name: Hunter
     source: rulebook
@@ -192,44 +216,52 @@ professions:
       - Sneaking
     heroic_abilities:
       - Companion
-    tables:
-      - name: "Hunter: Gear"
-        dice: D6
-        columns:
-          - GEAR
-        rows:
-          - roll: 1–2
-            cells:
-              - Dagger, short bow, quiver, leather armor, sleeping pelt, torch, flint & tinder, rope (hemp), snare, D8 food rations, D6 silver
-          - roll: 3–4
-            cells:
-              - Knife, longbow, quiver, leather armor, sleeping pelt, torch, flint & tinder, rope (hemp), fishing rod, D8 food rations, D6 silver
-          - roll: 5–6
-            cells:
-              - Dagger, sling, leather armor, sleeping pelt, torch, flint & tinder, rope (hemp), snare, D8 food rations, D6 silver
-      - name: "Hunter: Nickname"
-        dice: D6
-        columns:
-          - NICKNAME
-        rows:
-          - roll: "1"
-            cells:
-              - Forest Fox
-          - roll: "2"
-            cells:
-              - Wolfbane
-          - roll: "3"
-            cells:
-              - Pathfinder
-          - roll: "4"
-            cells:
-              - The Weathered
-          - roll: "5"
-            cells:
-              - Bloodhunger
-          - roll: "6"
-            cells:
-              - Shadowbolt
+    entities:
+      - id: hunter-gear-1
+        name: Dagger, short bow, quiver, leather armor, sleeping pelt, torch, flint & tinder, rope (hemp), snare, D8 food rations, D6 silver
+        kind: gear
+        category: "Hunter: Gear"
+        roll: 1–2
+      - id: hunter-gear-2
+        name: Knife, longbow, quiver, leather armor, sleeping pelt, torch, flint & tinder, rope (hemp), fishing rod, D8 food rations, D6 silver
+        kind: gear
+        category: "Hunter: Gear"
+        roll: 3–4
+      - id: hunter-gear-3
+        name: Dagger, sling, leather armor, sleeping pelt, torch, flint & tinder, rope (hemp), snare, D8 food rations, D6 silver
+        kind: gear
+        category: "Hunter: Gear"
+        roll: 5–6
+      - id: hunter-nickname-1
+        name: Forest Fox
+        kind: nickname
+        category: "Hunter: Nickname"
+        roll: "1"
+      - id: hunter-nickname-2
+        name: Wolfbane
+        kind: nickname
+        category: "Hunter: Nickname"
+        roll: "2"
+      - id: hunter-nickname-3
+        name: Pathfinder
+        kind: nickname
+        category: "Hunter: Nickname"
+        roll: "3"
+      - id: hunter-nickname-4
+        name: The Weathered
+        kind: nickname
+        category: "Hunter: Nickname"
+        roll: "4"
+      - id: hunter-nickname-5
+        name: Bloodhunger
+        kind: nickname
+        category: "Hunter: Nickname"
+        roll: "5"
+      - id: hunter-nickname-6
+        name: Shadowbolt
+        kind: nickname
+        category: "Hunter: Nickname"
+        roll: "6"
   - id: knight
     name: Knight
     source: rulebook
@@ -249,44 +281,52 @@ professions:
       - Swords
     heroic_abilities:
       - Guardian
-    tables:
-      - name: "Knight: Gear"
-        dice: D6
-        columns:
-          - GEAR
-        rows:
-          - roll: 1–2
-            cells:
-              - Broadsword/morning star, shield (small), plate armor, great helm, torch, flint & tinder, D6 food rations, D12 silver
-          - roll: 3–4
-            cells:
-              - Flail/warhammer (small), shield (small), chainmail, open helmet, torch, flint & tinder, D6 food rations, D12 silver
-          - roll: 5–6
-            cells:
-              - Short sword, lance, shield (small), chainmail, open helmet, combat trained horse, D6 food rations, D12 silver
-      - name: "Knight: Nickname"
-        dice: D6
-        columns:
-          - NICKNAME
-        rows:
-          - roll: "1"
-            cells:
-              - Dragonheart
-          - roll: "2"
-            cells:
-              - Goldlance
-          - roll: "3"
-            cells:
-              - Griffinclaw
-          - roll: "4"
-            cells:
-              - The Noble
-          - roll: "5"
-            cells:
-              - Gleamhelm
-          - roll: "6"
-            cells:
-              - Mourningcloak
+    entities:
+      - id: knight-gear-1
+        name: Broadsword/morning star, shield (small), plate armor, great helm, torch, flint & tinder, D6 food rations, D12 silver
+        kind: gear
+        category: "Knight: Gear"
+        roll: 1–2
+      - id: knight-gear-2
+        name: Flail/warhammer (small), shield (small), chainmail, open helmet, torch, flint & tinder, D6 food rations, D12 silver
+        kind: gear
+        category: "Knight: Gear"
+        roll: 3–4
+      - id: knight-gear-3
+        name: Short sword, lance, shield (small), chainmail, open helmet, combat trained horse, D6 food rations, D12 silver
+        kind: gear
+        category: "Knight: Gear"
+        roll: 5–6
+      - id: knight-nickname-1
+        name: Dragonheart
+        kind: nickname
+        category: "Knight: Nickname"
+        roll: "1"
+      - id: knight-nickname-2
+        name: Goldlance
+        kind: nickname
+        category: "Knight: Nickname"
+        roll: "2"
+      - id: knight-nickname-3
+        name: Griffinclaw
+        kind: nickname
+        category: "Knight: Nickname"
+        roll: "3"
+      - id: knight-nickname-4
+        name: The Noble
+        kind: nickname
+        category: "Knight: Nickname"
+        roll: "4"
+      - id: knight-nickname-5
+        name: Gleamhelm
+        kind: nickname
+        category: "Knight: Nickname"
+        roll: "5"
+      - id: knight-nickname-6
+        name: Mourningcloak
+        kind: nickname
+        category: "Knight: Nickname"
+        roll: "6"
   - id: mage
     name: Mage
     source: rulebook
@@ -295,44 +335,52 @@ professions:
       – Cyril Firemane
       Mages have learned to control the ancient forces that permeate nature and the primordial structures of the world. It is not a uniform profession, but includes a motley crew of individualists and headstrong eccentrics. There are several schools of magic with different views of what magic is and how it works. In the core game you can choose between Animism, Elementalism, and Mentalism. Animists believe that everything in the world has a spiritual presence and see magic as a power lent by nature’s spirits. Elementalists describe magic in terms of four elements that constitute the essence of all things. Mentalists say that magic comes from within, and that it can be manifested through self-control and discipline.
     key_attribute: WIL
-    tables:
-      - name: "Mage: Gear"
-        dice: D6
-        columns:
-          - GEAR
-        rows:
-          - roll: 1–2
-            cells:
-              - Staff, orbuculum, grimoire, torch, flint & tinder, D6 food rations, D8 silver
-          - roll: 3–4
-            cells:
-              - Knife, wand, grimoire, torch, flint & tinder, D6 food rations, D8 silver
-          - roll: 5–6
-            cells:
-              - Amulet, grimoire, sleeping pelt, torch, flint & tinder, D6 food rations, D8 silver
-      - name: "Mage: Nickname"
-        dice: D6
-        columns:
-          - NICKNAME
-        rows:
-          - roll: "1"
-            cells:
-              - Rootheart
-          - roll: "2"
-            cells:
-              - Crookback
-          - roll: "3"
-            cells:
-              - Graycape
-          - roll: "4"
-            cells:
-              - Stormhand
-          - roll: "5"
-            cells:
-              - Stafflimper
-          - roll: "6"
-            cells:
-              - Shadowbringer
+    entities:
+      - id: mage-gear-1
+        name: Staff, orbuculum, grimoire, torch, flint & tinder, D6 food rations, D8 silver
+        kind: gear
+        category: "Mage: Gear"
+        roll: 1–2
+      - id: mage-gear-2
+        name: Knife, wand, grimoire, torch, flint & tinder, D6 food rations, D8 silver
+        kind: gear
+        category: "Mage: Gear"
+        roll: 3–4
+      - id: mage-gear-3
+        name: Amulet, grimoire, sleeping pelt, torch, flint & tinder, D6 food rations, D8 silver
+        kind: gear
+        category: "Mage: Gear"
+        roll: 5–6
+      - id: mage-nickname-1
+        name: Rootheart
+        kind: nickname
+        category: "Mage: Nickname"
+        roll: "1"
+      - id: mage-nickname-2
+        name: Crookback
+        kind: nickname
+        category: "Mage: Nickname"
+        roll: "2"
+      - id: mage-nickname-3
+        name: Graycape
+        kind: nickname
+        category: "Mage: Nickname"
+        roll: "3"
+      - id: mage-nickname-4
+        name: Stormhand
+        kind: nickname
+        category: "Mage: Nickname"
+        roll: "4"
+      - id: mage-nickname-5
+        name: Stafflimper
+        kind: nickname
+        category: "Mage: Nickname"
+        roll: "5"
+      - id: mage-nickname-6
+        name: Shadowbringer
+        kind: nickname
+        category: "Mage: Nickname"
+        roll: "6"
     skills_by_school:
       Animism:
         - Animism
@@ -384,44 +432,52 @@ professions:
       - Swords
     heroic_abilities:
       - Sea Legs
-    tables:
-      - name: "Mariner: Gear"
-        dice: D6
-        columns:
-          - GEAR
-        rows:
-          - roll: 1–2
-            cells:
-              - Dagger, short bow, quiver, rope (hemp), grappling hook, sleeping pelt, torch, flint & tinder, D8 food rations, D10 silver
-          - roll: 3–4
-            cells:
-              - Scimitar, leather armor, rope (hemp), grappling hook, torch, flint & tinder, D8 food rations, D10 silver
-          - roll: 5–6
-            cells:
-              - Trident, spyglass, rope (hemp), grappling hook, torch, flint & tinder, D8 food rations, D10 silver
-      - name: "Mariner: Nickname"
-        dice: D6
-        columns:
-          - NICKNAME
-        rows:
-          - roll: "1"
-            cells:
-              - Whitewater
-          - roll: "2"
-            cells:
-              - Waverider
-          - roll: "3"
-            cells:
-              - Foamborn
-          - roll: "4"
-            cells:
-              - Saltsplash
-          - roll: "5"
-            cells:
-              - Seadog
-          - roll: "6"
-            cells:
-              - Stormfarer
+    entities:
+      - id: mariner-gear-1
+        name: Dagger, short bow, quiver, rope (hemp), grappling hook, sleeping pelt, torch, flint & tinder, D8 food rations, D10 silver
+        kind: gear
+        category: "Mariner: Gear"
+        roll: 1–2
+      - id: mariner-gear-2
+        name: Scimitar, leather armor, rope (hemp), grappling hook, torch, flint & tinder, D8 food rations, D10 silver
+        kind: gear
+        category: "Mariner: Gear"
+        roll: 3–4
+      - id: mariner-gear-3
+        name: Trident, spyglass, rope (hemp), grappling hook, torch, flint & tinder, D8 food rations, D10 silver
+        kind: gear
+        category: "Mariner: Gear"
+        roll: 5–6
+      - id: mariner-nickname-1
+        name: Whitewater
+        kind: nickname
+        category: "Mariner: Nickname"
+        roll: "1"
+      - id: mariner-nickname-2
+        name: Waverider
+        kind: nickname
+        category: "Mariner: Nickname"
+        roll: "2"
+      - id: mariner-nickname-3
+        name: Foamborn
+        kind: nickname
+        category: "Mariner: Nickname"
+        roll: "3"
+      - id: mariner-nickname-4
+        name: Saltsplash
+        kind: nickname
+        category: "Mariner: Nickname"
+        roll: "4"
+      - id: mariner-nickname-5
+        name: Seadog
+        kind: nickname
+        category: "Mariner: Nickname"
+        roll: "5"
+      - id: mariner-nickname-6
+        name: Stormfarer
+        kind: nickname
+        category: "Mariner: Nickname"
+        roll: "6"
   - id: merchant
     name: Merchant
     source: rulebook
@@ -441,44 +497,52 @@ professions:
       - Spot Hidden
     heroic_abilities:
       - Treasure Hunter
-    tables:
-      - name: "Merchant: Gear"
-        dice: D6
-        columns:
-          - GEAR
-        rows:
-          - roll: 1–2
-            cells:
-              - Dagger, sleeping pelt, torch, flint & tinder, rope (hemp), donkey, D6 food rations, D12 silver
-          - roll: 3–4
-            cells:
-              - Knife, sleeping pelt, lantern, lamp oil, flint & tinder, field kitchen, donkey, cart, D6 food rations, D12 silver
-          - roll: 5–6
-            cells:
-              - Dagger, sleeping pelt, large tent, oil lamp, lamp oil, flint & tinder, backpack, D6 food rations, D12 silver
-      - name: "Merchant: Nickname"
-        dice: D6
-        columns:
-          - NICKNAME
-        rows:
-          - roll: "1"
-            cells:
-              - Silvergrin
-          - roll: "2"
-            cells:
-              - Goldtooth
-          - roll: "3"
-            cells:
-              - Silktongue
-          - roll: "4"
-            cells:
-              - The Lisping and Truthful
-          - roll: "5"
-            cells:
-              - Lardbelly
-          - roll: "6"
-            cells:
-              - Skinflint
+    entities:
+      - id: merchant-gear-1
+        name: Dagger, sleeping pelt, torch, flint & tinder, rope (hemp), donkey, D6 food rations, D12 silver
+        kind: gear
+        category: "Merchant: Gear"
+        roll: 1–2
+      - id: merchant-gear-2
+        name: Knife, sleeping pelt, lantern, lamp oil, flint & tinder, field kitchen, donkey, cart, D6 food rations, D12 silver
+        kind: gear
+        category: "Merchant: Gear"
+        roll: 3–4
+      - id: merchant-gear-3
+        name: Dagger, sleeping pelt, large tent, oil lamp, lamp oil, flint & tinder, backpack, D6 food rations, D12 silver
+        kind: gear
+        category: "Merchant: Gear"
+        roll: 5–6
+      - id: merchant-nickname-1
+        name: Silvergrin
+        kind: nickname
+        category: "Merchant: Nickname"
+        roll: "1"
+      - id: merchant-nickname-2
+        name: Goldtooth
+        kind: nickname
+        category: "Merchant: Nickname"
+        roll: "2"
+      - id: merchant-nickname-3
+        name: Silktongue
+        kind: nickname
+        category: "Merchant: Nickname"
+        roll: "3"
+      - id: merchant-nickname-4
+        name: The Lisping and Truthful
+        kind: nickname
+        category: "Merchant: Nickname"
+        roll: "4"
+      - id: merchant-nickname-5
+        name: Lardbelly
+        kind: nickname
+        category: "Merchant: Nickname"
+        roll: "5"
+      - id: merchant-nickname-6
+        name: Skinflint
+        kind: nickname
+        category: "Merchant: Nickname"
+        roll: "6"
   - id: scholar
     name: Scholar
     source: rulebook
@@ -498,44 +562,52 @@ professions:
       - Spot Hidden
     heroic_abilities:
       - Intuition
-    tables:
-      - name: "Scholar: Gear"
-        dice: D6
-        columns:
-          - GEAR
-        rows:
-          - roll: 1–2
-            cells:
-              - Staff, notebook, quill, sleeping pelt, torch, flint & tinder, D6 food rations, D10 silver
-          - roll: 3–4
-            cells:
-              - Knife, book (any subject), sleeping pelt, oil lamp, lamp oil, flint & tinder, D6 food rations, D10 silver
-          - roll: 5–6
-            cells:
-              - Short sword, bandages, sleeping poison (one dose), sleeping pelt, lantern, lamp oil, flint & tinder, D6 food rations, D10 silver
-      - name: "Scholar: Nickname"
-        dice: D6
-        columns:
-          - NICKNAME
-        rows:
-          - roll: "1"
-            cells:
-              - Clearmind
-          - roll: "2"
-            cells:
-              - Dustlung
-          - roll: "3"
-            cells:
-              - Farsight
-          - roll: "4"
-            cells:
-              - The Lettered
-          - roll: "5"
-            cells:
-              - The All-Knowing
-          - roll: "6"
-            cells:
-              - The Plump and Learned
+    entities:
+      - id: scholar-gear-1
+        name: Staff, notebook, quill, sleeping pelt, torch, flint & tinder, D6 food rations, D10 silver
+        kind: gear
+        category: "Scholar: Gear"
+        roll: 1–2
+      - id: scholar-gear-2
+        name: Knife, book (any subject), sleeping pelt, oil lamp, lamp oil, flint & tinder, D6 food rations, D10 silver
+        kind: gear
+        category: "Scholar: Gear"
+        roll: 3–4
+      - id: scholar-gear-3
+        name: Short sword, bandages, sleeping poison (one dose), sleeping pelt, lantern, lamp oil, flint & tinder, D6 food rations, D10 silver
+        kind: gear
+        category: "Scholar: Gear"
+        roll: 5–6
+      - id: scholar-nickname-1
+        name: Clearmind
+        kind: nickname
+        category: "Scholar: Nickname"
+        roll: "1"
+      - id: scholar-nickname-2
+        name: Dustlung
+        kind: nickname
+        category: "Scholar: Nickname"
+        roll: "2"
+      - id: scholar-nickname-3
+        name: Farsight
+        kind: nickname
+        category: "Scholar: Nickname"
+        roll: "3"
+      - id: scholar-nickname-4
+        name: The Lettered
+        kind: nickname
+        category: "Scholar: Nickname"
+        roll: "4"
+      - id: scholar-nickname-5
+        name: The All-Knowing
+        kind: nickname
+        category: "Scholar: Nickname"
+        roll: "5"
+      - id: scholar-nickname-6
+        name: The Plump and Learned
+        kind: nickname
+        category: "Scholar: Nickname"
+        roll: "6"
   - id: thief
     name: Thief
     source: rulebook
@@ -555,41 +627,102 @@ professions:
       - Spot Hidden
     heroic_abilities:
       - Backstabbing
-    tables:
-      - name: "Thief: Gear"
-        dice: D6
-        columns:
-          - GEAR
-        rows:
-          - roll: 1–2
-            cells:
-              - Dagger, sling, rope (hemp), grappling hook, torch, flint & tinder, D6 food rations, D10 silver
-          - roll: 3–4
-            cells:
-              - Knife, lockpicks (simple), torch, flint & tinder, D6 food rations, D10 silver
-          - roll: 5–6
-            cells:
-              - Two daggers, marbles, rope (hemp), torch, flint & tinder, D6 food rations, D10 silver
-      - name: "Thief: Nickname"
-        dice: D6
-        columns:
-          - NICKNAME
-        rows:
-          - roll: "1"
-            cells:
-              - Halffinger
-          - roll: "2"
-            cells:
-              - Blackrat
-          - roll: "3"
-            cells:
-              - Redeye
-          - roll: "4"
-            cells:
-              - Quickfoot
-          - roll: "5"
-            cells:
-              - Doubletongue
-          - roll: "6"
-            cells:
-              - Nightstabber
+    entities:
+      - id: thief-gear-1
+        name: Dagger, sling, rope (hemp), grappling hook, torch, flint & tinder, D6 food rations, D10 silver
+        kind: gear
+        category: "Thief: Gear"
+        roll: 1–2
+      - id: thief-gear-2
+        name: Knife, lockpicks (simple), torch, flint & tinder, D6 food rations, D10 silver
+        kind: gear
+        category: "Thief: Gear"
+        roll: 3–4
+      - id: thief-gear-3
+        name: Two daggers, marbles, rope (hemp), torch, flint & tinder, D6 food rations, D10 silver
+        kind: gear
+        category: "Thief: Gear"
+        roll: 5–6
+      - id: thief-nickname-1
+        name: Halffinger
+        kind: nickname
+        category: "Thief: Nickname"
+        roll: "1"
+      - id: thief-nickname-2
+        name: Blackrat
+        kind: nickname
+        category: "Thief: Nickname"
+        roll: "2"
+      - id: thief-nickname-3
+        name: Redeye
+        kind: nickname
+        category: "Thief: Nickname"
+        roll: "3"
+      - id: thief-nickname-4
+        name: Quickfoot
+        kind: nickname
+        category: "Thief: Nickname"
+        roll: "4"
+      - id: thief-nickname-5
+        name: Doubletongue
+        kind: nickname
+        category: "Thief: Nickname"
+        roll: "5"
+      - id: thief-nickname-6
+        name: Nightstabber
+        kind: nickname
+        category: "Thief: Nickname"
+        roll: "6"
+
+entities:
+  - id: profession-1
+    name: Artisan
+    kind: profession
+    category: Profession
+    legacy_key: "#9"
+    roll: "1"
+  - id: profession-2
+    name: Bard
+    kind: profession
+    category: Profession
+    roll: "2"
+  - id: profession-3
+    name: Fighter
+    kind: profession
+    category: Profession
+    roll: "3"
+  - id: profession-4
+    name: Hunter
+    kind: profession
+    category: Profession
+    roll: "4"
+  - id: profession-5
+    name: Knight
+    kind: profession
+    category: Profession
+    roll: "5"
+  - id: profession-6
+    name: Mage
+    kind: profession
+    category: Profession
+    roll: "6"
+  - id: profession-7
+    name: Mariner
+    kind: profession
+    category: Profession
+    roll: "7"
+  - id: profession-8
+    name: Merchant
+    kind: profession
+    category: Profession
+    roll: "8"
+  - id: profession-9
+    name: Scholar
+    kind: profession
+    category: Profession
+    roll: "9"
+  - id: profession-10
+    name: Thief
+    kind: profession
+    category: Profession
+    roll: "10"

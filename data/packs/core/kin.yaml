@@ -7,30 +7,37 @@ kin:
     movement: 10
     innate_abilities:
       - Adaptive
-    tables:
-      - name: "Human: First Name"
-        dice: D6
-        columns:
-          - FIRST NAME
-        rows:
-          - roll: "1"
-            cells:
-              - Joruna
-          - roll: "2"
-            cells:
-              - Tym
-          - roll: "3"
-            cells:
-              - Halvelda
-          - roll: "4"
-            cells:
-              - Garmander
-          - roll: "5"
-            cells:
-              - Verolun
-          - roll: "6"
-            cells:
-              - Lothar
+    entities:
+      - id: human-first-name-1
+        name: Joruna
+        kind: first-name
+        category: "Human: First Name"
+        roll: "1"
+      - id: human-first-name-2
+        name: Tym
+        kind: first-name
+        category: "Human: First Name"
+        roll: "2"
+      - id: human-first-name-3
+        name: Halvelda
+        kind: first-name
+        category: "Human: First Name"
+        roll: "3"
+      - id: human-first-name-4
+        name: Garmander
+        kind: first-name
+        category: "Human: First Name"
+        roll: "4"
+      - id: human-first-name-5
+        name: Verolun
+        kind: first-name
+        category: "Human: First Name"
+        roll: "5"
+      - id: human-first-name-6
+        name: Lothar
+        kind: first-name
+        category: "Human: First Name"
+        roll: "6"
   - id: halfling
     name: Halfling
     source: rulebook
@@ -38,30 +45,37 @@ kin:
     movement: 8
     innate_abilities:
       - Hard to Catch
-    tables:
-      - name: "Halfling: First Name"
-        dice: D6
-        columns:
-          - FIRST NAME
-        rows:
-          - roll: "1"
-            cells:
-              - Snappy
-          - roll: "2"
-            cells:
-              - Brine
-          - roll: "3"
-            cells:
-              - Cottar
-          - roll: "4"
-            cells:
-              - Bumble
-          - roll: "5"
-            cells:
-              - Perrywick
-          - roll: "6"
-            cells:
-              - Theoline
+    entities:
+      - id: halfling-first-name-1
+        name: Snappy
+        kind: first-name
+        category: "Halfling: First Name"
+        roll: "1"
+      - id: halfling-first-name-2
+        name: Brine
+        kind: first-name
+        category: "Halfling: First Name"
+        roll: "2"
+      - id: halfling-first-name-3
+        name: Cottar
+        kind: first-name
+        category: "Halfling: First Name"
+        roll: "3"
+      - id: halfling-first-name-4
+        name: Bumble
+        kind: first-name
+        category: "Halfling: First Name"
+        roll: "4"
+      - id: halfling-first-name-5
+        name: Perrywick
+        kind: first-name
+        category: "Halfling: First Name"
+        roll: "5"
+      - id: halfling-first-name-6
+        name: Theoline
+        kind: first-name
+        category: "Halfling: First Name"
+        roll: "6"
   - id: dwarf
     name: Dwarf
     source: rulebook
@@ -69,30 +83,37 @@ kin:
     movement: 8
     innate_abilities:
       - Unforgiving
-    tables:
-      - name: "Dwarf: First Name"
-        dice: D6
-        columns:
-          - FIRST NAME
-        rows:
-          - roll: "1"
-            cells:
-              - Tinderrock
-          - roll: "2"
-            cells:
-              - Halwyld
-          - roll: "3"
-            cells:
-              - Tymolana
-          - roll: "4"
-            cells:
-              - Traut
-          - roll: "5"
-            cells:
-              - Urd
-          - roll: "6"
-            cells:
-              - Fermer
+    entities:
+      - id: dwarf-first-name-1
+        name: Tinderrock
+        kind: first-name
+        category: "Dwarf: First Name"
+        roll: "1"
+      - id: dwarf-first-name-2
+        name: Halwyld
+        kind: first-name
+        category: "Dwarf: First Name"
+        roll: "2"
+      - id: dwarf-first-name-3
+        name: Tymolana
+        kind: first-name
+        category: "Dwarf: First Name"
+        roll: "3"
+      - id: dwarf-first-name-4
+        name: Traut
+        kind: first-name
+        category: "Dwarf: First Name"
+        roll: "4"
+      - id: dwarf-first-name-5
+        name: Urd
+        kind: first-name
+        category: "Dwarf: First Name"
+        roll: "5"
+      - id: dwarf-first-name-6
+        name: Fermer
+        kind: first-name
+        category: "Dwarf: First Name"
+        roll: "6"
   - id: elf
     name: Elf
     source: rulebook
@@ -100,30 +121,37 @@ kin:
     movement: 10
     innate_abilities:
       - Inner Peace
-    tables:
-      - name: "Elf: First Name"
-        dice: D6
-        columns:
-          - FIRST NAME
-        rows:
-          - roll: "1"
-            cells:
-              - Arasin
-          - roll: "2"
-            cells:
-              - Illyriana
-          - roll: "3"
-            cells:
-              - Galvander
-          - roll: "4"
-            cells:
-              - Tyrindelia
-          - roll: "5"
-            cells:
-              - Erwilnor
-          - roll: "6"
-            cells:
-              - Andremone
+    entities:
+      - id: elf-first-name-1
+        name: Arasin
+        kind: first-name
+        category: "Elf: First Name"
+        roll: "1"
+      - id: elf-first-name-2
+        name: Illyriana
+        kind: first-name
+        category: "Elf: First Name"
+        roll: "2"
+      - id: elf-first-name-3
+        name: Galvander
+        kind: first-name
+        category: "Elf: First Name"
+        roll: "3"
+      - id: elf-first-name-4
+        name: Tyrindelia
+        kind: first-name
+        category: "Elf: First Name"
+        roll: "4"
+      - id: elf-first-name-5
+        name: Erwilnor
+        kind: first-name
+        category: "Elf: First Name"
+        roll: "5"
+      - id: elf-first-name-6
+        name: Andremone
+        kind: first-name
+        category: "Elf: First Name"
+        roll: "6"
   - id: mallard
     name: Mallard
     source: rulebook
@@ -132,30 +160,37 @@ kin:
     innate_abilities:
       - Ill-Tempered
       - Webbed Feet
-    tables:
-      - name: "Mallard: First Name"
-        dice: D6
-        columns:
-          - FIRST NAME
-        rows:
-          - roll: "1"
-            cells:
-              - Qwucksum
-          - roll: "2"
-            cells:
-              - Splats
-          - roll: "3"
-            cells:
-              - Moggee
-          - roll: "4"
-            cells:
-              - Groddy
-          - roll: "5"
-            cells:
-              - Blisandina
-          - roll: "6"
-            cells:
-              - Hackleswell
+    entities:
+      - id: mallard-first-name-1
+        name: Qwucksum
+        kind: first-name
+        category: "Mallard: First Name"
+        roll: "1"
+      - id: mallard-first-name-2
+        name: Splats
+        kind: first-name
+        category: "Mallard: First Name"
+        roll: "2"
+      - id: mallard-first-name-3
+        name: Moggee
+        kind: first-name
+        category: "Mallard: First Name"
+        roll: "3"
+      - id: mallard-first-name-4
+        name: Groddy
+        kind: first-name
+        category: "Mallard: First Name"
+        roll: "4"
+      - id: mallard-first-name-5
+        name: Blisandina
+        kind: first-name
+        category: "Mallard: First Name"
+        roll: "5"
+      - id: mallard-first-name-6
+        name: Hackleswell
+        kind: first-name
+        category: "Mallard: First Name"
+        roll: "6"
   - id: wolfkin
     name: Wolfkin
     source: rulebook
@@ -163,27 +198,104 @@ kin:
     movement: 12
     innate_abilities:
       - Hunting Instincts
-    tables:
-      - name: "Wolfkin: First Name"
-        dice: D6
-        columns:
-          - FIRST NAME
-        rows:
-          - roll: "1"
-            cells:
-              - Wyld
-          - roll: "2"
-            cells:
-              - Wolfshadow
-          - roll: "3"
-            cells:
-              - Lunariem
-          - roll: "4"
-            cells:
-              - Obdurian
-          - roll: "5"
-            cells:
-              - Frostbite
-          - roll: "6"
-            cells:
-              - Wuldenhall
+    entities:
+      - id: wolfkin-first-name-1
+        name: Wyld
+        kind: first-name
+        category: "Wolfkin: First Name"
+        roll: "1"
+      - id: wolfkin-first-name-2
+        name: Wolfshadow
+        kind: first-name
+        category: "Wolfkin: First Name"
+        roll: "2"
+      - id: wolfkin-first-name-3
+        name: Lunariem
+        kind: first-name
+        category: "Wolfkin: First Name"
+        roll: "3"
+      - id: wolfkin-first-name-4
+        name: Obdurian
+        kind: first-name
+        category: "Wolfkin: First Name"
+        roll: "4"
+      - id: wolfkin-first-name-5
+        name: Frostbite
+        kind: first-name
+        category: "Wolfkin: First Name"
+        roll: "5"
+      - id: wolfkin-first-name-6
+        name: Wuldenhall
+        kind: first-name
+        category: "Wolfkin: First Name"
+        roll: "6"
+
+entities:
+  - id: kin-1
+    name: Human
+    kind: kin
+    category: Kin
+    legacy_key: "#2"
+    roll: 1–4
+  - id: kin-2
+    name: Halfling
+    kind: kin
+    category: Kin
+    roll: 5–7
+  - id: kin-3
+    name: Dwarf
+    kind: kin
+    category: Kin
+    roll: 8–9
+  - id: kin-4
+    name: Elf
+    kind: kin
+    category: Kin
+    roll: "10"
+  - id: kin-5
+    name: Mallard
+    kind: kin
+    category: Kin
+    roll: "11"
+  - id: kin-6
+    name: Wolfkin
+    kind: kin
+    category: Kin
+    roll: "12"
+  - id: movement-1
+    name: Human
+    kind: kin
+    category: Movement
+    legacy_key: "#31"
+    fields:
+      MOVEMENT: "10"
+  - id: movement-2
+    name: Halfling
+    kind: kin
+    category: Movement
+    fields:
+      MOVEMENT: "8"
+  - id: movement-3
+    name: Dwarf
+    kind: kin
+    category: Movement
+    fields:
+      MOVEMENT: "8"
+  - id: movement-4
+    name: Elf
+    kind: kin
+    category: Movement
+    fields:
+      MOVEMENT: "10"
+  - id: movement-5
+    name: Mallard
+    kind: kin
+    category: Movement
+    fields:
+      MOVEMENT: "8"
+  - id: movement-6
+    name: Wolfkin
+    kind: kin
+    category: Movement
+    fields:
+      MOVEMENT: "12"

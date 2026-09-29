@@ -153,6 +153,35 @@ json tablesShown(const ContentStore& cs, const std::vector<const DataTable*>& ow
     return out;
 }
 
+// A content type of the index: what it is called, how many there are and the titles of the sections of its intro (a link may point at one).
+json typeEntry(const ContentStore& cs, const ContentType& t) {
+    json titles = json::array();
+    for (const auto& s : cs.introOf(t.kind).sections) titles.push_back(s.title);
+    return {{"id", t.id}, {"label", t.label}, {"count", cs.count(t.kind)}, {"sections", titles}};
+}
+
+// A kind's intro (null when it has none): body, sections and the tables they place.
+json introView(const ContentStore& cs, const Intro& intro) {
+    if (intro.empty()) return nullptr;
+    json sects = json::array();
+    for (const auto& s : intro.sections) sects.push_back({{"title", s.title}, {"body", s.body}});
+    std::vector<const DataTable*> own;
+    std::vector<const std::string*> texts{&intro.body};
+    for (const DataTable& t : intro.tables) own.push_back(&t);
+    for (const auto& s : intro.sections) texts.push_back(&s.body);
+    return {{"body", intro.body}, {"sections", sects}, {"tables", tablesShown(cs, own, texts)}};
+}
+
+json ruleTables(const ContentStore& cs, const RuleNode& n);
+
+// The text of a chapter's own root rule is that page's intro (null when the root has none).
+json chapterIntro(const ContentStore& cs, const RuleNode& root) {
+    if (root.body.empty() && root.sections.empty()) return nullptr;
+    json sects = json::array();
+    for (const auto& s : root.sections) sects.push_back({{"title", s.title}, {"body", s.body}});
+    return {{"body", root.body}, {"sections", sects}, {"tables", ruleTables(cs, root)}};
+}
+
 json ruleTables(const ContentStore& cs, const RuleNode& n) {
     std::vector<const DataTable*> own;
     for (int id : cs.tablesOfRule(n.id)) own.push_back(cs.packTable(id));
@@ -256,7 +285,7 @@ json partyView(const Party& party, const std::function<const Character*(const st
 
 json contentSummary(const ContentStore& cs) {
     json types = json::array(), packs = json::array(), rules = json::array();
-    for (const ContentType& t : kTypes) types.push_back({{"id", t.id}, {"label", t.label}, {"count", cs.count(t.kind)}});
+    for (const ContentType& t : kTypes) types.push_back(typeEntry(cs, t));
     for (const PackInfo& p : cs.packs()) {
         int shown = 0;                                   // a pack that only brings rules or tables has nothing to show here
         for (const ContentType& t : kTypes) shown += p.counts[static_cast<int>(t.kind)];
@@ -264,10 +293,10 @@ json contentSummary(const ContentStore& cs) {
     }
     // Intro-only chapters: spells (Magic) and skills (Skills) surfaced in the Rules tab
     for (const ContentType& t : kTypes) {
-        if (t.kind != Kind::Spell && t.kind != Kind::Skill) continue;
+        if (t.kind != Kind::Spell && t.kind != Kind::Skill && t.kind != Kind::Gear) continue;
         const Intro& intro = cs.introOf(t.kind);
         if (intro.empty()) continue;
-        const char* title = t.kind == Kind::Spell ? "Magic" : "Skills";
+        const char* title = t.kind == Kind::Spell ? "Magic" : t.kind == Kind::Skill ? "Skills" : "Gear";
         rules.push_back({{"key", t.id}, {"title", title}, {"introOnly", true}});
     }
     for (const RuleNode& n : cs.rules()) {
@@ -291,18 +320,7 @@ bool contentList(const ContentStore& cs, const std::string& typeId, const std::s
         for (const Hit& h : cs.search(q, 60, {type->kind}))
             if (const Entry* e = cs.entry(type->kind, h.id)) entries.push_back(publicCard(cs, *e));
     }
-    const Intro& intro = cs.introOf(type->kind);
-    json introJson = nullptr;
-    if (!intro.empty()) {
-        json sects = json::array();
-        for (const auto& s : intro.sections) sects.push_back({{"title", s.title}, {"body", s.body}});
-        std::vector<const DataTable*> own;
-        std::vector<const std::string*> texts{&intro.body};
-        for (const DataTable& t : intro.tables) own.push_back(&t);
-        for (const auto& s : intro.sections) texts.push_back(&s.body);
-        introJson = {{"body", intro.body}, {"sections", sects}, {"tables", tablesShown(cs, own, texts)}};
-    }
-    out = {{"type", type->id}, {"label", type->label}, {"entries", entries}, {"intro", introJson}};
+    out = {{"type", type->id}, {"label", type->label}, {"entries", entries}, {"intro", introView(cs, cs.introOf(type->kind))}};
     return true;
 }
 
@@ -326,14 +344,15 @@ bool rulesChapter(const ContentStore& cs, const std::string& keyId, json& out) {
     json rules = json::array();
     for (const RuleNode& n : cs.rules()) {
         if (!inChapter.count(n.id)) continue;
-        if (n.id == chapter->id && n.body.empty() && n.sections.empty()) continue;
+        if (n.id == chapter->id) continue;                 // its own text goes out as the page's intro
         if (!n.prop("web_hide").empty()) continue;
         json sects = json::array();
         for (const auto& s : n.sections) sects.push_back({{"title", s.title}, {"body", s.body}});
         rules.push_back({{"key", n.key}, {"title", n.title}, {"step", n.prop("step")},
                          {"body", n.body}, {"sections", sects}, {"tables", ruleTables(cs, n)}, {"parentId", n.parent}});
     }
-    out = {{"key", keyId}, {"title", chapter->title}, {"rules", rules}};
+    const json intro = chapter->prop("web_hide").empty() ? chapterIntro(cs, *chapter) : json(nullptr);   // a hidden chapter keeps its text hidden
+    out = {{"key", keyId}, {"title", chapter->title}, {"layout", chapter->prop("layout")}, {"intro", intro}, {"rules", rules}};
     return true;
 }
 
@@ -341,7 +360,7 @@ bool rulesChapter(const ContentStore& cs, const std::string& keyId, json& out) {
 
 json contentSummaryGm(const ContentStore& cs) {
     json types = json::array(), packs = json::array(), rules = json::array();
-    for (const ContentType& t : kTypes) types.push_back({{"id", t.id}, {"label", t.label}, {"count", cs.count(t.kind)}});
+    for (const ContentType& t : kTypes) types.push_back(typeEntry(cs, t));
     types.push_back({{"id", "creatures"}, {"label", "Creatures"}, {"count", static_cast<int>(cs.monsters().size())}});
     for (const PackInfo& p : cs.packs()) {
         int shown = 0;
@@ -349,10 +368,10 @@ json contentSummaryGm(const ContentStore& cs) {
         if (p.loaded && shown > 0) packs.push_back({{"id", p.id}, {"name", p.name}, {"version", p.version}, {"core", p.core}});
     }
     for (const ContentType& t : kTypes) {
-        if (t.kind != Kind::Spell && t.kind != Kind::Skill) continue;
+        if (t.kind != Kind::Spell && t.kind != Kind::Skill && t.kind != Kind::Gear) continue;
         const Intro& intro = cs.introOf(t.kind);
         if (intro.empty()) continue;
-        const char* title = t.kind == Kind::Spell ? "Magic" : "Skills";
+        const char* title = t.kind == Kind::Spell ? "Magic" : t.kind == Kind::Skill ? "Skills" : "Gear";
         rules.push_back({{"key", t.id}, {"title", title}, {"introOnly", true}});
     }
     for (const RuleNode& n : cs.rules()) {
@@ -383,13 +402,13 @@ bool rulesChapterGm(const ContentStore& cs, const std::string& keyId, json& out)
     json rules = json::array();
     for (const RuleNode& n : cs.rules()) {
         if (!inChapter.count(n.id)) continue;
-        if (n.id == chapter->id && n.body.empty() && n.sections.empty()) continue;
+        if (n.id == chapter->id) continue;                 // its own text goes out as the page's intro
         json sects = json::array();
         for (const auto& s : n.sections) sects.push_back({{"title", s.title}, {"body", s.body}});
         rules.push_back({{"key", n.key}, {"title", n.title}, {"step", n.prop("step")}, {"tool", n.prop("tool")},
                          {"body", n.body}, {"sections", sects}, {"tables", ruleTables(cs, n)}, {"parentId", n.parent}});
     }
-    out = {{"key", keyId}, {"title", chapter->title}, {"rules", rules}};
+    out = {{"key", keyId}, {"title", chapter->title}, {"layout", chapter->prop("layout")}, {"intro", chapterIntro(cs, *chapter)}, {"rules", rules}};
     return true;
 }
 
@@ -444,7 +463,7 @@ json monsterList(const ContentStore& cs, const std::string& query) {
     std::sort(list.begin(), list.end(), [](const json& a, const json& b) {
         return lowerAscii(a["name"].get<std::string>()) < lowerAscii(b["name"].get<std::string>());
     });
-    return {{"creatures", list}};
+    return {{"creatures", list}, {"intro", introView(cs, cs.introOf(Kind::Monster))}};
 }
 
 json characterSummary(const Character& c, const ContentStore& /*content*/, const std::string& link) {

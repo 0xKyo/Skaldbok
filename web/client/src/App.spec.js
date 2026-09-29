@@ -75,7 +75,7 @@ describe('App', () => {
     expect(w.text()).toContain('you');
     await tabs[3].trigger('click');
     await flushPromises();
-    await w.findAll('.ref-item').find((i) => i.text().startsWith('Spells')).trigger('click');
+    await w.findAll('.ref-item').find((i) => i.text().startsWith('Magic')).trigger('click');
     await flushPromises();
     expect(w.text()).toContain('Rime Ward');
     expect(w.text()).toContain('Homebrew · Frostmarch');

@@ -1,5 +1,5 @@
 <script setup>
-// The open reference entry: header, optional tabs (e.g. "All skills / General info", "General / Weapons / Armor"), and the list+detail view.
+// The open reference entry: optional tabs (e.g. "All skills / General Info", "General / Weapons / Armor"), and the list+detail view.
 import { computed } from 'vue';
 import CreatureView from './CreatureView.vue';
 import RulesView from './RulesView.vue';
@@ -17,9 +17,6 @@ const type = computed(() => tab.value?.type ?? props.state.current?.type);
 
 <template>
   <div v-if="state.current" class="ref-panel">
-    <div class="ref-header">
-      <strong>{{ state.current.label }}</strong>
-    </div>
     <div v-if="state.current.tabs.length > 1" class="subtabs" role="group" aria-label="View">
       <button v-for="(t, i) in state.current.tabs" :key="t.type + t.mode" :aria-pressed="state.current.tab === i" @click="state.current.tab = i">
         {{ t.label }}
@@ -41,10 +38,5 @@ const type = computed(() => tab.value?.type ?? props.state.current?.type);
 </template>
 
 <style scoped>
-.ref-header {
-  padding: 8px 16px;
-  border-bottom: 1px solid var(--border);
-  font-size: 0.95rem;
-}
 .muted { color: var(--muted); }
 </style>
