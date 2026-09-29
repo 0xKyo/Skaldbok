@@ -80,7 +80,7 @@ private:
     // The history: every place the user got to (an entry, a rule or one of its sections, a section of an intro, a page), so Back and
     // Forward (the buttons, Alt+Left / Alt+Right, the mouse's side buttons) retrace links as well as picks.
     struct Place {
-        std::string module;                   // the page ("spells", "combat-damage", "gear"...)
+        std::string module;                   // the page ("spells", "combat", "gear"...)
         bool entry = false;
         Selection sel;                        // an entry
         int rule = 0, ruleSection = -1;       // a rule (and the section of it), 0 for none

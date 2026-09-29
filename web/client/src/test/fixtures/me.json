@@ -332,7 +332,9 @@
           "value": "4"
         }
       ],
-      "description": "Bane on EVADE and SNEAKING rolls."
+      "banes": ["Evade", "Sneaking"],
+      "ranged": false,
+      "description": ""
     },
     "helmet": null,
     "inventory": [

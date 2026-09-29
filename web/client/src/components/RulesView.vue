@@ -56,10 +56,23 @@ const haystack = (e) => [
   ...(e.sections ?? []).flatMap((s) => [s.title, s.body]),
   ...(e.tables ?? []).flatMap((t) => [t.title, ...(t.columns ?? []), ...t.rows.flatMap((r) => r.cells)]),
 ].filter(Boolean).join('\n').toLowerCase();
+const byTitle = (a, b) => (a.title ?? '').localeCompare(b.title ?? '', undefined, { sensitivity: 'base' });
 const shownEntries = computed(() => {
   const q = query.value.trim().toLowerCase();
-  if (props.mode !== 'rules' || !q || tabbed.value) return entries.value;
-  return entries.value.filter((e) => haystack(e).includes(q));
+  const tabList = grouped.value ? entries.value.filter((e) => e.tab === groupNames.value[groupTab.value]) : entries.value;
+  const list = grouped.value ? [...tabList].sort(byTitle) : tabList;
+  // the entries of a category and of a chapter are already in their order (see load); a chapter's rules are only filtered here
+  if (props.mode === 'tables') return list;
+  if (!q || tabbed.value) return list;
+  return list.filter((e) => haystack(e).includes(q));
+});
+
+// Chapters with `layout: groups` (World): each rule says which `tab` it belongs to; a tab lists its rules with the text of the chosen one beside them.
+const grouped = computed(() => props.mode === 'rules' && layout.value === 'groups' && entries.value.some((e) => e.tab));
+const groupNames = computed(() => [...new Set(entries.value.map((e) => e.tab).filter(Boolean))]);
+const groupTab = ref(0);
+watch(groupTab, () => {
+  if (!shownEntries.value.includes(selected.value)) selected.value = shownEntries.value[0] ?? null;   // a new tab shows its first rule
 });
 
 // Chapters with `layout: tabs` (Actions): every entry is a tab, and the rows of its table are the list, with each row's info beside it.
@@ -69,10 +82,12 @@ const tab = ref(0);
 const row = ref(null);
 const activeEntry = computed(() => (tabbed.value ? entries.value[tab.value] ?? null : null));
 const activeTable = computed(() => activeEntry.value?.tables?.[0] ?? null);
+// a tab of plain text (General Info): it has no table, or it has named sections (its tables are placed inside its text)
+const textTab = computed(() => !!activeEntry.value && (!activeTable.value || (activeEntry.value.sections ?? []).length > 0));
 const rowMatches = (r, q) => !q || r.cells.join('\n').toLowerCase().includes(q);
 const shownRows = computed(() => {
   const q = query.value.trim().toLowerCase();
-  return (activeTable.value?.rows ?? []).filter((r) => rowMatches(r, q));
+  return (activeTable.value?.rows ?? []).filter((r) => rowMatches(r, q)).sort((a, b) => a.cells[0].localeCompare(b.cells[0], undefined, { sensitivity: 'base' }));   // A to Z
 });
 const paragraphsOf = (text) => (text ?? '').split('\n').filter((l) => l.trim());
 watch(shownRows, () => {
@@ -89,6 +104,7 @@ async function load() {
   selected.value = null;
   intro.value = null;
   layout.value = '';
+  groupTab.value = 0;
   tab.value = 0;
   row.value = null;
   if (!type.value) return;
@@ -118,7 +134,9 @@ async function load() {
       }
     } else if (isRulesChapter.value) {
       res = await apiGet(`${props.gmPrefix}/rules/${type.value}`, props.token);
-      entries.value = res.rules ?? [];
+      // A to Z, unless the order carries meaning: numbered steps, the tabs of a layout: tabs chapter; in a groups chapter each tab is sorted
+      const raw = res.rules ?? [];
+      entries.value = res.layout || raw.some((e) => e.step) ? raw : [...raw].sort(byTitle);
       intro.value = res.intro ?? null;
       layout.value = res.layout ?? '';
       if (entries.value.length) {
@@ -129,7 +147,8 @@ async function load() {
       }
     } else {
       res = await apiGet(`${props.gmPrefix}/content/${type.value}${q ? `?q=${encodeURIComponent(q)}` : ''}`, props.token);
-      entries.value = res.entries;
+      // A to Z, ignoring case; a search keeps the server's order (best match first)
+      entries.value = q ? res.entries : [...res.entries].sort((a, b) => (a.name ?? '').localeCompare(b.name ?? '', undefined, { sensitivity: 'base' }));
       intro.value = res.intro ?? null;
       if (entries.value.length) {
         selected.value = pendingKey
@@ -138,6 +157,7 @@ async function load() {
         pendingKey = null;
       }
     }
+    if (grouped.value && selected.value) groupTab.value = Math.max(0, groupNames.value.indexOf(selected.value.tab));   // open on the tab of the wanted rule
     error.value = '';
   } catch (e) {
     if (mine === request) error.value = e.message;
@@ -152,7 +172,11 @@ async function followLink(key) {
   const found = entries.value.find(
     (e) => (e.title ?? e.name ?? '').toLowerCase() === key || e.key?.split('/').pop() === key,
   );
-  if (found) { selected.value = found; return; }
+  if (found) {
+    if (grouped.value) groupTab.value = Math.max(0, groupNames.value.indexOf(found.tab));
+    selected.value = found;
+    return;
+  }
 
   if (props.mode === 'rules') {
     // 2. Try other rules chapters
@@ -201,6 +225,11 @@ watch(type, load);
 watch(query, () => {
   if (props.mode === 'rules') {
     // chapters are already loaded: filter them here, and keep something valid selected
+    const q = query.value.trim().toLowerCase();
+    if (grouped.value && q && !shownEntries.value.length) {              // nothing on this tab: go to the first tab that has a match
+      const other = groupNames.value.findIndex((name) => entries.value.some((e) => e.tab === name && haystack(e).includes(q)));
+      if (other >= 0) groupTab.value = other;
+    }
     if (selected.value && !shownEntries.value.includes(selected.value)) selected.value = shownEntries.value[0] ?? null;
     return;
   }
@@ -225,6 +254,9 @@ watch(
   <section aria-label="Rules" class="rules-root">
     <!-- toolbar: search (tables non-rules types only) + type tabs -->
     <div class="rules-bar">
+      <div v-if="grouped" class="subtabs" role="group" aria-label="Sections">
+        <button v-for="(g, i) in groupNames" :key="g" :aria-pressed="groupTab === i" data-test="group-tab" @click="groupTab = i">{{ g }}</button>
+      </div>
       <div v-if="tabbed" class="subtabs" role="group" aria-label="Sections">
         <button v-for="(e, i) in entries" :key="e.key" :aria-pressed="tab === i" data-test="chapter-tab" @click="tab = i">{{ e.title }}</button>
       </div>
@@ -276,7 +308,22 @@ watch(
     </div>
 
     <!-- tabbed chapter: the tab's own text as its intro, then the rows of its table with the info of the chosen one beside them -->
-    <template v-if="tabbed && activeEntry">
+    <article v-if="textTab" class="rules-detail panel general-info" data-test="tab-text">
+      <template v-for="(b, i) in textBlocks(activeEntry.body, activeEntry.tables)" :key="'b' + i">
+        <DataTable v-if="b.table" :table="b.table" />
+        <ul v-else-if="b.list" class="rule-list"><li v-for="(it, k) in b.list" :key="k"><RuleText :text="it" @follow="followLink" /></li></ul>
+        <p v-else style="margin: 0 0 0.6em;"><RuleText :text="b.text" @follow="followLink" /></p>
+      </template>
+      <template v-for="(s, si) in activeEntry.sections" :key="si">
+        <h3 class="rules-section-title">{{ s.title }}</h3>
+        <template v-for="(b, pi) in textBlocks(s.body, activeEntry.tables)" :key="pi">
+          <DataTable v-if="b.table" :table="b.table" />
+          <ul v-else-if="b.list" class="rule-list"><li v-for="(it, k) in b.list" :key="k"><RuleText :text="it" @follow="followLink" /></li></ul>
+          <p v-else style="margin: 0 0 0.6em;"><RuleText :text="b.text" @follow="followLink" /></p>
+        </template>
+      </template>
+    </article>
+    <template v-else-if="tabbed && activeEntry && !textTab">
       <div v-if="paragraphsOf(activeEntry.body).some((l) => !l.trim().startsWith('{{table:'))" class="inline-intro panel">
         <template v-for="(b, i) in textBlocks(activeEntry.body, [])" :key="i">
           <ul v-if="b.list" class="rule-list"><li v-for="(it, k) in b.list" :key="k"><RuleText :text="it" @follow="followLink" /></li></ul>
@@ -293,8 +340,11 @@ watch(
         <article v-if="row" class="rules-detail panel">
           <h2 class="rules-detail-name">{{ row.cells[0] }}</h2>
           <template v-for="(cell, ci) in row.cells.slice(1)" :key="ci">
-            <h3 v-if="activeTable.columns.length > 2" class="rules-section-title">{{ activeTable.columns[ci + 1] }}</h3>
-            <p v-for="(line, li) in paragraphsOf(cell)" :key="li" style="margin: 0 0 0.6em;"><RuleText :text="line" @follow="followLink" /></p>
+            <h3 v-if="ci > 0 && cell" class="rules-section-title">{{ activeTable.columns[ci + 1] }}</h3>
+            <template v-for="(b, li) in textBlocks(cell, [])" :key="li">
+              <ul v-if="b.list" class="rule-list"><li v-for="(it, k) in b.list" :key="k"><RuleText :text="it" @follow="followLink" /></li></ul>
+              <p v-else style="margin: 0 0 0.6em;"><RuleText :text="b.text" @follow="followLink" /></p>
+            </template>
           </template>
         </article>
       </div>
@@ -316,9 +366,6 @@ watch(
           <span class="rules-row-name">{{ e.step ? `${e.step}. ${e.name ?? e.title}` : (e.name ?? e.title) }}</span>
           <span v-if="e.subtitle" class="rules-row-sub">{{ e.subtitle }}</span>
         </button>
-        <p v-if="summary && mode === 'tables'" class="muted small" style="padding: 8px 12px;">
-          From: {{ summary.packs.map((p) => p.name).join(', ') }}
-        </p>
       </nav>
 
       <!-- right: the detail -->
@@ -328,7 +375,7 @@ watch(
         <div class="rules-detail-head">
           <h2 class="rules-detail-name">{{ selected.step ? `${selected.step}. ${selected.name ?? selected.title}` : (selected.name ?? selected.title) }}</h2>
           <div class="chips" style="margin-top: 4px;">
-            <span v-if="selected.homebrew" class="chip homebrew">{{ selected.source }}</span>
+            <span v-if="selected.pack" class="chip" :class="{ homebrew: selected.homebrew }" data-test="source-chip">Source · {{ selected.pack }}</span>
             <span v-if="selected.subtitle" class="chip">{{ selected.subtitle }}</span>
           </div>
         </div>

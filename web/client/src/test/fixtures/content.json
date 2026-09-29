@@ -58,7 +58,7 @@
   "rules": [
     { "key": "spells", "title": "Magic", "introOnly": true },
     { "key": "skills", "title": "Skills", "introOnly": true },
-    { "key": "combat-damage", "title": "Combat & Damage" },
+    { "key": "combat", "title": "Combat" },
     { "key": "adventures", "title": "Adventures" }
   ]
 }

@@ -686,6 +686,7 @@ void realData() {
           "real kin movement and equipment stats");
     const json spells = body(get(app, "/api/content/spells", token))["entries"];
     check(spells.size() >= 66, "the real spells are there");
+    check(spells[0]["pack"] == "Dragonbane Core", "every card says the pack it comes from (the page shows it as a Source tag)");
     const std::string everything = get(app, "/api/content/kin", token).body + get(app, "/api/content/gear", token).body + get(app, "/api/content/abilities", token).body;
     check(!contains(everything, "Centaur") && get(app, "/api/content/creatures", token).status == 404, "no creatures leak from the real Bestiary");
     int withTables = 0;

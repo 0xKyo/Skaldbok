@@ -3,7 +3,7 @@
 // packs add under it or replace. A table found by a search or a link opens the section that holds it.
 //
 // One class serves several pages over the same tree (host_.content().rules()). A top-level chapter of rules.json that says
-// "nav": "<group>" gets a page of its own in that group of the nav rail (Character Creation, Combat & Damage, Adventures...),
+// "nav": "<group>" gets a page of its own in that group of the nav rail (Character Creation, Combat, World...),
 // made from the data alone; "Rules" shows every chapter that does not.
 #include <string>
 #include <unordered_map>
@@ -47,7 +47,7 @@ public:
     RulesModule(Host& host, const RuleNode* chapter) : Module(host) {
         if (chapter) {
             key_ = chapter->key;
-            id_ = key_.substr(key_.find_last_of('/') + 1);             // "core/rule/combat-damage" -> "combat-damage"
+            id_ = key_.substr(key_.find_last_of('/') + 1);             // "core/rule/combat" -> "combat"
             title_ = chapter->title;
             group_ = chapter->prop("nav");
         } else {

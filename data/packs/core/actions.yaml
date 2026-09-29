@@ -1,6 +1,5 @@
 format: 1
 source: rulebook
-intro: On your turn in the round, you can move and perform one action. You simply explain how you want to move and what action you want to perform. If necessary, you also roll dice to see whether you succeed. You decide whether to move before you act or vice versa. You can even use part of your movement, perform your action, and then finish the movement. You must perform your action and move on your turn – you cannot save any of them for later (but see Waiting on the previous page).
 groups:
   - id: actions
     name: Actions
@@ -30,9 +29,26 @@ actions:
   - name: Ranged Attack
     group: actions
     description: Attacks with a ranged weapon can be made against targets within the weapon’s range.
+  - name: Sneak Attack
+    group: actions
+    description: |
+      * When you sneak up on someone undetected and perform an attack, it is called a sneak attack. It can be done with both ranged and melee weapons, but never during active combat (except with the Backstabbing [[heroic ability]]). First you make a SNEAKING roll.
+      * Moving close enough to attack in melee combat (within 2 meters for most weapons) gives you a [[bane]]. If you fail, the enemy notices you – draw initiative. If you succeed your attack counts as surprising, which means that you can choose any initiative card you want. You also get a [[boon]] on the attack, and the target can neither dodge nor parry. Using a subtle weapon increases the damage by one die (for example 2D8 instead of D8). Sneak attacks are always performed individually, by one attacker against one target.
+  - name: Ambush
+    group: actions
+    description: "* A special kind of sneak attack is an ambush – lying in wait for an enemy and attacking as it passes by. In this case, each victim makes an AWARENESS roll to spot the ambush, with a bane if the attackers are well prepared. All those who fail get the bottom cards (counting from #10 and up), randomly drawn."
   - name: Parry
     group: actions
     description: Both melee and ranged attacks can be parried, but the latter requires a shield. Parrying is a reaction that takes place outside your turn and replaces your normal turn in the round.
+    fields:
+      Parrying: "When hit by an attack in close combat, you can choose to {{key: parry}} the attack with a drawn weapon or shield. Note that you cannot draw a weapon to parry, as free actions can only be performed on your own turn. You must declare that you are going to parry before the attacker rolls for damage. You cannot parry unarmed. It is also impossible to both parry and dodge the same attack. You can parry while prone. When parrying, you roll against your [[skill level]] for the weapon."
+      "Parrying: Reaction": Parrying is a reaction, as it breaks the [[initiative]] order. It replaces your regular turn, and you must immediately flip your initiative card. This means that you cannot parry if you have already had your turn in the round (but see the [[heroic ability]] Defensive).
+      Durability: If your parry succeeds, the enemy’s attack hits your weapon or shield, and you suffer no damage. However, if the damage exceeds your weapon’s durability, the weapon is damaged and cannot be used until it is repaired with a CRAFTING roll.
+      Shield: If you have a shield drawn, you can parry with it instead of your weapon. There is no skill for shields – instead you can use any STR-based melee skill (i.e. any of them except KNIVES and STAVES) to parry with a shield.
+      Piercing Damage: Piercing attacks can never damage a parrying weapon or shield.
+      "Parrying: Monsters": As a rule, [[monster attacks|monster attack]] cannot be parried, unless otherwise specified.
+      Rolling a Dragon when Parrying: If you roll a dragon when parrying, you immediately perform a counterattack on your opponent – an automatic hit with your weapon that cannot be dodged or parried. This does not apply if the attacker rolled a dragon as well – in that case you need a dragon just to parry, and do not get a counterattack.
+      Parry Movement: When successfully parrying an attack, you can move both yourself and the enemy 2 meters (one square) in any direction. These movements follow the usual rules, but do not count toward anyone’s movement in the round and trigger no free attacks from anyone.
   - name: Dodge
     group: actions
     description: Dodging a melee or ranged attack is also a reaction that takes place outside your turn and replaces your normal turn in the round.

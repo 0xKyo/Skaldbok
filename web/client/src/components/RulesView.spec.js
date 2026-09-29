@@ -58,3 +58,50 @@ describe('RulesView search in a rules chapter', () => {
     expect(w.text()).toContain('Nothing found');
   });
 });
+
+describe('RulesView list of a category', () => {
+  const cards = [{ key: 'c/z', name: 'Zither' }, { key: 'c/b', name: 'boots' }, { key: 'c/a', name: 'Abacus' }].map((e) => ({ ...e, fields: [], body: '', tables: [] }));
+
+  async function mountCategory() {
+    vi.stubGlobal('fetch', vi.fn(async (url) => {
+      const path = url.replace('/api', '').split('?')[0];
+      const body = path === '/content' ? { types: [{ id: 'gear', label: 'Gear', count: 3 }], packs: [], rules: [] } : path === '/content/gear' ? { entries: cards, intro: null } : null;
+      return body ? { ok: true, status: 200, json: async () => structuredClone(body) } : { ok: false, status: 404, json: async () => ({ error: 'Not found' }) };
+    }));
+    const w = mount(RulesView, { props: { token: 't', mode: 'tables', jumpTo: { type: 'gear', key: null }, hideTabs: true } });
+    await flushPromises();
+    return w;
+  }
+
+  it('lists the entries of a category A to Z, ignoring case, whatever order the file has', async () => {
+    const w = await mountCategory();
+    expect(names(w)).toEqual(['Abacus', 'boots', 'Zither']);
+    expect(w.get('.rules-detail-name').text()).toBe('Abacus');
+  });
+});
+
+describe('RulesView order of the rules of a chapter', () => {
+  const rule = (title, extra = {}) => ({ key: `r/${title}`, title, body: `About ${title}.`, sections: [], tables: [], ...extra });
+
+  async function mountChapter(rules) {
+    vi.stubGlobal('fetch', vi.fn(async (url) => {
+      const path = url.replace('/api', '').split('?')[0];
+      const body = path === '/content' ? { types: [], packs: [], rules: [{ key: 'combat', title: 'Combat' }] } : path === '/rules/combat' ? { key: 'combat', title: 'Combat', intro: null, rules } : null;
+      return body ? { ok: true, status: 200, json: async () => structuredClone(body) } : { ok: false, status: 404, json: async () => ({ error: 'Not found' }) };
+    }));
+    const w = mount(RulesView, { props: { token: 't', mode: 'rules', jumpTo: { type: 'combat', key: null }, hideTabs: true } });
+    await flushPromises();
+    return w;
+  }
+
+  it('lists the rules A to Z and opens the first of them', async () => {
+    const w = await mountChapter([rule('Rounds & Initiative'), rule('Melee Combat'), rule('Damage'), rule('Conditions')]);
+    expect(names(w)).toEqual(['Conditions', 'Damage', 'Melee Combat', 'Rounds & Initiative']);
+    expect(w.get('.rules-detail-name').text()).toBe('Conditions');
+  });
+
+  it('keeps the book order when the rules are numbered steps', async () => {
+    const w = await mountChapter([rule('Kin', { step: '1' }), rule('Profession', { step: '2' }), rule('Age', { step: '3' })]);
+    expect(names(w)).toEqual(['1. Kin', '2. Profession', '3. Age']);
+  });
+});

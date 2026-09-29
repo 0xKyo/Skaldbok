@@ -29,7 +29,7 @@ private:
     void inventory(Character& c, bool& changed, float w);
     void armorAndWeapons(Character& c, bool& changed, float w);
     void points(const char* title, int& current, int max, int& bonus, const char* bonusTip, bool red, bool& changed, float w);
-    void gear(const char* label, Item& item, const char* bane, bool& changed, float w);
+    void gear(const char* label, Item& item, bool& changed, float w);
     bool refList(const char* label, std::vector<Ref>& list, Kind kind, const char* popup, float w);
 
     Host& host_;

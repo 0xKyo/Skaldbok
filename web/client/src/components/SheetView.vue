@@ -39,7 +39,10 @@ const otherSkills = computed(() => skillsShown.value.filter((s) => s.category !=
 
 const conditionOf = (attribute) => props.me.conditions.find((c) => c.attribute === attribute);
 const activeConditions = computed(() => props.me.conditions.filter((c) => c.active));
-const hasBane = (s) => activeConditions.value.some((c) => c.attribute === s.attribute);
+// what the worn armor and helmet do by themselves: a bane on some skills, and on ranged attacks
+const wornBanes = computed(() => new Set([props.me.equipment.armor, props.me.equipment.helmet].flatMap((i) => i?.banes ?? []).map((b) => b.toLowerCase())));
+const hasBane = (s) => activeConditions.value.some((c) => c.attribute === s.attribute) || wornBanes.value.has(s.name.toLowerCase());
+const rangedBane = computed(() => wornBanes.value.has('ranged attacks'));
 const bonus = (v) => (v ? `+${v}` : '–');
 const eq = computed(() => props.me.equipment);
 const stat = (item, label) => item?.stats.find((f) => f.label === label)?.value ?? '';
@@ -359,6 +362,7 @@ const setInt = (target, key, value, lo, hi) => (target[key] = num(value, lo, hi)
         <div class="stats">
           <span v-for="f in w.stats" :key="f.label"><b>{{ f.label }}</b>{{ f.value }}</span>
         </div>
+        <div v-if="w.ranged && rangedBane" class="bane" data-test="weapon-bane"><b>Bane on:</b> Ranged attacks</div>
         <div v-if="w.description" class="muted small">{{ w.description }}</div>
       </div>
       <EntryPicker v-if="editing" :token="token" type="weapons" label="Add a weapon…" @pick="addWeapon" />
@@ -372,7 +376,7 @@ const setInt = (target, key, value, lo, hi) => (target[key] = num(value, lo, hi)
         <span v-else class="name" data-test="armor">{{ eq.armor?.name ?? 'None' }}</span>
       </div>
       <EntryPicker v-if="editing" :token="token" type="armor" label="Pick armor…" @pick="(e) => chooseGear('armor', e)" />
-      <div class="bane"><b>Bane on:</b> Sneaking · Evade · Acrobatics</div>
+      <div v-if="eq.armor?.banes?.length" class="bane" data-test="armor-bane"><b>Bane on:</b> {{ eq.armor.banes.join(' · ') }}</div>
     </div>
 
     <div class="a-helmet block">
@@ -383,7 +387,7 @@ const setInt = (target, key, value, lo, hi) => (target[key] = num(value, lo, hi)
         <span v-else class="name" data-test="helmet">{{ eq.helmet?.name ?? 'None' }}</span>
       </div>
       <EntryPicker v-if="editing" :token="token" type="armor" label="Pick a helmet…" @pick="(e) => chooseGear('helmet', e)" />
-      <div class="bane"><b>Bane on:</b> Awareness · Ranged attacks</div>
+      <div v-if="eq.helmet?.banes?.length" class="bane" data-test="helmet-bane"><b>Bane on:</b> {{ eq.helmet.banes.join(' · ') }}</div>
     </div>
 
     <div class="a-inv block">

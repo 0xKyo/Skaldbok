@@ -71,7 +71,14 @@ json itemView(const ContentStore& cs, const Item& it) {
             if (f.label == "Damage" || f.label == "Grip" || f.label == "Range" || f.label == "Durability" || f.label == "Features" || f.label == "Armor rating") {
                 stats.push_back({{"label", f.label}, {"value", f.value}});
             }
-    return {{"name", it.name}, {"count", it.count}, {"note", it.note}, {"stats", stats}, {"description", card ? card->body : std::string()}};
+    // what wearing or wielding it does by itself: the skills that get a bane (armor, helmet) and whether a weapon is a ranged one
+    const Entry* effect = card;                       // an item written by name only ("Chainmail") still has its effects
+    for (Kind k : {Kind::Armor, Kind::Weapon})
+        if (!effect && !it.name.empty()) effect = cs.findByName(k, it.name);
+    const std::vector<std::string> banes = effect ? effect->list("banes") : std::vector<std::string>();
+    const bool ranged = effect && effect->kind == Kind::Weapon && effect->prop("kind") == "ranged";
+    return {{"name", it.name}, {"count", it.count}, {"note", it.note}, {"stats", stats}, {"banes", banes}, {"ranged", ranged},
+            {"description", card ? card->body : std::string()}};
 }
 
 json skillRows(const Character& c, const ContentStore& cs) {
@@ -192,7 +199,14 @@ json ruleTables(const ContentStore& cs, const RuleNode& n) {
 
 }  // namespace
 
-// Builds the JSON card shown to players. Source label is included only for homebrew; core content has no attribution.
+// The name of the pack an entry or creature comes from: its key is "<pack>/<kind>/<id>" ("Dragonbane Core", "Frostmarch Tales").
+static std::string packNameOf(const ContentStore& cs, const std::string& key) {
+    const PackInfo* pk = cs.pack(key.substr(0, key.find('/')));
+    return pk ? pk->name : std::string();
+}
+
+// Builds the JSON card shown to players. "pack" is where it comes from (the page shows it as a Source tag); "source" is the label of
+// a homebrew source only.
 json publicCard(const ContentStore& cs, const Entry& e) {
     const SourceInfo* src = cs.source(e.sourceId);
     std::vector<const DataTable*> own;
@@ -205,6 +219,7 @@ json publicCard(const ContentStore& cs, const Entry& e) {
             {"fields", fieldList(e.fields)},
             {"body", e.body},
             {"source", src && src->homebrew ? src->label : std::string()},
+            {"pack", packNameOf(cs, e.key)},
             {"homebrew", src && src->homebrew}};
 }
 
@@ -348,7 +363,7 @@ bool rulesChapter(const ContentStore& cs, const std::string& keyId, json& out) {
         if (!n.prop("web_hide").empty()) continue;
         json sects = json::array();
         for (const auto& s : n.sections) sects.push_back({{"title", s.title}, {"body", s.body}});
-        rules.push_back({{"key", n.key}, {"title", n.title}, {"step", n.prop("step")},
+        rules.push_back({{"key", n.key}, {"title", n.title}, {"step", n.prop("step")}, {"tab", n.prop("tab")},
                          {"body", n.body}, {"sections", sects}, {"tables", ruleTables(cs, n)}, {"parentId", n.parent}});
     }
     const json intro = chapter->prop("web_hide").empty() ? chapterIntro(cs, *chapter) : json(nullptr);   // a hidden chapter keeps its text hidden
@@ -405,7 +420,7 @@ bool rulesChapterGm(const ContentStore& cs, const std::string& keyId, json& out)
         if (n.id == chapter->id) continue;                 // its own text goes out as the page's intro
         json sects = json::array();
         for (const auto& s : n.sections) sects.push_back({{"title", s.title}, {"body", s.body}});
-        rules.push_back({{"key", n.key}, {"title", n.title}, {"step", n.prop("step")}, {"tool", n.prop("tool")},
+        rules.push_back({{"key", n.key}, {"title", n.title}, {"step", n.prop("step")}, {"tab", n.prop("tab")}, {"tool", n.prop("tool")},
                          {"body", n.body}, {"sections", sects}, {"tables", ruleTables(cs, n)}, {"parentId", n.parent}});
     }
     out = {{"key", keyId}, {"title", chapter->title}, {"layout", chapter->prop("layout")}, {"intro", chapterIntro(cs, *chapter)}, {"rules", rules}};
@@ -424,7 +439,7 @@ static std::string lowerAscii(const std::string& s) {
     return out;
 }
 
-json monsterDetail(const ContentStore& /*cs*/, const Monster& m) {
+json monsterDetail(const ContentStore& cs, const Monster& m) {
     const json image = m.image.empty() ? json(nullptr) : json("/gm/creatures/" + m.key + "/image");
     json blocks = json::array();
     for (const StatBlock& b : m.blocks) {
@@ -444,7 +459,7 @@ json monsterDetail(const ContentStore& /*cs*/, const Monster& m) {
     return {{"id", m.id}, {"key", m.key}, {"name", m.name}, {"kind", m.kind},
             {"category", m.category}, {"description", m.description}, {"quote", m.quote},
             {"randomEncounter", m.randomEncounter}, {"adventureSeed", m.adventureSeed},
-            {"statsRef", m.statsRef}, {"image", image}, {"blocks", blocks}, {"attacks", attacks},
+            {"statsRef", m.statsRef}, {"pack", packNameOf(cs, m.key)}, {"image", image}, {"blocks", blocks}, {"attacks", attacks},
             {"abilities", abilities}, {"tables", tables}};
 }
 

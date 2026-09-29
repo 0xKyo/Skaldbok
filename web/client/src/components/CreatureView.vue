@@ -118,6 +118,7 @@ onMounted(search);
             {{ selected.kind === 'npc' ? 'NPC' : selected.kind === 'animal' ? 'Animal' : 'Monster' }}
             <template v-if="selected.category"> · {{ selected.category }}</template>
           </span>
+          <span v-if="selected.pack" class="chip" style="margin-left: 8px;" data-test="source-chip">Source · {{ selected.pack }}</span>
         </div>
 
         <div class="stat-row" :class="{ 'has-image': selected.image }">

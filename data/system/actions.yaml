@@ -1,0 +1,11 @@
+format: 1
+intro:
+  body: On your turn in the round, you can move and perform one action. You simply explain how you want to move and what action you want to perform. If necessary, you also roll dice to see whether you succeed. You decide whether to move before you act or vice versa. You can even use part of your movement, perform your action, and then finish the movement. You must perform your action and move on your turn – you cannot save any of them for later (but see Waiting on the previous page).
+  sections:
+    - name: Reactions
+      body: |
+        Some actions are not performed on your turn, but on the opponent’s. These are called reactions and include things like [[parrying|parry]] or [[dodging|dodge]] attacks. This uses up your own turn in the round, which means that you cannot perform a reaction if you have already had your turn. Flip your [[initiative card|initiative]] after performing a reaction.
+    - name: Terrain
+      body: |
+        The terrain where the fighting takes place can affect your movement and actions. Maps usually show what type of terrain is found in different areas.
+        {{table: Terrain}}

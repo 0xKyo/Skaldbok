@@ -1,0 +1,11 @@
+format: 1
+entities:
+  - name: Slashing
+    kind: damage-type
+    category: Damage Types
+  - name: Piercing
+    kind: damage-type
+    category: Damage Types
+  - name: Bludgeoning
+    kind: damage-type
+    category: Damage Types

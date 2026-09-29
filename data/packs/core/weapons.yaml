@@ -11,7 +11,9 @@ weapons:
     durability: —
     cost: 1 silver
     supply: Common
-    features: Bludgeoning, tiny item
+    features: Tiny item
+    damage_types:
+      - Bludgeoning
   - id: short-bow
     name: Short Bow
     source: rulebook
@@ -23,7 +25,9 @@ weapons:
     durability: "3"
     cost: 25 gold
     supply: Common
-    features: Piercing, requires quiver
+    features: Requires quiver
+    damage_types:
+      - Piercing
   - id: longbow
     name: Longbow
     source: rulebook
@@ -35,7 +39,9 @@ weapons:
     durability: "6"
     cost: 50 gold
     supply: Uncommon
-    features: Piercing, requires quiver
+    features: Requires quiver
+    damage_types:
+      - Piercing
   - id: crossbow-light
     name: Crossbow, Light
     source: rulebook
@@ -47,7 +53,9 @@ weapons:
     durability: "6"
     cost: 75 gold
     supply: Uncommon
-    features: Piercing, requires quiver, no damage bonus
+    features: Requires quiver, no damage bonus
+    damage_types:
+      - Piercing
   - id: crossbow-heavy
     name: Crossbow, Heavy
     source: rulebook
@@ -59,7 +67,9 @@ weapons:
     durability: "9"
     cost: 200 gold
     supply: Rare
-    features: Piercing, requires quiver, no damage bonus
+    features: Requires quiver, no damage bonus
+    damage_types:
+      - Piercing
   - id: crossbow-hand
     name: Crossbow, Hand
     source: rulebook
@@ -71,7 +81,9 @@ weapons:
     durability: "6"
     cost: 90 gold
     supply: Rare
-    features: Piercing, requires quiver, no damage bonus
+    features: Requires quiver, no damage bonus
+    damage_types:
+      - Piercing
   - id: unarmed
     name: Unarmed
     source: rulebook
@@ -83,7 +95,8 @@ weapons:
     durability: —
     cost: —
     supply: —
-    features: Bludgeoning
+    damage_types:
+      - Bludgeoning
   - id: blunt-object-light
     name: Blunt Object, Light
     source: rulebook
@@ -95,7 +108,9 @@ weapons:
     durability: "3"
     cost: —
     supply: —
-    features: Bludgeoning, can be thrown
+    features: Can be thrown
+    damage_types:
+      - Bludgeoning
   - id: blunt-object-heavy
     name: Blunt Object, Heavy
     source: rulebook
@@ -107,7 +122,8 @@ weapons:
     durability: "3"
     cost: —
     supply: —
-    features: Bludgeoning
+    damage_types:
+      - Bludgeoning
   - id: knife
     name: Knife
     source: rulebook
@@ -119,7 +135,9 @@ weapons:
     durability: "6"
     cost: 5 silver
     supply: Common
-    features: Subtle, piercing, can be thrown
+    features: Subtle, can be thrown
+    damage_types:
+      - Piercing
   - id: dagger
     name: Dagger
     source: rulebook
@@ -131,7 +149,10 @@ weapons:
     durability: "9"
     cost: 1 gold
     supply: Common
-    features: Subtle, piercing, slashing, can be thrown
+    features: Subtle, can be thrown
+    damage_types:
+      - Piercing
+      - Slashing
   - id: parrying-dagger
     name: Parrying Dagger
     source: rulebook
@@ -143,7 +164,10 @@ weapons:
     durability: "15"
     cost: 2 gold
     supply: Uncommon
-    features: Subtle, piercing, slashing
+    features: Subtle
+    damage_types:
+      - Piercing
+      - Slashing
   - id: short-sword
     name: Short Sword
     source: rulebook
@@ -155,7 +179,9 @@ weapons:
     durability: "12"
     cost: 8 gold
     supply: Common
-    features: Piercing, slashing
+    damage_types:
+      - Piercing
+      - Slashing
   - id: broadsword
     name: Broadsword
     source: rulebook
@@ -167,7 +193,9 @@ weapons:
     durability: "15"
     cost: 12 gold
     supply: Common
-    features: Piercing, slashing
+    damage_types:
+      - Piercing
+      - Slashing
   - id: longsword
     name: Longsword
     source: rulebook
@@ -179,7 +207,9 @@ weapons:
     durability: "15"
     cost: 25 gold
     supply: Uncommon
-    features: Piercing, slashing
+    damage_types:
+      - Piercing
+      - Slashing
   - id: greatsword
     name: Greatsword
     source: rulebook
@@ -191,7 +221,9 @@ weapons:
     durability: "15"
     cost: 50 gold
     supply: Rare
-    features: Piercing, slashing
+    damage_types:
+      - Piercing
+      - Slashing
   - id: scimitar
     name: Scimitar
     source: rulebook
@@ -203,7 +235,9 @@ weapons:
     durability: "12"
     cost: 10 gold
     supply: Uncommon
-    features: Toppling, slashing
+    features: Toppling
+    damage_types:
+      - Slashing
   - id: handaxe
     name: Handaxe
     source: rulebook
@@ -215,7 +249,9 @@ weapons:
     durability: "9"
     cost: 2 gold
     supply: Common
-    features: Toppling, slashing, can be thrown
+    features: Toppling, can be thrown
+    damage_types:
+      - Slashing
   - id: battleaxe
     name: Battleaxe
     source: rulebook
@@ -227,7 +263,9 @@ weapons:
     durability: "9"
     cost: 10 gold
     supply: Uncommon
-    features: Toppling, slashing
+    features: Toppling
+    damage_types:
+      - Slashing
   - id: two-handed-axe
     name: Two-Handed Axe
     source: rulebook
@@ -239,7 +277,9 @@ weapons:
     durability: "9"
     cost: 25 gold
     supply: Uncommon
-    features: Toppling, slashing
+    features: Toppling
+    damage_types:
+      - Slashing
   - id: mace
     name: Mace
     source: rulebook
@@ -251,7 +291,8 @@ weapons:
     durability: "12"
     cost: 8 gold
     supply: Common
-    features: Bludgeoning
+    damage_types:
+      - Bludgeoning
   - id: morningstar
     name: Morningstar
     source: rulebook
@@ -263,7 +304,8 @@ weapons:
     durability: "12"
     cost: 14 gold
     supply: Uncommon
-    features: Bludgeoning
+    damage_types:
+      - Bludgeoning
   - id: flail
     name: Flail
     source: rulebook
@@ -275,7 +317,9 @@ weapons:
     durability: —
     cost: 16 gold
     supply: Uncommon
-    features: Bludgeoning, toppling, cannot be used for parrying
+    features: Toppling, cannot be used for parrying
+    damage_types:
+      - Bludgeoning
   - id: warhammer-light
     name: Warhammer, Light
     source: rulebook
@@ -287,7 +331,9 @@ weapons:
     durability: "12"
     cost: 10 gold
     supply: Uncommon
-    features: Bludgeoning, toppling
+    features: Toppling
+    damage_types:
+      - Bludgeoning
   - id: warhammer-heavy
     name: Warhammer, Heavy
     source: rulebook
@@ -299,7 +345,9 @@ weapons:
     durability: "12"
     cost: 20 gold
     supply: Uncommon
-    features: Bludgeoning, toppling
+    features: Toppling
+    damage_types:
+      - Bludgeoning
   - id: wooden-club-small
     name: Wooden Club, Small
     source: rulebook
@@ -311,7 +359,8 @@ weapons:
     durability: "9"
     cost: 1 silver
     supply: Common
-    features: Bludgeoning
+    damage_types:
+      - Bludgeoning
   - id: wooden-club-large
     name: Wooden Club, Large
     source: rulebook
@@ -323,7 +372,8 @@ weapons:
     durability: "12"
     cost: 2 silver
     supply: Common
-    features: Bludgeoning
+    damage_types:
+      - Bludgeoning
   - id: staff
     name: Staff
     source: rulebook
@@ -335,7 +385,9 @@ weapons:
     durability: "9"
     cost: 2 silver
     supply: Common
-    features: Bludgeoning, toppling
+    features: Toppling
+    damage_types:
+      - Bludgeoning
   - id: short-spear
     name: Short Spear
     source: rulebook
@@ -347,7 +399,9 @@ weapons:
     durability: "9"
     cost: 5 silver
     supply: Common
-    features: Piercing, can be thrown
+    features: Can be thrown
+    damage_types:
+      - Piercing
   - id: long-spear
     name: Long Spear
     source: rulebook
@@ -359,7 +413,9 @@ weapons:
     durability: "9"
     cost: 1 gold
     supply: Common
-    features: Long, piercing
+    features: Long
+    damage_types:
+      - Piercing
   - id: lance
     name: Lance
     source: rulebook
@@ -371,7 +427,9 @@ weapons:
     durability: "12"
     cost: 12 gold
     supply: Rare
-    features: Long, piercing, requires combat trained mount
+    features: Long, requires combat trained mount
+    damage_types:
+      - Piercing
   - id: halberd
     name: Halberd
     source: rulebook
@@ -383,7 +441,10 @@ weapons:
     durability: "12"
     cost: 20 gold
     supply: Rare
-    features: Long, toppling, piercing, slashing
+    features: Long, toppling
+    damage_types:
+      - Piercing
+      - Slashing
   - id: trident
     name: Trident
     source: rulebook
@@ -395,7 +456,9 @@ weapons:
     durability: "9"
     cost: 5 gold
     supply: Uncommon
-    features: Toppling, piercing, can be thrown
+    features: Toppling, can be thrown
+    damage_types:
+      - Piercing
   - id: shield-small
     name: Shield, Small
     source: rulebook
@@ -407,7 +470,8 @@ weapons:
     durability: "15"
     cost: 4 gold
     supply: Common
-    features: Bludgeoning
+    damage_types:
+      - Bludgeoning
   - id: shield-large
     name: Shield, Large
     source: rulebook
@@ -419,7 +483,8 @@ weapons:
     durability: "18"
     cost: 12 gold
     supply: Common
-    features: Bludgeoning
+    damage_types:
+      - Bludgeoning
   - id: mastercrafted
     name: Mastercrafted
     source: rulebook

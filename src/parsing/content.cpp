@@ -770,11 +770,17 @@ struct ContentStore::Loader {
         addField(e.fields, "STR requirement", jsonStr(o, "str_req"));
         addField(e.fields, "Range", jsonStr(o, "range"));
         addField(e.fields, "Damage", jsonStr(o, "damage"));
+        // "damage_types": the types of damage the weapon can inflict (one or several: a sword slashes and pierces); the names are those
+        // of the Damage Types entities, so a pack can add a type and use it here
+        e.lists["damage_types"] = jsonStrings(o, "damage_types");
+        std::string types;
+        for (const std::string& t : e.lists["damage_types"]) types += (types.empty() ? "" : ", ") + t;
+        addField(e.fields, "Damage type", types);
+        addField(e.fields, "Features", jsonStr(o, "features"));         // what is left to say: the damage types have their own field
         addField(e.fields, "Durability", jsonStr(o, "durability"));
         addField(e.fields, "Cost", jsonStr(o, "cost"));
         addField(e.fields, "Supply", jsonStr(o, "supply"));
         extraFields(o, e.fields);
-        e.body = jsonStr(o, "features");
         for (const char* p : {"grip", "range", "damage", "durability", "str_req"}) e.props[p] = jsonStr(o, p);
         e.props["kind"] = kind;
     }
@@ -784,12 +790,34 @@ struct ContentStore::Loader {
         const std::string slot = lowerCopy(jsonStr(o, "slot", "armor")) == "helmet" ? "helmet" : "armor";
         e.subtitle = slot == "helmet" ? "Helmet" : "Armor";
         addField(e.fields, "Armor rating", jsonStr(o, "armor_rating"));
+        // "armor_bonuses": a bonus to the armor rating against one type of damage ([{"damage_type": "Slashing", "bonus": 2}]); several
+        // are allowed. The type is the name of a Damage Types entity. Kept as JSON in the prop "armor_bonuses" for the rules to use.
+        std::string bonuses;
+        json list = json::array();
+        if (const json* arr = jsonFind(o, "armor_bonuses"); arr && arr->is_array())
+            for (const json& b : *arr) {
+                const std::string type = b.is_object() ? trimmed(jsonStr(b, "damage_type")) : std::string();
+                const int bonus = b.is_object() ? jsonInt(b, "bonus", 0) : 0;
+                if (type.empty() || bonus == 0) {
+                    warn("armor \"" + name + "\": an armor bonus needs a \"damage_type\" and a \"bonus\" (skipped)");
+                    continue;
+                }
+                list.push_back({{"damage_type", type}, {"bonus", bonus}});
+                bonuses += (bonuses.empty() ? "" : ", ") + std::string(bonus > 0 ? "+" : "") + std::to_string(bonus) + " against " + type;
+            }
+        addField(e.fields, "Bonus against damage", bonuses);
+        // "banes": the skills (or "Ranged attacks") that get a bane while this is worn; a sheet applies them by itself when it is equipped
+        e.lists["banes"] = jsonStrings(o, "banes");
+        std::string banes;
+        for (const std::string& b : e.lists["banes"]) banes += (banes.empty() ? "" : ", ") + b;
+        addField(e.fields, "Bane on", banes);
         addField(e.fields, "Cost", jsonStr(o, "cost"));
         addField(e.fields, "Supply", jsonStr(o, "supply"));
         extraFields(o, e.fields);
         e.body = jsonStr(o, "effect");
         e.props["slot"] = slot;
         e.props["armor_rating"] = jsonStr(o, "armor_rating");
+        if (!list.empty()) e.props["armor_bonuses"] = list.dump();
     }
 
     void gear(const json& o, const std::string& name) {
@@ -1157,9 +1185,21 @@ struct ContentStore::Loader {
             pk.error = "actions.yaml: expected a \"groups\" list and/or an \"actions\" list";
             return false;
         }
-        if (!st.actionsChapter_) {
+        // The general text of the chapter is its last tab, "General Info": Core keeps it in data/system/actions.yaml (an "intro" with a
+        // body and named sections, like the intro of every other page); a pack may write its own at the top of its actions.yaml instead
+        json generalInfo = root.contains("intro") ? root["intro"] : json(nullptr);
+        if (!sysDir.empty() && isFile(sysDir + "/actions.yaml")) {
+            std::string sysText;
+            json sysRoot;
+            if (!readTextFile(sysDir + "/actions.yaml", sysText, &err) || !jsonParse(sysText, sysRoot, &err)) {
+                pk.error = "system/actions.yaml: " + err;
+                return false;
+            }
+            if (sysRoot.is_object() && sysRoot.contains("intro")) generalInfo = sysRoot["intro"];
+        }
+        const bool newChapter = !st.actionsChapter_;
+        if (newChapter) {
             json chapter = {{"id", "actions"}, {"nav", "Reference"}, {"layout", "tabs"}};
-            if (const json* intro = jsonFind(root, "intro")) chapter["body"] = *intro;
             if (const std::string src = jsonStr(root, "source"); !src.empty()) chapter["source"] = src;
             addRule(chapter, "Actions", 0, 0, 1);
             st.actionsChapter_ = static_cast<int>(st.rules_.size());
@@ -1187,6 +1227,16 @@ struct ContentStore::Loader {
                 st.actionTables_[id] = st.tables_.back().id;
             }
         }
+        if (newChapter && !generalInfo.is_null()) {                       // the last tab: a page of text with no table
+            json page = {{"id", "general-info"}};
+            if (generalInfo.is_string()) {
+                page["body"] = generalInfo;
+            } else if (generalInfo.is_object()) {
+                if (const json* body = jsonFind(generalInfo, "body")) page["body"] = *body;
+                if (const json* sections = jsonFind(generalInfo, "sections")) page["sections"] = *sections;
+            }
+            addRule(page, "General Info", st.actionsChapter_, chapterSource, 2);
+        }
         if (hasList) {
             int index = 0;
             for (const json& a : *list) {
@@ -1202,9 +1252,24 @@ struct ContentStore::Loader {
                     warn("action \"" + name + "\": the group \"" + jsonStr(a, "group") + "\" does not exist (skipped)");
                     continue;
                 }
+                DataTable& table = st.tables_[static_cast<size_t>(it->second - kPackTableBase) - 1];
                 TableRow row;
-                row.cells = {name, a.contains("description") ? trimmed(jsonText(a["description"])) : std::string()};
-                st.tables_[static_cast<size_t>(it->second - kPackTableBase) - 1].rows.push_back(std::move(row));
+                row.cells.assign(table.columns.size(), std::string());
+                row.cells[0] = name;
+                row.cells[1] = a.contains("description") ? trimmed(jsonText(a["description"])) : std::string();
+                // "fields": named parts of the action (a parry's Durability, Shield...): each name is one more column of the group's table
+                if (const json* fields = jsonFind(a, "fields"); fields && fields->is_object())
+                    for (auto f = fields->begin(); f != fields->end(); ++f) {
+                        auto col = std::find(table.columns.begin() + 2, table.columns.end(), f.key());
+                        if (col == table.columns.end()) {
+                            table.columns.push_back(f.key());
+                            for (TableRow& other : table.rows) other.cells.push_back(std::string());
+                            row.cells.push_back(std::string());
+                            col = table.columns.end() - 1;
+                        }
+                        row.cells[static_cast<size_t>(col - table.columns.begin())] = trimmed(jsonText(f.value()));
+                    }
+                table.rows.push_back(std::move(row));
             }
         }
         return true;
@@ -1377,6 +1442,15 @@ void ContentStore::extractKeywords() {
             owner.section = static_cast<int>(s);
             strip(r.sections[s].body, owner);
         }
+    }
+    for (DataTable& t : tables_) {                                             // a keyword in a table cell points at the rule that shows the table
+        if (!t.rule) continue;
+        SeeTarget owner;
+        owner.type = SeeTarget::Type::Rule;
+        owner.id = t.rule;
+        owner.label = rules_[static_cast<size_t>(t.rule) - 1].title;
+        for (TableRow& r : t.rows)
+            for (std::string& cell : r.cells) strip(cell, owner);
     }
     for (int k = 0; k < kKindCount; ++k)
         for (Entry& e : entries_[k]) {

@@ -227,8 +227,13 @@ personaje (vienen con la profesión).
   Si existe `skills_by_school` el creador pide elegir escuela, y la profesión no da aptitud heroica.
 
 ### weapons.yaml, armor.yaml, gear.yaml — equipo
-* Arma: `kind` (`melee`/`ranged`), `grip`, `str_req`, `range`, `damage`, `durability`, `cost`, `supply`, `features`.
-* Armadura: `slot` (`armor` o `helmet`), `armor_rating`, `cost`, `supply`, `effect`.
+* Arma: `kind` (`melee`/`ranged`), `grip`, `str_req`, `range`, `damage`, `damage_types` (lista: uno o varios, por ejemplo `[Piercing, Slashing]`),
+  `durability`, `cost`, `supply`, `features`.
+* Armadura: `slot` (`armor` o `helmet`), `armor_rating`, `armor_bonuses` (lista de bonus condicionales: `damage_type` y `bonus`, por ejemplo
+  `- damage_type: Slashing` / `bonus: 2`; puede haber varios), `banes` (lista de habilidades que reciben un bane mientras se lleva puesta,
+  por ejemplo `[Evade, Sneaking]`, o `Ranged attacks`; la ficha web los aplica sola al equiparla), `cost`, `supply`, `effect`.
+* Los tipos de daño son entidades (`category: Damage Types`, en `damage-types.yaml` del Core): un pack agrega un tipo nuevo escribiendo su
+  entidad, y ya se puede usar en `damage_types` de las armas y en `armor_bonuses` de las armaduras.
 * Objeto: `category`, `cost`, `supply`, `weight`, `effect`.
 
 Este equipo no tiene una lista propia: las armas, armaduras y objetos del libro son las tablas de la categoría **Gear**
@@ -366,6 +371,7 @@ descripción al lado. Otro pack puede **sumar acciones a un grupo que ya existe*
 ```yaml
 format: 1
 source: rulebook            # opcional: la fuente del capítulo
+# el texto general del capítulo (la pestaña General Info) va en `intro:` de data/system/actions.yaml (Core: body y secciones, como cualquier intro) o, si no hay, aquí
 intro: "Texto general que va arriba de todo el capítulo."
 groups:
   - id: stealth             # lo que usan las acciones en "group"
@@ -377,9 +383,13 @@ actions:
   - name: Hide
     group: stealth
     description: Slip out of sight.
+    fields:                 # opcional: partes con nombre de la acción (cada nombre es una columna más de la tabla del grupo)
+      Durability: Texto que solo esta acción tiene.
 ```
 Un grupo con un `id` que ya existe no se vuelve a definir: sus acciones se agregan a la tabla del grupo. Una acción sin `name`,
-o de un grupo que no existe, se avisa y se omite.
+o de un grupo que no existe, se avisa y se omite. Los `fields` de una acción se muestran, con su nombre como título, debajo de su
+descripción (los campos vacíos no se muestran). Una palabra clave `{{key: parry}}` escrita en una descripción o en un campo
+funciona como en cualquier texto y apunta a la página del grupo.
 
 ### rules.yaml — reglas y homerules
 ```yaml
@@ -397,7 +407,7 @@ rules:
           - name: Guardia de noche
             body: "…"
   - name: Fumbles
-    parent: core/rule/combat-damage
+    parent: core/rule/combat
     body: Un 20 en un ataque es un desastre.
   - name: Melee, a nuestra manera
     replaces: core/rule/melee-combat
@@ -411,7 +421,7 @@ misma. Las de Core traen el texto de los libros; cualquier otro pack puede sumar
   ponerlo para fijar una clave que otros packs van a nombrar. La clave de cada regla es `<pack>/rule/<id>`
   (en Core: `melee-combat`, `boons-banes`; los títulos repetidos llevan delante el de su padre).
 * `parent` (solo para reglas **en la raíz del archivo**): cuelga la regla de otra que ya existe. Es la clave completa de una
-  regla de un pack anterior (`core/rule/combat-damage`) o el `id` de otra regla de este pack. Dentro de un árbol se ignora: manda
+  regla de un pack anterior (`core/rule/combat`) o el `id` de otra regla de este pack. Dentro de un árbol se ignora: manda
   el lugar donde está escrita. Si el padre no existe se avisa y va a la raíz.
 * `replaces`: en lugar de agregar una regla, **cambia** la que tenga esa clave: conserva su lugar y su clave, toma el título y el
   texto nuevos, muestra la fuente del pack y dice *"Changed by <pack>"*. Sus `children` se agregan debajo. Si la regla no existe,
@@ -422,10 +432,10 @@ misma. Las de Core traen el texto de los libros; cualquier otro pack puede sumar
   **clave de otra regla** (`core/rule/melee-combat`). Un `see` que no apunta a nada se avisa al cargar el pack. Así una regla
   puede decir «elegí un kin» y llevar a la lista de Kin, que vive en otro YAML.
 * `nav`: solo en un capítulo de primer nivel. Le da **página propia** en ese grupo de la barra de la izquierda, en vez de estar
-  dentro de Rules: `nav: Reference` (así están *Character Creation*, *Combat & Damage*, *Actions* y *World*). El grupo también puede ser otro texto (aparece como un encabezado nuevo).
+  dentro de Rules: `nav: Reference` (así están *Character Creation*, *Combat*, *Actions* y *World*). El grupo también puede ser otro texto (aparece como un encabezado nuevo).
   La página aparece al abrir la app (tras un cambio en caliente, al reiniciarla). Si el capítulo
   no tiene texto propio (ni `body`, ni `sections`, ni `tables`), no aparece como entrada: sus `children` son el primer nivel de su
-  página (así está *Combat & Damage*).
+  página (así está *Combat*).
 * **Cualquier otra clave** de una regla se conserva como dato para el programa, como en las fichas (`step: "4"`, `trained_skills: 6`,
   `attribute_mods: { AGL: 1 }`, `optional: true`): el creador de personajes los lee de ahí. Texto y números tal cual; objetos y listas,
   como su YAML. `step` además se muestra delante del título («4. Age») en Rules.

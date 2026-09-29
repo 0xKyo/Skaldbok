@@ -31,6 +31,10 @@ Para volver a esta pantalla en cualquier momento: botón **⚙ General Settings*
 
 Todas las páginas de Reference (también Creatures, cuyo texto general del Bestiary es la pestaña **General Info**) tienen la misma estructura, de arriba a abajo: **pestañas** (solo si la entrada las tiene, como Gear o Skills), **barra de búsqueda**, **intro** (el texto general de la categoría o el texto propio del capítulo, siempre desplegado) y la **lista con la descripción al lado**. No hay título encima. En los capítulos de reglas la búsqueda filtra en el navegador por título, texto y contenido de las tablas; la respuesta de `GET /api/rules/<cap>` (y `/api/gm/rules/<cap>`) trae el texto de la raíz del capítulo como `intro`, y `GET /api/gm/creatures` trae el `intro` del Bestiary.
 
+Las tablas con dado (las categorías `rollable` de los yaml, o con `dice`) tienen un botón **Roll**: elige un resultado al azar y marca su fila.
+
+**Capítulos por grupos** (`layout: groups`, como **World**, que sale de `world.yaml`): cada regla dice a qué pestaña pertenece con `tab:` (Journeys, NPC, Treasure, Hazards); arriba van las pestañas, debajo la búsqueda (que salta a la pestaña que tiene la coincidencia) y la lista de las reglas de esa pestaña con el texto al lado.
+
 **Capítulos con pestañas** (`layout: tabs`, como **Actions**, que sale de `actions.yaml`): cada entrada del capítulo es una pestaña; debajo van su texto, la búsqueda y la **lista con las filas de su tabla** (Dash, Melee Attack…), con la información de la fila elegida al lado. La respuesta de `GET /api/rules/<cap>` trae `layout`.
 
 ## Creatures (solo máster)
@@ -188,7 +192,7 @@ Todas las rutas menos `/api/health` piden `Authorization: Bearer <token>`.
 | `GET /api/party` | `{"party": {"name", "members":[…]}}` o `{"party": null}` |
 | `GET /api/content` | tipos de contenido (con su cantidad), packs cargados y capítulos de reglas (`rules[]`; los marcados `introOnly: true` muestran la intro del tipo en lugar de un capítulo YAML) |
 | `GET /api/content/<tipo>?q=texto` | `spells`, `abilities`, `skills`, `kin`, `professions`, `weapons`, `armor`, `gear`; cada entrada tiene `key`, `kind`, `name`, `subtitle`, `fields`, `body`, `tables`, `homebrew`; `source` solo para homebrew. `tables` (y `intro.tables`, y `tables` de cada regla) son `{title, dice, columns[], rows[{roll, cells[]}]}`: las propias más las que el texto nombra con una línea `{{table: Nombre}}`, que el cliente dibuja en ese lugar |
-| `GET /api/rules/<cap>` | capítulo de reglas YAML por clave (`combat-damage`, `world`, …); devuelve `{key, title, rules[]}` con cada nodo `{key, title, body, sections, parentId}` |
+| `GET /api/rules/<cap>` | capítulo de reglas YAML por clave (`combat`, `world`, …); devuelve `{key, title, rules[]}` con cada nodo `{key, title, body, sections, parentId}` |
 
 Errores: `401` enlace no válido, `429` demasiados intentos, `404` ruta o tipo desconocido, `405` método no permitido.
 

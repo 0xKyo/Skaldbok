@@ -23,6 +23,7 @@
       ],
       "body": "A thin rime spreads over a small object or a creature's fingertips. The target is chilled and takes a bane on its next roll that needs a steady hand.",
       "source": "Homebrew · Frostmarch",
+      "pack": "Frostmarch Tales",
       "homebrew": true,
       "page": "p.20"
     },
@@ -55,6 +56,7 @@
       ],
       "body": "You coat a creature in a shimmer of ice. The target gets +2 armor against fire damage and is immune to the effects of natural cold until the spell ends.",
       "source": "Homebrew · Frostmarch",
+      "pack": "Frostmarch Tales",
       "homebrew": true,
       "page": "p.20"
     },
@@ -91,6 +93,7 @@
       ],
       "body": "A swirling storm of snow fills a sphere 10 meters across. Everyone inside has a bane on attacks and on AWARENESS rolls.\nFire in the area is doused at once.",
       "source": "Homebrew · Frostmarch",
+      "pack": "Frostmarch Tales",
       "homebrew": true,
       "page": "p.21"
     }

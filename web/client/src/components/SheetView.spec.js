@@ -263,3 +263,26 @@ describe('SheetView editing', () => {
     expect(w.get('[data-test=silver-input]').element.value).toBe('12');
   });
 });
+
+describe('SheetView worn banes', () => {
+  it('applies the banes of the worn armor and helmet by itself: on the skills, on the item and on ranged attacks', () => {
+    const m = meReadonly();
+    m.equipment.helmet = { name: 'Great Helm', count: 1, note: '', stats: [], banes: ['Awareness', 'Ranged attacks'], ranged: false, description: '' };
+    m.equipment.weapons[0].ranged = true;
+    const w = mount(SheetView, { props: { me: m } });
+    expect(w.get('[data-test=armor-bane]').text()).toContain('Evade · Sneaking');
+    expect(w.get('[data-test=helmet-bane]').text()).toContain('Awareness · Ranged attacks');
+    const flaggedSkills = w.findAll('.skill.flagged').map((s) => s.text());
+    for (const name of ['Evade', 'Awareness']) expect(flaggedSkills.some((t) => t.includes(name))).toBe(true);
+    expect(flaggedSkills.some((t) => t.includes('Acrobatics'))).toBe(false);
+    expect(w.find('[data-test=weapon-bane]').exists()).toBe(true);
+  });
+
+  it('shows no bane line and flags nothing extra when nothing worn has one', () => {
+    const m = meReadonly();
+    m.equipment.armor = { ...m.equipment.armor, banes: [] };
+    const w = mount(SheetView, { props: { me: m } });
+    expect(w.find('[data-test=armor-bane]').exists()).toBe(false);
+    expect(w.find('[data-test=weapon-bane]').exists()).toBe(false);
+  });
+});

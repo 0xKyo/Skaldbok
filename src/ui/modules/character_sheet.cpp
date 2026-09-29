@@ -108,8 +108,6 @@ bool lineInt(const char* id, int& v, int lo, int hi, float width) {
     return changed;
 }
 
-const char* const kBaneArmor = "Sneaking · Evade · Acrobatics";
-const char* const kBaneHelmet = "Awareness · Ranged attacks";
 
 std::string statText(const Entry* e, const char* label) {
     if (e)
@@ -720,7 +718,7 @@ void CharacterSheet::inventory(Character& c, bool& changed, float w) {
 
 // ------------------------------------------------------------------------------- armor, helmet and weapons
 
-void CharacterSheet::gear(const char* label, Item& item, const char* bane, bool& changed, float w) {
+void CharacterSheet::gear(const char* label, Item& item, bool& changed, float w) {
     ImDrawList* dl = ImGui::GetWindowDrawList();
     const Entry* e = linkedGear(host_.content(), item);
     std::string rating = statText(e, "Armor rating");
@@ -734,7 +732,10 @@ void CharacterSheet::gear(const char* label, Item& item, const char* bane, bool&
     ImGui::BeginGroup();
     ImGui::TextColored(kGold, "%s", label);
     changed |= lineText("##name", item.name, w - r * 2 - U(10));
-    ImGui::TextColored(kGrey, "Bane on: %s", bane);
+    std::string banes;                                   // what wearing it does by itself, from its entry (the data says which skills)
+    if (e)
+        for (const std::string& b : e->list("banes")) banes += (banes.empty() ? "" : " · ") + b;
+    if (!banes.empty()) ImGui::TextColored(kGrey, "Bane on: %s", banes.c_str());
     ImGui::EndGroup();
     ImGui::SetCursorScreenPos(ImVec2(p.x, std::max(ImGui::GetItemRectMax().y, p.y + r * 2 + U(6))));
     ImGui::Dummy(ImVec2(w, U(4)));
@@ -745,13 +746,13 @@ void CharacterSheet::armorAndWeapons(Character& c, bool& changed, float w) {
     const float gap = U(14), half = (w - gap) * 0.5f;
     ImGui::BeginGroup();
     ImGui::PushID("armor");
-    gear("ARMOR", c.armor, kBaneArmor, changed, half);
+    gear("ARMOR", c.armor, changed, half);
     ImGui::PopID();
     ImGui::EndGroup();
     ImGui::SameLine(0, gap);
     ImGui::BeginGroup();
     ImGui::PushID("helmet");
-    gear("HELMET", c.helmet, kBaneHelmet, changed, half);
+    gear("HELMET", c.helmet, changed, half);
     ImGui::PopID();
     ImGui::EndGroup();
 

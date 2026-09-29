@@ -3,8 +3,10 @@ world:
   - name: World
     nav: Reference
     source: rulebook
+    layout: groups
     children:
       - name: Journeys
+        tab: Journeys
         body: As adventurers in the world of Dragonbane, the [[player characters|player character]] must often journey through dark forests, rugged moors, and high mountains. A journey can be much more than just a way of getting somewhere – it can be a little adventure in itself. Who knows what lies in wait around the corner?
         sections:
           - name: Travel
@@ -17,7 +19,7 @@ world:
             body: The travel rules are designed for short treks within a limited area. If the player characters go on a long journey to another part of the world, there is no need to play it out in detail – the GM can just make a cut in the story and pick up again when they arrive at their destination.
           - name: Pathfinders
             body: |
-              Player characters who follow a road or clear path are not at risk of getting lost, but such luxuries are rarely available. When they are out in the wilderness, navigation is more difficult, and all sorts of mishaps can occur. When traveling through pathless terrain, the player characters must appoint a pathfinder who leads the way for the group. This person must make a BUSHCRAFT roll every shift to find their way. If the pathfinder has no map, the roll gets a [[bane]]. A spyglass gives a [[boon]]. On a failure, the group suffers a mishap – roll on the table on page 102. You can adjust the mishap to better fit the area.
+              Player characters who follow a road or clear path are not at risk of getting lost, but such luxuries are rarely available. When they are out in the wilderness, navigation is more difficult, and all sorts of mishaps can occur. When traveling through pathless terrain, the player characters must appoint a pathfinder who leads the way for the group. This person must make a BUSHCRAFT roll every shift to find their way. If the pathfinder has no map, the roll gets a [[bane]]. A spyglass gives a [[boon]]. On a failure, the group suffers a mishap – roll on the table. You can adjust the mishap to better fit the area.
               {{table: Mishaps}}
           - name: Rolling a Dragon
             body: A pathfinder who rolls a Dragon finds a shortcut – the distance covered this shift is doubled.
@@ -27,10 +29,13 @@ world:
             body: |
               During a journey, the player characters can encounter the strangest creatures from far and near. Once per shift, or whenever you deem appropriate, you can roll on a table for random encounters. Random encounters can vary depending on the area you are
               in, which is why they are typically included in the adventure. You can also choose a suitable encounter instead of rolling randomly or make one up yourself. Some random encounters can even occur at night and when the player characters have made camp.
+      - name: Wilderness
+        tab: Journeys
+        sections:
           - name: Cold
-            body: In cold weather, particularly at night, the player characters must make a BUSHCRAFT roll to withstand the cold (page 54). It takes a blanket to avoid a bane, while a fur grants a boon on the roll.
+            body: In cold weather, particularly at night, the player characters must make a BUSHCRAFT roll to withstand the cold. It takes a blanket to avoid a bane, while a fur grants a boon on the roll.
           - name: Making Camp
-            body: The player characters need to sleep at least one shift per day to avoid sleep deprivation (page 54). Out in the wilderness, each player character must make a BUSHCRAFT roll to find a suitable resting place. Anyone without a sleeping fur gets a bane on the roll. If it fails, the shift does not count as sleep, nor can it be used as a [[shift rest]] (page 52).
+            body: The player characters need to sleep at least one shift per day to avoid sleep deprivation. Out in the wilderness, each player character must make a BUSHCRAFT roll to find a suitable resting place. Anyone without a sleeping fur gets a bane on the roll. If it fails, the shift does not count as sleep, nor can it be used as a [[shift rest]].
           - name: Tent
             body: A tent grants a boon when making camp, and a successful roll allows multiple people to sleep in the tent without making their own BUSHCRAFT rolls. A small tent can accommodate two people and a large one has room for six. If the person setting up the tent fails, other player characters can roll separately for the same shift.
           - name: Keeping Watch
@@ -48,13 +53,14 @@ world:
           - name: Cooking
             body: Anyone eating raw fish or meat is at risk of falling ill – roll against virulence 10. Plants can be eaten raw without risk, but it takes two rations of raw plants to cover the daily need of food. Cooking up to ten rations of food takes one shift and requires a successful BUSHCRAFT roll. On a failure, the food counts as uncooked. A field kitchen gives a boon to the roll. The same goes for a proper kitchen, and there you can also cook as much food as you want. See the Master Chef [[heroic ability]].
       - name: Non-Player Characters
+        tab: NPC
         web_hide: true
         body: |
-          You control everything in the world around the [[player characters|player character]], from dragons to demons, but your most important tool for creating drama is often your non-player characters. Stats for typical types of {{key: NPCs | npc}} can be found on the next page.
+          You control everything in the world around the [[player characters|player character]], from dragons to demons, but your most important tool for creating drama is often your non-player characters. Stats for typical types of {{key: NPCs | npc}} can be found on the table.
           {{table: Typical NPCs}}
         sections:
           - name: Managing NPCs
-            body: Mechanically, NPCs function like player characters. They move, perform actions, sustain damage, and use [[WP]] in the same way. But in practice, you should disregard all rules mechanics for NPCs if they do not directly affect a player character. Don’t roll dice for actions performed by NPCs unless they are attacking or healing a player character. You can roll for NPCs in other situations if it enhances the drama, but usually there is no need for it. Remember, an NPC rolls against the default [[skill level]] of 5 if no other level is listed (page 33).
+            body: Mechanically, NPCs function like player characters. They move, perform actions, sustain damage, and use [[WP]] in the same way. But in practice, you should disregard all rules mechanics for NPCs if they do not directly affect a player character. Don’t roll dice for actions performed by NPCs unless they are attacking or healing a player character. You can roll for NPCs in other situations if it enhances the drama, but usually there is no need for it. Remember, an NPC rolls against the default [[skill level]] of 5 if no other level is listed.
           - name: Minions & Bosses
             body: "NPCs can be divided into two categories: minions and bosses."
           - name: Minions
@@ -66,6 +72,68 @@ world:
               In adventures for Dragonbane, [[attribute]] scores for NPCs are not listed as they are very rarely used. If you at some point would need to roll against an exact attribute score for an NPC, use the guidelines below: STR & AGL: Use the [[Damage bonus|Derived Ratings]]. At +D6, roll against an attribute score of 17. At +D4, roll against 14. At no bonus, roll against 10.
               CON: Roll against maximum HP, reduced by 2 for each level of the Robust heroic ability. WIL: Roll against maximum WP if this is listed, reduced by 2 for each level of the Focused heroic ability. If WP is not listed, roll against 10. INT & CHA: Roll against 10.
       - name: NPC Creator
+        tab: NPC
         web_hide: true
         tool: npc-creator
         body: "Roll a random non-player character (name, attitude, kin, motivation, profession and trait) using the lists in Creating NPCs. Each result can be re-rolled on its own."
+      - name: Treasure
+        tab: Treasure
+        body: |
+          Roll D6 to see which of the tables to use: 1–3: Treasure table 1, 4–6: Treasure table 2.
+          {{table: Treasure Table 1}}
+          {{table: Treasure Table 2}}
+      - name: Other Hazards
+        tab: Hazards
+        sections:
+          - name: Darkness
+            body: In complete darkness you cannot dash or hit enemies with ranged attacks. To attack an enemy in melee combat, you must first make an AWARENESS roll (not an action).
+          - name: Torches & Lanterns
+            body: A torch or lantern lights up 10 meters (five squares) in all directions. Lighting a torch or lantern is an action and requires flint and tinder or a fire to light it with, or the [[magic trick]] IGNITE . If none of these are available, you can light it with a successful BUSHCRAFT roll, but that takes one stretch of work. A torch or lantern is carried in one hand, which means that you cannot use two-handed weapons or a second one-handed weapon at the same time. A torch can be used as a weapon, and counts as a small wooden club that deals fire damage. Whenever you hit someone with it, you must immediately roll to see whether the flame goes out (below). A torch or lantern can burn for up to a shift of time, but they are unreliable. After each stretch, or whenever the GM wants to heighten the drama, you must roll a die (the type depends on the light source. A result of 1 means that the flame goes out.
+          - name: Fear
+            body: |
+              There are many horrifying beasts lurking in the ruins and forests of Dragonbane. Such creatures can perform so-called fear attacks. Fear attacks can also be triggered by magic and other terrifying experiences. When struck by a fear attack you must immediately make a roll against WIL. The roll can be [[pushed|push]] (optional rule) and does not count as an action. Particularly frightening events can give you a [[bane]] on the roll. If the WIL roll fails, you must roll on the fear table on the next page.
+              {{table: Fear Table}}
+          - name: Poison
+            body: |
+              {{key: Poisons | poison}} are measured by potency. A weak poison has potency 9, a moderate poison has potency 12, and a strong poison can have potency 15 or even more. Whenever you ingest a poison, the GM makes an [[open opposed roll|opposed roll]] between the potency and your CON. If the poison wins, you suffer its full effect. If you win, you only suffer the limited effect of the poison. Poison has no effect on monsters.
+              [[NPCs|npc]]: For poison effects on NPCs, roll against their maximum [[HP]], reduced by 2 for each level of the Robust [[heroic ability]].
+          - name: Lethal Poison
+            body: |
+              ✦Full Effect: You take D6 damage per round, on your turn, until you reach zero HP. If you consume an antidote in time the effect is halted.
+              ✦Limited Effect: You take D6 damage on your next turn.
+          - name: Paralyzing Poison
+            body: |
+              ✦Full Effect: You become Exhausted and must make a CON roll each turn (not an action). If it fails, you can neither move nor perform actions (not even [[free actions|free action]]) that round. The effect wears off after one stretch or if you are given an antidote.
+              ✦Limited Effect: You become Exhausted.
+          - name: Sleeping Poison
+            body: |
+              ✦Full Effect: You become Dazed and must make a CON roll each turn (not an action). If it fails, you fall asleep and remain sleeping for one shift. Being given an antidote or taking at least one point of damage wakes you up.
+              ✦Limited Effect: You become Dazed.
+          - name: Disease
+            body: When you are exposed to a dangerous disease, the GM makes an open opposed roll between the disease’s virulence rating and your CON. If you win, you resist the disease. If not, you fall ill after one day – you become Sickly and lose D6 HP. While sick you cannot heal HP, [[WP]], or [[conditions|condition]]. Make a new roll against the disease every day, where each failure inflicts D6 damage. If you reach zero HP while sick, you die a day later. As soon as you win the opposed roll, you are fully cured – you stop rolling and can heal as usual.
+          - name: Healing
+            body: If someone tends to you with the HEALING skill while you are sick, that person can make the roll against the disease instead of you. The caregiver rolls for HEALING against the virulence of the disease. An herbal concoction adds a [[boon]] to the roll.
+          - name: Falling
+            body: Falling on a hard surface inflicts a number of D6s of bludgeoning damage equal to half of the height of the fall in meters, rounded down. A fall of less than two meters inflicts no damage. A successful ACROBATICS roll reduces the number of D6 by half (rounded up). Armor does not protect against falling damage.
+          - name: Swimming & Drowning
+            body: All [[player characters|player character]] are decent swimmers. In water your movement rate is half your movement rate on land. No ranged attacks can be performed in water, and melee attacks are performed with a bane. More difficult underwater maneuvers, like diving for something, require a
+          - name: Hunger
+            body: You must eat at least one ration of food per day. After one day without food you become famished and cannot heal HP, WP, or conditions except through magic. You also take one point of damage per day that you haven’t eaten. If you reach zero HP while famished, you die from starvation after one day. Once you have eaten a ration of food you are no longer famished and can heal normally again.
+          - name: Cold
+            body: |
+              When the cold is bitter and you do not have enough shelter (according to the GM), you must roll BUSHCRAFT regularly. You usually roll once per shift, but in extreme cold you may have to roll every stretch or even every round. If you don’t have a blanket, you get a bane to the roll, while a fur gives you a boon.
+              On failure you lose D6 HP and D6 WP, and can no longer heal these or conditions except through magic. You must then keep making rolls to withstand the cold, with the same effect if you fail. If you reach zero HP while cold, you die when it is time for the next roll. Only when you get warm, if only by a campfire, can you stop making rolls and heal normally again.
+          - name: Sleep Deprivation
+            body: You need at least one shift of uninterrupted sleep every day. You cannot sleep in armor. After three shifts without sleep you can no longer heal WP or conditions. You heal HP as usual. You also lose D6 WP each shift you remain awake. If you reach zero WP while suffering from sleep deprivation, you collapse and sleep for at least one shift, and cannot be woken. Once you have slept at least one shift, you can heal WP and conditions normally again.
+      - name: Riding Animals
+        tab: Journeys
+        body: A loyal horse or some other mount is a great asset to any adventurer.
+        sections:
+          - name: Saddlebags
+            body: The Gear lists specify how many units of weight the animal can carry.
+          - name: Movement
+            body: While mounted you travel twice as fast as on foot – roughly 30 kilometers per shift. All [[player characters|player character]] are assumed to be able to get up on a horse and ride slowly, but for more advanced maneuvers a roll for RIDING is required.
+          - name: Combat
+            body: In order to fight on horseback, your mount must be combat trained. You may then move at your mount’s movement rate instead of your own. On horseback you fight as usual, but all attacks and [[parries|parry]] use the lowest of your RIDING skill and the weapon skill. Also, RIDING replaces EVADE when horseback. If you don’t have a saddle, all rolls get a [[bane]]. Enemies attacking you must choose whether they target you or your mount. Melee attacks from the ground get a bane against you.
+          - name: Damage
+            body: Mounts heal [[HP]] just like player characters. A mount that reaches zero HP does not make [[death rolls|death roll]], but simply dies.

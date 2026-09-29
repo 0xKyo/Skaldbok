@@ -115,6 +115,50 @@ int main(int argc, char** argv) {
     check(core.count(Kind::Ability) == 51, "44 heroic + 7 kin abilities");
     check(core.count(Kind::Skill) == 34 && core.count(Kind::Kin) == 6 && core.count(Kind::Profession) == 10, "34 skills, 6 kin, 10 professions");
     check(core.count(Kind::Weapon) == 36 && core.count(Kind::Armor) == 6 && core.count(Kind::Gear) == 116, "equipment: 36 weapons, 6 armors, 116 items");
+    {
+        // damage types: entities in damage-types.yaml; weapons say which they inflict (one or several), armor can have a bonus against one
+        const DataTable* types = core.tableByName("Damage Types");
+        std::set<std::string> known;
+        for (const TableRow& r : types ? types->rows : std::vector<TableRow>()) known.insert(r.cells[0]);
+        check(known == std::set<std::string>{"Slashing", "Piercing", "Bludgeoning"}, "the damage types are entities of their own (damage-types.yaml), one row each");
+        bool everyTypeKnown = true;
+        int typed = 0;
+        for (const Entry& w : core.entries(Kind::Weapon)) {
+            typed += !w.list("damage_types").empty();
+            for (const std::string& t : w.list("damage_types")) everyTypeKnown &= known.count(t) == 1;
+        }
+        const Entry* sling = find(core, Kind::Weapon, "Sling");
+        const Entry* broadsword = find(core, Kind::Weapon, "Broadsword");
+        check(everyTypeKnown && typed == 35 && sling && sling->list("damage_types") == std::vector<std::string>{"Bludgeoning"} && broadsword &&
+                  broadsword->list("damage_types") == (std::vector<std::string>{"Piercing", "Slashing"}),
+              "each weapon lists the damage types it can inflict (several allowed), all of them known damage types");
+        // Features is a field of the weapon page and says what the damage type field does not: no damage type words in it
+        bool featuresClean = true;
+        int withFeatures = 0;
+        for (const Entry& w : core.entries(Kind::Weapon))
+            for (const Field& f : w.fields)
+                if (f.label == "Features") {
+                    ++withFeatures;
+                    for (const char* word : {"iercing", "lashing", "ludgeoning"}) featuresClean &= !f.value.contains(word);
+                }
+        const Entry* crossbow = find(core, Kind::Weapon, "Crossbow, Light");
+        std::string crossbowFeatures;
+        for (const Field& f : crossbow ? crossbow->fields : std::vector<Field>())
+            if (f.label == "Features") crossbowFeatures = f.value;
+        check(featuresClean && withFeatures == 24 && crossbowFeatures == "Requires quiver, no damage bonus" && crossbow && crossbow->body.empty(),
+              "a weapon's Features are a field of its page, without the damage types (they are shown as Damage type)");
+        const Entry* chainmail = find(core, Kind::Armor, "Chainmail");
+        const Entry* leather = find(core, Kind::Armor, "Leather");
+        const Entry* plate = find(core, Kind::Armor, "Plate Armor");
+        const Entry* greatHelm = find(core, Kind::Armor, "Great Helm");
+        check(plate && plate->list("banes") == (std::vector<std::string>{"Acrobatics", "Evade", "Sneaking"}) && greatHelm &&
+                  greatHelm->list("banes") == (std::vector<std::string>{"Awareness", "Ranged attacks"}) && leather && leather->list("banes").empty() &&
+                  plate->body.empty(),
+              "armor says its banes as data (skills, or Ranged attacks) instead of a text: Plate Armor, Great Helm; Leather has none");
+        check(chainmail && chainmail->prop("armor_bonuses") == "[{\"damage_type\":\"Slashing\",\"bonus\":2}]" && leather &&
+                  leather->prop("armor_bonuses") == "[{\"damage_type\":\"Bludgeoning\",\"bonus\":2}]" && plate && plate->prop("armor_bonuses").empty(),
+              "armor can have a conditional bonus against a type of damage (Chainmail +2 against slashing, Leather +2 against bludgeoning)");
+    }
 
     const Monster* centaur = monsterOf(core, "Centaur", "bestiary");
     check(centaur && centaur->attacks.size() == 6 && centaur->attackDice == "D6", "Centaur (Bestiary) has 6 attacks on a D6");
@@ -368,16 +412,34 @@ int main(int argc, char** argv) {
         std::vector<std::string> pages;
         for (const RuleNode& n : core.rules())
             if (n.parent == chapter) pages.push_back(n.title);
-        check(ch && ch->prop("nav") == "Reference" && ch->prop("layout") == "tabs" && ch->body.contains("perform one action"),
-              "Core's actions.yaml makes the Actions chapter: a page of the Reference with an intro and the tabs layout");
-        check(pages == std::vector<std::string>{"Actions", "Free Actions", "Movement", "Melee Combat"}, "one page per action group, in the order of the file");
+        const RuleNode* info = nullptr;
+        for (const RuleNode& n : core.rules())
+            if (n.parent == chapter && n.title == "General Info") info = &n;
+        check(ch && ch->prop("nav") == "Reference" && ch->prop("layout") == "tabs" && info && info->body.contains("perform one action") &&
+                  info->sections.size() == 2 && info->sections[0].title == "Reactions" && info->sections[1].title == "Terrain" &&
+                  info->sections[1].body.contains("{{table: Terrain}}") && core.tableByName("Terrain") && core.tableByName("Terrain")->rows.size() == 4,
+              "Core's actions.yaml makes the Actions chapter: a page of the Reference with the tabs layout, whose General Info tab is the intro of data/system/actions.yaml (body, a Reactions section and a Terrain section that places the terrain.yaml table)");
+        check(pages == std::vector<std::string>{"Actions", "Free Actions", "Movement", "Melee Combat", "General Info"}, "one page per action group in the order of the file, then General Info");
         const DataTable* acts = core.tableByName("Actions");
         const DataTable* moves = core.tableByName("Movement Actions");
-        check(acts && acts->rows.size() == 16 && acts->rows[0].cells[0] == "Dash" && core.tableByName("Free Actions") && core.tableByName("Free Actions")->rows.size() == 5 &&
+        check(acts && acts->rows.size() == 18 && acts->rows[0].cells[0] == "Dash" && core.tableByName("Free Actions") && core.tableByName("Free Actions")->rows.size() == 5 &&
                   moves && moves->rows.size() == 4 && core.tableByName("Melee Combat Actions") && core.tableByName("Melee Combat Actions")->rows.size() == 2,
               "each group's actions are the rows of its table (name, effect)");
         const DataTable* kinMovement = core.tableByName("Movement");
         check(kinMovement && kinMovement->rows.size() == 6, "a group's table can have another title, so {{table: Movement}} still means the kin table");
+        // an action can have named fields (Parry's Durability, Shield...): each one is a column of its group's table, empty for the other actions
+        int parryRow = -1;
+        for (size_t i = 0; acts && i < acts->rows.size(); ++i)
+            if (acts->rows[i].cells[0] == "Parry") parryRow = static_cast<int>(i);
+        const auto durability = acts ? std::find(acts->columns.begin(), acts->columns.end(), "Durability") : std::vector<std::string>::const_iterator();
+        check(acts && parryRow >= 0 && durability != acts->columns.end() && acts->rows[0].cells.size() == acts->columns.size() &&
+                  acts->rows[static_cast<size_t>(parryRow)].cells[static_cast<size_t>(durability - acts->columns.begin())].contains("weapon or shield") &&
+                  acts->rows[0].cells[static_cast<size_t>(durability - acts->columns.begin())].empty(),
+              "an action's fields become columns of its group's table, filled only for that action (the whole Parrying text is Parry's)");
+        const auto parryKey = core.keywords().find("parry");
+        check(parryKey != core.keywords().end() && parryKey->second.type == SeeTarget::Type::Rule && core.rule(parryKey->second.id) &&
+                  core.rule(parryKey->second.id)->title == "Actions",
+              "a {{key: parry}} written in an action's field is a keyword that points at the rule showing that table");
 
         const std::string root = test::scratch("actions");
         removeTree(root);
@@ -440,7 +502,7 @@ int main(int argc, char** argv) {
         check(ap && ap->loaded && ap->warnings.size() == 2 && hasWarning(*ap, "nowhere") && hasWarning(*ap, "no \"name\""),
               "a pack's actions.yaml loads; an action of an unknown group and one without a name are reported");
         const DataTable* more = s.tableByName("Actions");
-        check(more && more->rows.size() == 17 && more->rows.back().cells[0] == "Backflip", "a pack adds actions to a group Core already has (the group of the same id is not redefined)");
+        check(more && more->rows.size() == 19 && more->rows.back().cells[0] == "Backflip", "a pack adds actions to a group Core already has (the group of the same id is not redefined)");
         const DataTable* stealth = s.tableByName("Stealth");
         const RuleNode* page = stealth ? s.rule(stealth->rule) : nullptr;
         check(page && page->title == "Stealth" && page->parent == s.ruleByKey("core/rule/actions") && page->body == "Moving unseen." && stealth->rows.size() == 1 &&
@@ -467,7 +529,7 @@ int main(int argc, char** argv) {
         const std::string root = test::scratch("homerules");
         removeTree(root);
         const int before = static_cast<int>(core.rules().size());
-        const int combat = core.ruleByKey("core/rule/combat-damage");
+        const int combat = core.ruleByKey("core/rule/combat");
         check(combat != 0 && core.rule(combat) && core.rule(combat)->parent == 0, "a rule of Core is found by its key");
         const std::string melee = "core/rule/melee-combat";
         const int meleeId = core.ruleByKey(melee);
@@ -476,7 +538,7 @@ int main(int argc, char** argv) {
         test::write(root + "/house/manifest.yaml", "{\"format\":1,\"id\":\"house\",\"name\":\"House Rules\"}");
         test::write(root + "/house/rules.yaml",
                     "{\"rules\":["
-                    "{\"id\":\"crits\",\"name\":\"Critical Failures\",\"body\":[\"A 20 on a skill roll is a disaster.\",\"The GM decides how.\"],\"parent\":\"core/rule/combat-damage\"},"
+                    "{\"id\":\"crits\",\"name\":\"Critical Failures\",\"body\":[\"A 20 on a skill roll is a disaster.\",\"The GM decides how.\"],\"parent\":\"core/rule/combat\"},"
                     "{\"id\":\"crit-fumble\",\"name\":\"Fumble table\",\"body\":\"Roll on it.\",\"parent\":\"crits\"},"
                     "{\"name\":\"Melee, our way\",\"body\":\"No free parries.\",\"replaces\":\"core/rule/melee-combat\"},"
                     "{\"name\":\"Lost\",\"body\":\"x\",\"parent\":\"core/rule/not-there\"},"
@@ -488,7 +550,7 @@ int main(int argc, char** argv) {
         check(house && hasWarning(*house, "not-there"), "and the warnings name the missing rule");
         const int crits = s.ruleByKey("house/rule/crits");
         const RuleNode* c = s.rule(crits);
-        check(c && c->parent == s.ruleByKey("core/rule/combat-damage") && c->level == 2 && c->body.contains("disaster") && c->body.contains("The GM decides"),
+        check(c && c->parent == s.ruleByKey("core/rule/combat") && c->level == 2 && c->body.contains("disaster") && c->body.contains("The GM decides"),
               "a homerule goes under a rule of the base pack; paragraph lists are joined");
         const RuleNode* fumble = s.rule(s.ruleByKey("house/rule/crit-fumble"));
         check(fumble && fumble->parent == crits && fumble->level == 3, "and a homerule can go under another one of its own pack");
@@ -513,7 +575,7 @@ int main(int argc, char** argv) {
                     "  {\"name\":\"Fires\",\"body\":\"Keep one.\",\"children\":[{\"name\":\"Kindling\",\"body\":\"Dry wood only.\"}]},"
                     "  {\"name\":\"Watches\",\"source\":\"blog\"},"
                     "  {\"body\":\"no name here\"},"
-                    "  {\"id\":\"night\",\"name\":\"Night Shift\",\"parent\":\"core/rule/combat-damage\",\"body\":\"the parent is the tree, not this\"}]},"
+                    "  {\"id\":\"night\",\"name\":\"Night Shift\",\"parent\":\"core/rule/combat\",\"body\":\"the parent is the tree, not this\"}]},"
                     "{\"name\":\"Camping\",\"body\":\"a second one\"},"
                     "{\"name\":\"Melee, tree style\",\"replaces\":\"core/rule/melee-combat\",\"body\":\"New text.\",\"children\":[{\"name\":\"Grapples\",\"body\":\"Hold on.\"}]}"
                     "]}");

@@ -78,7 +78,8 @@ describe('App', () => {
     await w.findAll('.ref-item').find((i) => i.text().startsWith('Magic')).trigger('click');
     await flushPromises();
     expect(w.text()).toContain('Rime Ward');
-    expect(w.text()).toContain('Homebrew · Frostmarch');
+    expect(w.text()).toContain('Source · Frostmarch Tales');
+    expect(w.text()).not.toContain('From:');
   });
 
   it('counts what the GM wrote since the player last read, and tells the server when they open the chat', async () => {
