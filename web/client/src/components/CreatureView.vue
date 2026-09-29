@@ -1,13 +1,22 @@
 <script setup>
 // GM-only creature catalog: searchable list on the left, full stat block on the right.
-import { onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { apiGet } from '../api.js';
+import MessageImage from './MessageImage.vue';
 
 const props = defineProps({
   token: { type: String, required: true },
 });
 
-const list = ref([]);       // [{id, name, sub}]
+const TAGS = [{ id: 'npc', label: 'NPC' }, { id: 'animal', label: 'Animal' }, { id: 'monster', label: 'Monster' }];
+
+const list = ref([]);       // [{id, key, name, sub, kind}]
+const tags = ref([]);       // active tag filters; none = every creature
+const shown = computed(() => (tags.value.length ? list.value.filter((c) => tags.value.includes(c.kind)) : list.value));
+
+function toggleTag(id) {
+  tags.value = tags.value.includes(id) ? tags.value.filter((t) => t !== id) : [...tags.value, id];
+}
 const selected = ref(null); // full monster detail
 const query = ref('');
 const loading = ref(false);
@@ -57,10 +66,13 @@ onMounted(search);
           type="search"
         />
       </div>
+      <div class="tag-row" role="group" aria-label="Creature type">
+        <button v-for="t in TAGS" :key="t.id" class="tag" :aria-pressed="tags.includes(t.id)" data-test="creature-tag" @click="toggleTag(t.id)">{{ t.label }}</button>
+      </div>
       <div v-if="loading" class="muted small" style="padding: 8px 12px;">Loading…</div>
       <ul class="creature-list">
         <li
-          v-for="c in list"
+          v-for="c in shown"
           :key="c.id"
           class="creature-item"
           :class="{ active: selected?.id === c.id }"
@@ -81,27 +93,32 @@ onMounted(search);
         <div class="detail-header">
           <h2 class="detail-name">{{ selected.name }}</h2>
           <span class="detail-meta">
-            {{ selected.kind === 'npc' ? 'NPC' : selected.kind === 'animal' ? 'Animal' : 'Creature' }}
+            {{ selected.kind === 'npc' ? 'NPC' : selected.kind === 'animal' ? 'Animal' : 'Monster' }}
             <template v-if="selected.category"> · {{ selected.category }}</template>
           </span>
         </div>
 
-        <!-- stats ref note -->
-        <p v-if="selected.statsRef" class="stats-ref">
-          <em>Stats: {{ selected.statsRef }}</em>
-        </p>
+        <div class="stat-row" :class="{ 'has-image': selected.image }">
+          <div class="stat-col">
+            <!-- stats ref note -->
+            <p v-if="selected.statsRef" class="stats-ref">
+              <em>Stats: {{ selected.statsRef }}</em>
+            </p>
 
-        <!-- stat blocks -->
-        <div v-for="(block, bi) in selected.blocks" :key="bi" class="stat-block">
-          <h4 class="block-title">{{ block.variant || 'Stat block' }}</h4>
-          <table class="fields-table">
-            <tbody>
-              <tr v-for="f in block.fields" :key="f.label">
-                <th>{{ f.label }}</th>
-                <td>{{ f.value }}</td>
-              </tr>
-            </tbody>
-          </table>
+            <!-- stat blocks -->
+            <div v-for="(block, bi) in selected.blocks" :key="bi" class="stat-block">
+              <h4 class="block-title">{{ block.variant || 'Stat block' }}</h4>
+              <table class="fields-table">
+                <tbody>
+                  <tr v-for="f in block.fields" :key="f.label">
+                    <th>{{ f.label }}</th>
+                    <td>{{ f.value }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <MessageImage v-if="selected.image" :key="selected.key" class="creature-image" :token="token" :path="selected.image" :alt="selected.name" />
         </div>
 
         <!-- attacks -->
@@ -219,6 +236,17 @@ onMounted(search);
 
 .creature-detail { padding: 1.25rem 1.5rem; max-width: 700px; }
 
+.tag-row { display: flex; flex-wrap: wrap; gap: 5px; padding: 6px 8px; border-bottom: 1px solid var(--border); }
+.tag { background: var(--parchment); color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px;
+  font: inherit; font-size: 0.78rem; cursor: pointer; }
+.tag[aria-pressed='true'] { color: #fff; background: var(--green); border-color: var(--green-dark); }
+.stat-row { display: grid; grid-template-columns: 1fr; gap: 0 1.25rem; align-items: start; }
+.stat-col { min-width: 0; }
+.creature-image { max-height: 320px; max-width: 100%; object-fit: contain; margin: 0 0 1rem; }
+@media (min-width: 560px) {
+  .stat-row.has-image { grid-template-columns: minmax(0, 1fr) 220px; }
+  .stat-row.has-image .creature-image { max-width: 220px; width: 100%; }
+}
 .detail-header { margin-bottom: 0.75rem; }
 .detail-name { font-size: 1.25rem; margin: 0 0 2px; }
 .detail-meta { font-size: 0.85rem; color: var(--muted); }

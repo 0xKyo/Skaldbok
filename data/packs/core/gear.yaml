@@ -1,0 +1,893 @@
+format: 1
+gear:
+  - id: boots
+    name: Boots
+    source: rulebook
+    category: Clothes
+    cost: 2 gold
+    supply: Uncommon
+    effect: Protects against some journey mishaps (page 102).
+  - id: cloak
+    name: Cloak
+    source: rulebook
+    category: Clothes
+    cost: 8 silver
+    supply: Uncommon
+    effect: Protects against some journey mishaps (page 102).
+  - id: fine-garments
+    name: Fine Garments
+    source: rulebook
+    category: Clothes
+    cost: 10 gold
+    supply: Uncommon
+    effect: Boon on CHA-based skills when the GM finds it reasonable.
+  - id: fur
+    name: Fur
+    source: rulebook
+    category: Clothes
+    cost: 1 gold
+    supply: Uncommon
+    effect: Boon on BUSHCRAFT for resisting cold (page 54).
+  - id: rags
+    name: Rags
+    source: rulebook
+    category: Clothes
+    cost: 5 copper
+    supply: Common
+    effect: Bane on CHA-based skills when the GM finds it reasonable.
+  - id: simple-clothes
+    name: Simple Clothes
+    source: rulebook
+    category: Clothes
+    cost: 5 silver
+    supply: Common
+    effect: Required to avoid a bane on CHA-based skills.
+  - id: bagpipe
+    name: Bagpipe
+    source: rulebook
+    category: Musical Instruments
+    cost: 30 gold
+    supply: Uncommon
+    weight: "1"
+    effect: Reduces the WP cost of the Musician ability to 1 and increases range to 50 meters.
+  - id: drum
+    name: Drum
+    source: rulebook
+    category: Musical Instruments
+    cost: 4 gold
+    supply: Common
+    weight: "1"
+    effect: Increases the range of the Musician ability to 20 meters.
+  - id: flute
+    name: Flute
+    source: rulebook
+    category: Musical Instruments
+    cost: 2 gold
+    supply: Common
+    weight: "1"
+    effect: Reduces the WP cost of the Musician ability to 2.
+  - id: harp
+    name: Harp
+    source: rulebook
+    category: Musical Instruments
+    cost: 8 gold
+    supply: Uncommon
+    weight: "2"
+    effect: Reduces the WP cost of the Musician ability to 1.
+  - id: horn
+    name: Horn
+    source: rulebook
+    category: Musical Instruments
+    cost: 6 gold
+    supply: Common
+    weight: "1"
+    effect: Increases the range of the Musician ability to 100 meters.
+  - id: lyre
+    name: Lyre
+    source: rulebook
+    category: Musical Instruments
+    cost: 20 gold
+    supply: Uncommon
+    weight: "1"
+    effect: Reduces the WP cost of the Musician ability to 1.
+  - id: abacus
+    name: Abacus
+    source: rulebook
+    category: Trade Goods
+    cost: 2 gold
+    supply: Common
+    weight: "1"
+    effect: Boon on INT rolls for solving mathematical problems.
+  - id: blanket
+    name: Blanket
+    source: rulebook
+    category: Trade Goods
+    cost: 5 silver
+    supply: Common
+    weight: "1"
+    effect: Required to avoid a bane on rolls to avoid the effects of cold (page 54).
+  - id: chess-set
+    name: Chess Set
+    source: rulebook
+    category: Trade Goods
+    cost: 1 gold
+    supply: Common
+    weight: "1"
+    effect: Opposed roll for INT determines who wins.
+  - id: dice
+    name: Dice
+    source: rulebook
+    category: Trade Goods
+    cost: 1 silver
+    supply: Common
+    weight: —
+    effect: Chance determines who wins.
+  - id: field-kitchen
+    name: Field Kitchen
+    source: rulebook
+    category: Trade Goods
+    cost: 4 gold
+    supply: Common
+    weight: "2"
+    effect: Boon on BUSHCRAFT rolls for cooking (page 103).
+  - id: field-ration
+    name: Field Ration
+    source: rulebook
+    category: Trade Goods
+    cost: 1 silver
+    supply: Common
+    weight: 1/4
+    effect: One ration must be consumed per day, otherwise you become hungry (page 54).
+  - id: grappling-hook
+    name: Grappling Hook
+    source: rulebook
+    category: Trade Goods
+    cost: 3 gold
+    supply: Common
+    weight: "1"
+    effect: Can be used to secure a rope. Can be thrown and secured with an ACROBATICS roll up to STR meters (STR × 2 with a bane).
+  - id: lockpicks-advanced
+    name: Lockpicks, Advanced
+    source: rulebook
+    category: Trade Goods
+    cost: 20 gold
+    supply: Rare
+    weight: "1"
+    effect: Boon on SLEIGHT OF HAND rolls for picking locks.
+  - id: lockpicks-simple
+    name: Lockpicks, Simple
+    source: rulebook
+    category: Trade Goods
+    cost: 1 gold
+    supply: Uncommon
+    weight: "1"
+    effect: Required to avoid a bane on SLEIGHT OF HAND rolls for picking locks.
+  - id: magnifying-glass
+    name: Magnifying Glass
+    source: rulebook
+    category: Trade Goods
+    cost: 30 gold
+    supply: Uncommon
+    weight: "1"
+    effect: Boon to SPOT HIDDEN rolls.
+  - id: map
+    name: Map
+    source: rulebook
+    category: Trade Goods
+    cost: 5 gold
+    supply: Uncommon
+    weight: —
+    effect: Required to avoid a bane on BUSHCRAFT rolls for leading the way during journeys.
+  - id: marbles
+    name: Marbles
+    source: rulebook
+    category: Trade Goods
+    cost: 1 gold
+    supply: Common
+    weight: "1"
+    effect: Can be thrown at a humanoid enemy within 10 meters, as an action. Next turn the enemy must make an EVADE roll (not an action) in order to move.
+  - id: padlock
+    name: Padlock
+    source: rulebook
+    category: Trade Goods
+    cost: 10 gold
+    supply: Common
+    weight: —
+    effect: Locks a door or chest. Can take 20 points of damage, armor rating 5.
+  - id: perfume-10-doses
+    name: Perfume (10 doses)
+    source: rulebook
+    category: Trade Goods
+    cost: 5 gold
+    supply: Common
+    weight: "1"
+    effect: Boon on CHA-based skill rolls when the GM finds it reasonable.
+  - id: playing-cards
+    name: Playing Cards
+    source: rulebook
+    category: Trade Goods
+    cost: 5 silver
+    supply: Uncommon
+    weight: —
+    effect: Opposed roll for BLUFFING determines who wins.
+  - id: quiver-of-arrows-iron-head
+    name: Quiver of Arrows, Iron Head
+    source: rulebook
+    category: Trade Goods
+    cost: 2 gold
+    supply: Common
+    weight: "1"
+    effect: Required to fire bows or crossbows.
+  - id: quiver-of-arrows-wooden-head
+    name: Quiver of Arrows, Wooden Head
+    source: rulebook
+    category: Trade Goods
+    cost: 5 silver
+    supply: Common
+    weight: "1"
+    effect: Required to fire bows or crossbows. The effectiveness of armor is doubled.
+  - id: rope-hemp-10-meters
+    name: Rope, Hemp (10 meters)
+    source: rulebook
+    category: Trade Goods
+    cost: 1 gold
+    supply: Common
+    weight: "1"
+    effect: Boon on ACROBATICS rolls for climbing, but the rope must be secured to something.
+  - id: rope-silk-10-meters
+    name: Rope, Silk (10 meters)
+    source: rulebook
+    category: Trade Goods
+    cost: 10 gold
+    supply: Uncommon
+    weight: —
+    effect: Boon on ACROBATICS rolls for climbing, but the rope must be secured to something.
+  - id: saddle
+    name: Saddle
+    source: rulebook
+    category: Trade Goods
+    cost: 10 gold
+    supply: Common
+    weight: "1"
+    effect: Required to avoid a bane when fighting from horseback.
+  - id: sleeping-fur
+    name: Sleeping Fur
+    source: rulebook
+    category: Trade Goods
+    cost: 1 gold
+    supply: Common
+    weight: "1"
+    effect: Required to avoid a bane on BUSHCRAFT rolls for making camp.
+  - id: spyglass
+    name: Spyglass
+    source: rulebook
+    category: Trade Goods
+    cost: 50 gold
+    supply: Rare
+    weight: "1"
+    effect: Boon on BUSHCRAFT rolls for leading the way during journeys.
+  - id: tent-small
+    name: Tent, Small
+    source: rulebook
+    category: Trade Goods
+    cost: 2 gold
+    supply: Common
+    weight: "2"
+    effect: Can accommodate up to two people. Grants a boon on BUSHCRAFT rolls for making camp. Only one person rolls, but others can help.
+  - id: tent-large
+    name: Tent, Large
+    source: rulebook
+    category: Trade Goods
+    cost: 4 gold
+    supply: Common
+    weight: "4"
+    effect: Can accommodate up to six people. Grants a boon on BUSHCRAFT rolls for making camp. Only one person rolls, but others can help.
+  - id: whistle
+    name: Whistle
+    source: rulebook
+    category: Trade Goods
+    cost: 5 silver
+    supply: Common
+    weight: —
+    effect: Can be heard from up to 100 meters away.
+  - id: amulet
+    name: Amulet
+    source: rulebook
+    category: Studies & Magic
+    cost: 3 gold
+    supply: Uncommon
+    weight: —
+    effect: Can be used as a focus for spells.
+  - id: book
+    name: Book
+    source: rulebook
+    category: Studies & Magic
+    cost: 25 gold
+    supply: Uncommon
+    weight: "1"
+    effect: Boon on skill rolls in a specific subject. The cost varies depending on the subject.
+  - id: brooch
+    name: Brooch
+    source: rulebook
+    category: Studies & Magic
+    cost: 5 gold
+    supply: Uncommon
+    weight: —
+    effect: Can be used as a focus for spells.
+  - id: chalk
+    name: Chalk
+    source: rulebook
+    category: Studies & Magic
+    cost: 1 copper
+    supply: Common
+    weight: —
+    effect: Can be used as a focus for spells.
+  - id: grimoire
+    name: Grimoire
+    source: rulebook
+    category: Studies & Magic
+    cost: 50 gold
+    supply: Unique
+    weight: "1"
+    effect: The cost varies depending on the content and may be much higher.
+  - id: hourglass
+    name: Hourglass
+    source: rulebook
+    category: Studies & Magic
+    cost: 25 gold
+    supply: Rare
+    weight: "1"
+    effect: Can be used as a focus for spells.
+  - id: notebook
+    name: Notebook
+    source: rulebook
+    category: Studies & Magic
+    cost: 5 gold
+    supply: Common
+    weight: "1"
+    effect: Empty, can be used as a grimoire.
+  - id: orbuculum
+    name: Orbuculum
+    source: rulebook
+    category: Studies & Magic
+    cost: 18 gold
+    supply: Uncommon
+    weight: "1"
+    effect: Can be used as a focus for spells.
+  - id: paper-sheet
+    name: Paper (sheet)
+    source: rulebook
+    category: Studies & Magic
+    cost: 2 silver
+    supply: Uncommon
+    weight: —
+    effect: Can be used to write down spells.
+  - id: parchment-sheet
+    name: Parchment (sheet)
+    source: rulebook
+    category: Studies & Magic
+    cost: 1 silver
+    supply: Common
+    weight: —
+    effect: Can be used to write down spells.
+  - id: quill-and-ink
+    name: Quill & Ink
+    source: rulebook
+    category: Studies & Magic
+    cost: 10 gold
+    supply: Uncommon
+    weight: "1"
+    effect: Can be used to write down spells.
+  - id: reliquary
+    name: Reliquary
+    source: rulebook
+    category: Studies & Magic
+    cost: 5 gold
+    supply: Uncommon
+    weight: "1"
+    effect: Can be used as a focus for spells.
+  - id: wand
+    name: Wand
+    source: rulebook
+    category: Studies & Magic
+    cost: 10 gold
+    supply: Uncommon
+    weight: "1"
+    effect: Can be used as a focus for spells.
+  - id: flint-and-tinder
+    name: Flint & Tinder
+    source: rulebook
+    category: Light Sources
+    cost: 5 silver
+    supply: Common
+    weight: —
+    effect: Required to light torches, candles, or lanterns, and to make a fire.
+  - id: lamp-oil
+    name: Lamp Oil
+    source: rulebook
+    category: Light Sources
+    cost: 3 silver
+    supply: Common
+    weight: "1"
+    effect: Holds ten doses. Each dose keeps an oil lamp or lantern burning for up to one shift of time.
+  - id: lantern
+    name: Lantern
+    source: rulebook
+    category: Light Sources
+    cost: 10 gold
+    supply: Common
+    weight: "1"
+    effect: Illuminates a 10 meter radius. Burns for up to a shift of time, but roll D8 after each stretch of time. On 1 the lantern goes out and must be refilled and relit (action).
+  - id: oil-lamp
+    name: Oil Lamp
+    source: rulebook
+    category: Light Sources
+    cost: 1 gold
+    supply: Common
+    weight: "1"
+    effect: Illuminates a 10 meter radius. Burns for up to a shift of time, but roll D6 after each stretch of time. On 1 the lamp goes out and must be refilled and relit (action).
+  - id: tallow-candle
+    name: Tallow Candle
+    source: rulebook
+    category: Light Sources
+    cost: 1 copper
+    supply: Common
+    weight: —
+    effect: Illuminates a 4 meter radius. Burns for up to a shift of time, but roll D4 after each stretch of time, or if the bearer attacks or is attacked. On 1 the candle goes out.
+  - id: torch
+    name: Torch
+    source: rulebook
+    category: Light Sources
+    cost: 5 copper
+    supply: Common
+    weight: "1"
+    effect: Illuminates a 10 meter radius. Burns for up to a shift of time, but roll D6 after each stretch of time, or if the torch is used as a weapon. On 1 the torch goes out.
+  - id: crowbar
+    name: Crowbar
+    source: rulebook
+    category: Tools
+    cost: 2 gold
+    supply: Common
+    weight: "1"
+    effect: 2D6 damage against a door or wall, without risk of being damaged. Hits automatically.
+  - id: hammer
+    name: Hammer
+    source: rulebook
+    category: Tools
+    cost: 1 gold
+    supply: Common
+    weight: "1"
+    effect: 2D4 damage against a door or wall, without risk of being damaged. Hits automatically.
+  - id: needle-and-thread
+    name: Needle & Thread
+    source: rulebook
+    category: Tools
+    cost: 3 silver
+    supply: Common
+    weight: —
+    effect: Mends clothes with a CRAFTING roll.
+  - id: pickaxe
+    name: Pickaxe
+    source: rulebook
+    category: Tools
+    cost: 3 gold
+    supply: Common
+    weight: "1"
+    effect: 2D8 damage against a door or wall, without risk of being damaged. Hits automatically.
+  - id: saw
+    name: Saw
+    source: rulebook
+    category: Tools
+    cost: 5 gold
+    supply: Uncommon
+    weight: "1"
+    effect: Cuts metal or wood in one stretch.
+  - id: shovel
+    name: Shovel
+    source: rulebook
+    category: Tools
+    cost: 2 gold
+    supply: Common
+    weight: "1"
+    effect: Reduces the time spent digging by half.
+  - id: sledgehammer
+    name: Sledgehammer
+    source: rulebook
+    category: Tools
+    cost: 3 gold
+    supply: Common
+    weight: "2"
+    effect: 2D10 damage against a door or wall, without risk of being damaged. Hits automatically.
+  - id: blacksmithing-tools
+    name: Blacksmithing Tools
+    source: rulebook
+    category: Tools
+    cost: 20 gold
+    supply: Uncommon
+    weight: "1"
+    effect: Used for CRAFTING (page 34).
+  - id: carpentry-tools
+    name: Carpentry Tools
+    source: rulebook
+    category: Tools
+    cost: 8 gold
+    supply: Uncommon
+    weight: "1"
+    effect: Used for CRAFTING (page 34).
+  - id: tanning-tools
+    name: Tanning Tools
+    source: rulebook
+    category: Tools
+    cost: 5 gold
+    supply: Uncommon
+    weight: "1"
+    effect: Used for CRAFTING (page 34).
+  - id: backpack
+    name: Backpack
+    source: rulebook
+    category: Containers
+    cost: 3 gold
+    supply: Common
+    weight: —
+    effect: Increases carrying capacity by 2. A person can only use one backpack at a time.
+  - id: barrel
+    name: Barrel
+    source: rulebook
+    category: Containers
+    cost: 2 gold
+    supply: Common
+    weight: "2"
+    effect: Holds up to 15 weight units. Can take 10 points of damage, armor rating 3.
+  - id: basket
+    name: Basket
+    source: rulebook
+    category: Containers
+    cost: 4 silver
+    supply: Common
+    weight: "1"
+    effect: Holds up to 10 weight units.
+  - id: bottle
+    name: Bottle
+    source: rulebook
+    category: Containers
+    cost: 1 gold
+    supply: Common
+    weight: "1"
+    effect: Contains 1 unit of liquid.
+  - id: bucket
+    name: Bucket
+    source: rulebook
+    category: Containers
+    cost: 5 copper
+    supply: Common
+    weight: "1"
+    effect: Contains up to 5 units of liquid.
+  - id: chest
+    name: Chest
+    source: rulebook
+    category: Containers
+    cost: 5 gold
+    supply: Common
+    weight: "3"
+    effect: Holds up to 20 weight units. Can take 25 points of damage, armor rating 5.
+  - id: clay-jug
+    name: Clay Jug
+    source: rulebook
+    category: Containers
+    cost: 5 silver
+    supply: Common
+    weight: "1"
+    effect: Contains 1 unit of liquid
+  - id: saddle-bag
+    name: Saddle Bag
+    source: rulebook
+    category: Containers
+    cost: 6 gold
+    supply: Common
+    weight: —
+    effect: Increases an animal's carrying capacity by 2. An animal can carry no more than two saddle bags.
+  - id: poison-lethal-dose
+    name: Poison, Lethal (dose)
+    source: rulebook
+    category: Medicine
+    cost: 2 gold × potency
+    supply: Uncommon
+    weight: "1"
+    effect: See page 52.
+  - id: poison-paralyzing-dose
+    name: Poison, Paralyzing (dose)
+    source: rulebook
+    category: Medicine
+    cost: 12 silver × potency
+    supply: Uncommon
+    weight: "1"
+    effect: See page 53.
+  - id: poison-sleeping-dose
+    name: Poison, Sleeping (dose)
+    source: rulebook
+    category: Medicine
+    cost: 6 silver × potency
+    supply: Uncommon
+    weight: "1"
+    effect: See page 53.
+  - id: herbal-concoction-dose
+    name: Herbal Concoction (dose)
+    source: rulebook
+    category: Medicine
+    cost: 1 gold
+    supply: Uncommon
+    weight: "1"
+    effect: Boon on HEALING rolls for resisting disease (page 53).
+  - id: healing-potion-dose
+    name: Healing Potion (dose)
+    source: rulebook
+    category: Medicine
+    cost: 50 gold
+    supply: Rare
+    weight: "1"
+    effect: Instantly heals 2D6 HP. Stronger potions heal more HP, but are more expensive.
+  - id: bandages-10
+    name: Bandages (10)
+    source: rulebook
+    category: Medicine
+    cost: 5 silver
+    supply: Common
+    weight: "1"
+    effect: Required to avoid a bane on HEALING rolls for saving lives. Each attempt consumes a bandage.
+  - id: surgical-instruments
+    name: Surgical Instruments
+    source: rulebook
+    category: Medicine
+    cost: 15 gold
+    supply: Uncommon
+    weight: "1"
+    effect: Boon on HEALING rolls for saving a life.
+  - id: bath-at-an-inn
+    name: Bath at an Inn
+    source: rulebook
+    category: Services
+    cost: 6 copper
+    supply: Common
+    effect: Heals a condition of your choice in one stretch. Only one bath per day has this effect.
+  - id: bodyguard
+    name: Bodyguard
+    source: rulebook
+    category: Services
+    cost: 2 gold/ day
+    supply: Uncommon
+    effect: Stats as a typical guard on page 105.
+  - id: bowl-of-stew
+    name: Bowl of Stew
+    source: rulebook
+    category: Services
+    cost: 5 copper
+    supply: Common
+    effect: Covers the daily need of food.
+  - id: clothes-repair
+    name: Clothes Repair
+    source: rulebook
+    category: Services
+    cost: 5 silver
+    supply: Common
+    effect: Eliminates the effect of torn clothes (page 102).
+  - id: courier
+    name: Courier
+    source: rulebook
+    category: Services
+    cost: 1 silver/ kilometer
+    supply: Common
+    effect: Delivers a message to the recipient.
+  - id: feast
+    name: Feast
+    source: rulebook
+    category: Services
+    cost: 2 gold
+    supply: Uncommon
+    effect: Covers the daily need of food.
+  - id: goblet-of-wine
+    name: Goblet of Wine
+    source: rulebook
+    category: Services
+    cost: 2 silver
+    supply: Uncommon
+    effect: After drinking two goblets in a single shift, each additional goblet causes a condition of your choice.
+  - id: haircut
+    name: Haircut
+    source: rulebook
+    category: Services
+    cost: 2 silver
+    supply: Common
+    effect: Heals a chosen condition in one stretch. Can only be done once per week.
+  - id: healing
+    name: Healing
+    source: rulebook
+    category: Services
+    cost: 5 gold
+    supply: Uncommon
+    effect: HEALING rolls succeed automatically.
+  - id: lodging-at-inn-separate-room
+    name: Lodging at Inn, Separate Room
+    source: rulebook
+    category: Services
+    cost: 5 silver
+    supply: Common
+    effect: A shift rest can be had without a BUSHCRAFT roll.
+  - id: lodging-at-inn-dormitory
+    name: Lodging at Inn, Dormitory
+    source: rulebook
+    category: Services
+    cost: 1 silver
+    supply: Common
+    effect: A shift rest can be had without a BUSHCRAFT roll, but roll D4 each shift. On a 1 someone's snoring prevents anyone else in the room from sleeping.
+  - id: lodging-at-inn-luxury-suite
+    name: Lodging at Inn, Luxury Suite
+    source: rulebook
+    category: Services
+    cost: 2 gold
+    supply: Uncommon
+    effect: A shift rest can be had without a BUSHCRAFT roll.
+  - id: meal-at-an-inn
+    name: Meal at an Inn
+    source: rulebook
+    category: Services
+    cost: 3 silver
+    supply: Common
+    effect: Covers the daily need of food.
+  - id: road-toll
+    name: Road Toll
+    source: rulebook
+    category: Services
+    cost: 2 copper
+    supply: Common
+    effect: Allows passage.
+  - id: stagecoach
+    name: Stagecoach
+    source: rulebook
+    category: Services
+    cost: 3 copper/ kilometer
+    supply: Common
+    effect: Transportation to a specified destination.
+  - id: tankard-of-mead
+    name: Tankard of Mead
+    source: rulebook
+    category: Services
+    cost: 4 copper
+    supply: Common
+    effect: After drinking three tankards in a single shift, each additional tankard causes a condition of your choice.
+  - id: teacher
+    name: Teacher
+    source: rulebook
+    category: Services
+    cost: 5 gold/ shift or more
+    supply: Uncommon
+    effect: A shift of instruction grants an extra advancement roll (page 29).
+  - id: bear-trap
+    name: Bear Trap
+    source: rulebook
+    category: Hunting & Fishing
+    cost: 3 gold
+    supply: Uncommon
+    weight: "1"
+    effect: Can be used for hunting (page 103).
+  - id: fishing-rod
+    name: Fishing Rod
+    source: rulebook
+    category: Hunting & Fishing
+    cost: 8 silver
+    supply: Common
+    weight: "1"
+    effect: Gives D4 rations of food when fishing (page 103).
+  - id: fishing-net
+    name: Fishing Net
+    source: rulebook
+    category: Hunting & Fishing
+    cost: 2 gold
+    supply: Common
+    weight: "2"
+    effect: Gives D6 rations of food when fishing (page 103).
+  - id: snare
+    name: Snare
+    source: rulebook
+    category: Hunting & Fishing
+    cost: 5 copper
+    supply: Common
+    weight: "1"
+    effect: Can be used for hunting (page 103). Can only be used once.
+  - id: canoe
+    name: Canoe
+    source: rulebook
+    category: Means of Travel
+    cost: 6 gold
+    supply: Common
+    effect: Can carry two people and 10 weight units
+  - id: cart
+    name: Cart
+    source: rulebook
+    category: Means of Travel
+    cost: 15 gold
+    supply: Common
+    effect: Pulled by one horse or donkey. Can carry two people and 50 weight units.
+  - id: rowing-boat
+    name: Rowing Boat
+    source: rulebook
+    category: Means of Travel
+    cost: 15 gold
+    supply: Common
+    effect: Can carry four people and 50 weight units
+  - id: sailing-boat
+    name: Sailing Boat
+    source: rulebook
+    category: Means of Travel
+    cost: 40 gold
+    supply: Uncommon
+    effect: Can carry six people and 100 weight units
+  - id: wagon
+    name: Wagon
+    source: rulebook
+    category: Means of Travel
+    cost: 30 gold
+    supply: Common
+    effect: Pulled by two horses or donkeys. Can carry four people and 100 weight units.
+  - id: chicken
+    name: Chicken
+    source: rulebook
+    category: Animals
+    cost: 4 silver
+    supply: Common
+    effect: Yields one ration of food when slaughtered. The meat should be cooked (page 103).
+  - id: combat-trained-horse
+    name: Combat Trained Horse
+    source: rulebook
+    category: Animals
+    cost: 400 gold
+    supply: Rare
+    effect: Can carry one rider and 10 weight units, or two riders
+  - id: cow
+    name: Cow
+    source: rulebook
+    category: Animals
+    cost: 10 gold
+    supply: Uncommon
+    effect: Yields D4 rations of food (milk) per day, and 2D10 rations of food when slaughtered. The meat should be cooked (page 103).
+  - id: donkey
+    name: Donkey
+    source: rulebook
+    category: Animals
+    cost: 12 gold
+    supply: Common
+    effect: Can carry 10 weight units. Cannot be ridden.
+  - id: guard-dog
+    name: Guard Dog
+    source: rulebook
+    category: Animals
+    cost: 15 gold
+    supply: Common
+    effect: Protects its owner. For stats, see page 99.
+  - id: homing-pigeon-in-cage
+    name: Homing Pigeon in Cage
+    source: rulebook
+    category: Animals
+    cost: 2 gold
+    supply: Uncommon
+    effect: Flies home to its dovecote when released, wherever it is
+  - id: pig
+    name: Pig
+    source: rulebook
+    category: Animals
+    cost: 2 gold
+    supply: Common
+    effect: Yields 2D6 rations of food when slaughtered. The meat should be cooked (page 103).
+  - id: riding-horse
+    name: Riding Horse
+    source: rulebook
+    category: Animals
+    cost: 60 gold
+    supply: Uncommon
+    effect: Can carry one rider and 10 weight units, or two riders
+  - id: sheep
+    name: Sheep
+    source: rulebook
+    category: Animals
+    cost: 3 gold
+    supply: Common
+    effect: Yields 2D4 rations of food when slaughtered. The meat should be cooked (page 103).

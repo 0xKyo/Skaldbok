@@ -116,12 +116,60 @@ json skillRows(const Character& c, const ContentStore& cs) {
     return out;
 }
 
+json tableJson(const DataTable& t) {
+    json rows = json::array();
+    for (const TableRow& r : t.rows) rows.push_back({{"roll", r.rollText}, {"cells", r.cells}});
+    return {{"title", t.title}, {"dice", t.dice}, {"columns", t.columns}, {"rows", rows}};
+}
+
+// The name in a "{{table: Name}}" line, empty if the line is not one.
+std::string tableMarkerName(const std::string& line) {
+    const auto b = line.find_first_not_of(" \t\r");
+    if (b == std::string::npos) return {};
+    const auto e = line.find_last_not_of(" \t\r");
+    const std::string t = line.substr(b, e - b + 1);
+    if (!t.starts_with("{{table:") || !t.ends_with("}}")) return {};
+    return trimmed(t.substr(8, t.size() - 10));
+}
+
+// The tables that go with some text: the ones it owns, plus every one a "{{table: Name}}" line names (any table, by its title).
+json tablesShown(const ContentStore& cs, const std::vector<const DataTable*>& own, const std::vector<const std::string*>& texts) {
+    std::vector<const DataTable*> all = own;
+    for (const std::string* text : texts) {
+        size_t pos = 0;
+        while (pos <= text->size()) {
+            size_t end = text->find('\n', pos);
+            if (end == std::string::npos) end = text->size();
+            const std::string name = tableMarkerName(text->substr(pos, end - pos));
+            if (!name.empty())
+                if (const DataTable* t = cs.tableByName(name)) all.push_back(t);
+            pos = end + 1;
+        }
+    }
+    json out = json::array();
+    std::unordered_set<const DataTable*> seen;
+    for (const DataTable* t : all)
+        if (t && seen.insert(t).second) out.push_back(tableJson(*t));
+    return out;
+}
+
+json ruleTables(const ContentStore& cs, const RuleNode& n) {
+    std::vector<const DataTable*> own;
+    for (int id : cs.tablesOfRule(n.id)) own.push_back(cs.packTable(id));
+    std::vector<const std::string*> texts{&n.body};
+    for (const auto& s : n.sections) texts.push_back(&s.body);
+    return tablesShown(cs, own, texts);
+}
+
 }  // namespace
 
 // Builds the JSON card shown to players. Source label is included only for homebrew; core content has no attribution.
 json publicCard(const ContentStore& cs, const Entry& e) {
     const SourceInfo* src = cs.source(e.sourceId);
+    std::vector<const DataTable*> own;
+    for (const DataTable& t : e.tables) own.push_back(&t);
     return {{"key", e.key},
+            {"tables", tablesShown(cs, own, {&e.body})},
             {"kind", kindKey(e.kind)},
             {"name", e.title},
             {"subtitle", e.subtitle},
@@ -248,7 +296,11 @@ bool contentList(const ContentStore& cs, const std::string& typeId, const std::s
     if (!intro.empty()) {
         json sects = json::array();
         for (const auto& s : intro.sections) sects.push_back({{"title", s.title}, {"body", s.body}});
-        introJson = {{"body", intro.body}, {"sections", sects}};
+        std::vector<const DataTable*> own;
+        std::vector<const std::string*> texts{&intro.body};
+        for (const DataTable& t : intro.tables) own.push_back(&t);
+        for (const auto& s : intro.sections) texts.push_back(&s.body);
+        introJson = {{"body", intro.body}, {"sections", sects}, {"tables", tablesShown(cs, own, texts)}};
     }
     out = {{"type", type->id}, {"label", type->label}, {"entries", entries}, {"intro", introJson}};
     return true;
@@ -279,7 +331,7 @@ bool rulesChapter(const ContentStore& cs, const std::string& keyId, json& out) {
         json sects = json::array();
         for (const auto& s : n.sections) sects.push_back({{"title", s.title}, {"body", s.body}});
         rules.push_back({{"key", n.key}, {"title", n.title}, {"step", n.prop("step")},
-                         {"body", n.body}, {"sections", sects}, {"parentId", n.parent}});
+                         {"body", n.body}, {"sections", sects}, {"tables", ruleTables(cs, n)}, {"parentId", n.parent}});
     }
     out = {{"key", keyId}, {"title", chapter->title}, {"rules", rules}};
     return true;
@@ -334,11 +386,17 @@ bool rulesChapterGm(const ContentStore& cs, const std::string& keyId, json& out)
         if (n.id == chapter->id && n.body.empty() && n.sections.empty()) continue;
         json sects = json::array();
         for (const auto& s : n.sections) sects.push_back({{"title", s.title}, {"body", s.body}});
-        rules.push_back({{"key", n.key}, {"title", n.title}, {"step", n.prop("step")},
-                         {"body", n.body}, {"sections", sects}, {"parentId", n.parent}});
+        rules.push_back({{"key", n.key}, {"title", n.title}, {"step", n.prop("step")}, {"tool", n.prop("tool")},
+                         {"body", n.body}, {"sections", sects}, {"tables", ruleTables(cs, n)}, {"parentId", n.parent}});
     }
     out = {{"key", keyId}, {"title", chapter->title}, {"rules", rules}};
     return true;
+}
+
+json npcLists(const ContentStore& cs) {
+    json lists = json::array();
+    for (const NpcList& l : cs.npcLists()) lists.push_back({{"key", l.key}, {"dice", l.dice}, {"values", l.values}});
+    return {{"lists", lists}};
 }
 
 static std::string lowerAscii(const std::string& s) {
@@ -348,6 +406,7 @@ static std::string lowerAscii(const std::string& s) {
 }
 
 json monsterDetail(const ContentStore& /*cs*/, const Monster& m) {
+    const json image = m.image.empty() ? json(nullptr) : json("/gm/creatures/" + m.key + "/image");
     json blocks = json::array();
     for (const StatBlock& b : m.blocks) {
         json fields = json::array();
@@ -366,7 +425,7 @@ json monsterDetail(const ContentStore& /*cs*/, const Monster& m) {
     return {{"id", m.id}, {"key", m.key}, {"name", m.name}, {"kind", m.kind},
             {"category", m.category}, {"description", m.description}, {"quote", m.quote},
             {"randomEncounter", m.randomEncounter}, {"adventureSeed", m.adventureSeed},
-            {"statsRef", m.statsRef}, {"blocks", blocks}, {"attacks", attacks},
+            {"statsRef", m.statsRef}, {"image", image}, {"blocks", blocks}, {"attacks", attacks},
             {"abilities", abilities}, {"tables", tables}};
 }
 
@@ -378,7 +437,8 @@ json monsterList(const ContentStore& cs, const std::string& query) {
         std::string sub = m.category;
         if (m.kind == "npc") sub = sub.empty() ? "NPC" : "NPC · " + sub;
         else if (m.kind == "animal") sub = "Animal";
-        list.push_back({{"id", m.id}, {"key", m.key}, {"name", m.name}, {"sub", sub}});
+        const std::string tag = m.kind == "npc" || m.kind == "animal" ? m.kind : "monster";   // Monster: everything that is not an NPC or an animal
+        list.push_back({{"id", m.id}, {"key", m.key}, {"name", m.name}, {"sub", sub}, {"kind", tag}});
     }
     // Sort by name
     std::sort(list.begin(), list.end(), [](const json& a, const json& b) {

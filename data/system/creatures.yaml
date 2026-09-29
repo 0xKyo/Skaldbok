@@ -1,0 +1,124 @@
+format: 1
+intro:
+  sections:
+    - name: Monsters
+      body: |
+        * {{key: Ferocity}}: Some monsters are so powerful that they can act multiple times in the same round. This is indicated by their Ferocity score. At the start of each round, the GM draws one [[initiative card|initiative]] for each point of Ferocity. The monster gets one turn per card, with one action and one movement on each turn.
+        * Waiting: If a [[player character]] swaps initiative cards with a monster, the player character can choose any one of the monster’s cards. Monsters themselves never wait.
+        * A monster always uses a {{key: monster attack}} when it attacks. Each monster has a unique set of monster attacks, which are summarized in a table. The GM rolls or chooses an attack from this table when it is the monster’s turn to attack. Monsters never roll dice to hit their target – monster attacks succeed automatically. Performing a monster attack counts as an action. Unless otherwise specified, monster attacks have the same range as melee attacks, i.e. 2 meters (an adjacent square if you are using grid maps).
+        * [[Dodging|dodge]] & [[Parrying|parry]]: As a rule, a monster attack can be dodged but not parried. This applies to attacks with an area of effect as well, but not fear attacks. Exceptions to this rule are stated in the monster attack description.
+        * [[Conditions|condition]]: Monster attacks can inflict conditions on player characters. If a character gains a condition they already have, the player must choose another condition instead.
+        * Repeated Attacks: A monster never makes the same attack twice in a row. If the GM rolls the same monster attack two consecutive times, the second roll changes into the next attack on the table. The 6 result becomes a 1
+        * Dodging & Parrying: All monsters can dodge, and monsters carrying weapons can also parry. Each dodge or parry uses up one of the monster’s actions in the round. Roll against a default [[skill level]] of 15 for all dodges and parries by monsters.
+        * Skills: Monsters can have skills, but they are mainly used outside of combat or for [[opposed rolls|opposed roll]] – not for attacks. They only attack using their monster attacks.
+        * {{key: Natural Armor}}: Many monsters have some form of natural armor. This works just like ordinary armor
+        * Weak Spots: A piercing attack can find a gap or weak spot in the monster’s natural armor, just like on humanoid opponents (optional rule).
+        * Disarm & Grapple: Monsters cannot be disarmed or grappled by player characters.
+        * Darkness: Unless otherwise stated, monsters can see in darkness
+        * Resistance & Immunity. Some monsters are resistant to certain damage types. This means that all damage of this type is halved, after reduction by armor (rounded up). Some monsters can even be immune to certain types of damage, and therefore take no damage at all from such attacks.
+        * Fear & Persuasion: Monsters are too terrifying to get scared themselves, but many of them can certainly instill terror in the player characters. Monsters are also immune to the PERSUASION skill unless otherwise stated.
+        * Toppling: A player character can try to topple a monster (optional rule, page 48), rolling against a default EVADE skill level of 15 for all monsters. If the monster has four legs or more, the attacker gets a [[bane]] on the roll.
+        * Movement: Just like player characters, monsters have a Movement score and can move before or after their attack or divide their movement before and after the attack. Note that this score refers to movement per turn for monsters, not per round. Some monsters have different movement rates on land, in water, and in the air. Taking flight or landing are [[free actions|free action]].
+    - name: Size
+      body: |
+        Monsters come in all sizes. The game divides them into the following categories, which affect how large an area the monster can block and how narrow a passage it can move through.
+        {{table: Sizes}}
+  tables:
+    - id: common-animals-rule
+      legacy_key: "#71"
+      name: Common Animals
+      columns:
+        - ANIMAL
+        - MOVEMENT
+        - HP
+        - ATTACK
+        - SKILLS
+      rows:
+        - cells:
+            - Cat
+            - "12"
+            - "4"
+            - Bite (skill level 8, damage D3)
+            - Awareness 12, Evade 14, Sneaking 16
+        - cells:
+            - Dog
+            - "14"
+            - "8"
+            - Bite (skill level 12, damage D8)
+            - Awareness 14, Evade 10, Sneaking 12
+        - cells:
+            - Goat
+            - "10"
+            - "6"
+            - Horns (skill level 10, damage D6)
+            - Awareness 10, Evade 12
+        - cells:
+            - Donkey
+            - "14"
+            - "12"
+            - Kick (skill level 10, damage D10)
+            - Awareness 10, Evade 6
+        - cells:
+            - Horse
+            - "20"
+            - "16"
+            - Kick (skill level 10, damage 2D4)
+            - Awareness 12, Evade 8
+        - cells:
+            - Wild Boar
+            - "12"
+            - "14"
+            - Tusks (skill level 12, damage 2D6)
+            - Awareness 10, Evade 8
+        - cells:
+            - Deer
+            - "18"
+            - "12"
+            - Horns (skill level 10, damage D8)
+            - Awareness 12, Evade 12
+        - cells:
+            - Moose
+            - "16"
+            - "18"
+            - Horns (skill level 10, damage 2D6)
+            - Awareness 10, Evade 8
+        - cells:
+            - Fox
+            - "10"
+            - "6"
+            - Bite (skill level 12, damage D6)
+            - Awareness 12, Evade 10, Sneaking 14
+        - cells:
+            - Wolf
+            - "16"
+            - "10"
+            - Bite (skill level 14, damage 2D6)
+            - Awareness 14, Evade 12, Sneaking 14
+        - cells:
+            - Bear
+            - "12"
+            - "20"
+            - Bite (skill level 12, damage 2D8)
+            - Awareness 10, Evade 8
+    - id: sizes-table
+      source: bestiary
+      name: Sizes
+      columns:
+        - SIZE
+        - DESCRIPTION
+      rows:
+        - cells:
+            - Small
+            - A small monster is less than a meter tall and cannot block any area. It can easily pass through tiny passages.
+        - cells:
+            - Normal
+            - A normal-sized monster is roughly the size of a human. It can block an area of 2×2 meters (one square on a combat map) and pass through a passage half a meter wide.
+        - cells:
+            - Large
+            - A large monster can block an area of 4×4 meters and pass through a 1-meter-wide passage.
+        - cells:
+            - Huge
+            - A huge monster can block an area of 8×8 meters and pass through a 2-meter-wide passage.
+        - cells:
+            - Swarm
+            - A swarm can range in size from Normal to Huge, but never blocks the area it is in, and can pass through tiny passages.

@@ -83,6 +83,12 @@ struct Intro {
     bool empty() const { return body.empty() && sections.empty() && tables.empty(); }
 };
 
+// One list of the NPC generator: `dice` is the die the book rolls for it.
+struct NpcList {
+    std::string key, dice;
+    std::vector<std::string> values;
+};
+
 // Where a rule's "see" points (RuleNode::see), resolved against what is loaded.
 struct SeeTarget {
     enum class Type { None, Category, Entry, Rule, Section };
@@ -134,6 +140,8 @@ public:
     // keyword ("[[word]]") goes there, from any text.
     const std::map<std::string, SeeTarget>& keywords() const { return keywords_; }
     const Intro& introOf(Kind k) const;
+    // What the random NPC generator picks from (data/system/npcs.yaml): name, attitude, kin, motivation, profession, trait.
+    const std::vector<NpcList>& npcLists() const { return npcLists_; }
 
     const std::vector<Monster>& monsters() const { return monsters_; }
     const Monster* monster(int id) const;
@@ -178,6 +186,7 @@ private:
     std::map<std::string, SeeTarget> keywords_;      // "boon" -> the text that has {{key: boon}} (see extractKeywords)
     std::vector<Monster> monsters_;
     std::vector<DataTable> tables_;
+    std::vector<NpcList> npcLists_;
     std::vector<RuleNode> rules_;
     std::map<std::string, int> byKey_[kKindCount];
     std::map<std::string, int> ruleByKey_;

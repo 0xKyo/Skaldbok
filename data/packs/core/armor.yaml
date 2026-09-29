@@ -1,0 +1,50 @@
+format: 1
+armor:
+  - id: leather
+    name: Leather
+    source: rulebook
+    slot: armor
+    armor_rating: "1"
+    cost: 2 gold
+    supply: Common
+    effect: —
+  - id: studded-leather
+    name: Studded Leather
+    source: rulebook
+    slot: armor
+    armor_rating: "2"
+    cost: 10 gold
+    supply: Uncommon
+    effect: Bane on SNEAKING rolls.
+  - id: chainmail
+    name: Chainmail
+    source: rulebook
+    slot: armor
+    armor_rating: "4"
+    cost: 50 gold
+    supply: Uncommon
+    effect: Bane on EVADE and SNEAKING rolls.
+  - id: plate-armor
+    name: Plate Armor
+    source: rulebook
+    slot: armor
+    armor_rating: "6"
+    cost: 500 gold
+    supply: Rare
+    effect: Bane on ACROBATICS, EVADE, and SNEAKING rolls.
+  - id: open-helmet
+    name: Open Helmet
+    source: rulebook
+    slot: helmet
+    armor_rating: "+1"
+    cost: 12 gold
+    supply: Uncommon
+    effect: Bane on AWARENESS rolls.
+  - id: great-helm
+    name: Great Helm
+    source: rulebook
+    slot: helmet
+    armor_rating: "+2"
+    cost: 100 gold
+    supply: Rare
+    effect: Bane on AWARENESS and all ranged attacks.

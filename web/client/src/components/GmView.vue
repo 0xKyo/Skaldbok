@@ -4,8 +4,9 @@
 import { computed, onBeforeUnmount, onMounted, ref, watchEffect } from 'vue';
 import { ApiError, apiGet, apiSend } from '../api.js';
 import ChatView from './ChatView.vue';
-import CreatureView from './CreatureView.vue';
-import RulesView from './RulesView.vue';
+import ReferenceIndex from './ReferenceIndex.vue';
+import ReferencePanel from './ReferencePanel.vue';
+import { useReference } from '../reference.js';
 import SettingsView from './SettingsView.vue';
 import SheetView from './SheetView.vue';
 
@@ -19,14 +20,12 @@ const props = defineProps({
 const characters = ref([]);
 const parties = ref([]);
 const threads = ref([]);
-const contentTypes = ref([]);   // [{id, label, count}] from /gm/content
-const rulesChapters = ref([]);  // [{key, title, introOnly?}] from /gm/content
 
 const selectedId = ref(null);   // selected character id, or null
 const sheet = ref(null);
 const chat = ref({ messages: [], gmRead: '', playerRead: '' });
-// refItem: which reference panel is open; null = character/settings view
-const refItem = ref(null);      // {mode: 'tables'|'rules', type: string, key: string|null, label: string}
+// reference.current: which reference panel is open; null = character/settings view
+const reference = useReference(props.token, '/gm');
 
 const offline = ref(false);
 const problem = ref('');
@@ -45,18 +44,9 @@ const gmTabs = computed(() => [
       ? `Chat (${threads.value.find((t) => t.characterId === selectedId.value).unread})` : 'Chat' },
 ]);
 
-// Merged, alphabetically sorted reference list
-const refItems = computed(() => {
-  const items = [
-    ...contentTypes.value.map((t) => ({ mode: 'tables', type: t.id, label: t.label, count: t.count })),
-    ...rulesChapters.value.map((r) => ({ mode: 'rules', type: r.key, label: r.title, count: null })),
-  ];
-  return items.sort((a, b) => a.label.localeCompare(b.label));
-});
-
 // What the main area is showing
 const mainMode = computed(() => {
-  if (refItem.value) return 'reference';
+  if (reference.current) return 'reference';
   if (selectedId.value) return 'character';
   return 'settings';
 });
@@ -65,12 +55,6 @@ const mainMode = computed(() => {
 async function loadCharacterList() {
   const data = await apiGet('/gm/characters', props.token);
   characters.value = (data.characters ?? []).sort((a, b) => a.name.localeCompare(b.name));
-}
-
-async function loadContentSummary() {
-  const data = await apiGet('/gm/content', props.token);
-  contentTypes.value = data.types ?? [];
-  rulesChapters.value = data.rules ?? [];
 }
 
 async function loadSelected() {
@@ -131,7 +115,7 @@ async function createParty() {
 
 // ---- navigation ----
 async function selectCharacter(id) {
-  refItem.value = null;
+  reference.current = null;
   selectedId.value = id;
   tab.value = 'sheet';
   sheet.value = null;
@@ -141,27 +125,13 @@ async function selectCharacter(id) {
 
 function goSettings() {
   selectedId.value = null;
-  refItem.value = null;
-}
-
-function selectRef(mode, typeKey, label) {
-  refItem.value = { mode, type: typeKey, label };
+  reference.current = null;
 }
 
 function pick(id) { tab.value = id; }
 
 // If the sheet links to a rule, open it in reference mode
-function goToRules(target) {
-  const key = target?.key ?? '';
-  // Try to find it as a rules chapter first, then as a content type
-  const chapter = rulesChapters.value.find((r) => r.key === key);
-  if (chapter) {
-    selectRef('rules', key, chapter.title);
-  } else {
-    const ct = contentTypes.value.find((t) => t.id === key);
-    selectRef('tables', key, ct?.label ?? key);
-  }
-}
+function goToRules(target) { reference.goTo(target); }
 
 function schedule() {
   clearTimeout(timer);
@@ -172,13 +142,13 @@ function schedule() {
 }
 
 onMounted(async () => {
-  await Promise.all([refresh(), loadContentSummary()]);
+  await Promise.all([refresh(), reference.load().catch(() => {})]);
   schedule();
 });
 onBeforeUnmount(() => clearTimeout(timer));
 
 watchEffect(() => {
-  if (refItem.value) document.title = `GM · ${refItem.value.label} · Skaldbok`;
+  if (reference.current) document.title = `GM · ${reference.current.label} · Skaldbok`;
   else if (selected.value) document.title = `GM · ${selected.value.name} · Skaldbok`;
   else document.title = 'GM · Skaldbok';
 });
@@ -238,21 +208,10 @@ watchEffect(() => {
       </ul>
 
       <!-- Reference: content types + rules chapters, sorted alphabetically -->
-      <div v-if="refItems.length" class="sidebar-head" style="margin-top: 0.75rem;">
+      <div v-if="reference.items.length" class="sidebar-head" style="margin-top: 0.75rem;">
         <span class="sidebar-title">Reference</span>
       </div>
-      <ul v-if="refItems.length" class="char-list">
-        <li
-          v-for="r in refItems"
-          :key="r.mode + r.type"
-          class="char-item ref-item"
-          :class="{ active: refItem?.type === r.type && refItem?.mode === r.mode }"
-          @click="selectRef(r.mode, r.type, r.label)"
-        >
-          <span class="char-name">{{ r.label }}</span>
-          <span v-if="r.count !== null" class="ref-count">{{ r.count }}</span>
-        </li>
-      </ul>
+      <ReferenceIndex v-if="reference.items.length" :state="reference" />
 
     </aside>
 
@@ -267,23 +226,7 @@ watchEffect(() => {
       <SettingsView v-if="mainMode === 'settings' && !problem" :token="token" />
 
       <!-- Reference panel -->
-      <template v-else-if="mainMode === 'reference'">
-        <div class="ref-header">
-          <strong>{{ refItem.label }}</strong>
-        </div>
-        <CreatureView
-          v-if="refItem.type === 'creatures'"
-          :token="token"
-        />
-        <RulesView
-          v-else
-          :key="refItem.type + refItem.mode"
-          :token="token"
-          :mode="refItem.mode"
-          :jump-to="{ type: refItem.type, key: null }"
-          :gm-prefix="'/gm'"
-        />
-      </template>
+      <ReferencePanel v-else-if="mainMode === 'reference'" :state="reference" :token="token" gm-prefix="/gm" />
 
       <!-- Character panel -->
       <template v-else-if="mainMode === 'character'">
@@ -466,13 +409,6 @@ watchEffect(() => {
 .char-name { font-size: 0.88rem; font-weight: 500; }
 .char-meta { font-size: 0.73rem; color: var(--muted); }
 
-.ref-item { flex-direction: row; align-items: center; }
-.ref-item .char-name { flex: 1; }
-.ref-count {
-  font-size: 0.75rem;
-  color: var(--muted);
-  margin-left: 4px;
-}
 
 .badge {
   position: absolute;
@@ -497,12 +433,6 @@ watchEffect(() => {
   border-bottom: 1px solid var(--border);
   background: var(--bg-header, var(--bg));
   font-size: 0.9rem;
-}
-
-.ref-header {
-  padding: 8px 16px;
-  border-bottom: 1px solid var(--border);
-  font-size: 0.95rem;
 }
 
 .hp-wp { margin-left: auto; color: var(--muted); font-size: 0.85rem; }

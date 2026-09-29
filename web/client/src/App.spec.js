@@ -68,12 +68,14 @@ describe('App', () => {
     const w = mount(App);
     await flushPromises();
     const tabs = w.findAll('[role=tab]');
-    expect(tabs.map((t) => t.text())).toEqual(['My character', 'Party', 'Chat', 'Tables', 'Rules']);
+    expect(tabs.map((t) => t.text())).toEqual(['My character', 'Party', 'Chat', 'Rules']);
     await tabs[1].trigger('click');
     expect(w.get('[data-test=party-name]').text()).toBe('The Misty Vale party');
     expect(w.findAll('[data-test=member]').length).toBe(party.party.members.length);
     expect(w.text()).toContain('you');
     await tabs[3].trigger('click');
+    await flushPromises();
+    await w.findAll('.ref-item').find((i) => i.text().startsWith('Spells')).trigger('click');
     await flushPromises();
     expect(w.text()).toContain('Rime Ward');
     expect(w.text()).toContain('Homebrew · Frostmarch');

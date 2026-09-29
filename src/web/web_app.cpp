@@ -497,11 +497,27 @@ WebResponse WebApp::gmApi(const WebRequest& request, long long now) {
         return jsonResponse(200, out);
     }
 
+    if (sub == "/gm/npcs" && reading) return jsonResponse(200, npcLists(content_));
+
     // ---- creatures (GM only) ----
     if (sub == "/gm/creatures" && reading) {
         std::string q;
         if (auto it = request.query.find("q"); it != request.query.end()) q = it->second.substr(0, 100);
         return jsonResponse(200, monsterList(content_, q));
+    }
+    if (sub.size() > 20 && sub.starts_with("/gm/creatures/") && sub.ends_with("/image") && reading) {
+        const std::string key = sub.substr(14, sub.size() - 14 - 6);
+        for (const Monster& m : content_.monsters()) {
+            if (m.key != key || m.image.empty()) continue;
+            auto bytes = fs::readFile(m.image);           // the path comes from the loaded content, never from the request
+            if (!bytes) break;
+            WebResponse r;
+            r.body = std::move(*bytes);
+            r.contentType = mimeOf(m.image);
+            r.headers["Cache-Control"] = "private, max-age=86400";
+            return r;
+        }
+        return errorResponse(404, "No such picture");
     }
     if (sub.starts_with("/gm/creatures/") && reading) {
         const std::string key = sub.substr(14);

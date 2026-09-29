@@ -14,6 +14,7 @@ Un pack es una **carpeta** (o un **.zip** de esa carpeta) con:
 mi-pack/
   manifest.yaml        opcional: sin él, el id es el nombre de la carpeta (para importar el pack, hace falta)
   rules.yaml           un archivo YAML por tipo; todos opcionales (las homerules van aquí)
+  world.yaml           reglas como las de rules.yaml (mismo formato, bajo la clave `world:`), para el mundo del juego: en Core, el capítulo World (viajes, PNJ, NPC Creator)
   creatures.yaml
   spells.yaml
   abilities.yaml
@@ -366,7 +367,7 @@ misma. Las de Core traen el texto de los libros; cualquier otro pack puede sumar
   **clave de otra regla** (`core/rule/melee-combat`). Un `see` que no apunta a nada se avisa al cargar el pack. Así una regla
   puede decir «elegí un kin» y llevar a la lista de Kin, que vive en otro YAML.
 * `nav`: solo en un capítulo de primer nivel. Le da **página propia** en ese grupo de la barra de la izquierda, en vez de estar
-  dentro de Rules: `nav: Reference` (así están *Character Creation*, *Combat & Damage* y *Adventures*). El grupo también puede ser otro texto (aparece como un encabezado nuevo).
+  dentro de Rules: `nav: Reference` (así están *Character Creation*, *Combat & Damage* y *World*). El grupo también puede ser otro texto (aparece como un encabezado nuevo).
   La página aparece al abrir la app (tras un cambio en caliente, al reiniciarla). Si el capítulo
   no tiene texto propio (ni `body`, ni `sections`, ni `tables`), no aparece como entrada: sus `children` son el primer nivel de su
   página (así está *Combat & Damage*).

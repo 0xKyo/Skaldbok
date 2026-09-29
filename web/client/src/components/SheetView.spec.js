@@ -14,7 +14,7 @@ describe('SheetView', () => {
     const lines = w.findAll('.a-ident .line').map((l) => l.text());
     expect(lines.some((t) => t.includes('Sebastián'))).toBe(true);
     expect(lines.some((t) => t.includes('Human'))).toBe(true);
-    expect(lines.some((t) => t.includes('Fighter'))).toBe(true);
+    expect(w.findAll('.a-appear .line').some((l) => l.text().includes('Fighter'))).toBe(true);
     expect(w.text()).toContain('Child of the Wild');
   });
 

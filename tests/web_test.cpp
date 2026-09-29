@@ -688,6 +688,14 @@ void realData() {
     check(spells.size() >= 66, "the real spells are there");
     const std::string everything = get(app, "/api/content/kin", token).body + get(app, "/api/content/gear", token).body + get(app, "/api/content/abilities", token).body;
     check(!contains(everything, "Centaur") && get(app, "/api/content/creatures", token).status == 404, "no creatures leak from the real Bestiary");
+    int withTables = 0;
+    for (const json& ch : body(get(app, "/api/content", token))["rules"]) {
+        if (ch.value("introOnly", false)) continue;
+        const json res = body(get(app, "/api/rules/" + ch["key"].get<std::string>(), token));
+        for (const json& r : res["rules"])
+            if (!r["tables"].empty() && !r["tables"][0]["rows"].empty()) ++withTables;
+    }
+    check(withTables > 0, "the tables of the real rules travel with their text");
 }
 
 }  // namespace

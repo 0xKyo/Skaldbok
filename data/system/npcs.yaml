@@ -1,0 +1,100 @@
+format: 1
+# Random NPC generator (rulebook p.110, "Creating NPCs"): one pick from each list. `dice` is the die the book rolls for that list.
+npc:
+  attitude:
+    dice: D4
+    values: [Hostile, Evasive, Indifferent, Friendly]
+  kin:
+    dice: D6
+    values: [Human, Dwarf, Elf, Halfling, Wolfkin, Mallard]
+  motivation:
+    dice: D8
+    values:
+      - Sweet, glittering gold
+      - Knowledge of the world
+      - Deep and eternal love
+      - A lifelong oath
+      - An injustice that demands retribution
+      - A life of joy and song
+      - Blood ties that can never be severed
+      - Escaping a dark past
+  profession:
+    dice: D10
+    values: [Bard, Artisan, Hunter, Fighter, Scholar, Mage, Merchant, Knight, Mariner, Thief]
+  trait:
+    dice: D12
+    values:
+      - Talks too much
+      - Strange clothes
+      - Wild-eyed
+      - Smells bad
+      - Joker
+      - Cultist
+      - A bit childish
+      - Quiet and difficult
+      - Demon worshiper
+      - Obstinate
+      - Very touchy
+      - Highly romantic
+  name:
+    dice: D20
+    values:
+      - Agnar
+      - Jorid
+      - Dareios
+      - Ragnfast
+      - Ask
+      - Euanthe
+      - Arnulf
+      - Tyra
+      - Xanthos
+      - Atle
+      - Liv
+      - Athalia
+      - Guthorm
+      - Embla
+      - Kleitos
+      - Botvid
+      - Ragna
+      - Astara
+      - Kale
+      - Turid
+      - Priamus
+      - Egil
+      - Jorunn
+      - Galyna
+      - Ingemund
+      - Borghild
+      - Taras
+      - Gudmund
+      - Gylla
+      - Zenais
+      - Grim
+      - Tora
+      - Hesiod
+      - Brand
+      - Edda
+      - Liene
+      - Folkvid
+      - Sigrun
+      - Eupraxia
+      - Germund
+      - Dagrun
+      - Algot
+      - Bolla
+      - Lysandra
+      - Tolir
+      - Yrsa
+      - Kallias
+      - Hjorvald
+      - Estrid
+      - Isidora
+      - Ambjorn
+      - Signe
+      - Athos
+      - Grunn
+      - Tilde
+      - Larysa
+      - Olgrid
+      - Idun
+      - Nikias

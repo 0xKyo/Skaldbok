@@ -1,0 +1,32 @@
+format: 1
+id: core
+name: Dragonbane Core
+version: 1.0.0
+author: Free League
+description: "The Dragonbane books: their generic rules and tables (rules.json, the adventure included), and the creatures, spells, abilities, skills, kin, professions and equipment."
+sources:
+  - key: rulebook
+    title: Dragonbane Core Rules
+    short: Rulebook
+    file: References/Dragonbane_Rulebook.pdf
+    pages: 132
+    page_offset: 4
+    first_numbered_page: 9
+  - key: bestiary
+    title: Dragonbane Bestiary
+    short: Bestiary
+    file: References/Dragonbane_Bestiary.pdf
+    pages: 156
+    page_offset: 4
+    first_numbered_page: 9
+  - key: adventure
+    title: "Dragonbane Adventure: The Misty Vale"
+    short: Adventure
+    file: References/MistyValeAdventure.pdf
+    pages: 120
+    page_offset: 2
+    first_numbered_page: 5
+    unnumbered_pages:
+      - 6
+      - 7
+      - 8

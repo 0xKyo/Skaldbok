@@ -1,0 +1,255 @@
+format: 1
+world:
+  - name: World
+    nav: Reference
+    source: rulebook
+    children:
+      - name: Journeys
+        body: As adventurers in the world of Dragonbane, the [[player characters|player character]] must often journey through dark forests, rugged moors, and high mountains. A journey can be much more than just a way of getting somewhere – it can be a little adventure in itself. Who knows what lies in wait around the corner?
+        tables:
+          - id: mishaps-rule
+            name: Mishaps
+            dice: D12
+            columns:
+              - MISHAP
+            rows:
+              - roll: "1"
+                cells:
+                  - Fog. The player characters are caught unawares by a thick fog. The distance covered this shift is reduced by half.
+              - roll: "2"
+                cells:
+                  - Blocking Terrain. The way ahead is blocked by rocks, fallen trees, thick shrubs, or flooding. Each player character must make an ACROBATICS roll to keep moving forward. Anyone who succeeds can help the others. A player character who fails makes no progress this shift.
+              - roll: "3"
+                cells:
+                  - Torn Clothes. The pathfinder leads the group into a thorny thicket, rocky ravine, or swampy marsh. The clothes of a random player character are damaged and now count as rags.
+              - roll: "4"
+                cells:
+                  - Lost. The player characters realize that they are walking in circles and do not make any progress on the map this shift. The pathfinder must also make a BUSHCRAFT roll to find the right way again. Others cannot help.
+              - roll: "5"
+                cells:
+                  - Dropped Item. A random player character drops or breaks an item of your choice.
+              - roll: "6"
+                cells:
+                  - Mosquito Swarm. A large swarm of mosquitoes or gnats attacks the group, driving everyone crazy with their biting and buzzing. All player characters without a cloak become Angry.
+              - roll: "7"
+                cells:
+                  - Sprained Ankle. A random player character falls or missteps and suffers D6 damage. Armor has no effect but boots reduce the damage by two.
+              - roll: "8"
+                cells:
+                  - Downpour. A massive rainfall or blizzard (depending on the season) catches the group unawares. All player characters without a cloak must roll to withstand the cold (page 54). They must also seek shelter until the storm passes and cannot make any progress on the map this shift.
+              - roll: "9"
+                cells:
+                  - Wasps. The pathfinder steps right into a nest of wasps. A swarm of angry wasps attacks the entire group. All player characters must make an EVADE roll, and those who fail suffer D6 damage and a condition of their choice.
+              - roll: "10"
+                cells:
+                  - Landslide. The player characters are walking in rough terrain when the ground suddenly gives way under their feet. Everyone must make an EVADE roll – anyone who fails suffers D10 damage.
+              - roll: "11"
+                cells:
+                  - Savage Animal. A wolf, bear, or other savage animal feels threatened and attacks the adventurers. Choose an animal from the table on page 99.
+              - roll: "12"
+                cells:
+                  - Quicksand. The ground collapses! Each player character must make a BUSHCRAFT roll. Anyone who fails suffers a condition and must roll again. A character who already has all conditions and fails the roll is swallowed by the quicksand and disappears for good. Whoever is free can help those who are stuck.
+            legacy_key: "#72"
+          - id: hunting-rule
+            name: Hunting
+            dice: D6
+            columns:
+              - ANIMAL
+              - REQUIREMENT
+              - RATIONS
+            rows:
+              - roll: "1"
+                cells:
+                  - Squirrel
+                  - Weapon or trap
+                  - "1"
+              - roll: "2"
+                cells:
+                  - Crow
+                  - Weapon
+                  - "1"
+              - roll: "3"
+                cells:
+                  - Rabbit
+                  - Weapon or trap
+                  - D3
+              - roll: "4"
+                cells:
+                  - Fox
+                  - Weapon or trap
+                  - D4
+              - roll: "5"
+                cells:
+                  - Boar*
+                  - Weapon
+                  - 2D6
+              - roll: "6"
+                cells:
+                  - Deer
+                  - Weapon
+                  - 2D8
+            legacy_key: "#73"
+        sections:
+          - name: Travel
+            body: "Journeys proceed in shifts. As mentioned in chapter 1, there are four shifts in a day: morning, day, evening, and night. As a rule, the player characters can hike roughly 15 kilometers per shift on foot or roughly 30 kilometers on horseback. Difficult terrain might slow them down. The player characters can normally walk or ride for a maximum of two shifts per day, including a few short breaks. If they make a long stop on the road, the distance they cover is reduced. They cannot march with weapons drawn."
+          - name: Forced March
+            body: A player character can walk or ride for a third shift during the same day, but becomes Exhausted in the process. An already Exhausted character cannot travel a third shift, and no one can ever travel more than three shifts in a single day.
+          - name: Travel Maps
+            body: Most official adventures for Dragonbane include a map of the area where the adventure takes place. You can use the adventure map to determine how far the player characters need to travel and keep track of their progress. The maps are not exact, so you will sometimes have to make a judgment call.
+          - name: Long Journeys
+            body: The travel rules are designed for short treks within a limited area. If the player characters go on a long journey to another part of the world, there is no need to play it out in detail – the GM can just make a cut in the story and pick up again when they arrive at their destination.
+          - name: Pathfinders
+            body: |
+              Player characters who follow a road or clear path are not at risk of getting lost, but such luxuries are rarely available. When they are out in the wilderness, navigation is more difficult, and all sorts of mishaps can occur. When traveling through pathless terrain, the player characters must appoint a pathfinder who leads the way for the group. This person must make a BUSHCRAFT roll every shift to find their way. If the pathfinder has no map, the roll gets a [[bane]]. A spyglass gives a [[boon]]. On a failure, the group suffers a mishap – roll on the table on page 102. You can adjust the mishap to better fit the area.
+              {{table: Mishaps}}
+          - name: Rolling a Dragon
+            body: A pathfinder who rolls a Dragon finds a shortcut – the distance covered this shift is doubled.
+          - name: Difficult Terrain
+            body: If the terrain is particularly difficult, you can add a bane to the BUSHCRAFT roll.
+          - name: Random Encounters
+            body: |
+              During a journey, the player characters can encounter the strangest creatures from far and near. Once per shift, or whenever you deem appropriate, you can roll on a table for random encounters. Random encounters can vary depending on the area you are
+              in, which is why they are typically included in the adventure. You can also choose a suitable encounter instead of rolling randomly or make one up yourself. Some random encounters can even occur at night and when the player characters have made camp.
+          - name: Cold
+            body: In cold weather, particularly at night, the player characters must make a BUSHCRAFT roll to withstand the cold (page 54). It takes a blanket to avoid a bane, while a fur grants a boon on the roll.
+          - name: Making Camp
+            body: The player characters need to sleep at least one shift per day to avoid sleep deprivation (page 54). Out in the wilderness, each player character must make a BUSHCRAFT roll to find a suitable resting place. Anyone without a sleeping fur gets a bane on the roll. If it fails, the shift does not count as sleep, nor can it be used as a [[shift rest]] (page 52).
+          - name: Tent
+            body: A tent grants a boon when making camp, and a successful roll allows multiple people to sleep in the tent without making their own BUSHCRAFT rolls. A small tent can accommodate two people and a large one has room for six. If the person setting up the tent fails, other player characters can roll separately for the same shift.
+          - name: Keeping Watch
+            body: Since random encounters can occur at any time, it may be wise for the player characters to sleep during different shifts so there is always someone awake to keep watch.
+          - name: Dangerous Locations
+            body: In certain locations, such as a dungeon with enemies all around, the player characters cannot make camp or take a shift rest. They must first leave the area and find a safer spot.
+          - name: Food in the Wilderness
+            body: |
+              Out in the wilds a player character can spend a shift hunting, fishing, or foraging for edible plants. The character cannot make any progress on the map during such a shift.
+              {{table: Hunting}}
+          - name: Fishing
+            body: Fishing requires fishing gear and is handled with a HUNTING & FISHING roll. If it succeeds, the fisher catches D4 rations of food with a fishing rod or D6 rations with a fishing net.
+          - name: Foraging
+            body: The player character makes a BUSHCRAFT roll – with a bane in winter and a boon in the fall. On a success, the forager finds D3 food rations worth of edible mushrooms, roots, and other plants.
+          - name: Cooking
+            body: Anyone eating raw fish or meat is at risk of falling ill – roll against virulence 10. Plants can be eaten raw without risk, but it takes two rations of raw plants to cover the daily need of food. Cooking up to ten rations of food takes one shift and requires a successful BUSHCRAFT roll. On a failure, the food counts as uncooked. A field kitchen gives a boon to the roll. The same goes for a proper kitchen, and there you can also cook as much food as you want. See the Master Chef [[heroic ability]].
+      - name: Non-Player Characters
+        web_hide: true
+        body: |
+          You control everything in the world around the [[player characters|player character]], from dragons to demons, but your most important tool for creating drama is often your non-player characters. Stats for typical types of {{key: NPCs | npc}} can be found on the next page.
+          {{table: Typical NPCs}}
+        tables:
+          - id: typical-npcs-rule
+            name: Typical NPCs
+            columns:
+              - TYPE
+              - SKILLS
+              - HEROIC ABILITIES
+              - DAMAGE BONUS
+              - HP
+              - WP
+              - GEAR
+            rows:
+              - cells:
+                  - Guard
+                  - Awareness 10 Swords 12
+                  - —
+                  - STR +D4
+                  - "12"
+                  - —
+                  - Broadsword, studded leather armor
+              - cells:
+                  - Cultist
+                  - Evade 14 Knives 14
+                  - —
+                  - AGL +D4
+                  - "12"
+                  - —
+                  - Dagger
+              - cells:
+                  - Thief
+                  - Evade 12 Knives 12
+                  - —
+                  - AGL +D4
+                  - "10"
+                  - —
+                  - Knife
+              - cells:
+                  - Villager
+                  - Brawling 8
+                  - —
+                  - —
+                  - "8"
+                  - —
+                  - Wooden club
+              - cells:
+                  - Hunter
+                  - Awareness 12 Bows 13
+                  - —
+                  - AGL +D4
+                  - "13"
+                  - —
+                  - Longbow, leather armor
+              - cells:
+                  - Bandit
+                  - Bows 12 Evade 10 Swords 12
+                  - —
+                  - —
+                  - "12"
+                  - —
+                  - Short sword, short bow
+              - cells:
+                  - Adventurer
+                  - Awareness 10 Swords 12
+                  - —
+                  - STR +D4
+                  - "13"
+                  - —
+                  - Broadsword, studded leather armor
+              - cells:
+                  - Scholar
+                  - Languages 13 Myths & Legends 13 Staves 8
+                  - —
+                  - —
+                  - "7"
+                  - —
+                  - A good book
+              - cells:
+                  - Bandit Chief (Boss)
+                  - Awareness 12 Brawling 15 Hammers 15
+                  - Berserker Robust × 6 Veteran
+                  - STR +D6
+                  - "30"
+                  - "16"
+                  - Heavy warhammer, chainmail, open helmet
+              - cells:
+                  - Knight Champion (Boss)
+                  - Brawling 14 Swords 16
+                  - Defensive Double Slash Focused × 6 Robust × 6
+                  - STR +D6
+                  - "28"
+                  - "26"
+                  - Longsword, large shield, plate armor, great helm, combat-trained horse
+              - cells:
+                  - Archmage (Boss)
+                  - Magic School 15 Staves 13
+                  - Focused × 6 Master Spellcaster Robust × 4
+                  - —
+                  - "22"
+                  - "30"
+                  - Staff, grimoire
+            legacy_key: "#74"
+        sections:
+          - name: Managing NPCs
+            body: Mechanically, NPCs function like player characters. They move, perform actions, sustain damage, and use [[WP]] in the same way. But in practice, you should disregard all rules mechanics for NPCs if they do not directly affect a player character. Don’t roll dice for actions performed by NPCs unless they are attacking or healing a player character. You can roll for NPCs in other situations if it enhances the drama, but usually there is no need for it. Remember, an NPC rolls against the default [[skill level]] of 5 if no other level is listed (page 33).
+          - name: Minions & Bosses
+            body: "NPCs can be divided into two categories: minions and bosses."
+          - name: Minions
+            body: Are groups of less significant NPCs with identical stats. They are rarely described by name or personality. A minion who reaches zero [[HP]] is dead unless you want it to survive – perhaps to tell the player characters something important with its dying words. Minions almost never use WP and often act on the same turn in combat.
+          - name: Bosses
+            body: Are different. They are often described with names and backgrounds, and usually play an important part in the adventure. A boss draws their own [[initiative card|initiative]] in combat. Bosses have WP and use innate and [[heroic abilities|heroic ability]] just like player characters. Particularly powerful bosses often have multiple heroic abilities – not least Robust and Focused several times over, which can give them far more HP and WP than the player characters. If possible, try not to have your bosses die too early in the game. A boss who lives to fight another day is more fun than a dead one. Also make sure that the player characters cannot get to the boss too easily – put some minions in their way that need to be dealt with first. A boss encounter should be challenging!
+          - name: Attributes for NPCs
+            body: |
+              In adventures for Dragonbane, [[attribute]] scores for NPCs are not listed as they are very rarely used. If you at some point would need to roll against an exact attribute score for an NPC, use the guidelines below: STR & AGL: Use the [[Damage bonus|Derived Ratings]]. At +D6, roll against an attribute score of 17. At +D4, roll against 14. At no bonus, roll against 10.
+              CON: Roll against maximum HP, reduced by 2 for each level of the Robust heroic ability. WIL: Roll against maximum WP if this is listed, reduced by 2 for each level of the Focused heroic ability. If WP is not listed, roll against 10. INT & CHA: Roll against 10.
+      - name: NPC Creator
+        web_hide: true
+        tool: npc-creator
+        body: "Roll a random non-player character (name, attitude, kin, motivation, profession and trait) using the lists in Creating NPCs. Each result can be re-rolled on its own."

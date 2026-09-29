@@ -1,13 +1,17 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { apiGet } from '../api.js';
+import DataTable from './DataTable.vue';
+import NpcCreator from './NpcCreator.vue';
 import RuleText from './RuleText.vue';
+import { tablesMarkedIn, textBlocks, unplacedTables } from '../lib/ruletables.js';
 
 const props = defineProps({
   token: { type: String, required: true },
   jumpTo: { type: Object, default: null }, // {key, type}
   mode: { type: String, default: 'tables' }, // 'tables' | 'rules'
   gmPrefix: { type: String, default: '' },   // '/gm' when used in GM view, '' for player
+  hideTabs: { type: Boolean, default: false }, // GM sidebar already picks the category
 });
 const emit = defineEmits(['follow-key']);
 
@@ -35,19 +39,11 @@ const isRulesChapter = computed(() => currentChapter.value !== null);
 // An intro-only chapter surfaces a content type's intro as a rules chapter
 const isIntroOnly = computed(() => currentChapter.value?.introOnly === true);
 
-// In Tables mode: types whose intro appears inline above the list (no toggle)
-const inlineIntroTypes = ['abilities', 'professions'];
-// In Tables mode: types whose intro lives in the Rules tab (hide toggle here)
+// In Tables mode a type's intro is always shown above the list, except spells and skills: theirs lives in the "General info" tab.
 const rulesIntroTypes = ['spells', 'skills'];
 const showInlineIntro = computed(() =>
-  props.mode === 'tables' && inlineIntroTypes.includes(type.value) && intro.value !== null,
+  props.mode === 'tables' && !rulesIntroTypes.includes(type.value) && intro.value !== null,
 );
-const showIntroToggle = computed(() =>
-  props.mode === 'tables' && !inlineIntroTypes.includes(type.value) &&
-  !rulesIntroTypes.includes(type.value) && intro.value !== null,
-);
-
-const showIntro = ref(false); // for the toggle path (other types, not inline)
 
 const paragraphs = computed(() =>
   selected.value ? (selected.value.body ?? '').split('\n').filter((p) => p.trim() !== '') : [],
@@ -56,7 +52,6 @@ const selectedSections = computed(() => selected.value?.sections ?? []);
 
 async function load() {
   selected.value = null;
-  showIntro.value = false;
   intro.value = null;
   if (!type.value) return;
   const mine = ++request;
@@ -69,10 +64,12 @@ async function load() {
       res = await apiGet(`${props.gmPrefix}/content/${type.value}`, props.token);
       const introData = res.intro;
       const sects = [];
-      if (introData?.body) sects.push({ key: '__body__', title: currentChapter.value.title, body: introData.body, sections: [] });
+      const all = introData?.tables ?? [];
+      const unplaced = unplacedTables([introData?.body, ...(introData?.sections ?? []).map((s) => s.body)], all);
+      if (introData?.body) sects.push({ key: '__body__', title: currentChapter.value.title, body: introData.body, sections: [], tables: [...tablesMarkedIn(introData.body, all), ...unplaced] });
       for (let i = 0; i < (introData?.sections?.length ?? 0); i++) {
         const s = introData.sections[i];
-        sects.push({ key: `__sec__${i}`, title: s.title, body: s.body, sections: [] });
+        sects.push({ key: `__sec__${i}`, title: s.title, body: s.body, sections: [], tables: tablesMarkedIn(s.body, all) });
       }
       entries.value = sects;
       if (entries.value.length) {
@@ -191,7 +188,7 @@ watch(
         aria-label="Search"
         class="rules-search"
       />
-      <div v-if="summary" class="subtabs" role="group" aria-label="Kind">
+      <div v-if="summary && !hideTabs" class="subtabs" role="group" aria-label="Kind">
         <template v-if="mode === 'tables'">
           <button v-for="t in summary.types" :key="t.id" :aria-pressed="type === t.id" @click="type = t.id">
             {{ t.label }} <span class="small">{{ t.count }}</span>
@@ -213,44 +210,27 @@ watch(
 
     <p v-if="error" class="error">{{ error }}</p>
 
-    <!-- optional intro toggle (for types that are neither inline nor in Rules tab) -->
-    <div v-if="showIntroToggle" class="intro-bar">
-      <button class="intro-toggle" :class="{ active: showIntro }" @click="showIntro = !showIntro">
-        Intro
-      </button>
-    </div>
-
-    <!-- toggled intro panel -->
-    <div v-if="showIntro && showIntroToggle && intro" class="intro-panel panel">
-      <p v-if="intro.body" v-for="(p, i) in intro.body.split('\n').filter(l => l.trim())" :key="i" style="margin: 0 0 0.6em;">
-        <RuleText :text="p" @follow="followLink" />
-      </p>
-      <template v-for="(s, si) in intro.sections" :key="si">
-        <h3 class="intro-section-title">{{ s.title }}</h3>
-        <p v-for="(p, pi) in s.body.split('\n').filter(l => l.trim())" :key="pi" style="margin: 0 0 0.6em;">
-          <RuleText :text="p" @follow="followLink" />
-        </p>
+    <!-- inline intro for abilities / professions: full width above list and detail -->
+    <div v-if="showInlineIntro" class="inline-intro panel">
+      <template v-for="(b, i) in textBlocks(intro.body, intro.tables)" :key="'b' + i">
+        <DataTable v-if="b.table" :table="b.table" />
+        <p v-else class="intro-p"><RuleText :text="b.text" @follow="followLink" /></p>
       </template>
+      <template v-for="(s, si) in intro.sections" :key="si">
+        <p class="intro-section-name">{{ s.title }}</p>
+        <template v-for="(b, pi) in textBlocks(s.body, intro.tables)" :key="pi">
+          <DataTable v-if="b.table" :table="b.table" />
+          <p v-else class="intro-p"><RuleText :text="b.text" @follow="followLink" /></p>
+        </template>
+      </template>
+      <DataTable v-for="t in unplacedTables([intro.body, ...intro.sections.map((s) => s.body)], intro.tables)" :key="t.title" :table="t" />
     </div>
 
     <!-- list + detail layout -->
-    <div v-else class="rules-layout" :class="{ 'detail-open': showDetail }">
+    <div class="rules-layout" :class="{ 'detail-open': showDetail }">
 
       <!-- left: the list -->
       <nav class="rules-list" aria-label="Entries">
-        <!-- inline intro for abilities / professions -->
-        <div v-if="showInlineIntro" class="inline-intro">
-          <p v-if="intro.body" v-for="(p, i) in intro.body.split('\n').filter(l => l.trim())" :key="'b' + i" class="intro-p">
-            <RuleText :text="p" @follow="followLink" />
-          </p>
-          <template v-for="(s, si) in intro.sections" :key="si">
-            <p class="intro-section-name">{{ s.title }}</p>
-            <p v-for="(p, pi) in s.body.split('\n').filter(l => l.trim())" :key="pi" class="intro-p">
-              <RuleText :text="p" @follow="followLink" />
-            </p>
-          </template>
-        </div>
-
         <p v-if="!loading && !entries.length" class="muted" style="padding: 8px 12px;">Nothing found.</p>
         <button
           v-for="e in entries"
@@ -288,15 +268,19 @@ watch(
             <dd>{{ f.value }}</dd>
           </template>
         </dl>
-        <p v-for="(p, i) in paragraphs" :key="i" style="margin: 0 0 0.6em;">
-          <RuleText :text="p" @follow="followLink" />
-        </p>
+        <template v-for="(b, i) in textBlocks(selected.body, selected.tables)" :key="i">
+          <DataTable v-if="b.table" :table="b.table" />
+          <p v-else style="margin: 0 0 0.6em;"><RuleText :text="b.text" @follow="followLink" /></p>
+        </template>
         <template v-for="(s, si) in selectedSections" :key="si">
           <h3 class="rules-section-title">{{ s.title }}</h3>
-          <p v-for="(p, pi) in s.body.split('\n').filter(l => l.trim())" :key="pi" style="margin: 0 0 0.6em;">
-            <RuleText :text="p" @follow="followLink" />
-          </p>
+          <template v-for="(b, pi) in textBlocks(s.body, selected.tables)" :key="pi">
+            <DataTable v-if="b.table" :table="b.table" />
+            <p v-else style="margin: 0 0 0.6em;"><RuleText :text="b.text" @follow="followLink" /></p>
+          </template>
         </template>
+        <DataTable v-for="t in unplacedTables([selected.body, ...selectedSections.map((s) => s.body)], selected.tables)" :key="t.title" :table="t" />
+        <NpcCreator v-if="selected.tool === 'npc-creator'" :token="token" :gm-prefix="gmPrefix" />
       </article>
 
       <div v-else-if="!loading && entries.length === 0" class="rules-detail panel muted" style="display:flex;align-items:center;justify-content:center;">
@@ -316,20 +300,8 @@ watch(
 
 .rules-chapter-tab { font-style: italic; }
 
-.intro-bar { display: flex; gap: 6px; }
-.intro-toggle { padding: 4px 14px; border: 1px solid var(--green-dark); border-radius: 20px;
-  background: none; color: var(--green-dark); font: inherit; font-size: 0.85rem; cursor: pointer; }
-.intro-toggle:hover { background: var(--parchment); }
-.intro-toggle.active { background: var(--green-dark); color: #f3ead2; }
-
-.intro-panel { max-height: calc(100vh - 12rem); overflow-y: auto; }
-.intro-section-title { font-size: 0.95rem; color: var(--brown); margin: 1rem 0 0.4rem; text-transform: uppercase; font-family: var(--display); letter-spacing: 0.03em; }
-
-/* Inline intro (abilities / professions) */
-.inline-intro {
-  padding: 10px 12px 0;
-  border-bottom: 1px solid var(--line);
-}
+/* Intro, always open above the list */
+.inline-intro { margin-bottom: 10px; }
 .intro-p { font-size: 0.88rem; color: var(--ink); margin: 0 0 0.5em; line-height: 1.5; }
 .intro-section-name { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--brown); margin: 0.6em 0 0.2em; }
 

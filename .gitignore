@@ -1,8 +1,6 @@
-# ---- Copyrighted material: the Dragonbane books are NOT part of this repository.
-# References/ holds the original PDFs; the root data/ is everything derived from them (the Core pack, page images).
-# (Anchored to the root: tests/fixtures/web/data/ is a tiny invented stand-in and is part of the repository.)
+# ---- Copyrighted material: the Dragonbane PDFs are NOT part of this repository.
+# References/ holds the original PDFs. (The root data/, derived from them, is tracked on purpose since 2026-09-29.)
 /References/
-/data/
 
 # ---- Build output
 build/

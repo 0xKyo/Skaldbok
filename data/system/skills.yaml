@@ -1,0 +1,107 @@
+format: 1
+intro:
+  sections:
+    - name: Rolling Dice
+      body: |
+        Playing Dragonbane is a conversation between the GM and the players, back and forth, until a dramatic or challenging situation arises where the outcome is uncertain. Then it is time to roll dice. 
+        * The rules often ask you to roll multiple dice of the same type and add the results together. For example, rolling 2D6 means that you roll two six-sided dice and add the results.
+        * To determine whether an action succeeds or fails, you usually roll a D20. Rolling equal to or under your [[skill level]] means that the action succeeds. If you have a [[boon]], you roll two D20s for that action and only count the lowest result. If you have a [[bane]], you also roll two D20s, but instead only count the highest result. Skill rolls are explained in more detail in chapter 3.
+        * There are thirty core skills in total in the game, not counting secondary skills like the [[schools of magic|school of magic]]. Each skill is connected to one of the [[attributes|attribute]], which determines your base chance in the skill when you create your [[player character]]. When using a skill, first describe what your player character is trying to achieve. Then roll a D20. A result that is lower than or equal to your skill level means that your action succeeds. In combat your skill rolls often have specific effects. Outside of combat the GM, or the adventure you are playing, determines the effects of the roll.
+        * Only One Chance: As a rule, you only have one chance to succeed with any action. Once you have rolled the dice, you may not roll again to achieve the same goal. You need to try something different, wait until the circumstances have changed in a substantial way, or let another player character try. This rule does not apply in combat.
+        * Rolling above your skill level means that your action fails. You and the GM can describe what happens. The GM can also let failures have additional consequences to advance the story in an exciting way.
+        * NO STANDSTILL: Failure must not stop the story completely. Even when you fail, there must be a way forward – perhaps at the cost of time, risk, or gold, but still a way. The GM has the final say on the consequences of failure in that particular situation.
+    - name: Rolling a Dragon
+      body: |
+        * Rolling a one (1) on D20 means that you are particularly successful. This is called {{key: rolling a dragon | dragon}}. In combat, a dragon roll has specific effects – increasing the damage of an attack, for example. Outside of combat the GM decides the effect. Some suggestions:
+          * You impress everyone around you.
+          * You achieve more than intended.
+          * The action is performed faster than usual.
+    - name: Rolling a Demon
+      body: |
+        * Rolling a 20 on D20 is called {{key: rolling a demon | demon}} and means that the roll fails regardless of your [[skill level]] and other circumstances. Rolling a demon also means that the roll cannot be [[pushed|Pushing Your Roll]] Demon rolls can have additional effects in combat and during spellcasting. Outside of combat the GM can let demon rolls have effects such as:
+          * You damage yourself, someone else, or an item.
+          * You make a fool of yourself in front of everyone around you.
+          * You make a lot of noise.
+        [[ATTRIBUTE]] ROLLS
+        When no skill seems relevant to the situation, the GM can instruct you to roll against a base attribute instead – a Strength roll to lift something heavy, for example. But if there is a skill that covers the action you wish to perform, your roll must be based on that. In unclear cases the GM decides what is appropriate.
+    - name: Boons & Banes
+      body: |
+        * Normally, the GM does not assess how difficult an action is. You only roll dice in challenging situations – period. But sometimes the GM might want to underscore that external factors either help or hinder an action. You might then get a {{key: boon}} or {{key: bane}} to your roll. In both cases you roll two D20, but only one result counts. If you have a boon, only the lowest result applies. If you have a bane, only the highest result applies. There are also cases where the rules say that you get a boon or a bane, for example when attacking a prone opponent or shooting at long range.
+        * Multiple Boons/Banes: If you get multiple boons/banes to your roll, roll an additional D20 for each boon/bane and count only the lowest/highest result. Each boon negates one bane, and vice versa
+    - name: Help from Others
+      body: |
+        One other [[player character]] or [[NPC]] can help you succeed at a die roll. This must be declared before you roll any dice. It must also make sense in the story – the individual helping you must be physically present and have the capacity to support your action. The GM has the final say. Whenever someone helps you with a roll, you get a [[boon]]. In combat, helping counts as an action – by helping someone else you lose your own action that round. NPCs can help each other just as player characters can. Only one character can help a roll.
+        normal roll (one D20). If you have two boons and one [[bane]], it counts as a boon.
+    - name: Pushing Your Roll
+      body: |
+        If you fail a skill or [[attribute]] roll, you can choose to {{key: push the roll | push}}, which means that you make another attempt. The new result applies, whatever it is. If you have [[boons|boon]] or [[banes|bane]], you must re-roll all dice. You can never push a [[demon roll|demon]] (a natural 20). Whenever you push a roll, immediately after the re-roll, you suffer a [[condition]]. This means that you get a bane on all rolls for skills based on a certain attribute, and rolls against the attribute in question. Each attribute is linked to a certain condition. Thus, there are six different conditions:
+        {{table: Conditions}}
+        You decide which condition you get from pushing a roll, with two important restrictions:
+        ✦You cannot choose a condition you already have.
+        ✦You must be able to explain how the condition results from the action you are trying to perform. The GM has the right to reject clearly unreasonable explanations.
+        Once you have all six conditions, you may no longer push your rolls. In addition to their effects, conditions provide inspiration for roleplaying. Mark conditions on your character sheet.
+        Healing Conditions: You can recover from a condition by resting – for more on resting and healing, see page 52.
+        [[NPCs|npc]] and Monsters: Only the [[player characters|player character]] can push their rolls, not NPCs or monsters.
+    - name: Pushed Rolls
+      body: "[[Opposed rolls|opposed roll]] can be [[pushed|push]] (optional rule, see previous page) as well, but only if you are the active party. This can be done even after your opponent’s roll."
+    - name: Opposed Rolls
+      body: |
+        Sometimes you must beat your enemy in an {{key: opposed roll}} to succeed with an action. This means that both you and your adversary roll dice. Opposed rolls are used sparingly in the game, and only when someone is actively opposing you. In combat it only counts as an action for the active party.
+        ✦If your roll fails, your action fails as well, regardless of your opponent’s roll.
+        ✦If your roll succeeds while your opponent fails, your action succeeds.
+        ✦If both of you succeed with your rolls, your action succeeds if the result of your roll is lower than or equal to your opponent’s result. If the opponent’s result is lower than yours, you fail.
+    - name: Open Opposed Rolls
+      body: The GM can also use [[opposed rolls|opposed roll]] in situations where there is no active party – e.g. rolling STR against STR to decide the outcome of an arm-wrestling match. This is called an open opposed roll. Open opposed rolls are re-rolled if both parties fail, or if both succeed and get the same result. Both parties can push their rolls.
+    - name: The Core Skills
+      body: This section describes all core skills in the game. The [[schools of magic|school of magic]] are secondary skills and covered in chapter 5.
+    - name: NPCs and Skills
+      body: Non-[[player characters|player character]] use skills in the same way as player characters. The GM rolls dice for them, but only for actions that affect a player character directly – for example, if the [[NPC]] is attacking a player character or attempting to save them. When an NPC performs an action that does not directly affect a player character, the GM can simply decide what happens. NPC stat blocks don’t list all skills – when rolling for an NPC against an unlisted skill, the GM uses a default [[skill level]] of 5.
+    - name: Schools of Magic
+      body: There are different [[schools of magic|school of magic]], and each school is a separate secondary skill. For more information on magic, see chapter 5.
+  tables:
+    - id: measuring-time-rule
+      name: Measuring Time
+      source: rulebook
+      columns:
+        - UNIT OF TIME
+        - DURATION
+        - ENOUGH TIME TO
+      rows:
+        - cells:
+            - Round
+            - 10 seconds
+            - Perform an action in combat, take a round rest (page 52).
+        - cells:
+            - Stretch
+            - 15 minutes
+            - Explore a room, take a stretch rest (page 52).
+        - cells:
+            - Shift
+            - 6 hours
+            - Hike for 15 kilometers, take a shift rest (page 52).
+      legacy_key: "#1"
+    - id: conditions-pushing-table
+      name: Conditions
+      source: rulebook
+      columns:
+        - CONDITION
+        - ATTRIBUTE
+      rows:
+        - cells:
+            - Exhausted
+            - STR
+        - cells:
+            - Angry
+            - INT
+        - cells:
+            - Sickly
+            - CON
+        - cells:
+            - Scared
+            - WIL
+        - cells:
+            - Dazed
+            - AGL
+        - cells:
+            - Disheartened
+            - CHA

@@ -1,0 +1,189 @@
+format: 1
+kin:
+  - id: human
+    name: Human
+    source: rulebook
+    description: "Humans are the last-born. The other kin have songs and legends about times before the dawn of humanity. Today the humans have spread across much of the known world. Many are peasants living in little villages clustered around castles and palaces. Others are warriors sworn to protect the peasants and their vulnerable settlements, markets, and trade caravans from the dangers of the world. Still more are adventurers: fearless humans who venture into the unknown in search of glory, gold, and knowledge."
+    movement: 10
+    innate_abilities:
+      - Adaptive
+    tables:
+      - name: "Human: First Name"
+        dice: D6
+        columns:
+          - FIRST NAME
+        rows:
+          - roll: "1"
+            cells:
+              - Joruna
+          - roll: "2"
+            cells:
+              - Tym
+          - roll: "3"
+            cells:
+              - Halvelda
+          - roll: "4"
+            cells:
+              - Garmander
+          - roll: "5"
+            cells:
+              - Verolun
+          - roll: "6"
+            cells:
+              - Lothar
+  - id: halfling
+    name: Halfling
+    source: rulebook
+    description: Halflings are short humanoids often found in hilly farmlands where they live in earthen dwellings with well-stocked larders. They are modest and amiable by nature, with a natural affinity for hearth and home. Halflings are neither warlike nor ambitious, but highly drawn to epic tales and beautiful songs from days long gone. From time to time, this desire can lead them to leave the safety of their homes in search of grand adventures. Because of their vulnerability and fear of “the tall ones,” they are good at staying hidden and quickly getting out of critical situations.
+    movement: 8
+    innate_abilities:
+      - Hard to Catch
+    tables:
+      - name: "Halfling: First Name"
+        dice: D6
+        columns:
+          - FIRST NAME
+        rows:
+          - roll: "1"
+            cells:
+              - Snappy
+          - roll: "2"
+            cells:
+              - Brine
+          - roll: "3"
+            cells:
+              - Cottar
+          - roll: "4"
+            cells:
+              - Bumble
+          - roll: "5"
+            cells:
+              - Perrywick
+          - roll: "6"
+            cells:
+              - Theoline
+  - id: dwarf
+    name: Dwarf
+    source: rulebook
+    description: Dwarves are the oldest of the elder folk, at least according to their own chroniclers. They are an immensely proud and traditional people whose culture is steeped in ancient customs and grandiose ballads of heroic ancestors. Dwarves feel a strong connection with the bedrock and the roots of the world. They are skilled blacksmiths and artisans, admired for their ability to craft wondrous items of precious metal, as well as of iron and stone. Dwarves are also known as fierce warriors armed with axes, war hammers, and other heavy melee weapons forged in their underground smithies.
+    movement: 8
+    innate_abilities:
+      - Unforgiving
+    tables:
+      - name: "Dwarf: First Name"
+        dice: D6
+        columns:
+          - FIRST NAME
+        rows:
+          - roll: "1"
+            cells:
+              - Tinderrock
+          - roll: "2"
+            cells:
+              - Halwyld
+          - roll: "3"
+            cells:
+              - Tymolana
+          - roll: "4"
+            cells:
+              - Traut
+          - roll: "5"
+            cells:
+              - Urd
+          - roll: "6"
+            cells:
+              - Fermer
+  - id: elf
+    name: Elf
+    source: rulebook
+    description: Elves are an ancient kin that for eons have watched over the forests of the world. They are guided by the stars which they regard as divine beings capable of peering into the deepest mysteries. Elven culture is meditatively introverted and sometimes difficult for outsiders to understand. However, it is clear that they are driven by other, more metaphysical concerns than the lust for gold and glory often found in dwarves and humans. Nonetheless, their kin includes many powerful warriors, widely respected and praised by the bards for their skill with both sword and bow.
+    movement: 10
+    innate_abilities:
+      - Inner Peace
+    tables:
+      - name: "Elf: First Name"
+        dice: D6
+        columns:
+          - FIRST NAME
+        rows:
+          - roll: "1"
+            cells:
+              - Arasin
+          - roll: "2"
+            cells:
+              - Illyriana
+          - roll: "3"
+            cells:
+              - Galvander
+          - roll: "4"
+            cells:
+              - Tyrindelia
+          - roll: "5"
+            cells:
+              - Erwilnor
+          - roll: "6"
+            cells:
+              - Andremone
+  - id: mallard
+    name: Mallard
+    source: rulebook
+    description: The origin of the mallards is shrouded in mystery. Some scholars claim that they came from a mighty island realm that was swallowed by the sea thousands of years ago; others believe them to be the result of a failed magical experiment. Whatever the truth may be, these feathered humanoids are a common sight in the world. They have a knack for trade, and their agitated quacking is often an integral part of the soundscape around marketplaces and trade caravans. However, some mallards seek their fortunes as brigands, pirates, or mercenaries. Despite their diminutive size, they are fierce in battle and feared by many for their murderous rage.
+    movement: 8
+    innate_abilities:
+      - Ill-Tempered
+      - Webbed Feet
+    tables:
+      - name: "Mallard: First Name"
+        dice: D6
+        columns:
+          - FIRST NAME
+        rows:
+          - roll: "1"
+            cells:
+              - Qwucksum
+          - roll: "2"
+            cells:
+              - Splats
+          - roll: "3"
+            cells:
+              - Moggee
+          - roll: "4"
+            cells:
+              - Groddy
+          - roll: "5"
+            cells:
+              - Blisandina
+          - roll: "6"
+            cells:
+              - Hackleswell
+  - id: wolfkin
+    name: Wolfkin
+    source: rulebook
+    description: Wolfkin are the untamed fury of the wilds. They may be highly intelligent creatures, and like the elves, they have an unfailing tendency to sink into thought, pondering the mysteries of the universe. But simmering under the surface are ancient hunting instincts and an unquenchable anger over past wrongs committed against wolfkin, wolves, and the wilderness in general. As hunters and pathfinders they are second to none, but wolfkin can also be found as heavily armed mercenaries, or mystics and healers in human settlements.
+    movement: 12
+    innate_abilities:
+      - Hunting Instincts
+    tables:
+      - name: "Wolfkin: First Name"
+        dice: D6
+        columns:
+          - FIRST NAME
+        rows:
+          - roll: "1"
+            cells:
+              - Wyld
+          - roll: "2"
+            cells:
+              - Wolfshadow
+          - roll: "3"
+            cells:
+              - Lunariem
+          - roll: "4"
+            cells:
+              - Obdurian
+          - roll: "5"
+            cells:
+              - Frostbite
+          - roll: "6"
+            cells:
+              - Wuldenhall

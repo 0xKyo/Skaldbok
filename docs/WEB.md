@@ -27,6 +27,14 @@ Al abrir el enlace del máster en el browser, la primera pantalla es **General S
 
 Para volver a esta pantalla en cualquier momento: botón **⚙ General Settings** en la parte superior de la barra lateral.
 
+## Creatures (solo máster)
+
+**Reference › Creatures** lista las criaturas con buscador y muestra su ficha completa (estadísticas, ataques, habilidades, texto) **con su ilustración** si la tiene. Arriba de la lista hay tres etiquetas para filtrar, **NPC**, **Animal** y **Monster** (todo lo que no es NPC ni animal); se pueden combinar y, sin ninguna activa, se ve todo. `GET /api/gm/creatures/<key>` trae `image` (la ruta de la imagen, o `null`) y `GET /api/gm/creatures/<key>/image` sirve el archivo; el navegador la pide con el token del máster, igual que las fotos del chat.
+
+## NPC Creator (solo máster)
+
+En **Reference › World**, debajo de *Non-Player Characters*, hay una entrada **NPC Creator**: el botón **Create Random NPC** saca un valor al azar de cada lista de *Creating NPCs* (nombre, attitude, kin, motivation, profession y trait) y cada resultado tiene su propio botón **Re-roll**. Las listas salen de `data/system/npcs.yaml` (`GET /api/gm/npcs`); la entrada es un nodo de `rules.yaml` con `tool: npc-creator` y `web_hide: true`, así que los jugadores no la ven.
+
 ## Lo normal: abrir la app y listo
 
 **`Skaldbok.bat`** abre la app del máster. **El servidor web está apagado hasta que lo arrancás**: con **Start server** en **el engranaje › Web server**
@@ -147,7 +155,7 @@ archivos del máster **sigue siendo privado** hasta que se añade a propósito.
 |---|---|
 | Su ficha completa: atributos, PV/PW, condiciones, habilidades, aptitudes y hechizos con su texto, equipo con sus estadísticas, monedas, debilidad, recuerdo, apariencia y las **notas de la ficha** | El nombre de la party y de cada miembro: raza, profesión, edad, PV, PW y condiciones |
 
-Además, las **reglas**: dos pestañas, **Tables** (hechizos, aptitudes, habilidades, razas, profesiones y equipo) y **Rules** (capítulos de reglas: Combate & Daño, Aventuras, y la intro de Magia/Skills como contexto), del Core y los packs de homebrew **activos**.
+Además, las **reglas**: una sola pestaña **Rules** con el mismo índice que usa el máster en su barra lateral (tipos de contenido con su cantidad y capítulos de reglas, en orden alfabético). Un capítulo con el mismo título que un tipo (p. ej. Skills) se fusiona en una entrada con dos pestañas: "All skills" y "General info". **Gear** agrupa tres pestañas: General, Weapons y Armor (ya no hay entradas sueltas de Weapons y Armor). Todo del Core y los packs de homebrew **activos**. El código es compartido con la vista del máster (`reference.js`, `ReferenceIndex.vue`, `ReferencePanel.vue`).
 
 **Nunca**: criaturas y tablas (son del máster), las notas de la party, las conversaciones de otros jugadores, las fichas de
 otros jugadores (solo su resumen de party), ni los tokens. Un pack que el máster apaga o quita deja de verse en la web.
@@ -173,8 +181,8 @@ Todas las rutas menos `/api/health` piden `Authorization: Bearer <token>`.
 | `GET /api/me` | la ficha del jugador, con los números derivados (movimiento, bonificación de daño, carga, nivel de cada habilidad) |
 | `GET /api/party` | `{"party": {"name", "members":[…]}}` o `{"party": null}` |
 | `GET /api/content` | tipos de contenido (con su cantidad), packs cargados y capítulos de reglas (`rules[]`; los marcados `introOnly: true` muestran la intro del tipo en lugar de un capítulo YAML) |
-| `GET /api/content/<tipo>?q=texto` | `spells`, `abilities`, `skills`, `kin`, `professions`, `weapons`, `armor`, `gear`; cada entrada tiene `key`, `kind`, `name`, `subtitle`, `fields`, `body`, `homebrew`; `source` solo para homebrew |
-| `GET /api/rules/<cap>` | capítulo de reglas YAML por clave (`combat-damage`, `adventures`, …); devuelve `{key, title, rules[]}` con cada nodo `{key, title, body, sections, parentId}` |
+| `GET /api/content/<tipo>?q=texto` | `spells`, `abilities`, `skills`, `kin`, `professions`, `weapons`, `armor`, `gear`; cada entrada tiene `key`, `kind`, `name`, `subtitle`, `fields`, `body`, `tables`, `homebrew`; `source` solo para homebrew. `tables` (y `intro.tables`, y `tables` de cada regla) son `{title, dice, columns[], rows[{roll, cells[]}]}`: las propias más las que el texto nombra con una línea `{{table: Nombre}}`, que el cliente dibuja en ese lugar |
+| `GET /api/rules/<cap>` | capítulo de reglas YAML por clave (`combat-damage`, `world`, …); devuelve `{key, title, rules[]}` con cada nodo `{key, title, body, sections, parentId}` |
 
 Errores: `401` enlace no válido, `429` demasiados intentos, `404` ruta o tipo desconocido, `405` método no permitido.
 

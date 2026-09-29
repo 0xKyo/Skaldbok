@@ -1,0 +1,10 @@
+format: 1
+intro:
+  sections:
+    - name: Supply
+      body: |
+        Some goods and services are rare, and the [[player characters|player character]] cannot expect to find everything they are looking for in any little village. Each listed item has a supply rating, graded on the following scale.
+        ✦Common: Available in any village or marketplace.
+        ✦Uncommon: Can usually only be purchased from the artisan making it, which does not necessarily mean it will be available in every village.
+        ✦Rare: Must generally be specially ordered from artisans.
+        ✦Unique: Can only be obtained in treasure troves or from the person who found the precious item.

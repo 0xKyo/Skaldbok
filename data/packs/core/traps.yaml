@@ -1,0 +1,18 @@
+format: 1
+traps:
+  - id: spike-trap
+    name: Spike Trap
+    source: rulebook
+    damage: 2D6 piercing
+    description: Snaps shut on an unwary adventurer who tries to open a chest or door. Inflicts 2D6 piercing damage.
+  - id: trapdoor
+    name: Trapdoor
+    source: rulebook
+    damage: 3D6 falling
+    roll: EVADE with a bane
+    description: A hatch in the floor opens beneath a [[player character]]. The victim must make an EVADE roll with a [[bane]] and sustains 3D6 falling damage on a failure.
+  - id: poison-dart-trap
+    name: Poison Dart Trap
+    source: rulebook
+    roll: AWARENESS
+    description: "Darts dipped in [[poison]] shoot out from the wall, hitting all nearby player characters who fail an AWARENESS roll. The GM decides the potency and whether it is a lethal, paralyzing, or sleeping poison (page 52)."

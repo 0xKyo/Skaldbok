@@ -164,7 +164,7 @@ static constexpr Kind kLoadOrder[] = {Kind::Spell,  Kind::Ability, Kind::Skill, 
 
 const std::vector<std::string>& packDataFiles() {
     static const std::vector<std::string> files = [] {
-        std::vector<std::string> f = {"rules"};
+        std::vector<std::string> f = {"rules", "world"};
         for (Kind k : kLoadOrder) f.push_back(kindFile(k));
         return f;
     }();
@@ -990,12 +990,37 @@ struct ContentStore::Loader {
         return &Loader::table;
     }
 
+    // Core only: the lists of the random NPC generator, data/system/npcs.yaml ({"npc": {"<list>": {"dice": "D6", "values": [...]}}}).
+    void npcs() {
+        if (sysDir.empty()) return;
+        const std::string path = sysDir + "/npcs.yaml";
+        std::string text, err;
+        json root;
+        if (!isFile(path) || !readTextFile(path, text, &err) || !jsonParse(text, root, &err)) return;
+        const json* npc = jsonFind(root, "npc");
+        if (!npc || !npc->is_object()) return;
+        st.npcLists_.clear();
+        for (const char* key : {"name", "attitude", "kin", "motivation", "profession", "trait"}) {
+            const json* l = jsonFind(*npc, key);
+            const json* vals = l ? jsonFind(*l, "values") : nullptr;
+            if (!vals || !vals->is_array()) continue;
+            NpcList list;
+            list.key = key;
+            list.dice = jsonStr(*l, "dice");
+            for (const json& v : *vals)
+                if (v.is_string() && !trimmed(v.get<std::string>()).empty()) list.values.push_back(trimmed(v.get<std::string>()));
+            if (!list.values.empty()) st.npcLists_.push_back(std::move(list));
+        }
+    }
+
     void run() {
         setupSources();
         for (Kind k : kLoadOrder)
             if (!eachObject(kindFile(k), [&](const json& o, const std::string& n) { (this->*loaderFor(k))(o, n); })) return;
         // last: it may replace a rule an earlier pack loaded, and a broken pack must not have touched those
-        if (!eachObject("rules", [&](const json& o, const std::string& n) { rule(o, n); })) return;
+        for (const char* file : {"rules", "world"})       // world.yaml: rules like rules.yaml's, for the world of the game (adventures, NPCs)
+            if (!eachObject(file, [&](const json& o, const std::string& n) { rule(o, n); })) return;
+        npcs();
         pk.loaded = true;
     }
 };
@@ -1005,6 +1030,7 @@ void ContentStore::clear() {
     sources_.clear();
     for (auto& v : entries_) v.clear();
     for (auto& in : intros_) in = Intro();
+    npcLists_.clear();
     keywords_.clear();
     for (auto& m : byKey_) m.clear();
     monsters_.clear();

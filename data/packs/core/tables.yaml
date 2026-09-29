@@ -1,0 +1,209 @@
+format: 1
+tables:
+  - id: weakness
+    name: Weakness
+    source: rulebook
+    role: weakness
+    browse: false
+    dice: D20
+    columns:
+      - WEAKNESS
+    rows:
+      - roll: "1"
+        cells:
+          - Gullible. I believe everything that others tell me.
+      - roll: "2"
+        cells:
+          - Greedy. I want a bigger share of all treasure.
+      - roll: "3"
+        cells:
+          - Thin-skinned. I never tolerate a provocation.
+      - roll: "4"
+        cells:
+          - Foolhardy. I always go first into danger.
+      - roll: "5"
+        cells:
+          - Fainthearted. I always stay at the back of the group.
+      - roll: "6"
+        cells:
+          - Monster Slayer. All monsters are evil and must be slain.
+      - roll: "7"
+        cells:
+          - Intolerant. Nightkin such as orcs and goblins are evil and need to be fought.
+      - roll: "8"
+        cells:
+          - Slothful. I take every chance to rest.
+      - roll: "9"
+        cells:
+          - Gluttonous. I take every chance I get to eat something tasty.
+      - roll: "10"
+        cells:
+          - Kleptomaniac. I can’t stop myself from stealing valuables.
+      - roll: "11"
+        cells:
+          - Vain. I’ll help anyone who gives me praise or compliments.
+      - roll: "12"
+        cells:
+          - Reckless. I always take big risks without thought of the consequences.
+      - roll: "13"
+        cells:
+          - Fearful of Magic. Magic is an evil force and mages cannot be trusted.
+      - roll: "14"
+        cells:
+          - Craving Knowledge. The hunt for knowledge is more important than my friends.
+      - roll: "15"
+        cells:
+          - Child of the Wild. I never sleep indoors.
+      - roll: "16"
+        cells:
+          - Boastful. I always exaggerate my accomplishments.
+      - roll: "17"
+        cells:
+          - Violent. I resort to violence to overcome every obstacle.
+      - roll: "18"
+        cells:
+          - Overbearing. I always tell others what to do.
+      - roll: "19"
+        cells:
+          - Pessimist. I always think things will turn out for the worst.
+      - roll: "20"
+        cells:
+          - Haughty. I look down on everyone I meet.
+  - id: memento
+    name: Memento
+    source: rulebook
+    role: memento
+    browse: false
+    dice: D20
+    columns:
+      - MEMENTO
+    rows:
+      - roll: "1"
+        cells:
+          - Your trusty old shoes
+      - roll: "2"
+        cells:
+          - A simple silver medallion
+      - roll: "3"
+        cells:
+          - A letter from an old friend or relative
+      - roll: "4"
+        cells:
+          - A ragged old journal
+      - roll: "5"
+        cells:
+          - A bracelet passed down in your family
+      - roll: "6"
+        cells:
+          - A wooden figurine you got as a child
+      - roll: "7"
+        cells:
+          - A strangely shaped stone
+      - roll: "8"
+        cells:
+          - A copper coin from a treasure sought by your mother or father
+      - roll: "9"
+        cells:
+          - An old pewter tankard
+      - roll: "10"
+        cells:
+          - A horn taken as a trophy from a monster
+      - roll: "11"
+        cells:
+          - A fang taken as a trophy from a beast
+      - roll: "12"
+        cells:
+          - A couple of simple dice made of bone
+      - roll: "13"
+        cells:
+          - A locket containing a lock of hair
+      - roll: "14"
+        cells:
+          - An ornate key
+      - roll: "15"
+        cells:
+          - A hand-drawn map you inherited
+      - roll: "16"
+        cells:
+          - A ring with an inscription
+      - roll: "17"
+        cells:
+          - A bone whistle
+      - roll: "18"
+        cells:
+          - Your mother’s or father’s ragged old hat
+      - roll: "19"
+        cells:
+          - A griffin feather
+      - roll: "20"
+        cells:
+          - A beautifully carved pipe
+  - id: appearance
+    name: Appearance
+    source: rulebook
+    role: appearance
+    browse: false
+    dice: D20
+    columns:
+      - APPEARANCE
+    rows:
+      - roll: "1"
+        cells:
+          - Ugly scar across your cheek
+      - roll: "2"
+        cells:
+          - Strange headgear
+      - roll: "3"
+        cells:
+          - Abnormally pale and pasty
+      - roll: "4"
+        cells:
+          - A constant smile on your lips
+      - roll: "5"
+        cells:
+          - Icy, penetrating gaze
+      - roll: "6"
+        cells:
+          - A bit of extra weight around the middle
+      - roll: "7"
+        cells:
+          - Thin and wiry
+      - roll: "8"
+        cells:
+          - Abnormal amounts of body hair (depending on kin)
+      - roll: "9"
+        cells:
+          - Balding (depending on kin)
+      - roll: "10"
+        cells:
+          - Prominent tattoo
+      - roll: "11"
+        cells:
+          - Foul body odor
+      - roll: "12"
+        cells:
+          - Glorious hairstyle
+      - roll: "13"
+        cells:
+          - Limp
+      - roll: "14"
+        cells:
+          - Filthy
+      - roll: "15"
+        cells:
+          - Honest blue eyes
+      - roll: "16"
+        cells:
+          - Silver tooth
+      - roll: "17"
+        cells:
+          - Heavily perfumed
+      - roll: "18"
+        cells:
+          - Different-colored eyes
+      - roll: "19"
+        cells:
+          - Hissing voice
+      - roll: "20"
+        cells:
+          - Weathered face
