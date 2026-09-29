@@ -1,284 +1,207 @@
 format: 1
+rollable:
+  - Treasure Table 1
+  - Treasure Table 2
 entities:
-  - id: treasure-table-1-1
-    name: Copper Coins
+  - name: Copper Coins
     kind: treasure
     category: Treasure Table 1
     legacy_key: "#82"
-    roll: "1"
     fields:
       VALUE: D6 copper coins
-  - id: treasure-table-1-2
-    name: Copper Coins
+  - name: Copper Coins
     kind: treasure
     category: Treasure Table 1
-    roll: "2"
     fields:
       VALUE: 2D6 copper coins
-  - id: treasure-table-1-3
-    name: Copper Coins
+  - name: Copper Coins
     kind: treasure
     category: Treasure Table 1
-    roll: "3"
     fields:
       VALUE: 4D6 copper coins
-  - id: treasure-table-1-4
-    name: Copper Coins
+  - name: Copper Coins
     kind: treasure
     category: Treasure Table 1
-    roll: "4"
     fields:
       VALUE: 2D6 × 10 copper coins
-  - id: treasure-table-1-5
-    name: Copper Coins
+  - name: Copper Coins
     kind: treasure
     category: Treasure Table 1
-    roll: "5"
     fields:
       VALUE: 4D6 × 10 copper coins
-  - id: treasure-table-1-6
-    name: Silver Coins
+  - name: Silver Coins
     kind: treasure
     category: Treasure Table 1
-    roll: "6"
     fields:
       VALUE: D6 silver coins
-  - id: treasure-table-1-7
-    name: Silver Coins
+  - name: Silver Coins
     kind: treasure
     category: Treasure Table 1
-    roll: "7"
     fields:
       VALUE: 3D6 silver coins
-  - id: treasure-table-1-8
-    name: Silver Coins
+  - name: Silver Coins
     kind: treasure
     category: Treasure Table 1
-    roll: "8"
     fields:
       VALUE: D6 × 5 silver coins
-  - id: treasure-table-1-9
-    name: Silver Coins
+  - name: Silver Coins
     kind: treasure
     category: Treasure Table 1
-    roll: "9"
     fields:
       VALUE: D6 × 10 silver coins
-  - id: treasure-table-1-10
-    name: Silver Coins
+  - name: Silver Coins
     kind: treasure
     category: Treasure Table 1
-    roll: "10"
     fields:
       VALUE: 2D6 × 10 silver coins
-  - id: treasure-table-1-11
-    name: Silver Coins
+  - name: Silver Coins
     kind: treasure
     category: Treasure Table 1
-    roll: "11"
     fields:
       VALUE: 3D6 × 10 silver coins
-  - id: treasure-table-1-12
-    name: Gold Coins
+  - name: Gold Coins
     kind: treasure
     category: Treasure Table 1
-    roll: "12"
     fields:
       VALUE: D6 gold coins
-  - id: treasure-table-1-13
-    name: Gold Coins
+  - name: Gold Coins
     kind: treasure
     category: Treasure Table 1
-    roll: "13"
     fields:
       VALUE: 2D6 gold coins
-  - id: treasure-table-1-14
-    name: Gold Coins
+  - name: Gold Coins
     kind: treasure
     category: Treasure Table 1
-    roll: "14"
     fields:
       VALUE: 4D6 gold coins
-  - id: treasure-table-1-15
-    name: Gold Coins
+  - name: Gold Coins
     kind: treasure
     category: Treasure Table 1
-    roll: "15"
     fields:
       VALUE: D6 × 10 gold coins
-  - id: treasure-table-1-16
-    name: Gold Coins
+  - name: Gold Coins
     kind: treasure
     category: Treasure Table 1
-    roll: "16"
     fields:
       VALUE: 2D6 × 10 gold coins
-  - id: treasure-table-1-17
-    name: Chalice
+  - name: Chalice
     kind: treasure
     category: Treasure Table 1
-    roll: "17"
     fields:
       VALUE: 2D6 × 5 gold coins
-  - id: treasure-table-1-18
-    name: Silver Bracelet
+  - name: Silver Bracelet
     kind: treasure
     category: Treasure Table 1
-    roll: "18"
     fields:
       VALUE: 2D6 × 10 silver coins
-  - id: treasure-table-1-19
-    name: Gold Bracelet
+  - name: Gold Bracelet
     kind: treasure
     category: Treasure Table 1
-    roll: "19"
     fields:
       VALUE: 2D6 × 10 gold coins
-  - id: treasure-table-1-20
-    name: Silver Necklace
+  - name: Silver Necklace
     kind: treasure
     category: Treasure Table 1
-    roll: "20"
     fields:
       VALUE: 2D6 × 5 silver coins
-  - id: treasure-table-2-1
-    name: Gold Necklace
+  - name: Gold Necklace
     kind: treasure
     category: Treasure Table 2
     legacy_key: "#83"
-    roll: "1"
     fields:
       VALUE/OBJECT/EFFECT: 2D6 gold coins
-  - id: treasure-table-2-2
-    name: Silver Ring
+  - name: Silver Ring
     kind: treasure
     category: Treasure Table 2
-    roll: "2"
     fields:
       VALUE/OBJECT/EFFECT: 2D6 silver coins
-  - id: treasure-table-2-3
-    name: Gold Ring
+  - name: Gold Ring
     kind: treasure
     category: Treasure Table 2
-    roll: "3"
     fields:
       VALUE/OBJECT/EFFECT: 4D6 gold coins
-  - id: treasure-table-2-4
-    name: Silver Brooch
+  - name: Silver Brooch
     kind: treasure
     category: Treasure Table 2
-    roll: "4"
     fields:
       VALUE/OBJECT/EFFECT: 2D6 × 5 silver coins
-  - id: treasure-table-2-5
-    name: Gold Amulet
+  - name: Gold Amulet
     kind: treasure
     category: Treasure Table 2
-    roll: "5"
     fields:
       VALUE/OBJECT/EFFECT: 2D6 × 5 gold coins
-  - id: treasure-table-2-6
-    name: Gemstone
+  - name: Gemstone
     kind: treasure
     category: Treasure Table 2
-    roll: "6"
     fields:
       VALUE/OBJECT/EFFECT: "Roll D6. 1: glass (worth 2 copper), 2: crystal (worth 10 silver), 3: emerald (worth 10 gold), 4: sapphire (worth 15 gold), 5: ruby (worth 25 gold), 6: diamond (worth 100 gold)"
-  - id: treasure-table-2-7
-    name: Clothing
+  - name: Clothing
     kind: treasure
     category: Treasure Table 2
-    roll: "7"
     fields:
       VALUE/OBJECT/EFFECT: "Roll D3. 1: boots, 2: cloak, 3: fur."
-  - id: treasure-table-2-8
-    name: Melee Weapon
+  - name: Melee Weapon
     kind: treasure
     category: Treasure Table 2
-    roll: "8"
     fields:
       VALUE/OBJECT/EFFECT: "Roll D6. 1: dagger, 2: short sword, 3: short spear, 4: broadsword, 5: long spear, 6: longsword."
-  - id: treasure-table-2-9
-    name: Melee Weapon
+  - name: Melee Weapon
     kind: treasure
     category: Treasure Table 2
-    roll: "9"
     fields:
       VALUE/OBJECT/EFFECT: "Roll D6. 1: handaxe, 2: scimitar, 3: morningstar, 4: parrying dagger, 5: light warhammer, 6: flail."
-  - id: treasure-table-2-10
-    name: Ranged Weapon
+  - name: Ranged Weapon
     kind: treasure
     category: Treasure Table 2
-    roll: "10"
     fields:
       VALUE/OBJECT/EFFECT: "Roll D6. 1: sling, 2: short bow, 3: longbow, 4: light crossbow, 5: heavy crossbow, 6: hand crossbow."
-  - id: treasure-table-2-11
-    name: Mastercrafted Weapon
+  - name: Mastercrafted Weapon
     kind: treasure
     category: Treasure Table 2
-    roll: "11"
     fields:
       VALUE/OBJECT/EFFECT: "Roll D6. 1: dagger, 2: short sword, 3: battleaxe, 4: broadsword, 5: heavy warhammer, 6: longsword."
-  - id: treasure-table-2-12
-    name: Armor/Shield
+  - name: Armor/Shield
     kind: treasure
     category: Treasure Table 2
-    roll: "12"
     fields:
       VALUE/OBJECT/EFFECT: "Roll D6. 1: small shield, 2: large shield, 3: open helmet, 4: great helm, 5: studded leather, 6: chainmail."
-  - id: treasure-table-2-13
-    name: Poison Dagger
+  - name: Poison Dagger
     kind: treasure
     category: Treasure Table 2
-    roll: "13"
     fields:
       VALUE/OBJECT/EFFECT: "Roll for EVADE. If you fail, you cut yourself and suffer a Potency 12 poison. Roll D3 for the type. 1: lethal, 2: paralyzing, 3: sleeping."
-  - id: treasure-table-2-14
-    name: Rusty Nail
+  - name: Rusty Nail
     kind: treasure
     category: Treasure Table 2
-    roll: "14"
     fields:
       VALUE/OBJECT/EFFECT: Roll for EVADE. If you fail, you suffer D6 damage. Armor has no effect.
-  - id: treasure-table-2-15
-    name: Grimoire
+  - name: Grimoire
     kind: treasure
     category: Treasure Table 2
-    roll: "15"
     fields:
       VALUE/OBJECT/EFFECT: "Roll D4 for the school. 1: animism, 2: elementalism, 3: mentalism, 4: general magic. Roll D4−1 for the spell rank (0 means magic tricks) and D4 for the number. The GM chooses or randomized the exact spells."
-  - id: treasure-table-2-16
-    name: Bottle
+  - name: Bottle
     kind: treasure
     category: Treasure Table 2
-    roll: "16"
     fields:
       VALUE/OBJECT/EFFECT: "A HEALING roll reveals the contents. On a failure, the GM rolls in secret. Roll D6. 1: lethal poison (Potency 12), 2: sleeping poison (Potency 14), 3: booze, 4: herbal concoction, 5: healing potion (2D6 HP), 6: healing potion (3D6 HP)."
-  - id: treasure-table-2-17
-    name: Book
+  - name: Book
     kind: treasure
     category: Treasure Table 2
-    roll: "17"
     fields:
       VALUE/OBJECT/EFFECT: "Roll D6 for the title: 1: Eat or Be Eaten – Plants of the Forest, 2: Grammar of the Dragon Tongue, 3: Ancient Heroes and Villains, 4: Handbook of the Master Carpenter, 5: Beasts of the Cave – An Encyclopedia, 6: Blood, Phlegm and Bile – Master Your Bodily Fluids."
-  - id: treasure-table-2-18
-    name: Instrument
+  - name: Instrument
     kind: treasure
     category: Treasure Table 2
-    roll: "18"
     fields:
       VALUE/OBJECT/EFFECT: "Roll D6. 1: horn, 2: flute, 3: harp, 4: lyre, 5: bagpipe, 6: drum."
-  - id: treasure-table-2-19
-    name: Trade Goods
+  - name: Trade Goods
     kind: treasure
     category: Treasure Table 2
-    roll: "19"
     fields:
       VALUE/OBJECT/EFFECT: "Roll D6. 1: magnifying glass, 2: spyglass, 3: perfume, 4: chess set, 5: playing cards, 6: marbles"
-  - id: treasure-table-2-20
-    name: Rat
+  - name: Rat
     kind: treasure
     category: Treasure Table 2
-    roll: "20"
     fields:
       VALUE/OBJECT/EFFECT: Roll for EVADE. If you fail, you suffer D4 damage. Armor has no effect.

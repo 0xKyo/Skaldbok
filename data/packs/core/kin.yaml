@@ -7,37 +7,27 @@ kin:
     movement: 10
     innate_abilities:
       - Adaptive
+    rollable:
+      - "Human: First Name"
     entities:
-      - id: human-first-name-1
-        name: Joruna
+      - name: Joruna
         kind: first-name
         category: "Human: First Name"
-        roll: "1"
-      - id: human-first-name-2
-        name: Tym
+      - name: Tym
         kind: first-name
         category: "Human: First Name"
-        roll: "2"
-      - id: human-first-name-3
-        name: Halvelda
+      - name: Halvelda
         kind: first-name
         category: "Human: First Name"
-        roll: "3"
-      - id: human-first-name-4
-        name: Garmander
+      - name: Garmander
         kind: first-name
         category: "Human: First Name"
-        roll: "4"
-      - id: human-first-name-5
-        name: Verolun
+      - name: Verolun
         kind: first-name
         category: "Human: First Name"
-        roll: "5"
-      - id: human-first-name-6
-        name: Lothar
+      - name: Lothar
         kind: first-name
         category: "Human: First Name"
-        roll: "6"
   - id: halfling
     name: Halfling
     source: rulebook
@@ -45,37 +35,27 @@ kin:
     movement: 8
     innate_abilities:
       - Hard to Catch
+    rollable:
+      - "Halfling: First Name"
     entities:
-      - id: halfling-first-name-1
-        name: Snappy
+      - name: Snappy
         kind: first-name
         category: "Halfling: First Name"
-        roll: "1"
-      - id: halfling-first-name-2
-        name: Brine
+      - name: Brine
         kind: first-name
         category: "Halfling: First Name"
-        roll: "2"
-      - id: halfling-first-name-3
-        name: Cottar
+      - name: Cottar
         kind: first-name
         category: "Halfling: First Name"
-        roll: "3"
-      - id: halfling-first-name-4
-        name: Bumble
+      - name: Bumble
         kind: first-name
         category: "Halfling: First Name"
-        roll: "4"
-      - id: halfling-first-name-5
-        name: Perrywick
+      - name: Perrywick
         kind: first-name
         category: "Halfling: First Name"
-        roll: "5"
-      - id: halfling-first-name-6
-        name: Theoline
+      - name: Theoline
         kind: first-name
         category: "Halfling: First Name"
-        roll: "6"
   - id: dwarf
     name: Dwarf
     source: rulebook
@@ -83,37 +63,27 @@ kin:
     movement: 8
     innate_abilities:
       - Unforgiving
+    rollable:
+      - "Dwarf: First Name"
     entities:
-      - id: dwarf-first-name-1
-        name: Tinderrock
+      - name: Tinderrock
         kind: first-name
         category: "Dwarf: First Name"
-        roll: "1"
-      - id: dwarf-first-name-2
-        name: Halwyld
+      - name: Halwyld
         kind: first-name
         category: "Dwarf: First Name"
-        roll: "2"
-      - id: dwarf-first-name-3
-        name: Tymolana
+      - name: Tymolana
         kind: first-name
         category: "Dwarf: First Name"
-        roll: "3"
-      - id: dwarf-first-name-4
-        name: Traut
+      - name: Traut
         kind: first-name
         category: "Dwarf: First Name"
-        roll: "4"
-      - id: dwarf-first-name-5
-        name: Urd
+      - name: Urd
         kind: first-name
         category: "Dwarf: First Name"
-        roll: "5"
-      - id: dwarf-first-name-6
-        name: Fermer
+      - name: Fermer
         kind: first-name
         category: "Dwarf: First Name"
-        roll: "6"
   - id: elf
     name: Elf
     source: rulebook
@@ -121,37 +91,27 @@ kin:
     movement: 10
     innate_abilities:
       - Inner Peace
+    rollable:
+      - "Elf: First Name"
     entities:
-      - id: elf-first-name-1
-        name: Arasin
+      - name: Arasin
         kind: first-name
         category: "Elf: First Name"
-        roll: "1"
-      - id: elf-first-name-2
-        name: Illyriana
+      - name: Illyriana
         kind: first-name
         category: "Elf: First Name"
-        roll: "2"
-      - id: elf-first-name-3
-        name: Galvander
+      - name: Galvander
         kind: first-name
         category: "Elf: First Name"
-        roll: "3"
-      - id: elf-first-name-4
-        name: Tyrindelia
+      - name: Tyrindelia
         kind: first-name
         category: "Elf: First Name"
-        roll: "4"
-      - id: elf-first-name-5
-        name: Erwilnor
+      - name: Erwilnor
         kind: first-name
         category: "Elf: First Name"
-        roll: "5"
-      - id: elf-first-name-6
-        name: Andremone
+      - name: Andremone
         kind: first-name
         category: "Elf: First Name"
-        roll: "6"
   - id: mallard
     name: Mallard
     source: rulebook
@@ -160,37 +120,27 @@ kin:
     innate_abilities:
       - Ill-Tempered
       - Webbed Feet
+    rollable:
+      - "Mallard: First Name"
     entities:
-      - id: mallard-first-name-1
-        name: Qwucksum
+      - name: Qwucksum
         kind: first-name
         category: "Mallard: First Name"
-        roll: "1"
-      - id: mallard-first-name-2
-        name: Splats
+      - name: Splats
         kind: first-name
         category: "Mallard: First Name"
-        roll: "2"
-      - id: mallard-first-name-3
-        name: Moggee
+      - name: Moggee
         kind: first-name
         category: "Mallard: First Name"
-        roll: "3"
-      - id: mallard-first-name-4
-        name: Groddy
+      - name: Groddy
         kind: first-name
         category: "Mallard: First Name"
-        roll: "4"
-      - id: mallard-first-name-5
-        name: Blisandina
+      - name: Blisandina
         kind: first-name
         category: "Mallard: First Name"
-        roll: "5"
-      - id: mallard-first-name-6
-        name: Hackleswell
+      - name: Hackleswell
         kind: first-name
         category: "Mallard: First Name"
-        roll: "6"
   - id: wolfkin
     name: Wolfkin
     source: rulebook
@@ -198,103 +148,77 @@ kin:
     movement: 12
     innate_abilities:
       - Hunting Instincts
+    rollable:
+      - "Wolfkin: First Name"
     entities:
-      - id: wolfkin-first-name-1
-        name: Wyld
+      - name: Wyld
         kind: first-name
         category: "Wolfkin: First Name"
-        roll: "1"
-      - id: wolfkin-first-name-2
-        name: Wolfshadow
+      - name: Wolfshadow
         kind: first-name
         category: "Wolfkin: First Name"
-        roll: "2"
-      - id: wolfkin-first-name-3
-        name: Lunariem
+      - name: Lunariem
         kind: first-name
         category: "Wolfkin: First Name"
-        roll: "3"
-      - id: wolfkin-first-name-4
-        name: Obdurian
+      - name: Obdurian
         kind: first-name
         category: "Wolfkin: First Name"
-        roll: "4"
-      - id: wolfkin-first-name-5
-        name: Frostbite
+      - name: Frostbite
         kind: first-name
         category: "Wolfkin: First Name"
-        roll: "5"
-      - id: wolfkin-first-name-6
-        name: Wuldenhall
+      - name: Wuldenhall
         kind: first-name
         category: "Wolfkin: First Name"
-        roll: "6"
 
+rollable:
+  - Kin
 entities:
-  - id: kin-1
-    name: Human
+  - name: Human
     kind: kin
     category: Kin
     legacy_key: "#2"
-    roll: 1–4
-  - id: kin-2
-    name: Halfling
+  - name: Halfling
     kind: kin
     category: Kin
-    roll: 5–7
-  - id: kin-3
-    name: Dwarf
+  - name: Dwarf
     kind: kin
     category: Kin
-    roll: 8–9
-  - id: kin-4
-    name: Elf
+  - name: Elf
     kind: kin
     category: Kin
-    roll: "10"
-  - id: kin-5
-    name: Mallard
+  - name: Mallard
     kind: kin
     category: Kin
-    roll: "11"
-  - id: kin-6
-    name: Wolfkin
+  - name: Wolfkin
     kind: kin
     category: Kin
-    roll: "12"
-  - id: movement-1
-    name: Human
+  - name: Human
     kind: kin
     category: Movement
     legacy_key: "#31"
     fields:
       MOVEMENT: "10"
-  - id: movement-2
-    name: Halfling
+  - name: Halfling
     kind: kin
     category: Movement
     fields:
       MOVEMENT: "8"
-  - id: movement-3
-    name: Dwarf
+  - name: Dwarf
     kind: kin
     category: Movement
     fields:
       MOVEMENT: "8"
-  - id: movement-4
-    name: Elf
+  - name: Elf
     kind: kin
     category: Movement
     fields:
       MOVEMENT: "10"
-  - id: movement-5
-    name: Mallard
+  - name: Mallard
     kind: kin
     category: Movement
     fields:
       MOVEMENT: "8"
-  - id: movement-6
-    name: Wolfkin
+  - name: Wolfkin
     kind: kin
     category: Movement
     fields:

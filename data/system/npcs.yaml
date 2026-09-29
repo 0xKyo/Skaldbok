@@ -100,8 +100,7 @@ npc:
       - Nikias
 
 entities:
-  - id: typical-npcs-1
-    name: Guard
+  - name: Guard
     kind: type
     category: Typical NPCs
     legacy_key: "#74"
@@ -112,8 +111,7 @@ entities:
       HP: "12"
       WP: —
       GEAR: Broadsword, studded leather armor
-  - id: typical-npcs-2
-    name: Cultist
+  - name: Cultist
     kind: type
     category: Typical NPCs
     fields:
@@ -123,8 +121,7 @@ entities:
       HP: "12"
       WP: —
       GEAR: Dagger
-  - id: typical-npcs-3
-    name: Thief
+  - name: Thief
     kind: type
     category: Typical NPCs
     fields:
@@ -134,8 +131,7 @@ entities:
       HP: "10"
       WP: —
       GEAR: Knife
-  - id: typical-npcs-4
-    name: Villager
+  - name: Villager
     kind: type
     category: Typical NPCs
     fields:
@@ -145,8 +141,7 @@ entities:
       HP: "8"
       WP: —
       GEAR: Wooden club
-  - id: typical-npcs-5
-    name: Hunter
+  - name: Hunter
     kind: type
     category: Typical NPCs
     fields:
@@ -156,8 +151,7 @@ entities:
       HP: "13"
       WP: —
       GEAR: Longbow, leather armor
-  - id: typical-npcs-6
-    name: Bandit
+  - name: Bandit
     kind: type
     category: Typical NPCs
     fields:
@@ -167,8 +161,7 @@ entities:
       HP: "12"
       WP: —
       GEAR: Short sword, short bow
-  - id: typical-npcs-7
-    name: Adventurer
+  - name: Adventurer
     kind: type
     category: Typical NPCs
     fields:
@@ -178,8 +171,7 @@ entities:
       HP: "13"
       WP: —
       GEAR: Broadsword, studded leather armor
-  - id: typical-npcs-8
-    name: Scholar
+  - name: Scholar
     kind: type
     category: Typical NPCs
     fields:
@@ -189,8 +181,7 @@ entities:
       HP: "7"
       WP: —
       GEAR: A good book
-  - id: typical-npcs-9
-    name: Bandit Chief (Boss)
+  - name: Bandit Chief (Boss)
     kind: type
     category: Typical NPCs
     fields:
@@ -200,8 +191,7 @@ entities:
       HP: "30"
       WP: "16"
       GEAR: Heavy warhammer, chainmail, open helmet
-  - id: typical-npcs-10
-    name: Knight Champion (Boss)
+  - name: Knight Champion (Boss)
     kind: type
     category: Typical NPCs
     fields:
@@ -211,8 +201,7 @@ entities:
       HP: "28"
       WP: "26"
       GEAR: Longsword, large shield, plate armor, great helm, combat-trained horse
-  - id: typical-npcs-11
-    name: Archmage (Boss)
+  - name: Archmage (Boss)
     kind: type
     category: Typical NPCs
     fields:

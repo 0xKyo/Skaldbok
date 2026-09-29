@@ -409,7 +409,7 @@ struct ContentStore::Loader {
     // as a table, so a table is only ever a way of showing entities. The name is the first column, headed by its "kind" ("hazard" ->
     // HAZARD); "fields" are the other columns, headed by their keys. A "roll" ("3", "4-5") gives the entity when the die is rolled; the die
     // is the highest roll of the category (or an entity's own "dice"). The entities' kind is also the table's role ("weakness").
-    json tablesFromEntities(const json& list, const std::string& where) {
+    json tablesFromEntities(const json& list, const std::string& where, const std::set<std::string>& rollable = {}) {
         json tables = json::array();
         if (!list.is_array()) return tables;
         std::vector<std::string> order;
@@ -444,6 +444,8 @@ struct ContentStore::Loader {
                 if (legacy.empty()) legacy = jsonStr(*e, "legacy_key");     // the key this category had before (saved boards and recents)
             }
             if (dice.empty() && highest > 0) dice = "D" + std::to_string(highest);
+            // a rollable category needs no rolls written: its entities are the numbers 1..N in file order, and the die is as many-sided as they are
+            if (dice.empty() && rollable.count(category)) dice = "D" + std::to_string(members.size());
             std::string head = kind.empty() ? "NAME" : kind;
             for (char& c : head) c = c == '-' ? ' ' : static_cast<char>(std::toupper(static_cast<unsigned char>(c)));
             json columns = json::array({head});
@@ -475,10 +477,13 @@ struct ContentStore::Loader {
     // The tables an object writes: its "tables" (the plain form, still accepted) and the ones made from its "entities".
     json tablesOf(const json& o, const std::string& where) {
         json all = json::array();
+        std::set<std::string> rollable;                    // "rollable": the categories the reader can roll on (a random one of them)
+        if (const json* r = jsonFind(o, "rollable"); r && r->is_array())
+            for (const json& x : *r) rollable.insert(trimmed(jsonText(x)));
         if (const json* t = jsonFind(o, "tables"); t && t->is_array())
             for (const json& x : *t) all.push_back(x);
         if (const json* ents = jsonFind(o, "entities"))
-            for (json& x : tablesFromEntities(*ents, where)) all.push_back(std::move(x));
+            for (json& x : tablesFromEntities(*ents, where, rollable)) all.push_back(std::move(x));
         return all;
     }
 

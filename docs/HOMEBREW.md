@@ -335,17 +335,25 @@ un hechizo). Una **tabla** es solo una forma de *mostrar* entidades, y eso es co
 de `data/system` en Core) puede llevar una lista `entities:` en su primer nivel; una carta (`kin`, `professions`…) o la `intro` de un
 archivo puede llevar la suya, y esas entidades pertenecen a esa carta o a esa página.
 ```yaml
+rollable:                     # opcional: las categorías sobre las que se puede tirar
+  - Odd Weather
 entities:
-  - id: fog
-    name: Fog                 # obligatorio
+  - name: Fog                 # obligatorio
     kind: weather             # qué es; encabeza la primera columna (WEATHER) y es el rol de la tabla ("weakness"...)
     category: Odd Weather     # obligatorio: las entidades de una categoría son las filas de una tabla con ese título
-    roll: "1-3"               # opcional: la tirada que da esta entidad; el dado es la tirada más alta (D6)
     description: Nothing is visible.
     fields:                   # el resto de columnas, en este orden
       RANGE: 2 m
-    legacy_key: "#12"         # opcional: la clave que tenía antes (tableros y recientes guardados)
+  - name: Hail
+    kind: weather
+    category: Odd Weather
+    description: Ouch.
+    fields:
+      RANGE: 10 m
 ```
+Las entidades no llevan número: el orden del archivo es el orden de las filas. Una categoría en `rollable` se puede tirar: el dado
+tiene tantas caras como entidades hay (dos entidades, D2) y sale una al azar entre ellas. (Con `roll: "1-3"` en cada entidad se
+puede fijar a mano qué tirada da cuál, y con `legacy_key` se conserva la clave que tenía la tabla antes: tableros y recientes guardados.)
 Una regla muestra la tabla de una categoría donde su texto tiene una línea `{{table: Odd Weather}}`; si ningún texto la coloca,
 aparece en la regla `Tables · <pack>`. Un pack puede sumar entidades a una categoría del Core (o traer categorías propias) con solo
 escribirlas. La forma antigua, una lista `tables:` con `columns` y `rows`, sigue aceptándose (y `tables.yaml`, más abajo).

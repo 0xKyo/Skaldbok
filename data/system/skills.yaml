@@ -59,8 +59,7 @@ intro:
     - name: Schools of Magic
       body: There are different [[schools of magic|school of magic]], and each school is a separate secondary skill. For more information on magic, see chapter 5.
   entities:
-    - id: measuring-time-1
-      name: Round
+    - name: Round
       kind: unit-of-time
       category: Measuring Time
       legacy_key: "#1"
@@ -68,59 +67,51 @@ intro:
       fields:
         DURATION: 10 seconds
         ENOUGH TIME TO: Perform an action in combat, take a round rest (page 52).
-    - id: measuring-time-2
-      name: Stretch
+    - name: Stretch
       kind: unit-of-time
       category: Measuring Time
       source: rulebook
       fields:
         DURATION: 15 minutes
         ENOUGH TIME TO: Explore a room, take a stretch rest (page 52).
-    - id: measuring-time-3
-      name: Shift
+    - name: Shift
       kind: unit-of-time
       category: Measuring Time
       source: rulebook
       fields:
         DURATION: 6 hours
         ENOUGH TIME TO: Hike for 15 kilometers, take a shift rest (page 52).
-    - id: conditions-1
-      name: Exhausted
+    - name: Exhausted
       kind: condition
       category: Conditions
       source: rulebook
       fields:
         ATTRIBUTE: STR
-    - id: conditions-2
-      name: Angry
+    - name: Angry
       kind: condition
       category: Conditions
       source: rulebook
       fields:
         ATTRIBUTE: INT
-    - id: conditions-3
-      name: Sickly
+    - name: Sickly
       kind: condition
       category: Conditions
       source: rulebook
       fields:
         ATTRIBUTE: CON
-    - id: conditions-4
-      name: Scared
+    - name: Scared
       kind: condition
       category: Conditions
       source: rulebook
       fields:
         ATTRIBUTE: WIL
-    - id: conditions-5
-      name: Dazed
+    - name: Dazed
       kind: condition
       category: Conditions
       source: rulebook
       fields:
         ATTRIBUTE: AGL
-    - id: conditions-6
-      name: Disheartened
+    - name: Disheartened
       kind: condition
       category: Conditions
       source: rulebook

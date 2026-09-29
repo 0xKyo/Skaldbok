@@ -72,71 +72,60 @@ intro:
     - name: Magic Tricks
       body: "{{key: magic trick}}{{key: magic tricks}}Magic tricks are easier to learn than real spells. It takes one stretch to learn a new trick from a teacher or [[grimoire]]. No [[advancement mark]] or roll is required."
   entities:
-    - id: casting-spells-1
-      name: Casting
+    - name: Casting
       kind: rule
       category: Casting Spells
       legacy_key: "#42"
       fields:
         Description: To cast a spell you must spend [[Willpower Points|wp]] (WP) and roll against your [[skill level]] in the relevant school. Any school can be used to cast general spells. If the roll succeeds, the spell has the intended effect, as per its description. Otherwise, it has no effect. You can [[push the roll|push]] if this optional rule is used. [[Magic tricks|magic trick]] succeed automatically and always cost 1 WP.
-    - id: casting-spells-2
-      name: Rank
+    - name: Rank
       kind: rule
       category: Casting Spells
       fields:
         Description: Spells are divided into ranks. These have no mechanical effect, but indicate how complex and powerful spells are. As a mage you start the game with only rank 1 spells, but you can learn higher rank spells during the game.
-    - id: casting-spells-3
-      name: Prepared Spells
+    - name: Prepared Spells
       kind: rule
       category: Casting Spells
       fields:
         Description: Spells are complicated, and the maximum number of spells you can hold prepared in your memory at the same time is equal to your base chance for INT. When you have reached your limit and want to prepare another spell, you need to replace a spell. To prepare spells, you need to study them in a [[grimoire]]. This takes a shift of time, regardless of the number of spells. It can be done during a [[shift rest]]. You can only prepare spells that you have learned (page 61). Mark your prepared spells with an X on your character sheet.
-    - id: casting-spells-4
-      name: Grimoire
+    - name: Grimoire
       kind: rule
       category: Casting Spells
       fields:
         Description: |
           Most mages have a {{key: grimoire}}, and newly created mages automatically get one. In the grimoire, you record all the spells you know. Recording one spell takes a shift of time. You can record unreadied spells. Once you have learned more spells than can be held prepared, your grimoire becomes crucial. In an emergency, you can cast spells directly from the grimoire, but it takes twice as long as normal (see below). Grimoires from other mages are also an effective way to learn new spells, should you not have a teacher. 
           If you lose your [[grimoire]], you cannot prepare the spells you kept in it. To be able to use the unprepared spells again, you first need to get a new grimoire and record these spells in it.
-    - id: casting-spells-5
-      name: Magic Tricks
+    - name: Magic Tricks
       kind: rule
       category: Casting Spells
       fields:
         Description: "So-called {{key: magic tricks | magic trick}} are minor, relatively harmless spells. They are often the first thing a mage learns, as these simple spells train their minds to handle magical power. Each school has its own magic tricks. The limit on prepared spells (above) does not apply to magic tricks. Your magic tricks are always prepared. All magic tricks require a gesture (below) to be cast."
-    - id: casting-spells-6
-      name: Zero WP
+    - name: Zero WP
       kind: rule
       category: Casting Spells
       fields:
         Description: Some spells can drain [[WP]] from another person. Hitting zero WP has no other effect than prohibiting the use of abilities that require WP.
-    - id: casting-spells-7
-      name: Power Level
+    - name: Power Level
       kind: rule
       category: Casting Spells
       fields:
         Description: The power level of a spell indicates how much power you charge it with. The power level ranges from 1 to 3. Casting a spell costs 2 [[WP]] per power level. In other words, normal spells always cost at least 2 WP, and [[magic tricks|magic trick]] always cost 1 WP. Some spells do not use power level – these always cost 2 WP.
-    - id: casting-spells-8
-      name: Power from the Body
+    - name: Power from the Body
       kind: rule
       category: Casting Spells
       fields:
         Description: If you have just one or zero [[WP]] left, you can draw power from your body if need be. But this is harmful, potentially even lethal. Roll a die of your choice (D4, D6, D8, D10, D12, or D20) before casting the spell – the result indicates how many WP you gain and must use straight away, but you also take the same amount of damage. WP not used immediately are lost. The damage is applied after the spell is cast. Power from the body cannot be used for healing spells.
-    - id: casting-spells-9
-      name: Magic and Metal
+    - name: Magic and Metal
       kind: rule
       category: Casting Spells
       fields:
         Description: Metal has an anti-magical effect, which means that you cannot use magic if you are wearing metal armor or have a metal weapon at hand (page 45). This includes partially metal items such as axes, spears, studded leather, and arrows (but not staves, clubs, or slings). Items in your inventory do not count.
-    - id: casting-spells-10
-      name: Rank
+    - name: Rank
       kind: rule
       category: Casting Spells
       fields:
         Description: To
-    - id: casting-spells-11
-      name: Rank
+    - name: Rank
       kind: rule
       category: Casting Spells
       fields:

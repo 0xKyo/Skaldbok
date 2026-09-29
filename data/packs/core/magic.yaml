@@ -1,115 +1,77 @@
 format: 1
+rollable:
+  - Magical Mishaps
 entities:
-  - id: magical-mishaps-1
-    name: The magical powers leave you Dazed.
+  - name: The magical powers leave you Dazed.
     kind: magical-mishap
     category: Magical Mishaps
     legacy_key: "#42"
-    roll: "1"
-  - id: magical-mishaps-2
-    name: The spellcasting suddenly makes you Exhausted.
+  - name: The spellcasting suddenly makes you Exhausted.
     kind: magical-mishap
     category: Magical Mishaps
-    roll: "2"
-  - id: magical-mishaps-3
-    name: The energies take a toll on your body and make you Sickly.
+  - name: The energies take a toll on your body and make you Sickly.
     kind: magical-mishap
     category: Magical Mishaps
-    roll: "3"
-  - id: magical-mishaps-4
-    name: You lose control of the spell, which makes you very Angry.
+  - name: You lose control of the spell, which makes you very Angry.
     kind: magical-mishap
     category: Magical Mishaps
-    roll: "4"
-  - id: magical-mishaps-5
-    name: The spell subjects you to demonic visions that leave you Scared.
+  - name: The spell subjects you to demonic visions that leave you Scared.
     kind: magical-mishap
     category: Magical Mishaps
-    roll: "5"
-  - id: magical-mishaps-6
-    name: You see the world beyond the veil and realize your own insignificance
+  - name: You see the world beyond the veil and realize your own insignificance
     kind: magical-mishap
     category: Magical Mishaps
-    roll: "6"
     description: You feel Disheartened.
-  - id: magical-mishaps-7
-    name: The magic ravages your body, inflicting D6 damage per power level.
+  - name: The magic ravages your body, inflicting D6 damage per power level.
     kind: magical-mishap
     category: Magical Mishaps
-    roll: "7"
-  - id: magical-mishaps-8
-    name: The spell drains your willpower and you lose D6 WP per power level.
+  - name: The spell drains your willpower and you lose D6 WP per power level.
     kind: magical-mishap
     category: Magical Mishaps
-    roll: "8"
-  - id: magical-mishaps-9
-    name: The spell gives rise to a magical disease with virulence 3D6
+  - name: The spell gives rise to a magical disease with virulence 3D6
     kind: magical-mishap
     category: Magical Mishaps
-    roll: "9"
     description: You and everyone you come into contact with during the next shift are exposed to the disease.
-  - id: magical-mishaps-10
-    name: Another random spell of yours is activated instead of the one you cast, with the same target and power level.
+  - name: Another random spell of yours is activated instead of the one you cast, with the same target and power level.
     kind: magical-mishap
     category: Magical Mishaps
-    roll: "10"
-  - id: magical-mishaps-11
-    name: You vomit a frog the moment you tell a lie
+  - name: You vomit a frog the moment you tell a lie
     kind: magical-mishap
     category: Magical Mishaps
-    roll: "11"
     description: Roll D4 every morning. On a 1, the effect wears off. It can also be lifted with DISPEL.
-  - id: magical-mishaps-12
-    name: Any gold or silver you touch withers into dust
+  - name: Any gold or silver you touch withers into dust
     kind: magical-mishap
     category: Magical Mishaps
-    roll: "12"
     description: Roll D4 every morning. On a 1, the effect wears off. It can also be lifted with DISPEL.
-  - id: magical-mishaps-13
-    name: The spell blinds you, and you act as if in total darkness (page 52)
+  - name: The spell blinds you, and you act as if in total darkness (page 52)
     kind: magical-mishap
     category: Magical Mishaps
-    roll: "13"
     description: Roll D4 every morning. On a 1, you recover. The effect can also be lifted with DISPEL.
-  - id: magical-mishaps-14
-    name: You are struck by amnesia and forget who you and the other player characters are
+  - name: You are struck by amnesia and forget who you and the other player characters are
     kind: magical-mishap
     category: Magical Mishaps
-    roll: "14"
     description: The effect must be roleplayed. Roll D4 every morning. On a 1, your memory returns.
-  - id: magical-mishaps-15
-    name: The spell also affects a friend or other unintended victim
+  - name: The spell also affects a friend or other unintended victim
     kind: magical-mishap
     category: Magical Mishaps
-    roll: "15"
     description: A healing or helping spell affects an enemy.
-  - id: magical-mishaps-16
-    name: The spell backfires
+  - name: The spell backfires
     kind: magical-mishap
     category: Magical Mishaps
-    roll: "16"
     description: An offensive spell affects you instead of the intended target. A protecting or healing spell inflicts damage instead.
-  - id: magical-mishaps-17
-    name: You turn into an animal
+  - name: You turn into an animal
     kind: magical-mishap
     category: Magical Mishaps
-    roll: "17"
     description: "Roll D6. 1: cat, 2: fox, 3: goat, 4: wolf, 5: deer, 6: bear. You get stats according to the table on page 99 and cannot speak, but you retain your mental acuity. Roll a D4 every morning. On a 1, you revert back to your original form."
-  - id: magical-mishaps-18
-    name: You become one category younger, for example from adult to young
+  - name: You become one category younger, for example from adult to young
     kind: magical-mishap
     category: Magical Mishaps
-    roll: "18"
     description: Your attributes and derived ratings change as per the table on page 24, but your skill levels do not. If you were already young, you turn into a child with −2 STR and CON, to a minimum of 3. The effect is permanent and you age normally from your new age.
-  - id: magical-mishaps-19
-    name: You become one category older, for example from adult to old
+  - name: You become one category older, for example from adult to old
     kind: magical-mishap
     category: Magical Mishaps
-    roll: "19"
     description: Your attributes and derived ratings change as per the table on page 24, but your skill levels do not. If you were already old, you become very frail and get −2 STR and CON. The effect is permanent and you age normally from your new age.
-  - id: magical-mishaps-20
-    name: Your magic attracts a demon (page 85) from another dimension
+  - name: Your magic attracts a demon (page 85) from another dimension
     kind: magical-mishap
     category: Magical Mishaps
-    roll: "20"
     description: The demon shows up within the next shift and attacks or causes some kind of trouble. The details are up to the GM.

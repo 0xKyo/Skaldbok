@@ -1,118 +1,100 @@
 format: 1
 entities:
-  - id: attributes-1
-    name: Strength
+  - name: Strength
     kind: attribute
     category: Attributes
     fields:
       ABBREVIATION: STR
       DESCRIPTION: Raw muscle power.
-  - id: attributes-2
-    name: Constitution
+  - name: Constitution
     kind: attribute
     category: Attributes
     fields:
       ABBREVIATION: CON
       DESCRIPTION: Physical fitness and resilience.
-  - id: attributes-3
-    name: Agility
+  - name: Agility
     kind: attribute
     category: Attributes
     fields:
       ABBREVIATION: AGL
       DESCRIPTION: Body control, speed, and fine motor skills.
-  - id: attributes-4
-    name: Intelligence
+  - name: Intelligence
     kind: attribute
     category: Attributes
     fields:
       ABBREVIATION: INT
       DESCRIPTION: Mental acuity, intellect, and reasoning skills.
-  - id: attributes-5
-    name: Willpower
+  - name: Willpower
     kind: attribute
     category: Attributes
     fields:
       ABBREVIATION: WIL
       DESCRIPTION: Self-discipline and focus.
-  - id: attributes-6
-    name: Charisma
+  - name: Charisma
     kind: attribute
     category: Attributes
     fields:
       ABBREVIATION: CHA
       DESCRIPTION: Force of personality and empathy.
-  - id: movement-modifier-1
-    name: AGL 1–6
+  - name: AGL 1–6
     kind: attribute-/-range
     category: Movement modifier
     legacy_key: "#32"
     fields:
       MODIFIER: –4
-  - id: movement-modifier-2
-    name: AGL 7–9
+  - name: AGL 7–9
     kind: attribute-/-range
     category: Movement modifier
     fields:
       MODIFIER: –2
-  - id: movement-modifier-3
-    name: AGL 13–15
+  - name: AGL 13–15
     kind: attribute-/-range
     category: Movement modifier
     fields:
       MODIFIER: "+2"
-  - id: movement-modifier-4
-    name: AGL 16–18
+  - name: AGL 16–18
     kind: attribute-/-range
     category: Movement modifier
     fields:
       MODIFIER: "+4"
-  - id: damage-bonus-1
-    name: ≤12
+  - name: ≤12
     kind: str/agl
     category: Damage Bonus
     legacy_key: "#33"
     fields:
       DAMAGE BONUS: —
-  - id: damage-bonus-2
-    name: 13–16
+  - name: 13–16
     kind: str/agl
     category: Damage Bonus
     fields:
       DAMAGE BONUS: "+D4"
-  - id: damage-bonus-3
-    name: 17+
+  - name: 17+
     kind: str/agl
     category: Damage Bonus
     fields:
       DAMAGE BONUS: "+D6"
-  - id: base-chance-1
-    name: 1–5
+  - name: 1–5
     kind: attribute
     category: Base Chance
     legacy_key: "#34"
     fields:
       BASE CHANCE: "3"
-  - id: base-chance-2
-    name: 6–8
+  - name: 6–8
     kind: attribute
     category: Base Chance
     fields:
       BASE CHANCE: "4"
-  - id: base-chance-3
-    name: 9–12
+  - name: 9–12
     kind: attribute
     category: Base Chance
     fields:
       BASE CHANCE: "5"
-  - id: base-chance-4
-    name: 13–15
+  - name: 13–15
     kind: attribute
     category: Base Chance
     fields:
       BASE CHANCE: "6"
-  - id: base-chance-5
-    name: 16–18
+  - name: 16–18
     kind: attribute
     category: Base Chance
     fields:

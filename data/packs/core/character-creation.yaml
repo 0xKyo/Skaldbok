@@ -1,385 +1,269 @@
 format: 1
+rollable:
+  - Weakness
+  - Memento
+  - Appearance
 entities:
-  - id: weakness-1
-    name: Gullible
+  - name: Gullible
     kind: weakness
     category: Weakness
     legacy_key: "#35"
-    roll: "1"
     source: rulebook
     description: I believe everything that others tell me.
-  - id: weakness-2
-    name: Greedy
+  - name: Greedy
     kind: weakness
     category: Weakness
-    roll: "2"
     source: rulebook
     description: I want a bigger share of all treasure.
-  - id: weakness-3
-    name: Thin-skinned
+  - name: Thin-skinned
     kind: weakness
     category: Weakness
-    roll: "3"
     source: rulebook
     description: I never tolerate a provocation.
-  - id: weakness-4
-    name: Foolhardy
+  - name: Foolhardy
     kind: weakness
     category: Weakness
-    roll: "4"
     source: rulebook
     description: I always go first into danger.
-  - id: weakness-5
-    name: Fainthearted
+  - name: Fainthearted
     kind: weakness
     category: Weakness
-    roll: "5"
     source: rulebook
     description: I always stay at the back of the group.
-  - id: weakness-6
-    name: Monster Slayer
+  - name: Monster Slayer
     kind: weakness
     category: Weakness
-    roll: "6"
     source: rulebook
     description: All monsters are evil and must be slain.
-  - id: weakness-7
-    name: Intolerant
+  - name: Intolerant
     kind: weakness
     category: Weakness
-    roll: "7"
     source: rulebook
     description: Nightkin such as orcs and goblins are evil and need to be fought.
-  - id: weakness-8
-    name: Slothful
+  - name: Slothful
     kind: weakness
     category: Weakness
-    roll: "8"
     source: rulebook
     description: I take every chance to rest.
-  - id: weakness-9
-    name: Gluttonous
+  - name: Gluttonous
     kind: weakness
     category: Weakness
-    roll: "9"
     source: rulebook
     description: I take every chance I get to eat something tasty.
-  - id: weakness-10
-    name: Kleptomaniac
+  - name: Kleptomaniac
     kind: weakness
     category: Weakness
-    roll: "10"
     source: rulebook
     description: I can’t stop myself from stealing valuables.
-  - id: weakness-11
-    name: Vain
+  - name: Vain
     kind: weakness
     category: Weakness
-    roll: "11"
     source: rulebook
     description: I’ll help anyone who gives me praise or compliments.
-  - id: weakness-12
-    name: Reckless
+  - name: Reckless
     kind: weakness
     category: Weakness
-    roll: "12"
     source: rulebook
     description: I always take big risks without thought of the consequences.
-  - id: weakness-13
-    name: Fearful of Magic
+  - name: Fearful of Magic
     kind: weakness
     category: Weakness
-    roll: "13"
     source: rulebook
     description: Magic is an evil force and mages cannot be trusted.
-  - id: weakness-14
-    name: Craving Knowledge
+  - name: Craving Knowledge
     kind: weakness
     category: Weakness
-    roll: "14"
     source: rulebook
     description: The hunt for knowledge is more important than my friends.
-  - id: weakness-15
-    name: Child of the Wild
+  - name: Child of the Wild
     kind: weakness
     category: Weakness
-    roll: "15"
     source: rulebook
     description: I never sleep indoors.
-  - id: weakness-16
-    name: Boastful
+  - name: Boastful
     kind: weakness
     category: Weakness
-    roll: "16"
     source: rulebook
     description: I always exaggerate my accomplishments.
-  - id: weakness-17
-    name: Violent
+  - name: Violent
     kind: weakness
     category: Weakness
-    roll: "17"
     source: rulebook
     description: I resort to violence to overcome every obstacle.
-  - id: weakness-18
-    name: Overbearing
+  - name: Overbearing
     kind: weakness
     category: Weakness
-    roll: "18"
     source: rulebook
     description: I always tell others what to do.
-  - id: weakness-19
-    name: Pessimist
+  - name: Pessimist
     kind: weakness
     category: Weakness
-    roll: "19"
     source: rulebook
     description: I always think things will turn out for the worst.
-  - id: weakness-20
-    name: Haughty
+  - name: Haughty
     kind: weakness
     category: Weakness
-    roll: "20"
     source: rulebook
     description: I look down on everyone I meet.
-  - id: memento-1
-    name: Your trusty old shoes
+  - name: Your trusty old shoes
     kind: memento
     category: Memento
     legacy_key: "#36"
-    roll: "1"
     source: rulebook
-  - id: memento-2
-    name: A simple silver medallion
+  - name: A simple silver medallion
     kind: memento
     category: Memento
-    roll: "2"
     source: rulebook
-  - id: memento-3
-    name: A letter from an old friend or relative
+  - name: A letter from an old friend or relative
     kind: memento
     category: Memento
-    roll: "3"
     source: rulebook
-  - id: memento-4
-    name: A ragged old journal
+  - name: A ragged old journal
     kind: memento
     category: Memento
-    roll: "4"
     source: rulebook
-  - id: memento-5
-    name: A bracelet passed down in your family
+  - name: A bracelet passed down in your family
     kind: memento
     category: Memento
-    roll: "5"
     source: rulebook
-  - id: memento-6
-    name: A wooden figurine you got as a child
+  - name: A wooden figurine you got as a child
     kind: memento
     category: Memento
-    roll: "6"
     source: rulebook
-  - id: memento-7
-    name: A strangely shaped stone
+  - name: A strangely shaped stone
     kind: memento
     category: Memento
-    roll: "7"
     source: rulebook
-  - id: memento-8
-    name: A copper coin from a treasure sought by your mother or father
+  - name: A copper coin from a treasure sought by your mother or father
     kind: memento
     category: Memento
-    roll: "8"
     source: rulebook
-  - id: memento-9
-    name: An old pewter tankard
+  - name: An old pewter tankard
     kind: memento
     category: Memento
-    roll: "9"
     source: rulebook
-  - id: memento-10
-    name: A horn taken as a trophy from a monster
+  - name: A horn taken as a trophy from a monster
     kind: memento
     category: Memento
-    roll: "10"
     source: rulebook
-  - id: memento-11
-    name: A fang taken as a trophy from a beast
+  - name: A fang taken as a trophy from a beast
     kind: memento
     category: Memento
-    roll: "11"
     source: rulebook
-  - id: memento-12
-    name: A couple of simple dice made of bone
+  - name: A couple of simple dice made of bone
     kind: memento
     category: Memento
-    roll: "12"
     source: rulebook
-  - id: memento-13
-    name: A locket containing a lock of hair
+  - name: A locket containing a lock of hair
     kind: memento
     category: Memento
-    roll: "13"
     source: rulebook
-  - id: memento-14
-    name: An ornate key
+  - name: An ornate key
     kind: memento
     category: Memento
-    roll: "14"
     source: rulebook
-  - id: memento-15
-    name: A hand-drawn map you inherited
+  - name: A hand-drawn map you inherited
     kind: memento
     category: Memento
-    roll: "15"
     source: rulebook
-  - id: memento-16
-    name: A ring with an inscription
+  - name: A ring with an inscription
     kind: memento
     category: Memento
-    roll: "16"
     source: rulebook
-  - id: memento-17
-    name: A bone whistle
+  - name: A bone whistle
     kind: memento
     category: Memento
-    roll: "17"
     source: rulebook
-  - id: memento-18
-    name: Your mother’s or father’s ragged old hat
+  - name: Your mother’s or father’s ragged old hat
     kind: memento
     category: Memento
-    roll: "18"
     source: rulebook
-  - id: memento-19
-    name: A griffin feather
+  - name: A griffin feather
     kind: memento
     category: Memento
-    roll: "19"
     source: rulebook
-  - id: memento-20
-    name: A beautifully carved pipe
+  - name: A beautifully carved pipe
     kind: memento
     category: Memento
-    roll: "20"
     source: rulebook
-  - id: appearance-1
-    name: Ugly scar across your cheek
+  - name: Ugly scar across your cheek
     kind: appearance
     category: Appearance
     legacy_key: "#37"
-    roll: "1"
     source: rulebook
-  - id: appearance-2
-    name: Strange headgear
+  - name: Strange headgear
     kind: appearance
     category: Appearance
-    roll: "2"
     source: rulebook
-  - id: appearance-3
-    name: Abnormally pale and pasty
+  - name: Abnormally pale and pasty
     kind: appearance
     category: Appearance
-    roll: "3"
     source: rulebook
-  - id: appearance-4
-    name: A constant smile on your lips
+  - name: A constant smile on your lips
     kind: appearance
     category: Appearance
-    roll: "4"
     source: rulebook
-  - id: appearance-5
-    name: Icy, penetrating gaze
+  - name: Icy, penetrating gaze
     kind: appearance
     category: Appearance
-    roll: "5"
     source: rulebook
-  - id: appearance-6
-    name: A bit of extra weight around the middle
+  - name: A bit of extra weight around the middle
     kind: appearance
     category: Appearance
-    roll: "6"
     source: rulebook
-  - id: appearance-7
-    name: Thin and wiry
+  - name: Thin and wiry
     kind: appearance
     category: Appearance
-    roll: "7"
     source: rulebook
-  - id: appearance-8
-    name: Abnormal amounts of body hair (depending on kin)
+  - name: Abnormal amounts of body hair (depending on kin)
     kind: appearance
     category: Appearance
-    roll: "8"
     source: rulebook
-  - id: appearance-9
-    name: Balding (depending on kin)
+  - name: Balding (depending on kin)
     kind: appearance
     category: Appearance
-    roll: "9"
     source: rulebook
-  - id: appearance-10
-    name: Prominent tattoo
+  - name: Prominent tattoo
     kind: appearance
     category: Appearance
-    roll: "10"
     source: rulebook
-  - id: appearance-11
-    name: Foul body odor
+  - name: Foul body odor
     kind: appearance
     category: Appearance
-    roll: "11"
     source: rulebook
-  - id: appearance-12
-    name: Glorious hairstyle
+  - name: Glorious hairstyle
     kind: appearance
     category: Appearance
-    roll: "12"
     source: rulebook
-  - id: appearance-13
-    name: Limp
+  - name: Limp
     kind: appearance
     category: Appearance
-    roll: "13"
     source: rulebook
-  - id: appearance-14
-    name: Filthy
+  - name: Filthy
     kind: appearance
     category: Appearance
-    roll: "14"
     source: rulebook
-  - id: appearance-15
-    name: Honest blue eyes
+  - name: Honest blue eyes
     kind: appearance
     category: Appearance
-    roll: "15"
     source: rulebook
-  - id: appearance-16
-    name: Silver tooth
+  - name: Silver tooth
     kind: appearance
     category: Appearance
-    roll: "16"
     source: rulebook
-  - id: appearance-17
-    name: Heavily perfumed
+  - name: Heavily perfumed
     kind: appearance
     category: Appearance
-    roll: "17"
     source: rulebook
-  - id: appearance-18
-    name: Different-colored eyes
+  - name: Different-colored eyes
     kind: appearance
     category: Appearance
-    roll: "18"
     source: rulebook
-  - id: appearance-19
-    name: Hissing voice
+  - name: Hissing voice
     kind: appearance
     category: Appearance
-    roll: "19"
     source: rulebook
-  - id: appearance-20
-    name: Weathered face
+  - name: Weathered face
     kind: appearance
     category: Appearance
-    roll: "20"
     source: rulebook

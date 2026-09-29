@@ -151,10 +151,10 @@ int main(int argc, char** argv) {
     check(fighter && fighter->list("skills").size() == 8 && fighter->list("starting_gear").size() == 3 &&
               fighter->list("heroic_abilities") == std::vector<std::string>{"Veteran"},
           "Fighter: 8 skills, 3 gear sets, heroic ability Veteran");
-    check(fighter && fighter->tables.size() == 2 && fighter->tables[0].title == "Fighter: Gear" && fighter->tables[0].dieSides() == 6 &&
+    check(fighter && fighter->tables.size() == 2 && fighter->tables[0].title == "Fighter: Gear" && fighter->tables[0].dieSides() == 3 &&
               fighter->tables[0].rows.size() == 3 && fighter->tables[1].title == "Fighter: Nickname" && fighter->tables[1].rows.size() == 6 &&
               fighter->list("starting_gear")[0] == fighter->tables[0].rows[0].cells[0] && fighter->list("nicknames")[0] == fighter->tables[1].rows[0].cells[0],
-          "a profession card holds its own Gear and Nickname tables; the lists the creator uses come from them");
+          "a profession card holds its own Gear and Nickname tables (the die has as many sides as there are gear sets); the lists the creator uses come from them");
     const Entry* axes = find(core, Kind::Skill, "Axes");
     check(axes && axes->prop("attribute") == "STR" && find(core, Kind::Skill, "Bows")->prop("attribute") == "AGL", "weapon skills know their attribute");
     const Entry* fetch = find(core, Kind::Spell, "Fetch");
@@ -403,7 +403,15 @@ int main(int argc, char** argv) {
                     "  - group: actions\n");
         test::write(root + "/acts/anything.yaml",
                     "format: 1\n"
+                    "rollable:\n"
+                    "  - Odd Luck\n"
                     "entities:\n"
+                    "  - name: Heads\n"
+                    "    kind: side\n"
+                    "    category: Odd Luck\n"
+                    "  - name: Tails\n"
+                    "    kind: side\n"
+                    "    category: Odd Luck\n"
                     "  - id: fog\n"
                     "    name: Fog\n"
                     "    kind: weather\n"
@@ -444,6 +452,9 @@ int main(int argc, char** argv) {
                   weather->rows[0].cells == std::vector<std::string>{"Fog", "Nothing is visible.", "2 m"} && weather->rows[0].rollMin == 1 && weather->rows[0].rollMax == 3 &&
                   weather->rows[1].rollMin == 4 && weather->rows[1].rollMax == 6 && s.rule(weather->rule) && s.rule(weather->rule)->title == "Tables · Action Pack",
               "entities are pure data: those of a category become the rows of its table (name, description, fields), the die is the highest roll, the kind heads the first column and is the role");
+        const DataTable* luck = s.tableByName("Odd Luck");
+        check(luck && luck->dieSides() == 2 && luck->rows.size() == 2 && luck->rows[0].rollMin == 1 && luck->rows[1].rollMax == 2,
+              "a rollable category needs no rolls written: its entities are 1..N in file order and the die has as many sides");
         check(s.tableByName("Plain Old Table") && s.tableByName("Plain Old Table")->rows.size() == 1, "a table written the plain way is still accepted");
         const std::vector<PackSpec> actsSpec = {PackSpec{root + "/acts", false, true}};
         const std::string sigBefore = packSignature(actsSpec);

@@ -1,7 +1,6 @@
 format: 1
 entities:
-  - id: rest-types-1
-    name: Round Rest
+  - name: Round Rest
     kind: type
     category: Rest Types
     fields:
@@ -9,8 +8,7 @@ entities:
       WP RECOVERED: D6
       CONDITIONS HEALED: —
       NOTES: Once per shift
-  - id: rest-types-2
-    name: Stretch Rest
+  - name: Stretch Rest
     kind: type
     category: Rest Types
     fields:
@@ -18,8 +16,7 @@ entities:
       WP RECOVERED: D6
       CONDITIONS HEALED: 1 condition of choice
       NOTES: Once per shift; caregiver cannot rest
-  - id: rest-types-3
-    name: Shift Rest
+  - name: Shift Rest
     kind: type
     category: Rest Types
     fields:
