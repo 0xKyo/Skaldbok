@@ -165,6 +165,8 @@ input[type='search']:focus-visible { outline: 2px solid var(--green); }
 .a-helmet { grid-area: helmet; } .a-weapons { grid-area: weapons; } .a-about { grid-area: about; }
 .a-points { grid-area: points; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .a-hp { grid-column: 1; } .a-wp { grid-column: 2; }
+.a-hp, .a-wp { display: flex; }                                  /* the two cards are as tall as the taller one */
+.a-hp > .points, .a-wp > .points { flex: 1; min-width: 0; }
 
 @media (min-width: 480px) {
   .gems { grid-template-columns: repeat(6, minmax(0, 1fr)); }
@@ -179,7 +181,7 @@ input[type='search']:focus-visible { outline: 2px solid var(--green); }
     grid-template-areas:
       'tools  tools   tools   tools'
       'issues issues  issues  issues'
-      'ident  name    appear  appear'
+      'ident  name    name    appear'
       'attrs  attrs   attrs   attrs'
       'points points  points  points'
       'abil   skills  skills  inv'
@@ -191,6 +193,7 @@ input[type='search']:focus-visible { outline: 2px solid var(--green); }
       '.      skills  skills  tiny'
       'about  about   about   about'; }
   .skill-cols { grid-template-columns: 1fr 1fr; }
+  .a-name { justify-self: center; width: min(100%, 26rem); }                  /* the name sits in the middle of the page, between the two columns
 }
 
 /* the green ornamented banner that heads every block */
@@ -206,6 +209,11 @@ input[type='search']:focus-visible { outline: 2px solid var(--green); }
 
 .block { display: grid; gap: 5px; align-content: start; }
 .field-row { display: grid; grid-template-columns: max-content max-content; gap: 5px; align-items: stretch; }
+/* the banners of the abilities column (damage bonuses, movement, abilities & spells) are as wide as the widest one, so they line up */
+.a-abil { grid-template-columns: max-content max-content; justify-content: start; column-gap: 5px; }
+.a-abil > .field-row { display: contents; }
+.a-abil > .banner { width: auto; }
+.a-abil > :not(.field-row):not(.banner) { grid-column: 1 / -1; }
 .field { display: flex; align-items: center; justify-content: center; min-height: 1.7rem; padding: 2px 6px; border: 1px solid var(--line); border-radius: 6px;
   background: linear-gradient(var(--parchment), #e2d3a8); font-family: var(--display); font-weight: 800; font-size: 1rem; color: var(--ink); }
 
@@ -259,6 +267,7 @@ input[type='search']:focus-visible { outline: 2px solid var(--green); }
 /* hit points and willpower points: a big number and a row of circles */
 .points { padding: 10px 10px 12px; border-radius: 12px; color: #fff; border: 3px solid var(--green-dark); background: linear-gradient(#34866f, #2a6e5c); box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2); }
 .points.hp { background: linear-gradient(#e6524a, #c22b23); border-color: var(--red-dark); }
+.points.wp { background: linear-gradient(#4f86ad, #2f5f86); border-color: #234b6b; }                /* a muted ink blue next to the dragon green and the red */
 .points h3 { margin: 0 0 6px; color: #fff; font-size: 0.9rem; letter-spacing: 0.12em; }
 .points .body { display: flex; align-items: center; gap: 12px; }
 .points .now { display: grid; place-items: center; align-content: center; line-height: 1.05; min-width: 3.6rem; min-height: 3.1rem; padding: 4px 8px; border-radius: 8px; background: #fbf5e2; color: var(--ink);

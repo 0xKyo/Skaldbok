@@ -2,7 +2,7 @@
 
 El servidor `skaldbok_web` sirve **dos interfaces** desde la misma página Vue:
 
-* **Vista del máster** — se abre con `/?gm=<token>`. Es la interfaz principal del máster desde el browser: lista de personajes y parties en la barra lateral, y para cada personaje las pestañas Ficha / Chat / Tablas / Reglas. La pantalla de **General Settings** (la primera en cargar) muestra el enlace del propio máster y todos los enlaces de los jugadores, listos para copiar y enviar.
+* **Vista del máster** — se abre con `/?gm=<token>`. Es la interfaz principal del máster desde el browser y se parece a la del jugador: **pestañas arriba** — **Character** (un desplegable con todos los personajes y su ficha), **Parties** (todas las parties, con sus personajes como ficha reducida), **Chat** (por ahora, el mismo chat del jugador, del personaje elegido), **Rules** (la Reference, idéntica a la de los jugadores). El enlace personal de cada jugador se ve en la cabecera de su ficha (**Player link ↗**) y se imprime con `skaldbok_web --links`.
 * **Vista del jugador** — se abre con `/?t=<token>`. Cada jugador ve solo su ficha, su party y las reglas; no puede ver ni modificar nada de los demás.
 
 ```
@@ -18,15 +18,6 @@ skaldbok_web  (C++, sin ventana)  ──JSON──►  web/client (Vue 3, ya com
 * **`web/client`** es una página Vue 3 (Vite). Node solo hace falta para *compilarla*; el servidor sirve los archivos ya compilados (`web/client/dist`, o la carpeta `web/` junto al ejecutable en el paquete).
 * **Escritura acotada**: el jugador solo puede cambiar su propia hoja (`PATCH /api/me`) y escribir en su chat; el máster puede editar cualquier ficha y gestionar parties vía `/api/gm/*`.
 
-## General Settings (pantalla de inicio del máster)
-
-Al abrir el enlace del máster en el browser, la primera pantalla es **General Settings**:
-
-* **GM Link** — el enlace del propio máster, con botón *Copy*.
-* **Player Links** — uno por personaje, con su nombre y botón *Copy*. Desde aquí el máster copia y envía a cada jugador su enlace personal.
-
-Para volver a esta pantalla en cualquier momento: botón **⚙ General Settings** en la parte superior de la barra lateral.
-
 ## Cómo se ve cada categoría
 
 Todas las páginas de Reference (también Creatures, cuyo texto general del Bestiary es la pestaña **General Info**) tienen la misma estructura, de arriba a abajo: **pestañas** (solo si la entrada las tiene, como Gear o Skills), **barra de búsqueda**, **intro** (el texto general de la categoría o el texto propio del capítulo, siempre desplegado) y la **lista con la descripción al lado**. No hay título encima. En los capítulos de reglas la búsqueda filtra en el navegador por título, texto y contenido de las tablas; la respuesta de `GET /api/rules/<cap>` (y `/api/gm/rules/<cap>`) trae el texto de la raíz del capítulo como `intro`, y `GET /api/gm/creatures` trae el `intro` del Bestiary.
@@ -37,13 +28,13 @@ Las tablas con dado (las categorías `rollable` de los yaml, o con `dice`) tiene
 
 **Capítulos con pestañas** (`layout: tabs`, como **Actions**, que sale de `actions.yaml`): cada entrada del capítulo es una pestaña; debajo van su texto, la búsqueda y la **lista con las filas de su tabla** (Dash, Melee Attack…), con la información de la fila elegida al lado. La respuesta de `GET /api/rules/<cap>` trae `layout`.
 
-## Creatures (solo máster)
+## Creatures
 
 **Reference › Creatures** lista las criaturas con buscador y muestra su ficha completa (estadísticas, ataques, habilidades, texto) **con su ilustración** si la tiene. Arriba de la lista hay tres etiquetas para filtrar, **NPC**, **Animal** y **Monster** (todo lo que no es NPC ni animal); se pueden combinar y, sin ninguna activa, se ve todo. `GET /api/gm/creatures/<key>` trae `image` (la ruta de la imagen, o `null`) y `GET /api/gm/creatures/<key>/image` sirve el archivo; el navegador la pide con el token del máster, igual que las fotos del chat.
 
 ## Parties y personajes (máster)
 
-En la barra lateral, **Characters** trae la categoría **Solo**: los personajes que no están en ninguna party. **Parties** es un desplegable (el título se pliega y se despliega); cada party es a su vez un desplegable con sus personajes, y un personaje puede estar en varias parties (aparece bajo cada una). Al hacer clic en una party se abre a la derecha su página:
+Las pestañas **Character** y **Parties** del máster. En **Parties** se ve **cada party** como una tarjeta, con sus personajes en una tabla reducida (**Name**, **Class** y **Kin**; clic en el nombre abre la hoja en la pestaña Character) y, al final, **Solo**: los personajes que no están en ninguna party (un personaje puede estar en varias). **+ New party** crea una. La tarjeta de cada party trae:
 
 * el **nombre** y todos sus **miembros** (clic en un nombre abre su ficha; la **×** lo saca de la party);
 * **Add to Party**: elige entre los personajes que todavía no están en ella;
@@ -57,7 +48,7 @@ En el inventario de la ficha, cada objeto cuenta para el límite de carga como p
 
 ## Creador de personajes (máster)
 
-El **+** de **Characters** abre el creador con los mismos 9 pasos que la app (Kin, Profession, Age, Attributes, Skills, Ability & magic, Gear, Name & details, Review), con sus botones de tirada (D12, D10, D6, 4D6, tablas de weakness/memento/appearance). **Next** se habilita al terminar cada paso; **Create character** en Review guarda la ficha y la abre. **Random character** (dentro del creador) y el **🎲** de la barra lateral generan un personaje completo y válido y lo dejan en Review para retocarlo o crearlo.
+El botón **+ New character** de la pestaña **Character** abre el creador con los mismos 9 pasos que la app (Kin, Profession, Age, Attributes, Skills, Ability & magic, Gear, Name & details, Review), con sus botones de tirada (D12, D10, D6, 4D6, tablas de weakness/memento/appearance). **Next** se habilita al terminar cada paso; **Create character** en Review guarda la ficha y la abre. **Random character** (dentro del creador) y el botón **Random** generan un personaje completo y válido y lo dejan en Review para retocarlo o crearlo.
 
 Donde se elige una opción (kin, profession, age, heroic ability, gear set) se ve como en la Reference: la lista a la izquierda y a la derecha los datos de la elegida (campos, texto y tablas, las mismas tarjetas de `GET /api/gm/content/<tipo>`). Skills y hechizos, que son de selección múltiple, siguen siendo listas con casillas.
 
@@ -67,7 +58,7 @@ Las reglas son las de la app (`game/creation.cpp`); la web solo junta las elecci
 
 ## NPC Creator (solo máster)
 
-En **Reference › World**, debajo de *Non-Player Characters*, hay una entrada **NPC Creator**: el botón **Create Random NPC** saca un valor al azar de cada lista de *Creating NPCs* (nombre, attitude, kin, motivation, profession y trait) y cada resultado tiene su propio botón **Re-roll**. Las listas salen de `data/system/npcs.yaml` (`GET /api/gm/npcs`); la entrada es un nodo de `rules.yaml` con `tool: npc-creator` y `web_hide: true`, así que los jugadores no la ven.
+En **Reference › World**, debajo de *Non-Player Characters*, hay una entrada **NPC Creator**: el botón **Create Random NPC** saca un valor al azar de cada lista de *Creating NPCs* (nombre, attitude, kin, motivation, profession y trait) y cada resultado tiene su propio botón **Re-roll**. Las listas salen de `data/system/npcs.yaml` (`GET /api/npcs`, o `GET /api/gm/npcs`); la entrada es un nodo de `rules.yaml` con `tool: npc-creator`.
 
 ## Lo normal: abrir la app y listo
 
@@ -189,7 +180,7 @@ archivos del máster **sigue siendo privado** hasta que se añade a propósito.
 |---|---|
 | Su ficha completa: atributos, PV/PW, condiciones, habilidades, aptitudes y hechizos con su texto, equipo con sus estadísticas, monedas, debilidad, recuerdo, apariencia y las **notas de la ficha** | El nombre de la party y de cada miembro: raza, profesión, edad, PV, PW y condiciones |
 
-Además, las **reglas**: una sola pestaña **Rules** con el mismo índice que usa el máster en su barra lateral (tipos de contenido con su cantidad y capítulos de reglas, en orden alfabético). Un capítulo con el mismo título que un tipo (p. ej. Skills) se fusiona en una entrada con dos pestañas: "All skills" y "General info". **Magic** reúne Spells y el texto general (pestañas Spells y General Info). **Gear** agrupa cuatro pestañas: General, Weapons, Armor y General Info (el texto general de Gear, con Supply y Encumbrance) (ya no hay entradas sueltas de Weapons y Armor). Todo del Core y los packs de homebrew **activos**. El código es compartido con la vista del máster (`reference.js`, `ReferenceIndex.vue`, `ReferencePanel.vue`).
+Además, las **reglas**: una sola pestaña **Rules** con el mismo índice que usa el máster en su pestaña Rules (tipos de contenido con su cantidad y capítulos de reglas, en orden alfabético). Un capítulo con el mismo título que un tipo (p. ej. Skills) se fusiona en una entrada con dos pestañas: "All skills" y "General info". **Magic** reúne Spells y el texto general (pestañas Spells y General Info). **Gear** agrupa cuatro pestañas: General, Weapons, Armor y General Info (el texto general de Gear, con Supply y Encumbrance) (ya no hay entradas sueltas de Weapons y Armor). Todo del Core y los packs de homebrew **activos**. El código es compartido con la vista del máster (`reference.js`, `ReferenceIndex.vue`, `ReferencePanel.vue`).
 
 **Nunca**: criaturas y tablas (son del máster), las notas de la party, las conversaciones de otros jugadores, las fichas de
 otros jugadores (solo su resumen de party), ni los tokens. Un pack que el máster apaga o quita deja de verse en la web.
@@ -216,7 +207,10 @@ Todas las rutas menos `/api/health` piden `Authorization: Bearer <token>`.
 | `GET /api/party` | `{"party": {"name", "members":[…]}}` o `{"party": null}` |
 | `GET /api/content` | tipos de contenido (con su cantidad), packs cargados y capítulos de reglas (`rules[]`; los marcados `introOnly: true` muestran la intro del tipo en lugar de un capítulo YAML) |
 | `GET /api/content/<tipo>?q=texto` | `spells`, `abilities`, `skills`, `kin`, `professions`, `weapons`, `armor`, `gear`; cada entrada tiene `key`, `kind`, `name`, `subtitle`, `fields`, `body`, `tables`, `homebrew`; `source` solo para homebrew. `tables` (y `intro.tables`, y `tables` de cada regla) son `{title, dice, columns[], rows[{roll, cells[]}]}`: las propias más las que el texto nombra con una línea `{{table: Nombre}}`, que el cliente dibuja en ese lugar |
+| `GET /api/creatures?q=texto`, `GET /api/creatures/<clave>`, `GET /api/creatures/<clave>/image`, `GET /api/npcs` | las criaturas del Bestiary (lista con etiquetas NPC / Animal / Monster, ficha completa e ilustración) y las listas del NPC Creator. `contentSummary` trae también el tipo `creatures` |
 | `GET /api/rules/<cap>` | capítulo de reglas YAML por clave (`combat`, `world`, …); devuelve `{key, title, rules[]}` con cada nodo `{key, title, body, sections, parentId}` |
+
+La **Reference es idéntica para el máster y para los jugadores**: son las mismas rutas de solo lectura, con el token del jugador bajo `/api/…` y con el del máster bajo `/api/gm/…` (mismas respuestas). Lo que sigue siendo solo del máster es lo demás de `/api/gm/*`: personajes ajenos, parties, chat, creador de personajes.
 
 Errores: `401` enlace no válido, `429` demasiados intentos, `404` ruta o tipo desconocido, `405` método no permitido.
 

@@ -110,18 +110,21 @@ async function send() {
     </div>
 
     <p v-if="!members.length" class="muted">No characters in this party yet.</p>
-    <ul v-else class="members">
-      <li v-for="c in members" :key="c.id" class="member" data-test="party-member">
-        <button type="button" class="member-name" @click="emit('open-character', c.id)">{{ c.name || c.id }}</button>
-        <span class="muted">{{ c.kin }} {{ c.profession }}</span>
-        <span class="vitals">HP {{ c.hp.current }}/{{ c.hp.max }} · WP {{ c.wp.current }}/{{ c.wp.max }}</span>
-        <button type="button" class="remove" :aria-label="`Remove ${c.name} from the party`" data-test="party-remove" @click="change({ removeMember: c.id })">×</button>
-      </li>
-    </ul>
+    <table v-else class="members">
+      <thead><tr><th>Name</th><th>Class</th><th>Kin</th><th></th></tr></thead>
+      <tbody>
+        <tr v-for="c in members" :key="c.id" class="member" data-test="party-member">
+          <td><button type="button" class="member-name" @click="emit('open-character', c.id)">{{ c.name || c.id }}</button></td>
+          <td>{{ c.profession }}</td>
+          <td>{{ c.kin }}</td>
+          <td class="end"><button type="button" class="remove" :aria-label="`Remove ${c.name} from the party`" data-test="party-remove" @click="change({ removeMember: c.id })">×</button></td>
+        </tr>
+      </tbody>
+    </table>
 
     <form class="message panel" @submit.prevent="send">
-      <label class="message-label" for="party-message">Message to the whole party</label>
-      <textarea id="party-message" v-model="text" rows="3" maxlength="2000" placeholder="Write to every member…" data-test="party-message"></textarea>
+      <label class="message-label" :for="`party-message-${party.id}`">Message to the whole party</label>
+      <textarea :id="`party-message-${party.id}`" v-model="text" rows="3" maxlength="2000" placeholder="Write to every member…" data-test="party-message"></textarea>
       <div class="message-row">
         <button type="submit" class="send-btn" :disabled="!text.trim() || !members.length || busy" data-test="party-send">Send to party</button>
         <span v-if="status" class="status" :class="{ error: failed }" data-test="party-status">{{ status }}</span>
@@ -131,7 +134,7 @@ async function send() {
 </template>
 
 <style scoped>
-.party-panel { padding: 1rem 1.25rem; max-width: 760px; }
+.party-panel { padding: 1rem 1.25rem; margin-bottom: 1.25rem; border: 1px solid var(--line); border-radius: var(--radius); }
 .party-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
 .party-name { margin: 0; font-size: 1.25rem; color: var(--green-dark); }
 .rename { display: flex; align-items: center; gap: 8px; }
@@ -145,12 +148,12 @@ async function send() {
 .picker { display: flex; flex-direction: column; gap: 2px; margin-bottom: 12px; padding: 6px; }
 .pick { text-align: left; padding: 6px 10px; border: 0; border-radius: 6px; background: none; font: inherit; cursor: pointer; color: var(--ink); }
 .pick:hover { background: var(--parchment); }
-.members { list-style: none; margin: 0 0 16px; padding: 0; border: 1px solid var(--line); border-radius: var(--radius); background: var(--cream); }
-.member { display: flex; align-items: baseline; gap: 10px; padding: 9px 12px; border-bottom: 1px solid var(--line); }
-.member:last-child { border-bottom: 0; }
+.members { width: 100%; border-collapse: collapse; margin: 0 0 16px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--cream); }
+.members th { text-align: left; padding: 7px 12px; }
+.members td { padding: 8px 12px; border-top: 1px solid var(--line); }
+.members .end { text-align: right; width: 2rem; }
 .member-name { border: 0; background: none; padding: 0; font: inherit; font-weight: 600; color: var(--green-dark); cursor: pointer; text-align: left; }
 .member-name:hover { text-decoration: underline; }
-.vitals { margin-left: auto; font-size: 0.82rem; color: var(--muted); white-space: nowrap; }
 .remove { border: 0; background: none; color: var(--muted); font-size: 1.1rem; line-height: 1; cursor: pointer; }
 .remove:hover { color: var(--red, #a33); }
 .message { display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; }

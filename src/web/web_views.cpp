@@ -307,15 +307,17 @@ json partyView(const Party& party, const std::function<const Character*(const st
     return {{"name", party.name}, {"members", members}};
 }
 
+// --------------------------------------------------------------------------- Reference views (GM and players alike)
+
 json contentSummary(const ContentStore& cs) {
     json types = json::array(), packs = json::array(), rules = json::array();
     for (const ContentType& t : kTypes) types.push_back(typeEntry(cs, t));
+    types.push_back({{"id", "creatures"}, {"label", "Creatures"}, {"count", static_cast<int>(cs.monsters().size())}});
     for (const PackInfo& p : cs.packs()) {
-        int shown = 0;                                   // a pack that only brings rules or tables has nothing to show here
+        int shown = 0;
         for (const ContentType& t : kTypes) shown += p.counts[static_cast<int>(t.kind)];
         if (p.loaded && shown > 0) packs.push_back({{"id", p.id}, {"name", p.name}, {"version", p.version}, {"core", p.core}});
     }
-    // Intro-only chapters: spells (Magic) and skills (Skills) surfaced in the Rules tab
     for (const ContentType& t : kTypes) {
         if (t.kind != Kind::Spell && t.kind != Kind::Skill && t.kind != Kind::Gear) continue;
         const Intro& intro = cs.introOf(t.kind);
@@ -324,7 +326,7 @@ json contentSummary(const ContentStore& cs) {
         rules.push_back({{"key", t.id}, {"title", title}, {"introOnly", true}});
     }
     for (const RuleNode& n : cs.rules()) {
-        if (n.parent != 0 || n.prop("nav").empty() || !n.prop("web_hide").empty()) continue;
+        if (n.parent != 0 || n.prop("nav").empty()) continue;
         const std::string key = n.key.substr(n.key.find_last_of('/') + 1);
         rules.push_back({{"key", key}, {"title", n.title}});
     }
@@ -369,64 +371,6 @@ bool rulesChapter(const ContentStore& cs, const std::string& keyId, json& out) {
     for (const RuleNode& n : cs.rules()) {
         if (!inChapter.count(n.id)) continue;
         if (n.id == chapter->id) continue;                 // its own text goes out as the page's intro
-        if (!n.prop("web_hide").empty()) continue;
-        json sects = json::array();
-        for (const auto& s : n.sections) sects.push_back({{"title", s.title}, {"body", s.body}});
-        rules.push_back({{"key", n.key}, {"title", n.title}, {"step", n.prop("step")}, {"tab", n.prop("tab")},
-                         {"body", n.body}, {"sections", sects}, {"tables", ruleTables(cs, n)}, {"parentId", n.parent}});
-    }
-    const json intro = chapter->prop("web_hide").empty() ? chapterIntro(cs, *chapter) : json(nullptr);   // a hidden chapter keeps its text hidden
-    out = {{"key", keyId}, {"title", chapter->title}, {"layout", chapter->prop("layout")}, {"intro", intro}, {"rules", rules}};
-    return true;
-}
-
-// --------------------------------------------------------------------------- GM-only views
-
-json contentSummaryGm(const ContentStore& cs) {
-    json types = json::array(), packs = json::array(), rules = json::array();
-    for (const ContentType& t : kTypes) types.push_back(typeEntry(cs, t));
-    types.push_back({{"id", "creatures"}, {"label", "Creatures"}, {"count", static_cast<int>(cs.monsters().size())}});
-    for (const PackInfo& p : cs.packs()) {
-        int shown = 0;
-        for (const ContentType& t : kTypes) shown += p.counts[static_cast<int>(t.kind)];
-        if (p.loaded && shown > 0) packs.push_back({{"id", p.id}, {"name", p.name}, {"version", p.version}, {"core", p.core}});
-    }
-    for (const ContentType& t : kTypes) {
-        if (t.kind != Kind::Spell && t.kind != Kind::Skill && t.kind != Kind::Gear) continue;
-        const Intro& intro = cs.introOf(t.kind);
-        if (intro.empty()) continue;
-        const char* title = t.kind == Kind::Spell ? "Magic" : t.kind == Kind::Skill ? "Skills" : "Gear";
-        rules.push_back({{"key", t.id}, {"title", title}, {"introOnly", true}});
-    }
-    for (const RuleNode& n : cs.rules()) {
-        if (n.parent != 0 || n.prop("nav").empty()) continue;
-        const std::string key = n.key.substr(n.key.find_last_of('/') + 1);
-        rules.push_back({{"key", key}, {"title", n.title}});
-    }
-    return {{"types", types}, {"packs", packs}, {"rules", rules}};
-}
-
-bool rulesChapterGm(const ContentStore& cs, const std::string& keyId, json& out) {
-    const RuleNode* chapter = nullptr;
-    for (const RuleNode& n : cs.rules()) {
-        if (n.parent != 0 || n.prop("nav").empty()) continue;
-        const std::string k = n.key.substr(n.key.find_last_of('/') + 1);
-        if (k == keyId) { chapter = &n; break; }
-    }
-    if (!chapter) return false;
-    std::unordered_set<int> inChapter;
-    inChapter.insert(chapter->id);
-    bool changed = true;
-    while (changed) {
-        changed = false;
-        for (const RuleNode& n : cs.rules())
-            if (!inChapter.count(n.id) && inChapter.count(n.parent))
-                { inChapter.insert(n.id); changed = true; }
-    }
-    json rules = json::array();
-    for (const RuleNode& n : cs.rules()) {
-        if (!inChapter.count(n.id)) continue;
-        if (n.id == chapter->id) continue;                 // its own text goes out as the page's intro
         json sects = json::array();
         for (const auto& s : n.sections) sects.push_back({{"title", s.title}, {"body", s.body}});
         rules.push_back({{"key", n.key}, {"title", n.title}, {"step", n.prop("step")}, {"tab", n.prop("tab")}, {"tool", n.prop("tool")},
@@ -448,8 +392,8 @@ static std::string lowerAscii(const std::string& s) {
     return out;
 }
 
-json monsterDetail(const ContentStore& cs, const Monster& m) {
-    const json image = m.image.empty() ? json(nullptr) : json("/gm/creatures/" + m.key + "/image");
+json monsterDetail(const ContentStore& cs, const Monster& m, const std::string& prefix) {
+    const json image = m.image.empty() ? json(nullptr) : json(prefix + "/creatures/" + m.key + "/image");
     json blocks = json::array();
     for (const StatBlock& b : m.blocks) {
         json fields = json::array();

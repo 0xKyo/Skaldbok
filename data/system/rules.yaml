@@ -3,7 +3,6 @@ rules:
   - id: character-creation
     name: Character Creation
     nav: Reference
-    web_hide: true
     sections:
       - name: Intro
         body: |

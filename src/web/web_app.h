@@ -10,6 +10,7 @@
 #include <map>
 #include <memory>
 #include <mutex>
+#include <optional>
 #include <set>
 #include <string>
 #include <utility>
@@ -82,6 +83,7 @@ private:
     WebResponse route(const WebRequest& request, long long now);
     WebResponse api(const WebRequest& request, long long now);
     WebResponse gmApi(const WebRequest& request, long long now);
+    std::optional<WebResponse> referenceApi(const std::string& sub, const WebRequest& request, const std::string& prefix);
     WebResponse serveStatic(const WebRequest& request);
     WebResponse chatImage(const std::string& characterId, const std::string& messageId);
     WebResponse postChat(const WebRequest& request, const std::string& characterId);

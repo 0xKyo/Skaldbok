@@ -244,21 +244,7 @@ WebResponse WebApp::api(const WebRequest& request, long long now) {
         return jsonResponse(200, {{"ok", true}});
     }
     if (sub.size() > 12 && sub.starts_with("/chat/") && sub.ends_with("/image")) return chatImage(id, sub.substr(6, sub.size() - 6 - 6));
-    if (sub == "/content") return jsonResponse(200, contentSummary(content_));
-    if (sub.starts_with("/content/")) {
-        std::string q;
-        if (auto it = request.query.find("q"); it != request.query.end()) q = it->second.substr(0, 100);
-        json out;
-        if (!contentList(content_, sub.substr(9), q, out))
-            return errorResponse(404, "Unknown type. Choose one of: spells, abilities, skills, kin, professions, weapons, armor, gear");
-        return jsonResponse(200, out);
-    }
-    if (sub.starts_with("/rules/")) {
-        json out;
-        if (!rulesChapter(content_, sub.substr(7), out))
-            return errorResponse(404, "Unknown rules chapter");
-        return jsonResponse(200, out);
-    }
+    if (auto reference = referenceApi(sub, request, "")) return std::move(*reference);
     return errorResponse(404, "Not found");
 }
 
@@ -327,6 +313,51 @@ WebResponse WebApp::postGmChat(const WebRequest& request, const std::string& cha
     if (!chat_.sendFromGm(ids, false, "", text->get<std::string>(), "", &error)) return errorResponse(400, "Could not send: " + error + ".");
     const Thread& t = chat_.thread(characterId);
     return jsonResponse(201, {{"message", t.messages.empty() ? json(nullptr) : chatMessageView(t.messages.back())}});
+}
+
+// The Reference is the same for everybody who is signed in, GM or player: the content types, the rule chapters, the creatures and the NPC
+// lists. `sub` is the path after the API prefix ("/content/spells"); `prefix` is the one the caller came in by ("/gm" or "").
+std::optional<WebResponse> WebApp::referenceApi(const std::string& sub, const WebRequest& request, const std::string& prefix) {
+    if (request.method != "GET" && request.method != "HEAD") return std::nullopt;
+    const auto queryText = [&] {
+        std::string q;
+        if (auto it = request.query.find("q"); it != request.query.end()) q = it->second.substr(0, 100);
+        return q;
+    };
+    if (sub == "/content") return jsonResponse(200, contentSummary(content_));
+    if (sub.starts_with("/content/")) {
+        json out;
+        if (!contentList(content_, sub.substr(9), queryText(), out)) return errorResponse(404, "Unknown content type.");
+        return jsonResponse(200, out);
+    }
+    if (sub.starts_with("/rules/")) {
+        json out;
+        if (!rulesChapter(content_, sub.substr(7), out)) return errorResponse(404, "Unknown rules chapter.");
+        return jsonResponse(200, out);
+    }
+    if (sub == "/npcs") return jsonResponse(200, npcLists(content_));
+    if (sub == "/creatures") return jsonResponse(200, monsterList(content_, queryText()));
+    if (sub.size() > 14 && sub.starts_with("/creatures/") && sub.ends_with("/image")) {
+        const std::string key = sub.substr(11, sub.size() - 11 - 6);
+        for (const Monster& m : content_.monsters()) {
+            if (m.key != key || m.image.empty()) continue;
+            auto bytes = fs::readFile(m.image);           // the path comes from the loaded content, never from the request
+            if (!bytes) break;
+            WebResponse r;
+            r.body = std::move(*bytes);
+            r.contentType = mimeOf(m.image);
+            r.headers["Cache-Control"] = "private, max-age=86400";
+            return r;
+        }
+        return errorResponse(404, "No such picture");
+    }
+    if (sub.starts_with("/creatures/")) {
+        const std::string key = sub.substr(11);
+        for (const Monster& m : content_.monsters())
+            if (m.key == key) return jsonResponse(200, monsterDetail(content_, m, prefix));
+        return errorResponse(404, "Creature not found.");
+    }
+    return std::nullopt;
 }
 
 // Full GM API: list/create/edit/delete characters, manage parties, read/send chat.
@@ -530,49 +561,9 @@ WebResponse WebApp::gmApi(const WebRequest& request, long long now) {
         }
     }
 
-    // ---- content + rules (GM sees all, including web_hide chapters) ----
-    if (sub == "/gm/content") return jsonResponse(200, contentSummaryGm(content_));
-    if (sub.starts_with("/gm/content/")) {
-        std::string q;
-        if (auto it = request.query.find("q"); it != request.query.end()) q = it->second.substr(0, 100);
-        json out;
-        if (!contentList(content_, sub.substr(12), q, out)) return errorResponse(404, "Unknown content type.");
-        return jsonResponse(200, out);
-    }
-    if (sub.starts_with("/gm/rules/")) {
-        json out;
-        if (!rulesChapterGm(content_, sub.substr(10), out)) return errorResponse(404, "Unknown rules chapter.");
-        return jsonResponse(200, out);
-    }
-
-    if (sub == "/gm/npcs" && reading) return jsonResponse(200, npcLists(content_));
-
-    // ---- creatures (GM only) ----
-    if (sub == "/gm/creatures" && reading) {
-        std::string q;
-        if (auto it = request.query.find("q"); it != request.query.end()) q = it->second.substr(0, 100);
-        return jsonResponse(200, monsterList(content_, q));
-    }
-    if (sub.size() > 20 && sub.starts_with("/gm/creatures/") && sub.ends_with("/image") && reading) {
-        const std::string key = sub.substr(14, sub.size() - 14 - 6);
-        for (const Monster& m : content_.monsters()) {
-            if (m.key != key || m.image.empty()) continue;
-            auto bytes = fs::readFile(m.image);           // the path comes from the loaded content, never from the request
-            if (!bytes) break;
-            WebResponse r;
-            r.body = std::move(*bytes);
-            r.contentType = mimeOf(m.image);
-            r.headers["Cache-Control"] = "private, max-age=86400";
-            return r;
-        }
-        return errorResponse(404, "No such picture");
-    }
-    if (sub.starts_with("/gm/creatures/") && reading) {
-        const std::string key = sub.substr(14);
-        for (const Monster& m : content_.monsters())
-            if (m.key == key) return jsonResponse(200, monsterDetail(content_, m));
-        return errorResponse(404, "Creature not found.");
-    }
+    // ---- the Reference: the same routes as the players', under /gm ----
+    if (sub.starts_with("/gm/"))
+        if (auto reference = referenceApi(sub.substr(3), request, "/gm")) return std::move(*reference);
 
     // ---- links ----
     if (sub == "/gm/links" && reading) {

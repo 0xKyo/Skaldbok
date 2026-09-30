@@ -22,7 +22,7 @@ const type = computed(() => tab.value?.type ?? props.state.current?.type);
         {{ t.label }}
       </button>
     </div>
-    <CreatureView v-if="type === 'creatures'" :token="token" />
+    <CreatureView v-if="type === 'creatures'" :token="token" :prefix="gmPrefix" />
     <RulesView
       v-else
       :key="type + mode"

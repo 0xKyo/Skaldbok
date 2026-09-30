@@ -14,7 +14,7 @@ const creatures = {
 
 async function mountIt() {
   vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, status: 200, json: async () => structuredClone(creatures) })));
-  const w = mount(CreatureView, { props: { token: 'gm' } });
+  const w = mount(CreatureView, { props: { token: 'gm', prefix: '/gm' } });
   await flushPromises();
   return w;
 }

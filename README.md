@@ -26,19 +26,19 @@ supports **homebrew content** imported as a data plugin.
 (`web/client`) with two interfaces:
 
 * **GM interface** (`/?gm=<token>`): the whole GM side from a browser.
-  * **General Settings** (the first screen) shows the GM link and every player's personal link, ready to copy and send.
-  * A sidebar with the **characters** (the ones in no party under *Solo*) and the **parties**; each character opens as an editable sheet plus
-    the chat with that player, and a party opens with its members and a message to all of them. The **+** opens the **character creator**
-    (see [Characters](#characters)) and the dice button makes a random character.
-  * A **Reference** index shared with the players, plus what is GM-only:
+  * **Tabs along the top**, like the player's page: **Character** (a dropdown of every character, with its editable sheet; *+ New
+    character* opens the **character creator**, see [Characters](#characters), and *Random* makes one at once), **Parties** (every party
+    with its characters as a reduced sheet, name / class / kin, each linking to its sheet; adding, renaming, messaging and deleting
+    parties), **Chat** (for now the player's own chat, of the character picked in the dropdown) and **Rules**. Each player's personal link is on their sheet's header (*Player link ↗*).
+  * A **Reference** index, exactly the same one the players have:
     * Entries with tabs: Skills (*All skills* / *General info*), Gear (*General* / *Weapons* / *Armor*).
     * Rule tables drawn in place, and each category's Intro always open above its list.
     * **Creatures** with their picture next to the stat block, and **NPC / Animal / Monster** filter tags.
     * **World › NPC Creator**: *Create Random NPC* rolls a name, attitude, kin, motivation, profession and trait from the book's
       lists (`data/system/npcs.yaml`), and each result has its own *Re-roll*.
 * **Player interface** (`/?t=<token>`): on their phone and with **their personal link**, each player sees their complete sheet,
-  their party's status and the rules (the same Reference index, without what is GM-only). It updates by itself every few seconds,
-  lets them edit their sheet and chat with the GM, and it shows no creatures, GM notes or other players' data.
+  their party's status and the whole Reference (exactly what the GM sees there: rules, creatures, NPC Creator, everything). It updates
+  by itself every few seconds, lets them edit their sheet and chat with the GM, and it shows no GM notes or other players' data.
 
 The normal way is to **open `Skaldbok.bat`** and, when you want the players to join, press **Start server** in the app's **General Settings**
 (with *Launch server when opening* it starts with the app), then **Open as GM**. Players on the same

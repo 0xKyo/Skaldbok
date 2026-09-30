@@ -23,17 +23,14 @@ json characterSummary(const Character& c, const ContentStore& content, const std
 // The party as its own members see it: who is in it and how they are doing. Skills, gear and notes stay private.
 json partyView(const Party& party, const std::function<const Character*(const std::string&)>& findCharacter, const std::string& meId);
 
-// Content visible to players.
+// The Reference: everything under it is the same for the GM and for the players (types, rule chapters, creatures, the NPC lists).
 json contentSummary(const ContentStore& content);
 bool contentList(const ContentStore& content, const std::string& typeId, const std::string& query, json& out);
 bool rulesChapter(const ContentStore& content, const std::string& key, json& out);
-
-// GM-only content: includes creatures count and web_hide chapters/nodes.
-json contentSummaryGm(const ContentStore& content);
-bool rulesChapterGm(const ContentStore& content, const std::string& key, json& out);
 json npcLists(const ContentStore& content);   // the random NPC generator's lists
 json monsterList(const ContentStore& content, const std::string& query);
-json monsterDetail(const ContentStore& content, const Monster& m);
+// `prefix` is where the picture is served from: "/gm" for the GM's routes, "" for the players'.
+json monsterDetail(const ContentStore& content, const Monster& m, const std::string& prefix);
 
 json publicCard(const ContentStore& content, const Entry& e);
 

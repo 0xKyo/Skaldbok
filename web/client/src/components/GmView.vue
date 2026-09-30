@@ -1,15 +1,13 @@
 <script setup>
-// GM interface: sidebar nav on the left, content area on the right.
-// Characters/parties in sidebar; reference content (tables, rules) also in sidebar — no longer in per-character tabs.
+// GM interface: tabs along the top, like the player's page. Character (a dropdown of every character, with its sheet), Parties (every
+// party with its characters as a reduced sheet), Chat and Rules (the Reference, the same the players have).
 import { computed, onBeforeUnmount, onMounted, ref, watchEffect } from 'vue';
 import { ApiError, apiGet, apiSend } from '../api.js';
 import ChatView from './ChatView.vue';
 import CharacterCreator from './CharacterCreator.vue';
 import GmPartyPanel from './GmPartyPanel.vue';
-import ReferenceIndex from './ReferenceIndex.vue';
-import ReferencePanel from './ReferencePanel.vue';
+import ReferenceView from './ReferenceView.vue';
 import { useReference } from '../reference.js';
-import SettingsView from './SettingsView.vue';
 import SheetView from './SheetView.vue';
 
 const POLL_MS = 3000;
@@ -23,45 +21,32 @@ const characters = ref([]);
 const parties = ref([]);
 const threads = ref([]);
 
-const selectedId = ref(null);   // selected character id, or null
-const selectedPartyId = ref(null); // selected party id, or null
-const partiesOpen = ref(true);  // the Parties section of the sidebar is a dropdown
-const expanded = ref(new Set()); // parties whose characters are shown under them
+const tab = ref('character');       // 'character' | 'party' | 'chat' | 'rules'
+const selectedId = ref(null);       // the character the Character and Chat tabs show
 const sheet = ref(null);
 const chat = ref({ messages: [], gmRead: '', playerRead: '' });
-// reference.current: which reference panel is open; null = character/settings view
 const reference = useReference(props.token, '/gm');
 
 const offline = ref(false);
 const problem = ref('');
-const tab = ref('sheet');       // 'sheet' | 'chat'  (tables/rules moved to sidebar)
 const newPartyName = ref('');
-const creator = ref(null);      // null, or the creator is open: 'wizard' from the first step, 'random' already filled in
 const showNewParty = ref(false);
+const creator = ref(null);          // null, or the creator is open: 'wizard' from the first step, 'random' already filled in
+const confirmingCharDelete = ref(false);
 let timer = null;
 
 const selected = computed(() => characters.value.find((c) => c.id === selectedId.value) ?? null);
-const selectedParty = computed(() => parties.value.find((p) => p.id === selectedPartyId.value) ?? null);
-// a character can be in several parties, or in none: those go in the Solo category of Characters
 const inAParty = computed(() => new Set(parties.value.flatMap((p) => p.members)));
 const soloCharacters = computed(() => characters.value.filter((c) => !inAParty.value.has(c.id)));
-const membersOf = (p) => p.members.map((id) => characters.value.find((c) => c.id === id)).filter(Boolean);
 const unreadOf = (id) => threads.value.find((t) => t.characterId === id)?.unread ?? 0;
+const totalUnread = computed(() => threads.value.reduce((n, t) => n + (t.unread ?? 0), 0));
 
-const gmTabs = computed(() => [
-  { id: 'sheet', label: 'Sheet' },
-  { id: 'chat', label: threads.value.find((t) => t.characterId === selectedId.value)?.unread > 0 && tab.value !== 'chat'
-      ? `Chat (${threads.value.find((t) => t.characterId === selectedId.value).unread})` : 'Chat' },
+const tabs = computed(() => [
+  { id: 'character', label: 'Character' },
+  { id: 'party', label: 'Parties' },
+  { id: 'chat', label: totalUnread.value > 0 && tab.value !== 'chat' ? `Chat (${totalUnread.value})` : 'Chat' },
+  { id: 'rules', label: 'Rules' },
 ]);
-
-// What the main area is showing
-const mainMode = computed(() => {
-  if (reference.current) return 'reference';
-  if (creator.value) return 'creator';
-  if (selectedParty.value) return 'party';
-  if (selectedId.value) return 'character';
-  return 'settings';
-});
 
 // ---- data loading ----
 async function loadCharacterList() {
@@ -71,10 +56,12 @@ async function loadCharacterList() {
 
 async function loadSelected() {
   if (!selectedId.value) return;
+  const id = selectedId.value;
   const [sheetData, chatData] = await Promise.all([
-    apiGet(`/gm/characters/${selectedId.value}`, props.token),
-    apiGet(`/gm/chat/${selectedId.value}`, props.token).catch(() => null),
+    apiGet(`/gm/characters/${id}`, props.token),
+    apiGet(`/gm/chat/${id}`, props.token).catch(() => null),
   ]);
+  if (id !== selectedId.value) return;                 // another character was picked meanwhile
   sheet.value = sheetData;
   if (chatData) chat.value = chatData;
 }
@@ -92,6 +79,12 @@ async function loadParties() {
 async function refresh() {
   try {
     await Promise.all([loadCharacterList(), loadThreadSummaries(), loadParties()]);
+    // the dropdown always has a character picked while there is one
+    if (!characters.value.some((c) => c.id === selectedId.value)) {
+      selectedId.value = null;
+      sheet.value = null;
+      if (characters.value.length && !creator.value) await selectCharacter(characters.value[0].id);
+    }
     if (selectedId.value) await loadSelected();
     offline.value = false;
     problem.value = '';
@@ -104,32 +97,34 @@ async function refresh() {
   }
 }
 
-// ---- actions ----
+// ---- characters ----
+async function selectCharacter(id) {
+  creator.value = null;
+  confirmingCharDelete.value = false;
+  selectedId.value = id || null;
+  sheet.value = null;
+  chat.value = { messages: [], gmRead: '', playerRead: '' };
+  if (id) await loadSelected();
+}
+
+// A name in a party opens that character's sheet.
+async function openCharacter(id) {
+  tab.value = 'character';
+  await selectCharacter(id);
+}
+
 function openCreator(mode) {
-  reference.current = null;
-  selectedPartyId.value = null;
-  selectedId.value = null;
+  tab.value = 'character';
   creator.value = mode;
 }
 
 async function characterCreated(id) {
   creator.value = null;
   await refresh();
-  await selectCharacter(id);
-}
-
-async function createParty() {
-  if (!newPartyName.value.trim()) return;
-  try {
-    await apiSend('POST', '/gm/parties', props.token, { name: newPartyName.value.trim() });
-    newPartyName.value = '';
-    showNewParty.value = false;
-    await loadParties();
-  } catch { /* inline later */ }
+  await openCharacter(id);
 }
 
 // Deleting a character removes its file (and it leaves every party); it asks first.
-const confirmingCharDelete = ref(false);
 async function deleteCharacter() {
   const id = selectedId.value;
   if (!id) return;
@@ -142,50 +137,22 @@ async function deleteCharacter() {
   await refresh();
 }
 
-// ---- navigation ----
-async function selectCharacter(id) {
-  creator.value = null;
-  confirmingCharDelete.value = false;
-  reference.current = null;
-  selectedPartyId.value = null;
-  selectedId.value = id;
-  tab.value = 'sheet';
-  sheet.value = null;
-  chat.value = { messages: [], gmRead: '', playerRead: '' };
-  await loadSelected();
+// ---- parties ----
+async function createParty() {
+  if (!newPartyName.value.trim()) return;
+  try {
+    await apiSend('POST', '/gm/parties', props.token, { name: newPartyName.value.trim() });
+    newPartyName.value = '';
+    showNewParty.value = false;
+    await loadParties();
+  } catch { /* the list shows nothing new */ }
 }
 
-// A party opens its own page (name, members, a message to all of them) and shows its characters under it in the sidebar.
-function selectParty(id) {
-  creator.value = null;
-  reference.current = null;
-  selectedId.value = null;
-  selectedPartyId.value = id;
-  expanded.value.add(id);
+// If the sheet links to a rule, open it in the Rules tab
+function goToRules(target) {
+  tab.value = 'rules';
+  reference.goTo(target);
 }
-
-async function afterPartyDeleted(id) {
-  expanded.value.delete(id);
-  selectedPartyId.value = null;
-  await loadParties();
-}
-
-function toggleParty(id) {
-  if (expanded.value.has(id)) expanded.value.delete(id);
-  else expanded.value.add(id);
-}
-
-function goSettings() {
-  creator.value = null;
-  selectedId.value = null;
-  selectedPartyId.value = null;
-  reference.current = null;
-}
-
-function pick(id) { tab.value = id; }
-
-// If the sheet links to a rule, open it in reference mode
-function goToRules(target) { reference.goTo(target); }
 
 function schedule() {
   clearTimeout(timer);
@@ -202,151 +169,100 @@ onMounted(async () => {
 onBeforeUnmount(() => clearTimeout(timer));
 
 watchEffect(() => {
-  if (reference.current) document.title = `GM · ${reference.current.label} · Skaldbok`;
-  else if (selected.value) document.title = `GM · ${selected.value.name} · Skaldbok`;
+  if (tab.value === 'rules' && reference.current) document.title = `GM · ${reference.current.label} · Skaldbok`;
+  else if (tab.value === 'character' && selected.value) document.title = `GM · ${selected.value.name} · Skaldbok`;
   else document.title = 'GM · Skaldbok';
 });
 </script>
 
 <template>
-  <div class="gm-layout">
-    <!-- ========== left sidebar ========== -->
-    <aside class="gm-sidebar">
+  <div class="gm-view">
+    <nav class="tabs" role="tablist">
+      <button v-for="t in tabs" :key="t.id" role="tab" :aria-selected="tab === t.id" data-test="gm-tab" @click="tab = t.id">{{ t.label }}</button>
+    </nav>
 
-      <!-- General Settings -->
-      <button class="nav-item" :class="{ active: mainMode === 'settings' }" @click="goSettings">
-        ⚙ General Settings
-      </button>
+    <p v-if="problem" class="error" style="padding: 1rem;">{{ problem }}</p>
+    <p v-else-if="offline" class="error" style="padding: 0 0 1rem;">Cannot reach the server. Trying again…</p>
 
-      <!-- Characters -->
-      <div class="sidebar-head">
-        <span class="sidebar-title">Characters</span>
-        <span class="head-actions">
-          <button class="icon-btn" title="Random character" data-test="new-random" @click="openCreator('random')">🎲</button>
-          <button class="icon-btn" title="New character" data-test="new-character" @click="openCreator('wizard')">+</button>
-        </span>
-      </div>
-      <div class="sidebar-sub" data-test="solo-title">Solo <span class="muted">{{ soloCharacters.length }}</span></div>
-      <ul class="char-list" data-test="solo-list">
-        <li
-          v-for="c in soloCharacters"
-          :key="c.id"
-          class="char-item"
-          :class="{ active: c.id === selectedId && mainMode === 'character' }"
-          @click="selectCharacter(c.id)"
-        >
-          <span class="char-name">{{ c.name || c.id }}</span>
-          <span class="char-meta">{{ c.kin }} {{ c.profession }}</span>
-          <span v-if="unreadOf(c.id)" class="badge">{{ unreadOf(c.id) }}</span>
-        </li>
-      </ul>
-
-      <!-- Parties: a dropdown of parties, each one a dropdown of its characters -->
-      <div class="sidebar-head" style="margin-top: 0.75rem;">
-        <button class="section-toggle" :aria-expanded="partiesOpen" data-test="parties-toggle" @click="partiesOpen = !partiesOpen">
-          <span class="chev">{{ partiesOpen ? '▾' : '▸' }}</span><span class="sidebar-title">Parties</span>
-        </button>
-        <button class="icon-btn" title="New party" @click="showNewParty = !showNewParty; partiesOpen = true">+</button>
-      </div>
-      <form v-if="showNewParty" class="inline-form" @submit.prevent="createParty">
-        <input v-model="newPartyName" placeholder="Party name…" class="inline-input" />
-        <button type="submit" class="btn-sm">Create</button>
-        <button type="button" class="btn-sm muted" @click="showNewParty = false">Cancel</button>
-      </form>
-      <ul v-if="partiesOpen" class="char-list" data-test="party-list">
-        <li v-for="p in parties" :key="p.id" class="party-item" data-test="party-item">
-          <div class="char-item party-row" :class="{ active: p.id === selectedPartyId && mainMode === 'party' }">
-            <button class="chev-btn" :aria-label="expanded.has(p.id) ? 'Hide characters' : 'Show characters'" :aria-expanded="expanded.has(p.id)" data-test="party-chevron" @click.stop="toggleParty(p.id)">{{ expanded.has(p.id) ? '▾' : '▸' }}</button>
-            <button class="party-open" data-test="party-open" @click="selectParty(p.id)">
-              <span class="char-name">{{ p.name }}</span>
-              <span class="char-meta">{{ membersOf(p).length }} member{{ membersOf(p).length !== 1 ? 's' : '' }}</span>
-            </button>
-          </div>
-          <ul v-if="expanded.has(p.id)" class="party-members">
-            <li
-              v-for="c in membersOf(p)"
-              :key="c.id"
-              class="char-item"
-              :class="{ active: c.id === selectedId && mainMode === 'character' }"
-              data-test="party-character"
-              @click="selectCharacter(c.id)"
-            >
-              <span class="char-name">{{ c.name || c.id }}</span>
-              <span class="char-meta">{{ c.kin }} {{ c.profession }}</span>
-              <span v-if="unreadOf(c.id)" class="badge">{{ unreadOf(c.id) }}</span>
-            </li>
-            <li v-if="!membersOf(p).length" class="muted small party-empty">No characters yet.</li>
-          </ul>
-        </li>
-      </ul>
-
-      <!-- Reference: content types + rules chapters, sorted alphabetically -->
-      <div v-if="reference.items.length" class="sidebar-head" style="margin-top: 0.75rem;">
-        <span class="sidebar-title">Reference</span>
-      </div>
-      <ReferenceIndex v-if="reference.items.length" :state="reference" />
-
-    </aside>
-
-    <!-- ========== main area ========== -->
-    <div class="gm-main">
-
-      <!-- Error banner -->
-      <p v-if="problem" class="error" style="padding: 1rem;">{{ problem }}</p>
-      <p v-else-if="offline && mainMode !== 'reference'" class="error" style="padding: 1rem;">Cannot reach the server. Trying again…</p>
-
-      <!-- Settings -->
-      <SettingsView v-if="mainMode === 'settings' && !problem" :token="token" />
-
-      <!-- Character creator -->
-      <CharacterCreator v-if="mainMode === 'creator'" :key="creator" :token="token" :random="creator === 'random'" @created="characterCreated" @cancel="creator = null" />
-
-      <!-- Reference panel -->
-      <ReferencePanel v-else-if="mainMode === 'reference'" :state="reference" :token="token" gm-prefix="/gm" />
-
-      <!-- Party panel -->
-      <GmPartyPanel
-        v-else-if="mainMode === 'party'"
-        :key="selectedParty.id"
-        :party="selectedParty"
-        :characters="characters"
-        :token="token"
-        @changed="loadParties"
-        @deleted="afterPartyDeleted"
-        @open-character="selectCharacter"
-      />
-
-      <!-- Character panel -->
-      <template v-else-if="mainMode === 'character'">
-        <div class="gm-char-header">
-          <strong>{{ selected.name }}</strong>
-          <span class="char-meta">{{ selected.kin }} {{ selected.profession }} · {{ selected.age }}</span>
-          <span v-if="selected.conditions.length" class="conditions">{{ selected.conditions.join(', ') }}</span>
-          <span class="hp-wp">HP {{ selected.hp.current }}/{{ selected.hp.max }} · WP {{ selected.wp.current }}/{{ selected.wp.max }}</span>
-          <a v-if="selected.link" :href="selected.link" target="_blank" class="player-link">Player link ↗</a>
-          <button v-if="!confirmingCharDelete" type="button" class="del-btn" data-test="delete-character" @click="confirmingCharDelete = true">Delete character</button>
-          <span v-else class="confirm" data-test="char-delete-confirm">Delete «{{ selected.name }}»? This cannot be undone.
-            <button type="button" class="del-btn sure" data-test="char-delete-yes" @click="deleteCharacter">Delete</button>
-            <button type="button" class="del-btn" data-test="char-delete-no" @click="confirmingCharDelete = false">Cancel</button>
+    <template v-if="!problem">
+      <!-- the character picked in the dropdown: Character shows its sheet, Chat its conversation -->
+      <div v-if="(tab === 'character' && !creator) || tab === 'chat'" class="pick-bar">
+        <select :value="selectedId ?? ''" aria-label="Character" data-test="character-select" :disabled="!characters.length" @change="selectCharacter($event.target.value)">
+          <option v-if="!characters.length" value="">No characters yet</option>
+          <option v-for="c in characters" :key="c.id" :value="c.id">{{ c.name || c.id }}{{ unreadOf(c.id) ? ` (${unreadOf(c.id)})` : '' }} · {{ c.kin }} {{ c.profession }}</option>
+        </select>
+        <template v-if="tab === 'character'">
+          <button type="button" class="pick-btn" data-test="new-character" @click="openCreator('wizard')">+ New character</button>
+          <button type="button" class="pick-btn" data-test="new-random" @click="openCreator('random')">Random</button>
+          <span v-if="selected" class="char-actions">
+            <a v-if="selected.link" :href="selected.link" target="_blank" class="player-link">Player link ↗</a>
+            <button v-if="!confirmingCharDelete" type="button" class="del-btn" data-test="delete-character" @click="confirmingCharDelete = true">Delete character</button>
+            <span v-else class="confirm" data-test="char-delete-confirm">Delete «{{ selected.name }}»? This cannot be undone.
+              <button type="button" class="del-btn sure" data-test="char-delete-yes" @click="deleteCharacter">Delete</button>
+              <button type="button" class="del-btn" data-test="char-delete-no" @click="confirmingCharDelete = false">Cancel</button>
+            </span>
           </span>
+        </template>
+      </div>
+
+      <!-- Character -->
+      <template v-if="tab === 'character'">
+        <CharacterCreator v-if="creator" :key="creator" :token="token" :random="creator === 'random'" @created="characterCreated" @cancel="creator = null" />
+        <template v-else-if="selected">
+          <SheetView
+            v-if="sheet"
+            :me="sheet"
+            :token="token"
+            :patch-path="`/gm/characters/${selectedId}`"
+            @updated="(fresh) => { sheet = fresh; loadCharacterList(); }"
+            @goto-rules="goToRules"
+          />
+          <p v-else class="muted" style="padding: 1rem;">Loading…</p>
+        </template>
+        <p v-else class="muted" style="padding: 1rem;">There are no characters yet. Use “+ New character” or “Random”.</p>
+      </template>
+
+      <!-- Parties: every party, with its characters as a reduced sheet -->
+      <template v-else-if="tab === 'party'">
+        <div class="parties-bar">
+          <button v-if="!showNewParty" type="button" class="pick-btn" data-test="new-party" @click="showNewParty = true">+ New party</button>
+          <form v-else class="new-party" @submit.prevent="createParty">
+            <input v-model="newPartyName" placeholder="Party name…" aria-label="Party name" data-test="new-party-name" />
+            <button type="submit" class="pick-btn" :disabled="!newPartyName.trim()">Create</button>
+            <button type="button" class="pick-btn" @click="showNewParty = false">Cancel</button>
+          </form>
         </div>
-
-        <nav class="tabs" role="tablist">
-          <button v-for="t in gmTabs" :key="t.id" role="tab" :aria-selected="tab === t.id" @click="pick(t.id)">{{ t.label }}</button>
-        </nav>
-
-        <SheetView
-          v-if="tab === 'sheet' && sheet"
-          :me="sheet"
+        <p v-if="!parties.length" class="muted" style="padding: 0 0 1rem;">There are no parties yet.</p>
+        <GmPartyPanel
+          v-for="p in parties"
+          :key="p.id"
+          :party="p"
+          :characters="characters"
           :token="token"
-          :patch-path="`/gm/characters/${selectedId}`"
-          @updated="(fresh) => { sheet = fresh; loadCharacterList(); }"
-          @goto-rules="goToRules"
+          @changed="loadParties"
+          @deleted="loadParties"
+          @open-character="openCharacter"
         />
-        <div v-else-if="tab === 'sheet'" class="muted" style="padding: 1rem;">Loading…</div>
+        <section v-if="soloCharacters.length" class="solo" data-test="solo">
+          <h2>Solo <span class="muted">characters in no party</span></h2>
+          <table class="members">
+            <thead><tr><th>Name</th><th>Class</th><th>Kin</th></tr></thead>
+            <tbody>
+              <tr v-for="c in soloCharacters" :key="c.id" data-test="solo-member">
+                <td><button type="button" class="member-name" @click="openCharacter(c.id)">{{ c.name || c.id }}</button></td>
+                <td>{{ c.profession }}</td>
+                <td>{{ c.kin }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+      </template>
 
+      <!-- Chat: for now the player's own view, of the character picked above -->
+      <template v-else-if="tab === 'chat'">
         <ChatView
-          v-else-if="tab === 'chat'"
+          v-if="selectedId"
+          :key="selectedId"
           :thread="chat"
           :token="token"
           :send-path="`/gm/chat/${selectedId}`"
@@ -354,219 +270,38 @@ watchEffect(() => {
           :as-gm="true"
           @sent="loadSelected"
         />
+        <p v-else class="muted" style="padding: 1rem;">There are no characters to talk to yet.</p>
       </template>
 
-    </div>
+      <!-- Rules: the Reference, exactly the players' -->
+      <ReferenceView v-else-if="tab === 'rules'" :state="reference" :token="token" gm-prefix="/gm" />
+    </template>
   </div>
 </template>
 
 <style scoped>
-.gm-layout {
-  display: flex;
-  height: calc(100vh - var(--header-h, 48px));
-  overflow: hidden;
-}
+.pick-bar, .parties-bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.pick-bar select { flex: 1 1 260px; max-width: 460px; font: inherit; padding: 6px 10px; border: 1px solid var(--line); border-radius: 8px; background: #fbf6e6; color: var(--ink); }
+.pick-btn { padding: 5px 14px; border: 1px solid var(--green-dark); border-radius: 20px; background: none; color: var(--green-dark); font: inherit; font-size: 0.85rem; font-weight: 600; cursor: pointer; }
+.pick-btn:hover:not(:disabled) { background: var(--green-dark); color: #f3ead2; }
+.pick-btn:disabled { opacity: 0.45; cursor: default; }
+.new-party { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.new-party input { font: inherit; padding: 5px 10px; border: 1px solid var(--line); border-radius: 8px; background: #fbf6e6; color: var(--ink); }
 
-.gm-sidebar {
-  width: 180px;
-  min-width: 140px;
-  flex-shrink: 0;
-  border-right: 1px solid var(--border);
-  overflow-y: auto;
-  padding: 0.5rem 0;
-  background: var(--bg-sidebar, var(--bg));
-}
-
-.gm-main {
-  flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-  display: flex;
-  flex-direction: column;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0,0,0,0.18) transparent;
-}
-.gm-main::-webkit-scrollbar { width: 6px; }
-.gm-main::-webkit-scrollbar-track { background: transparent; }
-.gm-main::-webkit-scrollbar-thumb {
-  background: rgba(0,0,0,0.18);
-  border-radius: 99px;
-}
-.gm-main::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.32); }
-
-.gm-sidebar {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0,0,0,0.12) transparent;
-}
-.gm-sidebar::-webkit-scrollbar { width: 4px; }
-.gm-sidebar::-webkit-scrollbar-track { background: transparent; }
-.gm-sidebar::-webkit-scrollbar-thumb {
-  background: rgba(0,0,0,0.12);
-  border-radius: 99px;
-}
-.gm-sidebar::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.25); }
-
-/* ---- sidebar nav ---- */
-.nav-item {
-  display: block;
-  width: 100%;
-  text-align: left;
-  padding: 8px 12px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  border: none;
-  border-left: 3px solid transparent;
-  background: none;
-  cursor: pointer;
-  color: var(--text);
-  margin-bottom: 2px;
-}
-.nav-item:hover { background: var(--hover-bg, #f5f5f5); }
-.nav-item.active {
-  background: var(--active-bg, #e8f0fe);
-  border-left-color: var(--accent, #2d7a68);
-}
-
-.sidebar-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.25rem 0.75rem;
-}
-
-.sidebar-title {
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: var(--muted);
-}
-
-.head-actions { display: inline-flex; gap: 2px; }
-.icon-btn {
-  background: none;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 0 6px;
-  cursor: pointer;
-  color: var(--text);
-  line-height: 1.4;
-  font-size: 1rem;
-}
-.icon-btn:hover { background: var(--hover-bg, #eee); }
-
-.inline-form {
-  display: flex;
-  gap: 4px;
-  padding: 4px 8px;
-  flex-wrap: wrap;
-}
-
-.inline-input {
-  flex: 1;
-  min-width: 0;
-  font-size: 0.85rem;
-  padding: 2px 6px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: var(--input-bg, #fff);
-  color: var(--text);
-}
-
-.btn-sm {
-  font-size: 0.8rem;
-  padding: 2px 8px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  cursor: pointer;
-  background: var(--btn-bg, #f0f0f0);
-  color: var(--text);
-}
-.btn-sm.muted { color: var(--muted); }
-
-.char-list { list-style: none; margin: 0; padding: 0; }
-
-.char-item {
-  display: flex;
-  flex-direction: column;
-  padding: 5px 12px;
-  cursor: pointer;
-  border-left: 3px solid transparent;
-  position: relative;
-}
-.char-item:hover { background: var(--hover-bg, #f5f5f5); }
-.char-item.active {
-  background: var(--active-bg, #e8f0fe);
-  border-left-color: var(--accent, #2d7a68);
-}
-
-.char-name { font-size: 0.88rem; font-weight: 500; }
-.char-meta { font-size: 0.73rem; color: var(--muted); }
-
-
-.badge {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: var(--accent, #2d7a68);
-  color: #fff;
-  border-radius: 10px;
-  font-size: 0.7rem;
-  padding: 1px 6px;
-  font-weight: 700;
-}
-
-/* ---- Solo category and the Parties dropdown ---- */
-.sidebar-sub {
-  padding: 4px 12px 2px;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-.section-toggle { display: flex; align-items: center; gap: 4px; padding: 0; border: 0; background: none; font: inherit; cursor: pointer; color: inherit; }
-.chev { width: 1em; color: var(--muted); }
-.party-item { list-style: none; }
-.party-row { flex-direction: row; align-items: center; gap: 2px; padding: 0 12px 0 4px; }
-.chev-btn { width: 22px; flex: 0 0 22px; padding: 6px 0; border: 0; background: none; color: var(--muted); cursor: pointer; font-size: 0.8rem; }
-.party-open { flex: 1; min-width: 0; display: flex; flex-direction: column; padding: 5px 0; border: 0; background: none; font: inherit; text-align: left; color: inherit; cursor: pointer; }
-.party-members { list-style: none; margin: 0; padding: 0 0 0 16px; }
-.party-empty { padding: 3px 12px 3px 26px; }
-
-/* ---- main area ---- */
-.gm-char-header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  border-bottom: 1px solid var(--border);
-  background: var(--bg-header, var(--bg));
-  font-size: 0.9rem;
-}
-
-.hp-wp { margin-left: auto; color: var(--muted); font-size: 0.85rem; }
-.conditions { color: var(--danger, #c0392b); font-size: 0.8rem; }
-
-.player-link {
-  font-size: 0.8rem;
-  color: var(--accent, #2d7a68);
-  text-decoration: none;
-}
+.char-actions { margin-left: auto; display: inline-flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: flex-end; }
+.player-link { font-size: 0.85rem; color: var(--green-dark); }
 .player-link:hover { text-decoration: underline; }
-.del-btn { margin-left: auto; padding: 3px 12px; border: 1px solid var(--line); border-radius: 20px; background: none; color: var(--muted); font: inherit; font-size: 0.8rem; cursor: pointer; }
+.del-btn { padding: 3px 12px; border: 1px solid var(--line); border-radius: 20px; background: none; color: var(--muted); font: inherit; font-size: 0.8rem; cursor: pointer; }
 .del-btn:hover { color: var(--danger, #c0392b); border-color: var(--danger, #c0392b); }
-.del-btn.sure { margin-left: 0; background: var(--danger, #c0392b); border-color: var(--danger, #c0392b); color: #fff; }
-.confirm { margin-left: auto; display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 0.85rem; color: var(--danger, #c0392b); }
-.confirm .del-btn { margin-left: 0; }
+.del-btn.sure { background: var(--danger, #c0392b); border-color: var(--danger, #c0392b); color: #fff; }
+.confirm { display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 0.85rem; color: var(--danger, #c0392b); }
 
+.solo h2 { font-size: 1.1rem; margin: 0 0 8px; color: var(--green-dark); }
+.solo h2 .muted { font-size: 0.8rem; font-weight: 400; margin-left: 8px; }
+.members { width: 100%; border-collapse: collapse; border: 1px solid var(--line); border-radius: var(--radius); background: var(--cream); }
+.members th { text-align: left; padding: 7px 12px; }
+.members td { padding: 8px 12px; border-top: 1px solid var(--line); }
+.member-name { border: 0; background: none; padding: 0; font: inherit; font-weight: 600; color: var(--green-dark); cursor: pointer; text-align: left; }
+.member-name:hover { text-decoration: underline; }
 .muted { color: var(--muted); }
-.error { color: var(--danger, #c0392b); }
-
-@media (max-width: 600px) {
-  .gm-layout { flex-direction: column; height: auto; }
-  .gm-sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); max-height: 260px; }
-}
 </style>

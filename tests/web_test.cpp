@@ -262,17 +262,17 @@ void privacy() {
     bool clean = true;
     std::string leaked;
     for (const std::string& t : texts)
-        for (const char* secret : {"GM SECRET", "innkeeper is the cult", "Secret Boss"})
+        for (const char* secret : {"GM SECRET", "innkeeper is the cult"})
             if (contains(t, secret)) {
                 clean = false;
                 leaked = secret;
             }
     for (const std::string& t : texts) clean &= !contains(t, token);
-    check(clean, "nothing private reaches a player: GM notes, tokens, the bestiary" + (leaked.empty() ? std::string() : " (leaked: " + leaked + ")"));
+    check(clean, "nothing private reaches a player: GM notes and tokens" + (leaked.empty() ? std::string() : " (leaked: " + leaked + ")"));
     check(body(get(app, "/api/me", tokenOf(app, "Garmander")))["name"] == "Garmander", "a token opens exactly one character");
     check(body(get(app, "/api/me?id=" + byName(app, "Brenna")->id, tokenOf(app, "Garmander")))["name"] == "Garmander", "the character is chosen by the token, never by a parameter");
     check(get(app, "/api/characters", token).status == 404, "no route lists characters");
-    check(get(app, "/api/content/creatures", token).status == 404, "no bestiary for players");
+    check(get(app, "/api/creatures", token).status == 200 && get(app, "/api/gm/creatures", token).status != 200, "players read the creatures on their own route, not the GM's");
     check(get(app, "/api/content/tables", token).status == 404, "no tables either");
 }
 
@@ -554,7 +554,7 @@ void rules() {
     std::vector<std::string> types, packs;
     for (const json& t : summary["types"]) types.push_back(t["id"]);
     for (const json& p : summary["packs"]) packs.push_back(p["id"]);
-    check(types == std::vector<std::string>{"spells", "abilities", "skills", "kin", "professions", "weapons", "armor", "gear"}, "the rule types on offer: no creatures, no tables");
+    check(types == std::vector<std::string>{"spells", "abilities", "skills", "kin", "professions", "weapons", "armor", "gear", "creatures"}, "the types on offer: the same as the GM's, creatures included, no tables");
     check(packs == std::vector<std::string>{"core", "frostmarch"}, "packs: Core and homebrew; the fixture's settings.yaml switches hidden-pack off");
     std::vector<std::string> names;
     const json allSpells = body(get(app, "/api/content/spells", token));      // (kept in a variable: a range over a temporary would dangle)
@@ -775,7 +775,15 @@ void realData() {
     check(spells.size() >= 66, "the real spells are there");
     check(spells[0]["pack"] == "Dragonbane Core", "every card says the pack it comes from (the page shows it as a Source tag)");
     const std::string everything = get(app, "/api/content/kin", token).body + get(app, "/api/content/gear", token).body + get(app, "/api/content/abilities", token).body;
-    check(!contains(everything, "Centaur") && get(app, "/api/content/creatures", token).status == 404, "no creatures leak from the real Bestiary");
+    const json bestiary = body(get(app, "/api/creatures?q=centaur", token));
+    check(!contains(everything, "Centaur") && bestiary["creatures"].size() >= 1 && get(app, "/api/creatures/no-such-creature", token).status == 404,
+          "the real Bestiary is there for players too, on its own route");
+    const std::string gmToken = app.access().gmToken();
+    check(get(app, "/api/content", token).body == get(app, "/api/gm/content", gmToken).body && get(app, "/api/npcs", token).body == get(app, "/api/gm/npcs", gmToken).body, "the Reference index and the NPC lists are the same for the GM and a player");
+    bool sameChapters = true;
+    for (const json& ch : body(get(app, "/api/content", token))["rules"])
+        if (!ch.value("introOnly", false)) sameChapters &= get(app, "/api/rules/" + ch["key"].get<std::string>(), token).body == get(app, "/api/gm/rules/" + ch["key"].get<std::string>(), gmToken).body;
+    check(sameChapters, "every rules chapter reads the same for both");
     int withTables = 0;
     for (const json& ch : body(get(app, "/api/content", token))["rules"]) {
         if (ch.value("introOnly", false)) continue;

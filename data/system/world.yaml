@@ -54,7 +54,6 @@ world:
             body: Anyone eating raw fish or meat is at risk of falling ill – roll against virulence 10. Plants can be eaten raw without risk, but it takes two rations of raw plants to cover the daily need of food. Cooking up to ten rations of food takes one shift and requires a successful BUSHCRAFT roll. On a failure, the food counts as uncooked. A field kitchen gives a boon to the roll. The same goes for a proper kitchen, and there you can also cook as much food as you want. See the Master Chef [[heroic ability]].
       - name: Non-Player Characters
         tab: NPC
-        web_hide: true
         body: |
           You control everything in the world around the [[player characters|player character]], from dragons to demons, but your most important tool for creating drama is often your non-player characters. Stats for typical types of {{key: NPCs | npc}} can be found on the table.
           {{table: Typical NPCs}}
@@ -73,7 +72,6 @@ world:
               CON: Roll against maximum HP, reduced by 2 for each level of the Robust heroic ability. WIL: Roll against maximum WP if this is listed, reduced by 2 for each level of the Focused heroic ability. If WP is not listed, roll against 10. INT & CHA: Roll against 10.
       - name: NPC Creator
         tab: NPC
-        web_hide: true
         tool: npc-creator
         body: "Roll a random non-player character (name, attitude, kin, motivation, profession and trait) using the lists in Creating NPCs. Each result can be re-rolled on its own."
       - name: Treasure

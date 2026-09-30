@@ -9,6 +9,7 @@ import { textBlocks, unplacedTables } from '../lib/ruletables.js';
 
 const props = defineProps({
   token: { type: String, required: true },
+  prefix: { type: String, default: '' },      // '/gm' when the GM is signed in, '' for a player: the creatures are the same for both
 });
 
 const TAGS = [{ id: 'npc', label: 'NPC' }, { id: 'animal', label: 'Animal' }, { id: 'monster', label: 'Monster' }];
@@ -33,7 +34,7 @@ async function search() {
   loading.value = true;
   try {
     const q = query.value.trim();
-    const data = await apiGet(`/gm/creatures${q ? `?q=${encodeURIComponent(q)}` : ''}`, props.token);
+    const data = await apiGet(`${props.prefix}/creatures${q ? `?q=${encodeURIComponent(q)}` : ''}`, props.token);
     list.value = data.creatures ?? [];
     intro.value = data.intro ?? null;
     if (selected.value && !list.value.find((c) => c.id === selected.value.id)) selected.value = null;
@@ -47,7 +48,7 @@ async function pick(item) {
   loadingDetail.value = true;
   selected.value = null;
   try {
-    selected.value = await apiGet(`/gm/creatures/${encodeURIComponent(item.key)}`, props.token);
+    selected.value = await apiGet(`${props.prefix}/creatures/${encodeURIComponent(item.key)}`, props.token);
   } finally {
     loadingDetail.value = false;
   }

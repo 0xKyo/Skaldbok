@@ -21,7 +21,7 @@ struct Options {
     std::string dataDir;
     std::string prefDir;            // --prefs <folder>: keep the settings, characters and packs here (tests use a scratch folder)
     std::string shot;               // write a PNG of the window and quit
-    int width = 1360, height = 860;
+    int width = 900, height = 650;
     int shotFrames = 6;
     bool software = false;
     gm::StartupOptions startup;
@@ -116,7 +116,7 @@ int main(int argc, char** argv) {
         return 3;
     }
     SDL_SetRenderVSync(renderer, 1);
-    SDL_SetWindowMinimumSize(window, 900, 560);
+    SDL_SetWindowMinimumSize(window, 640, 480);
 
     // The window icon: shown by the OS in the title bar, taskbar/dock and alt-tab switcher while the app is running
     // (the icon before/without a running window, e.g. pinned shortcuts or the .desktop entry, comes from the .ico
