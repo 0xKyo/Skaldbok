@@ -53,7 +53,7 @@ En la barra lateral, **Characters** trae la categoría **Solo**: los personajes 
 
 En la ficha de un personaje, **Delete character** (con confirmación) borra su archivo y lo saca de todas las parties en las que estaba (`DELETE /api/gm/characters/<id>`).
 
-En el inventario de la ficha, cada objeto tiene su **peso** (el número junto a la cantidad, editable): cuenta para el límite de carga como peso × cantidad. Un objeto que se agrega desde las reglas trae el «Weight» de su tarjeta (1/4 la ración, — no pesa); uno escrito a mano pesa 1.
+En el inventario de la ficha, cada objeto cuenta para el límite de carga como peso × cantidad. El peso sale del «Weight» de la tarjeta de las reglas (1/4 la ración, — no pesa), se busca por la clave del objeto o, si se escribió a mano, por su nombre; sin tarjeta pesa 1. La web no muestra ni edita el peso; se fija a mano con `weight` en el archivo de la ficha o en el campo de peso de la app de escritorio.
 
 ## Creador de personajes (máster)
 

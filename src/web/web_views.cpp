@@ -66,6 +66,12 @@ json itemView(const ContentStore& cs, const Item& it) {
     if (!it.key.empty())
         for (Kind k : {Kind::Weapon, Kind::Armor, Kind::Gear})
             if (!card) card = cs.entry(k, cs.idByKey(k, it.key));
+    // what it weighs: its own weight, else the one in the book (by its key, or by its name when it was written by hand), else the usual
+    double weight = itemWeight(it);
+    if (it.weight < 0) {
+        const Entry* book = card ? card : (it.key.empty() && !it.name.empty() ? cs.findByName(Kind::Gear, it.name) : nullptr);
+        if (book && catalogWeight(*book) >= 0) weight = catalogWeight(*book);
+    }
     json stats = json::array();
     if (card)
         for (const Field& f : card->fields)
@@ -78,7 +84,7 @@ json itemView(const ContentStore& cs, const Item& it) {
         if (!effect && !it.name.empty()) effect = cs.findByName(k, it.name);
     const std::vector<std::string> banes = effect ? effect->list("banes") : std::vector<std::string>();
     const bool ranged = effect && effect->kind == Kind::Weapon && effect->prop("kind") == "ranged";
-    return {{"name", it.name}, {"count", it.count}, {"note", it.note}, {"weight", it.weight >= 0 || !card ? itemWeight(it) : (catalogWeight(*card) >= 0 ? catalogWeight(*card) : itemWeight(it))}, {"stats", stats}, {"banes", banes}, {"ranged", ranged},
+    return {{"name", it.name}, {"count", it.count}, {"note", it.note}, {"weight", weight}, {"stats", stats}, {"banes", banes}, {"ranged", ranged},
             {"description", card ? card->body : std::string()}};
 }
 

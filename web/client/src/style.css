@@ -271,8 +271,7 @@ input[type='search']:focus-visible { outline: 2px solid var(--green); }
 
 /* the skills parchment */
 .parchment { padding: 12px 18px 14px; border: 1px solid #b7a26f; border-radius: 12px; background: linear-gradient(#efe4c0, #e4d4a6); box-shadow: 0 2px 0 rgba(0, 0, 0, 0.12), inset 0 0 26px rgba(150, 110, 50, 0.16); }
-.skill-cols { display: grid; gap: 0 8px; margin-top: 6px;
-  background: linear-gradient(90deg, transparent calc(50% - 0.5px), var(--yellow) calc(50% - 0.5px), var(--yellow) calc(50% + 0.5px), transparent calc(50% + 0.5px)); }
+.skill-cols { display: grid; gap: 0 8px; margin-top: 6px; }
 /* small display-font caps label used in skill headers and gear labels */
 .skill-head, .gear .what { font-family: var(--display); font-weight: 800; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--brown); }
 .skill-head { margin: 8px 0 1px; }
@@ -339,9 +338,9 @@ input[type="number"].edit:not(:focus)::-webkit-inner-spin-button { -webkit-appea
 .inv-row { display: flex; align-items: center; gap: 6px; padding: 3px 0; border-bottom: 1px solid var(--line); }
 .inv-row:last-child { border-bottom: 0; }
 .inv-row.drag-over { background: var(--parchment); border-radius: 4px; outline: 2px dashed var(--green); }
-.inv-row input.edit:not(.count):not(.weight) { flex: 1 1 auto; }
+.inv-row input.edit:not(.count) { flex: 1 1 auto; }
 .inv-row .count { flex: 0 0 2.4rem; width: 2.4rem; text-align: center; padding: 2px 4px; }
-.inv-row .weight { flex: 0 0 3.2rem; width: 3.2rem; text-align: center; padding: 2px 4px; color: var(--muted); }
+.inv-row .inv-count { flex: 0 0 auto; color: var(--muted); }
 .drag-handle { cursor: grab; color: var(--muted); font-size: 1rem; flex: 0 0 auto; user-select: none; }
 .inv-add { display: flex; gap: 8px; align-items: center; margin-top: 8px; flex-wrap: wrap; }
 .name-line { display: flex; align-items: baseline; justify-content: center; gap: 10px; flex-wrap: wrap; }

@@ -345,12 +345,12 @@ double catalogWeight(const Entry& e) {
 
 void fillWeights(Character& c, const ContentStore& content) {
     for (Item& it : c.inventory) {
-        if (it.weight >= 0 || it.key.empty()) continue;
+        if (it.weight >= 0) continue;
+        const Entry* e = nullptr;
         for (Kind k : {Kind::Gear, Kind::Weapon, Kind::Armor})
-            if (const Entry* e = content.entry(k, content.idByKey(k, it.key))) {
-                it.weight = catalogWeight(*e);
-                break;
-            }
+            if (!e && !it.key.empty()) e = content.entry(k, content.idByKey(k, it.key));
+        if (!e && it.key.empty() && !it.name.empty()) e = content.findByName(Kind::Gear, it.name);     // written by hand: found by its name
+        if (e && catalogWeight(*e) >= 0) it.weight = catalogWeight(*e);
     }
 }
 

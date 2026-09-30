@@ -67,8 +67,7 @@ omite hasta que lo arregles; al guardar de nuevo se vuelve a leer.
 * `fields`: cualquier ficha (menos criaturas y tablas) acepta `fields: { Etiqueta: valor }` para mostrar líneas
   extra, sin tocar el código.
 * `tables`: cualquier ficha (hechizo, raza, profesión, equipo...) puede llevar **sus propias tablas**, con el mismo formato que `tables.yaml`
-  (`name`, `dice`, `columns`, `rows`, `page`); heredan la `source` de la ficha. Se ven en el detalle de la entrada y en el Master Screen
-  cuando se fija; la búsqueda las cubre. No aparecen entre las tablas de las reglas (Rules).
+  (`name`, `dice`, `columns`, `rows`, `page`); heredan la `source` de la ficha. Se ven en el detalle de la entrada; la búsqueda las cubre. No aparecen entre las tablas de las reglas (Rules).
 * Un pack con YAML inválido, un `manifest.yaml` roto o hecho para un formato más nuevo **se rechaza entero**, con el
   archivo y la posición del error. Los problemas de una sola entrada nunca rechazan el pack.
 
@@ -141,11 +140,8 @@ Todos los campos son opcionales salvo `name`. Cualquier tarjeta (de cualquiera d
 * `image`: una ilustración chica de la tarjeta, ruta relativa al pack (`images/orco.png`), igual que ya usan las criaturas.
 * `replaces`: en vez de agregar una tarjeta nueva, **cambia** la que tenga esa clave (`core/kin/human`, por ejemplo): conserva su
   lugar y su clave, toma el resto de los datos de la nueva, y queda marcada *"Changed by \<pack\>"* — igual que `replaces` en una regla
-  (ver más abajo). Así funcionan los botones **Edit** de Kin y Abilities en la app: editar una tarjeta de otro pack (o del libro)
-  escribe **una** tarjeta con `replaces` en tu propio pack de homebrew (`custom`, uno solo para todo lo que crees así; guardar de nuevo
-  la actualiza, no agrega otra); `Generate Kin`/`Generate Ability` crean una sin `replaces`, nueva, y editarla la actualiza donde está.
-  El original nunca se toca. **Delete** borra una tarjeta que creaste; en una edición de una tarjeta ajena el botón es **Revert to
-  original** y solo quita tu edición. El pack `custom` se carga siempre **último**, así que puede reemplazar tarjetas de cualquier otro pack.
+  (ver más abajo). Sirve para cambiar una tarjeta del libro o de otro pack desde el tuyo: el original nunca se toca, y quitar tu pack
+  (o apagarlo) la deja como estaba. Un pack llamado `custom` se carga siempre **último**, así que puede reemplazar tarjetas de cualquier otro pack.
 
 Cualquiera de estos archivos puede además llevar un `"intro"` de nivel superior
 (junto a su lista, no dentro de una tarjeta): un texto general de esa categoría
@@ -169,11 +165,8 @@ spells:
 — así es como los capítulos "Skills", "Bestiary", "Magic" y "Gear" de Rules terminaron adentro de `skills.yaml`,
 `creatures.yaml`, `spells.yaml` y `gear.yaml`. Un pack posterior con `intro` no vacío reemplaza el de uno anterior para esa categoría.
 
-El **intro se edita en la app**: en la pestaña "Intro" el botón **Edit** convierte el texto y las secciones en campos, y **Save** escribe el
-resultado en el YAML del que salió (`data/system/<categoría>.yaml` en Core; sin intro todavía, lo crea allí). El resto del archivo
-queda tal cual. Debajo de las secciones, **Tables** permite crear (**Add table**), editar y borrar las tablas del intro: nombre, dados
-("D20"... agrega la columna Roll), columnas y filas; **Put in a section...** agrega el `{{table: Nombre}}` al final de esa sección (sin él, la
-tabla sale al final de la página). Las celdas de una tabla también aceptan enlaces. Como cualquier texto de la app, se escribe una línea por párrafo:
+El **intro se escribe en el YAML** (`data/system/<categoría>.yaml` en Core). Una tabla del intro se coloca en una sección con
+`{{table: Nombre}}` (sin él, la tabla sale al final de la página). Las celdas de una tabla también aceptan enlaces. Como cualquier texto, se escribe una línea por párrafo:
 `- ` o `* ` abre una viñeta, `1. ` una línea numerada (dos espacios al principio de la línea = un nivel más adentro: listas anidadas), `✦Etiqueta: texto` una línea con etiqueta, y hay **enlaces** en cualquier texto
 (el de una regla, el de una tarjeta, un intro): `[[Fighter]]` va a la entrada, página o regla con ese nombre (también `[[Spells]]`, una
 categoría); `[[texto|destino]]` muestra otro texto (el destino puede ser una clave completa, como `core/spell/birdsong`, o una categoría);
@@ -237,8 +230,7 @@ personaje (vienen con la profesión).
 * Objeto: `category`, `cost`, `supply`, `weight`, `effect`.
 
 Este equipo no tiene una lista propia: las armas, armaduras y objetos del libro son las tablas de la categoría **Gear**
-(en Reference, con su propio `gear.yaml`, ver más arriba); se puede igual añadir a la ficha de un personaje, buscarlo con
-`Ctrl+K` y fijarlo en el Master Screen.
+(en Reference, con su propio `gear.yaml`, ver más arriba); se puede igual añadir a la ficha de un personaje y buscarlo en la Reference.
 
 ### creatures.yaml — criaturas (un archivo grande)
 ```yaml
@@ -277,7 +269,7 @@ creatures:
 ```
 * `kind`: `monster`, `npc` o `animal`. `category` agrupa la lista.
 * `statblocks`: uno o varios (por ejemplo *Scout* y *Warrior*); `fields` conserva el orden que escribas. El campo **HP**
-  se usa para «Add to encounter».
+  se muestra tal cual en el bloque de estadísticas.
 * `attacks`: la tabla de ataques de monstruo. `roll` es `"1"`, `"1-2"`…; sin `roll`, las filas se numeran en orden.
   Si `text` no empieza por el `name`, se antepone. `attack_dice` (por defecto `D6`) es el dado de esa tabla.
 * `image`: ruta **relativa a la carpeta del pack**, dentro de ella. Una ruta con `..` o absoluta se ignora con un aviso.
@@ -329,7 +321,7 @@ rules:
       - name: "…"
 ```
 Una tabla de `tables.yaml` (sin regla) aparece en Rules bajo una sección propia del pack, **«Tables · <nombre del pack>»**, al final
-del árbol. Buscar una tabla (`Ctrl+K`), abrirla desde una criatura o desde el Master Screen lleva a su sección. Una criatura enlaza
+del árbol. Buscar una tabla en la Reference o abrirla desde una criatura lleva a su sección. Una criatura enlaza
 su tabla con `tables: ["First Name"]`; si existe una tabla llamada `<Criatura>: First Name` (por ejemplo `Goblin: First Name`),
 enlaza a esa, y si no, a la primera con ese título.
 
@@ -448,7 +440,7 @@ habilidades entrenadas dan y cómo cambian los atributos). Sirve como referencia
 
 ## Cómo se combina con el resto
 
-* La búsqueda (`Ctrl+K`) cubre todos los packs activos; las criaturas, hechizos, etc. del homebrew se listan en sus páginas
+* La búsqueda cubre todos los packs activos; las criaturas, hechizos, etc. del homebrew se listan en sus páginas
   junto a los del Core, con su fuente.
 * Cada entrada tiene una **clave estable** `<pack>/<tipo>/<id>` (`frostmarch/spell/rime-ward`). Los personajes, el
   encuentro y los «recientes» se guardan con esas claves, no con números: apagar, quitar, actualizar o reordenar un pack no los rompe.

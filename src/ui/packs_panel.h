@@ -5,7 +5,7 @@
 
 #include "parsing/packs.h"
 #include "ui/filedialog.h"
-#include "ui/module.h"
+#include "ui/host.h"
 
 namespace gm {
 

@@ -16,10 +16,20 @@ namespace {
 constexpr size_t kTokenLength = 8;
 }
 
+// A token made only of digits (or digits, one "e" and digits) would be written to the yaml file as a number and read back as one, so the
+// token would be lost: those are not used.
+static bool readsAsANumber(const std::string& t) {
+    const size_t e = t.find('e');
+    const auto digits = [](const std::string& s) { return !s.empty() && s.find_first_not_of("0123456789") == std::string::npos; };
+    return digits(t) || (e != std::string::npos && digits(t.substr(0, e)) && digits(t.substr(e + 1)));
+}
+
 std::string WebAccess::newToken() {
     std::random_device rd;                                       // the operating system's entropy source
     char buf[9];
-    std::snprintf(buf, sizeof buf, "%08x", static_cast<unsigned>(rd()));
+    do {
+        std::snprintf(buf, sizeof buf, "%08x", static_cast<unsigned>(rd()));
+    } while (readsAsANumber(buf));
     return buf;
 }
 

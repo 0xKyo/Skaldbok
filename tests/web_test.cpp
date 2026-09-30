@@ -619,6 +619,14 @@ void tokens() {
         distinct.insert(t);
     }
     check(shape && distinct.size() == 4, "8 hex digits each, all different");
+    bool neverANumber = true;                                    // yaml would turn 12345678 or 1e234567 into a number and the token would be lost
+    for (int i = 0; i < 20000; ++i) {
+        const std::string t = WebAccess::newToken();
+        const size_t e = t.find('e');
+        const auto digits = [](const std::string& s) { return !s.empty() && s.find_first_not_of("0123456789") == std::string::npos; };
+        neverANumber &= !digits(t) && !(e != std::string::npos && digits(t.substr(0, e)) && digits(t.substr(e + 1)));
+    }
+    check(neverANumber, "a token never reads back from the yaml file as a number");
     const std::string brennaId = byName(app, "Brenna")->id;
     check(app.access().linkFor(brennaId) == "http://players.test/?t=" + std::string(saved["tokens"][brennaId]), "the personal link");
 

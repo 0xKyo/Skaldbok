@@ -180,13 +180,6 @@ function toggleMark(s) {
 const removeAt = (list, i) => list.splice(i, 1);
 const addItem = (list) => list.push({ name: '', count: 1 });
 const addRef = (list, entry) => list.push({ key: entry.key, name: entry.name });
-// an item taken from the rules brings the weight the book gives it, which counts towards the encumbrance limit
-const addGear = (list, entry) => list.push({ key: entry.key, name: entry.name, ...(entry.weight === undefined ? {} : { weight: entry.weight }) });
-const setWeight = (item, value) => {
-  const n = Number.parseFloat(value);
-  if (Number.isNaN(n)) delete item.weight;
-  else item.weight = Math.min(99, Math.max(0, n));
-};
 const addWeapon = (entry) => draft.value.weapons.push({ key: entry.key, name: entry.name });
 const chooseGear = (which, entry) => (draft.value[which] = { key: entry.key, name: entry.name });
 const setInt = (target, key, value, lo, hi) => (target[key] = num(value, lo, hi));
@@ -404,7 +397,6 @@ const setInt = (target, key, value, lo, hi) => (target[key] = num(value, lo, hi)
         <span class="banner">Inventory</span>
         <span class="field" :class="{ error: overloaded, flagged: flagged('encumbrance') }" data-test="carrying">{{ me.derived.encumbrance.carried }}<span class="muted">/{{ me.derived.encumbrance.limit }}</span></span>
       </div>
-      <div class="muted small" style="text-align: right">Encumbrance limit {{ me.derived.encumbrance.limit }}</div>
       <div v-for="(it, i) in (editing ? draft.inventory : me.equipment.inventory)" :key="'i' + i" class="inv-row"
         :class="{ 'drag-over': dragOver === i }"
         draggable="true"
@@ -414,15 +406,14 @@ const setInt = (target, key, value, lo, hi) => (target[key] = num(value, lo, hi)
         @drop="onDrop(i)"
         @dragend="onDragEnd">
         <span class="drag-handle" aria-hidden="true">⠿</span>
-        <span class="n">{{ i + 1 }}</span>
         <input v-if="!it.key" v-model="it.name" class="edit" maxlength="80" :aria-label="`Item ${i + 1}`" data-test="item-input" />
         <span v-else class="inv-name">{{ it.name }}</span>
-        <input type="number" class="edit count" min="1" max="999" :value="it.count ?? 1" :aria-label="`Number of ${it.name}`" @input="setInt(it, 'count', $event.target.value, 1, 999)" />
-        <input type="number" class="edit weight" min="0" max="99" step="0.25" :value="it.weight ?? 1" :title="`What one ${it.name || 'item'} weighs, for the encumbrance limit (0 weighs nothing)`" :aria-label="`Weight of ${it.name}`" data-test="item-weight" @input="setWeight(it, $event.target.value)" />
+        <span v-if="!editing && (it.count ?? 1) > 1" class="inv-count" data-test="item-count">×{{ it.count }}</span>
+        <input v-if="editing" type="number" class="edit count" min="1" max="999" :value="it.count ?? 1" :aria-label="`Number of ${it.name}`" @input="setInt(it, 'count', $event.target.value, 1, 999)" />
         <button type="button" class="x" :aria-label="`Remove ${it.name}`" @click="removeAt(draft.inventory, i)">×</button>
       </div>
       <div v-if="editing" class="inv-add">
-        <EntryPicker :token="token" :prefix="apiPrefix" type="gear" label="Add an item…" @pick="(e) => addGear(draft.inventory, e)" />
+        <EntryPicker :token="token" :prefix="apiPrefix" type="gear" label="Add an item…" @pick="(e) => addRef(draft.inventory, e)" />
         <button type="button" class="btn secondary small-btn" data-test="add-item" @click="addItem(draft.inventory)">+ Custom</button>
       </div>
     </div>

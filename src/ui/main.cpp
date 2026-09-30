@@ -19,7 +19,7 @@ namespace {
 
 struct Options {
     std::string dataDir;
-    std::string prefDir;            // --prefs <folder>: keep pins/recents/encounter here (tests use a scratch folder)
+    std::string prefDir;            // --prefs <folder>: keep the settings, characters and packs here (tests use a scratch folder)
     std::string shot;               // write a PNG of the window and quit
     int width = 1360, height = 860;
     int shotFrames = 6;
@@ -35,17 +35,8 @@ Options parseArgs(int argc, char** argv) {
         if (a == "--data") o.dataDir = next();
         else if (a == "--shot") o.shot = next();
         else if (a == "--frames") o.shotFrames = std::max(2, std::atoi(next().c_str()));
-        else if (a == "--tab") o.startup.tab = next();
-        else if (a == "--select") o.startup.select = next();
-        else if (a == "--search") o.startup.search = next();
-        else if (a == "--roll") o.startup.demoRoll = true;
         else if (a == "--prefs") o.prefDir = next();
-        else if (a == "--demo-encounter") o.startup.demoEncounter = true;
-        else if (a == "--demo-character") o.startup.demoCharacter = true;
-        else if (a == "--demo-party") o.startup.demoParty = true;
-        else if (a == "--demo-screen") o.startup.demoScreen = true;
         else if (a == "--no-web") SDL_setenv_unsafe("SKALDBOK_NO_WEB", "1", 1);      // do not start the players' web server
-        else if (a == "--new-character") o.startup.newCharacter = std::atoi(next().c_str());     // the step to open (0 = first)
         else if (a == "--import") o.startup.importPath = next();
         else if (a == "--software") o.software = true;
         else if (a == "--size") std::sscanf(next().c_str(), "%dx%d", &o.width, &o.height);
@@ -110,14 +101,14 @@ int main(int argc, char** argv) {
 
     // Sets the app's identity for the window manager: the taskbar/dock/alt-tab label on Windows and Linux, and, on
     // Linux, the id Wayland compositors match against a .desktop file (assets/linux/skaldbok.desktop) to find its icon.
-    SDL_SetAppMetadata("Skaldbok", "0.3", "com.skaldbok.app");
+    SDL_SetAppMetadata("Skaldbok", "0.4", "com.skaldbok.app");
 
     if (opt.software) SDL_SetHint(SDL_HINT_RENDER_DRIVER, "software");
     if (!SDL_Init(SDL_INIT_VIDEO)) {
         fail(std::string("SDL could not start: ") + SDL_GetError());
         return 3;
     }
-    SDL_Window* window = SDL_CreateWindow("Skaldbok 0.3", opt.width, opt.height,
+    SDL_Window* window = SDL_CreateWindow("Skaldbok 0.4", opt.width, opt.height,
                                           SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY);
     SDL_Renderer* renderer = window ? SDL_CreateRenderer(window, nullptr) : nullptr;
     if (!renderer) {
@@ -167,7 +158,6 @@ int main(int argc, char** argv) {
             auto handle = [&](const SDL_Event& e) {
                 ImGui_ImplSDL3_ProcessEvent(&e);
                 if (e.type == SDL_EVENT_QUIT || e.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED) running = false;
-                if (e.type == SDL_EVENT_DROP_FILE && e.drop.data) app.dropFile(e.drop.data, e.drop.x, e.drop.y);
                 any = true;
             };
             if (idle) {

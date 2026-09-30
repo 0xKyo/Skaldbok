@@ -38,17 +38,8 @@ watch([open, query], () => {
 });
 onBeforeUnmount(() => clearTimeout(timer));
 
-// what the book says one weighs ("1", "1/4", "—" = nothing); undefined when it says nothing usable
-function weightOf(entry) {
-  const text = (entry.fields ?? []).find((f) => f.label === 'Weight')?.value?.trim() ?? '';
-  if (text === '—' || text === '-') return 0;
-  const frac = /^(\d+)\s*\/\s*(\d+)$/.exec(text);
-  if (frac && Number(frac[2]) > 0) return Number(frac[1]) / Number(frac[2]);
-  return /^\d+(\.\d+)?$/.test(text) ? Number(text) : undefined;
-}
-
 function choose(entry) {
-  emit('pick', { key: entry.key, name: entry.name, weight: weightOf(entry) });
+  emit('pick', { key: entry.key, name: entry.name });
   open.value = false;
   query.value = '';
 }

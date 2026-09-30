@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 3.24)
 # yaml-cpp 0.8.0 declares cmake_minimum_required(2.8.12); CMake 4.x rejects < 3.5 unless this is set.
 set(CMAKE_POLICY_VERSION_MINIMUM 3.5 CACHE INTERNAL "" FORCE)
 if(WIN32)
-  project(Skaldbok VERSION 0.3.0 LANGUAGES C CXX RC)
+  project(Skaldbok VERSION 0.4.0 LANGUAGES C CXX RC)
 else()
-  project(Skaldbok VERSION 0.3.0 LANGUAGES C CXX)
+  project(Skaldbok VERSION 0.4.0 LANGUAGES C CXX)
 endif()
 
 set(CMAKE_CXX_STANDARD 23)
@@ -39,7 +39,6 @@ add_library(gm_core STATIC
   src/game/party.cpp
   src/game/changelog.cpp
   src/game/sheet_edit.cpp
-  src/game/master_screen.cpp
   src/game/web_link.cpp
   src/game/creation.cpp
   src/game/messages.cpp
@@ -66,21 +65,8 @@ add_executable(skaldbok
   src/ui/textures.cpp
   src/ui/filedialog.cpp
   src/ui/ui_common.cpp
-  src/ui/intro_page.cpp
-  src/ui/homebrew_forms.cpp
   src/ui/packs_panel.cpp
-  src/ui/modules/registry.cpp
-  src/ui/modules/search_module.cpp
-  src/ui/modules/master_screen_module.cpp
-  src/ui/modules/catalog_module.cpp
-  src/ui/modules/gear_module.cpp
-  src/ui/modules/rules_module.cpp
-  src/ui/modules/encounter_module.cpp
-  src/ui/modules/characters_module.cpp
-  src/ui/modules/character_sheet.cpp
-  src/ui/modules/party_module.cpp
-  src/ui/modules/messages_module.cpp
-  src/ui/modules/web_module.cpp
+  src/ui/settings_screen.cpp
 )
 if(WIN32)
   target_sources(skaldbok PRIVATE assets/icons/skaldbok.rc)   # the exe's own icon: Explorer, the taskbar, alt-tab
@@ -147,7 +133,7 @@ endif()
 
 # ---- tests (no window) -------------------------------------------------------------------------------------
 enable_testing()
-foreach(t content_test character_test encounter_test screen_test messages_test sheet_test)
+foreach(t content_test character_test encounter_test messages_test sheet_test)
   add_executable(${t} tests/${t}.cpp)
   target_link_libraries(${t} PRIVATE gm_core)
   if(MSVC)
@@ -160,7 +146,6 @@ if(MSVC)
   target_compile_options(web_test PRIVATE /W4 /utf-8 /permissive-)
 endif()
 add_test(NAME web COMMAND web_test)
-add_test(NAME master_screen COMMAND screen_test)
 add_test(NAME messages COMMAND messages_test)
 add_test(NAME sheet COMMAND sheet_test)
 add_test(NAME content COMMAND content_test)
