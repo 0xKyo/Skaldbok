@@ -1,77 +1,37 @@
-format: 1
+kind: magical-mishap
+category: Magical Mishaps
 rollable:
   - Magical Mishaps
 entities:
   - name: The magical powers leave you Dazed.
-    kind: magical-mishap
-    category: Magical Mishaps
-    legacy_key: "#42"
   - name: The spellcasting suddenly makes you Exhausted.
-    kind: magical-mishap
-    category: Magical Mishaps
   - name: The energies take a toll on your body and make you Sickly.
-    kind: magical-mishap
-    category: Magical Mishaps
   - name: You lose control of the spell, which makes you very Angry.
-    kind: magical-mishap
-    category: Magical Mishaps
   - name: The spell subjects you to demonic visions that leave you Scared.
-    kind: magical-mishap
-    category: Magical Mishaps
   - name: You see the world beyond the veil and realize your own insignificance
-    kind: magical-mishap
-    category: Magical Mishaps
     description: You feel Disheartened.
   - name: The magic ravages your body, inflicting D6 damage per power level.
-    kind: magical-mishap
-    category: Magical Mishaps
   - name: The spell drains your willpower and you lose D6 WP per power level.
-    kind: magical-mishap
-    category: Magical Mishaps
   - name: The spell gives rise to a magical disease with virulence 3D6
-    kind: magical-mishap
-    category: Magical Mishaps
     description: You and everyone you come into contact with during the next shift are exposed to the disease.
   - name: Another random spell of yours is activated instead of the one you cast, with the same target and power level.
-    kind: magical-mishap
-    category: Magical Mishaps
   - name: You vomit a frog the moment you tell a lie
-    kind: magical-mishap
-    category: Magical Mishaps
     description: Roll D4 every morning. On a 1, the effect wears off. It can also be lifted with DISPEL.
   - name: Any gold or silver you touch withers into dust
-    kind: magical-mishap
-    category: Magical Mishaps
     description: Roll D4 every morning. On a 1, the effect wears off. It can also be lifted with DISPEL.
   - name: The spell blinds you, and you act as if in total darkness
-    kind: magical-mishap
-    category: Magical Mishaps
     description: Roll D4 every morning. On a 1, you recover. The effect can also be lifted with DISPEL.
   - name: You are struck by amnesia and forget who you and the other player characters are
-    kind: magical-mishap
-    category: Magical Mishaps
     description: The effect must be roleplayed. Roll D4 every morning. On a 1, your memory returns.
   - name: The spell also affects a friend or other unintended victim
-    kind: magical-mishap
-    category: Magical Mishaps
     description: A healing or helping spell affects an enemy.
   - name: The spell backfires
-    kind: magical-mishap
-    category: Magical Mishaps
     description: An offensive spell affects you instead of the intended target. A protecting or healing spell inflicts damage instead.
   - name: You turn into an animal
-    kind: magical-mishap
-    category: Magical Mishaps
     description: "Roll D6. 1: cat, 2: fox, 3: goat, 4: wolf, 5: deer, 6: bear. You get stats according to the table on page 99 and cannot speak, but you retain your mental acuity. Roll a D4 every morning. On a 1, you revert back to your original form."
   - name: You become one category younger, for example from adult to young
-    kind: magical-mishap
-    category: Magical Mishaps
     description: Your attributes and derived ratings change as per the table on page 24, but your skill levels do not. If you were already young, you turn into a child with −2 STR and CON, to a minimum of 3. The effect is permanent and you age normally from your new age.
   - name: You become one category older, for example from adult to old
-    kind: magical-mishap
-    category: Magical Mishaps
     description: Your attributes and derived ratings change as per the table on page 24, but your skill levels do not. If you were already old, you become very frail and get −2 STR and CON. The effect is permanent and you age normally from your new age.
   - name: Your magic attracts a demon from another dimension
-    kind: magical-mishap
-    category: Magical Mishaps
     description: The demon shows up within the next shift and attacks or causes some kind of trouble. The details are up to the GM.

@@ -48,7 +48,7 @@ rules:
         body: |
           Choose your age (young, adult or old), or roll on the table below. Older age means lower [[attributes|attribute]] but more skills. Your age in years depends on your kin and has no mechanical significance.
           Age changes two things: how many trained skills of your own choice you get in step 8 (two, four or six, on top of the six from your profession) and how your attributes are adjusted once you have rolled them in step 6. The adjustments do not stack, and no attribute can go above 18.
-          {{table: Effects of Age}}
+          {{table: Age}}
         see:
           - skills
         young_trained_skills: 6

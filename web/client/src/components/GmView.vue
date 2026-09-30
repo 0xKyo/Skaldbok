@@ -1,9 +1,10 @@
 <script setup>
-// GM interface: tabs along the top, like the player's page. Character (a dropdown of every character, with its sheet), Chat and Rules
-// (the Reference, the same the players have).
+// GM interface: tabs along the top, like the player's page. Character (a dropdown of every character, with its sheet), Chat, Rules
+// (the Reference, the same the players have) and Homebrew (only the GM has it: what the GM makes).
 import { computed, onBeforeUnmount, onMounted, ref, watchEffect } from 'vue';
 import { ApiError, apiGet, apiSend } from '../api.js';
 import ChatView from './ChatView.vue';
+import HomebrewView from './HomebrewView.vue';
 import CharacterCreator from './CharacterCreator.vue';
 import ReferenceView from './ReferenceView.vue';
 import { useReference } from '../reference.js';
@@ -19,7 +20,7 @@ const props = defineProps({
 const characters = ref([]);
 const threads = ref([]);
 
-const tab = ref('character');       // 'character' | 'chat' | 'rules'
+const tab = ref('character');       // 'character' | 'chat' | 'rules' | 'homebrew'
 const selectedId = ref(null);       // the character the Character and Chat tabs show
 const sheet = ref(null);
 const chat = ref({ messages: [], gmRead: '', playerRead: '' });
@@ -39,6 +40,7 @@ const tabs = computed(() => [
   { id: 'character', label: 'Character' },
   { id: 'chat', label: totalUnread.value > 0 && tab.value !== 'chat' ? `Chat (${totalUnread.value})` : 'Chat' },
   { id: 'rules', label: 'Rules' },
+  { id: 'homebrew', label: 'Homebrew' },
 ]);
 
 // ---- data loading ----
@@ -211,6 +213,9 @@ watchEffect(() => {
 
       <!-- Rules: the Reference, exactly the players' -->
       <ReferenceView v-else-if="tab === 'rules'" :state="reference" :token="token" gm-prefix="/gm" />
+
+      <!-- Homebrew: the GM's own creatures -->
+      <HomebrewView v-else-if="tab === 'homebrew'" :token="token" />
     </template>
   </div>
 </template>

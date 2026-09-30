@@ -1,85 +1,44 @@
-format: 1
+kind: weakness
 rollable:
   - Weakness
 entities:
   - name: Gullible
-    kind: weakness
-    legacy_key: "#35"
-    source: rulebook
     description: I believe everything that others tell me.
   - name: Greedy
-    kind: weakness
-    source: rulebook
     description: I want a bigger share of all treasure.
   - name: Thin-skinned
-    kind: weakness
-    source: rulebook
     description: I never tolerate a provocation.
   - name: Foolhardy
-    kind: weakness
-    source: rulebook
     description: I always go first into danger.
   - name: Fainthearted
-    kind: weakness
-    source: rulebook
     description: I always stay at the back of the group.
   - name: Monster Slayer
-    kind: weakness
-    source: rulebook
     description: All monsters are evil and must be slain.
   - name: Intolerant
-    kind: weakness
-    source: rulebook
     description: Nightkin such as orcs and goblins are evil and need to be fought.
   - name: Slothful
-    kind: weakness
-    source: rulebook
     description: I take every chance to rest.
   - name: Gluttonous
-    kind: weakness
-    source: rulebook
     description: I take every chance I get to eat something tasty.
   - name: Kleptomaniac
-    kind: weakness
-    source: rulebook
     description: I can’t stop myself from stealing valuables.
   - name: Vain
-    kind: weakness
-    source: rulebook
     description: I’ll help anyone who gives me praise or compliments.
   - name: Reckless
-    kind: weakness
-    source: rulebook
     description: I always take big risks without thought of the consequences.
   - name: Fearful of Magic
-    kind: weakness
-    source: rulebook
     description: Magic is an evil force and mages cannot be trusted.
   - name: Craving Knowledge
-    kind: weakness
-    source: rulebook
     description: The hunt for knowledge is more important than my friends.
   - name: Child of the Wild
-    kind: weakness
-    source: rulebook
     description: I never sleep indoors.
   - name: Boastful
-    kind: weakness
-    source: rulebook
     description: I always exaggerate my accomplishments.
   - name: Violent
-    kind: weakness
-    source: rulebook
     description: I resort to violence to overcome every obstacle.
   - name: Overbearing
-    kind: weakness
-    source: rulebook
     description: I always tell others what to do.
   - name: Pessimist
-    kind: weakness
-    source: rulebook
     description: I always think things will turn out for the worst.
   - name: Haughty
-    kind: weakness
-    source: rulebook
     description: I look down on everyone I meet.

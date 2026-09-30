@@ -1,41 +1,28 @@
-format: 1
+kind: animal
 rollable:
   - Hunting
 entities:
   - name: Squirrel
-    kind: animal
-    category: Hunting
-    legacy_key: "#73"
     fields:
       REQUIREMENT: Weapon or trap
       RATIONS: "1"
   - name: Crow
-    kind: animal
-    category: Hunting
     fields:
       REQUIREMENT: Weapon
       RATIONS: "1"
   - name: Rabbit
-    kind: animal
-    category: Hunting
     fields:
       REQUIREMENT: Weapon or trap
       RATIONS: D3
   - name: Fox
-    kind: animal
-    category: Hunting
     fields:
       REQUIREMENT: Weapon or trap
       RATIONS: D4
   - name: Boar*
-    kind: animal
-    category: Hunting
     fields:
       REQUIREMENT: Weapon
       RATIONS: 2D6
   - name: Deer
-    kind: animal
-    category: Hunting
     fields:
       REQUIREMENT: Weapon
       RATIONS: 2D8

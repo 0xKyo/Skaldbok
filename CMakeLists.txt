@@ -99,6 +99,7 @@ add_library(gm_web STATIC
   src/web/web_access.cpp
   src/web/web_views.cpp
   src/web/web_creation.cpp
+  src/web/web_homebrew.cpp
   src/web/web_app.cpp
   src/web/web_server.cpp
 )

@@ -1,53 +1,28 @@
-format: 1
+kind: mishap
 rollable:
   - Mishaps
 entities:
   - name: Fog
-    kind: mishap
-    category: Mishaps
-    legacy_key: "#72"
     description: The player characters are caught unawares by a thick fog. The distance covered this shift is reduced by half.
   - name: Blocking Terrain
-    kind: mishap
-    category: Mishaps
     description: The way ahead is blocked by rocks, fallen trees, thick shrubs, or flooding. Each player character must make an ACROBATICS roll to keep moving forward. Anyone who succeeds can help the others. A player character who fails makes no progress this shift.
   - name: Torn Clothes
-    kind: mishap
-    category: Mishaps
     description: The pathfinder leads the group into a thorny thicket, rocky ravine, or swampy marsh. The clothes of a random player character are damaged and now count as rags.
   - name: Lost
-    kind: mishap
-    category: Mishaps
     description: The player characters realize that they are walking in circles and do not make any progress on the map this shift. The pathfinder must also make a BUSHCRAFT roll to find the right way again. Others cannot help.
   - name: Dropped Item
-    kind: mishap
-    category: Mishaps
     description: A random player character drops or breaks an item of your choice.
   - name: Mosquito Swarm
-    kind: mishap
-    category: Mishaps
     description: A large swarm of mosquitoes or gnats attacks the group, driving everyone crazy with their biting and buzzing. All player characters without a cloak become Angry.
   - name: Sprained Ankle
-    kind: mishap
-    category: Mishaps
     description: A random player character falls or missteps and suffers D6 damage. Armor has no effect but boots reduce the damage by two.
   - name: Downpour
-    kind: mishap
-    category: Mishaps
     description: A massive rainfall or blizzard (depending on the season) catches the group unawares. All player characters without a cloak must roll to withstand the cold. They must also seek shelter until the storm passes and cannot make any progress on the map this shift.
   - name: Wasps
-    kind: mishap
-    category: Mishaps
     description: The pathfinder steps right into a nest of wasps. A swarm of angry wasps attacks the entire group. All player characters must make an EVADE roll, and those who fail suffer D6 damage and a condition of their choice.
   - name: Landslide
-    kind: mishap
-    category: Mishaps
     description: The player characters are walking in rough terrain when the ground suddenly gives way under their feet. Everyone must make an EVADE roll – anyone who fails suffers D10 damage.
   - name: Savage Animal
-    kind: mishap
-    category: Mishaps
     description: A wolf, bear, or other savage animal feels threatened and attacks the adventurers. Choose an animal from the table on page 99.
   - name: Quicksand
-    kind: mishap
-    category: Mishaps
     description: The ground collapses! Each player character must make a BUSHCRAFT roll. Anyone who fails suffers a condition and must roll again. A character who already has all conditions and fails the roll is swallowed by the quicksand and disappears for good. Whoever is free can help those who are stuck.

@@ -1,81 +1,60 @@
-format: 1
+kind: effect
 rollable:
   - Inn
   - Cave
   - Forest
 entities:
   - name: Boiling Cauldron
-    kind: effect
     category: Inn
-    legacy_key: "#79"
     description: ✦Throw the boiling water in a cone that is 4 meters in both length and width. ✦Everyone within the cone suffers 2D6 damage. ✦The attack can be dodged, but not parried. ✦Armor has no effect.
   - name: Bucket of Soapy Water
-    kind: effect
     category: Inn
     description: ✦Throw the soapy water in a cone that is 4 meters in both length and width. ✦Everyone within the cone falls down. ✦The attack can be dodged, but not parried.
   - name: Burning Firewood
-    kind: effect
     category: Inn
     description: ✦Hit an enemy within 2 meters with the firewood. ✦Requires one free hand. ✦The attack hits automatically and inflicts 2D6 fire damage plus damage bonus. ✦The attack can be dodged or parried. ✦The firewood can then be used as a torch.
   - name: Rummaging Pig
-    kind: effect
     category: Inn
     description: ✦Make a BUSHCRAFT roll to agitate the pig and make it attack an enemy of your choice within 10 meters. ✦The attack hits automatically and inflicts 3D6 bludgeoning damage. ✦The attack can be dodged but not parried. ✦Then the pig storms off.
   - name: Wine Bottle
-    kind: effect
     category: Inn
     description: ✦Hit an enemy within 2 meters with the bottle. ✦Requires one free hand. ✦The attack hits automatically and inflicts 2D6 bludgeoning damage plus damage bonus. ✦The attack can be dodged or parried. ✦The enemy gets wine in their eyes, which stings so bad that it gives a bane on all actions until your next turn.
   - name: Chandelier
-    kind: effect
     category: Inn
     description: ✦Swing yourself from the chandelier and perform a melee attack. ✦You can take a normal movement action without triggering free attacks. ✦The melee attack must be unarmed, but cannot be dodged or parried. ✦If the attack fails, you fall to the ground and take D6 bludgeoning damage.
   - name: Stalactite
-    kind: effect
     category: Cave
-    legacy_key: "#80"
     description: ✦Shove an enemy within 2 meters into the sharp rock formations hanging from the ceiling. ✦The attack hits automatically and inflicts 2D6 piercing damage plus damage bonus. ✦The attack can be dodged but not parried. ✦Armor has no effect, except helmets.
   - name: Torch
-    kind: effect
     category: Cave
     description: ✦Grab a torch from the wall and strike an enemy within 2 meters. ✦Requires one free hand. ✦The attack hits automatically and inflicts 2D6 fire damage plus damage bonus. ✦The attack can be dodged or parried. ✦You may then keep the torch.
   - name: Stalagmite
-    kind: effect
     category: Cave
     description: ✦Shove an enemy within 2 meters into a tall rock formation on the cave floor. ✦The attack hits automatically and inflicts D6 bludgeoning damage plus damage bonus and knocks the enemy to the ground. ✦The attack can be dodged but not parried.
   - name: Puddle
-    kind: effect
     category: Cave
     description: ✦Roll to topple the enemy. ✦If you succeed, the enemy must spend one action and make an ACROBATICS roll to get back up.
   - name: Crevice
-    kind: effect
     category: Cave
     description: ✦Roll to topple the enemy. ✦If you succeed, the enemy falls into a 2D6 meter deep crevice and suffers falling damage. ✦Climbing up requires an ACROBATICS roll.
   - name: Bats
-    kind: effect
     category: Cave
     description: ✦Make a BUSHCRAFT roll to agitate the bats and make them attack an enemy within 10 meters. ✦For stats, see page 99. ✦The bats keep attacking the enemy for D3 rounds. ✦If your BUSHCRAFT roll fails, the bats attack you instead.
   - name: Low Brach
-    kind: effect
     category: Forest
-    legacy_key: "#81"
     description: ✦Swing yourself from the branch and perform a melee attack. ✦You can make a normal move without triggering free attacks. ✦The melee attack must be unarmed, but cannot be dodged or parried. ✦If the attack fails, you fall to the ground and take D6 bludgeoning damage.
   - name: Wasp Nest
-    kind: effect
     category: Forest
     description: ✦Roll BUSHCRAFT to pick up the wasp’s nest and hurl it at an enemy within 10 meters. ✦The enemy gets badly stung, which inflicts 2D6 damage and gives them a bane on all actions for a Shift. ✦The attack can be dodged but not parried. ✦Armor has no effect. ✦If your BUSHCRAFT roll fails the wasps sting you instead.
   - name: Gnarled Roots
-    kind: effect
     category: Forest
     description: ✦Roll to topple the enemy. ✦If you succeed, the enemy must spend one action and make an ACROBATICS roll to get back up.
   - name: Boulder
-    kind: effect
     category: Forest
     description: ✦Make an ACROBATICS roll to jump up on the boulder and throw yourself at an enemy within 2 meters. ✦The attack inflicts 2D6 damage (bludgeoning) plus damage bonus and cannot be dodged or parried. ✦If it succeeds, both you and the enemy drop to the ground. ✦If your roll fails, only you fall over and suffer D6 damage.
   - name: Viper
-    kind: effect
     category: Forest
     description: ✦Roll BUSHCRAFT to pick up the snake and throw it at an enemy within 10 meters. ✦The enemy gets bitten, which inflicts D6 damage and a lethal poison with Potency 12 if the bite pierces armor. ✦The attack can be dodged but not parried. ✦If your BUSHCRAFT roll fails, the snake bites you instead.
   - name: Patch of Dirt
-    kind: effect
     category: Forest
     description: ✦Throw dirt in the eyes of an enemy within 10 meters. ✦The enemy suffers D6 damage (armor has no effect) and gets a bane on all actions for the rest of the combat. ✦The attack can be dodged but not parried.

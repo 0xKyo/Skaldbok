@@ -1,24 +1,19 @@
-format: 1
+kind: type
+category: Rest Types
 entities:
   - name: Round Rest
-    kind: type
-    category: Rest Types
     fields:
       HP RECOVERED: —
       WP RECOVERED: D6
       CONDITIONS HEALED: —
       NOTES: Once per shift
   - name: Stretch Rest
-    kind: type
-    category: Rest Types
     fields:
       HP RECOVERED: D6 (2D6 with HEALING)
       WP RECOVERED: D6
       CONDITIONS HEALED: 1 condition of choice
       NOTES: Once per shift; caregiver cannot rest
   - name: Shift Rest
-    kind: type
-    category: Rest Types
     fields:
       HP RECOVERED: All
       WP RECOVERED: All

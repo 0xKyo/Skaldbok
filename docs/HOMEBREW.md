@@ -142,6 +142,14 @@ Todos los campos son opcionales salvo `name`. Cualquier tarjeta (de cualquiera d
   (ver más abajo). Sirve para cambiar una tarjeta del libro o de otro pack desde el tuyo: el original nunca se toca, y quitar tu pack
   (o apagarlo) la deja como estaba. Un pack llamado `custom` se carga siempre **último**, así que puede reemplazar tarjetas de cualquier otro pack.
 
+**Lo que no hace falta escribir** (los archivos del Core van así, lo más cortos posible): `format: 1` (es el valor por defecto);
+el `id` cuando es lo que daría el nombre (`Hard to Catch` → `hard-to-catch`); `source` cuando es la primera fuente del pack (en el Core, *rulebook*);
+`type: heroic` en una aptitud, `trick: false` y `school: General Magic` en un hechizo, `category: core` en una habilidad,
+`kind: melee` en un arma, `slot: armor` en una armadura y `kind: monster` en una criatura. En un archivo de entidades, `kind`, `category` y
+`source` se escriben **una vez al principio del archivo** si todas las entidades los comparten (una entidad que escribe el suyo lo conserva), y sin
+`category` la categoría es el nombre del archivo; las entidades de una carta (los nombres de un kin, el equipo de una profesión) sin `category`
+se llaman `<carta>: <Kind>` (*Human: First Name*).
+
 Cualquiera de estos archivos puede además llevar un `"intro"` de nivel superior
 (junto a su lista, no dentro de una tarjeta): un texto general de esa categoría
 (`intro: "..."`, o con secciones y tablas propias). También puede llevar sus propias secciones con título y sus propias tablas, igual
@@ -366,7 +374,7 @@ entities:
 ```
 Sin `category`, la categoría es el **nombre del archivo** (`weakness.yaml` → *Weakness*, `improvised-weapons.yaml` → *Improvised Weapons*): así están `weakness.yaml`, `memento.yaml` y `appearance.yaml` del Core, un archivo por categoría. Las entidades no llevan número: el orden del archivo es el orden de las filas. Una categoría en `rollable` se puede tirar: el dado
 tiene tantas caras como entidades hay (dos entidades, D2) y sale una al azar entre ellas. (Con `roll: "1-3"` en cada entidad se
-puede fijar a mano qué tirada da cuál, y con `legacy_key` se conserva la clave que tenía la tabla antes: tableros y recientes guardados.)
+puede fijar a mano qué tirada da cuál.)
 Una regla muestra la tabla de una categoría donde su texto tiene una línea `{{table: Odd Weather}}`; si ningún texto la coloca,
 aparece en la regla `Tables · <pack>`. Un pack puede sumar entidades a una categoría del Core (o traer categorías propias) con solo
 escribirlas. La forma antigua, una lista `tables:` con `columns` y `rows`, sigue aceptándose (y `tables.yaml`, más abajo).

@@ -1,206 +1,119 @@
-format: 1
 skills:
-  - id: acrobatics
-    name: Acrobatics
-    source: rulebook
+  - name: Acrobatics
     attribute: AGL
-    category: core
     description: When jumping, climbing, balancing or performing a similar physical action, roll for this skill.
-  - id: awareness
-    name: Awareness
-    source: rulebook
+  - name: Awareness
     attribute: INT
-    category: core
     description: As an adventurer you must always be on your guard, or you won’t live long. You use your AWARENESS skill to watch or listen for anyone sneaking around nearby (opposed roll, see SNEAKING below). The GM can also let you make an AWARENESS roll to notice emerging threats in time. Such a passive roll cannot be pushed.
-  - id: bartering
-    name: Bartering
-    source: rulebook
+  - name: Bartering
     attribute: CHA
-    category: core
     description: When haggling over the price of something you are buying or selling, roll for BARTERING. If you succeed, the price goes down or up by 20%. If you roll a dragon, the price is halved or doubled. If you roll a demon, you have offended the other party so badly that they refuse the trade.
-  - id: beast-lore
-    name: Beast Lore
-    source: rulebook
+  - name: Beast Lore
     attribute: INT
-    category: core
     description: The world is full of common and rare animals and beasts of all kinds. Roll for BEAST LORE when trying to identify an animal or monster, or to know its habits, abilities, and weaknesses. If you succeed, the GM should give you some piece of useful information.
-  - id: bluffing
-    name: Bluffing
-    source: rulebook
+  - name: Bluffing
     attribute: CHA
-    category: core
     description: To quickly come up with a convincing lie can be an invaluable skill as an adventurer. If the GM finds your bluff unconvincing, you get a bane to your roll. If your bluff is completely unbelievable, it fails automatically – no matter how well you deliver it.
-  - id: bushcraft
-    name: Bushcraft
-    source: rulebook
+  - name: Bushcraft
     attribute: INT
-    category: core
     description: The vast wilderness is a dangerous place where wild beasts roam. The ignorant can lose their lives by choosing the wrong path through the woods or making camp in the wrong spot. Roll for BUSHCRAFT to lead the way through the wilderness, make camp, cook food, or stay warm in cold weather. Read more in chapter 8.
-  - id: crafting
-    name: Crafting
-    source: rulebook
+  - name: Crafting
     attribute: STR
-    category: core
     description: As an adventurer, you must often repair your gear if it breaks. Typically, it takes one shift to repair a damaged item, and you need access to the appropriate tools.
-  - id: evade
-    name: Evade
-    source: rulebook
+  - name: Evade
     attribute: AGL
-    category: core
     description: Roll for this skill when trying to dodge an attack or flee from combat. Read more in chapter 4.
-  - id: healing
-    name: Healing
-    source: rulebook
+  - name: Healing
     attribute: INT
-    category: core
     description: As an adventurer there is a significant risk that you and your friends will be injured, sooner or later. That is when HEALING is useful – with this skill you can get fallen companions back on their feet or even save their lives. Read more on page 50.
   - id: hunting-and-fishing
     name: Hunting & Fishing
-    source: rulebook
     attribute: AGL
-    category: core
     description: Out in the wild, you will often need to find your own food by hunting or fishing. This is further described on page 103.
-  - id: languages
-    name: Languages
-    source: rulebook
+  - name: Languages
     attribute: INT
-    category: core
     description: All player characters can speak the common tongue and read simple texts, and non-human kin also know their own language. To understand foreign or ancient languages, roll for this skill.
   - id: myths-and-legends
     name: Myths & Legends
-    source: rulebook
     attribute: INT
-    category: core
     description: When trying to remember stories of old times or distant lands, or trying to understand links to the past, roll for this skill.
-  - id: performance
-    name: Performance
-    source: rulebook
+  - name: Performance
     attribute: CHA
-    category: core
     description: When singing a song, reading a poem, making jokes or in some other way try to amuse a crowd, roll for PERFORMANCE.
-  - id: persuasion
-    name: Persuasion
-    source: rulebook
+  - name: Persuasion
     attribute: CHA
-    category: core
     description: Life as an adventurer is dangerous, but you can often reach your goals without violence, through charm, threats, or sensible reasoning. Roll for PERSUASION to make another person see things your way. If you succeed, you achieve your stated objective, and the NPC does what you want. However, they might demand something in return – the GM decides what that entails. If what you are asking for requires the NPC to sacrifice or risk something important, the roll is more difficult – it becomes an opposed roll between your PERSUASION and the other person’s WIL. But even in this case your request must be reasonable – no NPC will agree to just anything or act entirely against their own interests, no matter how successful the roll. The GM has the final say. You cannot PERSUADE monsters (chapter 7) unless it is explicitly allowed.
-  - id: riding
-    name: Riding
-    source: rulebook
+  - name: Riding
     attribute: AGL
-    category: core
     description: To get up on a horse and ride slowly doesn’t require a skill roll, for but for more advanced maneuvers you need to roll for RIDING. Special rules apply in combat.
-  - id: seamanship
-    name: Seamanship
-    source: rulebook
+  - name: Seamanship
     attribute: INT
-    category: core
     description: Anyone can row a boat or paddle a canoe slowly, but in more challenging situations you need to roll for SEAMANSHIP to steer a vessel over water. This skill can also be used for navigation.
-  - id: sleight-of-hand
-    name: Sleight of Hand
-    source: rulebook
+  - name: Sleight of Hand
     attribute: AGL
-    category: core
     description: When you are trying to steal something unnoticed, pick a lock, or perform any other action that requires fine motor skills, you roll SLEIGHT OF HAND.
-  - id: sneaking
-    name: Sneaking
-    source: rulebook
+  - name: Sneaking
     attribute: AGL
-    category: core
     description: It is often wise to avoid combat and hide or sneak past the enemy instead. If you win, you remain undetected. It is usually a straight skill roll, but if someone is actively looking for you, you must make an opposed roll with your SNEAKING against the enemy’s AWARENESS. Note that you can only make a SNEAKING roll when you can actually see or hear the enemy you wish to avoid. You never use SNEAKING “just in case” there is an enemy nearby.
-  - id: spot-hidden
-    name: Spot Hidden
-    source: rulebook
+  - name: Spot Hidden
     attribute: INT
-    category: core
     description: The art of finding what’s hidden can make you rich beyond measure – or save your life. When you are looking for something concealed, you roll SPOT HIDDEN. If your description of where you are searching is very precise, the GM can give you a boon or even let you succeed without a roll. Each SPOT HIDDEN roll takes roughly a stretch. You only get one attempt to look for the same thing in exactly the same place. Multiple player characters can look simultaneously.
-  - id: swimming
-    name: Swimming
-    source: rulebook
+  - name: Swimming
     attribute: AGL
-    category: core
     description: All player characters can keep afloat for a short time, but for more challenging situations a roll for SWIMMING is required. Read more about swimming and drowning on page 53.
-  - id: axes
-    name: Axes
-    source: rulebook
+  - name: Axes
     attribute: STR
     category: weapon
     description: A skill used for combat with axes of all kinds, including when thrown.
-  - id: bows
-    name: Bows
-    source: rulebook
+  - name: Bows
     attribute: AGL
     category: weapon
     description: A skill for attacks with all types of bows, except crossbows.
-  - id: brawling
-    name: Brawling
-    source: rulebook
+  - name: Brawling
     attribute: STR
     category: weapon
     description: Used for unarmed combat with fists, feet, teeth, or claws.
-  - id: crossbows
-    name: Crossbows
-    source: rulebook
+  - name: Crossbows
     attribute: AGL
     category: weapon
     description: This skill is used for attacks with crossbows of all kinds.
-  - id: hammers
-    name: Hammers
-    source: rulebook
+  - name: Hammers
     attribute: STR
     category: weapon
     description: Used for combat with warhammers and other blunt weapons such as clubs and maces.
-  - id: knives
-    name: Knives
-    source: rulebook
+  - name: Knives
     attribute: AGL
     category: weapon
     description: This skill is used for combat with knives and daggers, including when thrown.
-  - id: slings
-    name: Slings
-    source: rulebook
+  - name: Slings
     attribute: AGL
     category: weapon
     description: Roll for this skill when attacking with a sling.
-  - id: spears
-    name: Spears
-    source: rulebook
+  - name: Spears
     attribute: STR
     category: weapon
     description: A skill used for combat with spears and tridents, including when thrown. It also covers lances.
-  - id: staves
-    name: Staves
-    source: rulebook
+  - name: Staves
     attribute: AGL
     category: weapon
     description: Use this skill when fighting with a staff.
-  - id: swords
-    name: Swords
-    source: rulebook
+  - name: Swords
     attribute: STR
     category: weapon
     description: Used for combat with all types of swords.
-  - id: weapon-skills
-    name: Weapon Skills
-    source: rulebook
+  - name: Weapon Skills
     attribute: STR/AGL
     category: weapon
     description: (STR/AGL) There are several skills for wielding different types of weapons. You can read more about weapons and combat in the next chapter.
-  - id: animism
-    name: Animism
-    source: rulebook
+  - name: Animism
     attribute: INT
     category: magic
     description: The world is alive. It is full of spirits and gods, and all things have a soul. Like nature itself, spirits and gods are neither good nor evil. They may not be omnipotent, but they possess great power and should be treated with respect. If you speak to them in the right way, they may lend power to your animist magic.
-  - id: elementalism
-    name: Elementalism
-    source: rulebook
+  - name: Elementalism
     attribute: INT
     category: magic
     description: "According to elementalists, all things in the universe consist of four elements: wind, water, earth, and fire in different combinations. The mind and spirit are associated with wind. Adaptability and creativity are linked to water. Action and energy are linked to fire, and steadfastness and determination are properties of the element earth."
-  - id: mentalism
-    name: Mentalism
-    source: rulebook
+  - name: Mentalism
     attribute: INT
     category: magic
     description: Mentalists believe that your mind and body are the center of the universe. By focusing and training your mind, you gain control of your body and the magic that flows through it and the world.

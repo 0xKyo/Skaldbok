@@ -12,6 +12,7 @@
 #include "game/settings.h"
 #include "web/web_views.h"
 #include "web/web_creation.h"
+#include "web/web_homebrew.h"
 
 namespace gm {
 namespace {
@@ -358,6 +359,33 @@ WebResponse WebApp::gmApi(const WebRequest& request, long long now) {
         json body;
         if (!jsonParse(request.body, body, nullptr) || !body.is_object()) return errorResponse(400, "Send a JSON object.");
         return jsonResponse(200, creationPreview(creationFromJson(body, content_), content_, dice_));
+    }
+
+    // ---- homebrew: the GM's own pack (creatures so far) ----
+    static const std::string kHomebrew = "/gm/homebrew/creatures";
+    if (sub == kHomebrew || sub.starts_with(kHomebrew + "/")) {
+        const std::string pack = customPackDir(config_.prefsDir);
+        const std::string id = sub.size() > kHomebrew.size() ? sub.substr(kHomebrew.size() + 1) : std::string();
+        if (!id.empty() && !fs::safeId(id)) return errorResponse(400, "Invalid creature id.");
+        const auto respond = [&](const HomebrewResult& r) {
+            if (r.status >= 300) return errorResponse(r.status, r.error);
+            contentSignature_.clear();                           // what was just written must be read back now
+            reloadContentIfChanged();
+            return jsonResponse(r.status, r.body);
+        };
+        if (reading && id.empty()) return jsonResponse(200, homebrewCreatures(pack));
+        if (request.method == "POST" && id.empty()) {
+            json body;
+            if (!jsonParse(request.body, body, nullptr)) return errorResponse(400, "Send the creature as JSON.");
+            return respond(saveHomebrewCreature(pack, "", body));
+        }
+        if (request.method == "PUT" && !id.empty()) {
+            json body;
+            if (!jsonParse(request.body, body, nullptr)) return errorResponse(400, "Send the creature as JSON.");
+            return respond(saveHomebrewCreature(pack, id, body));
+        }
+        if (request.method == "DELETE" && !id.empty()) return respond(deleteHomebrewCreature(pack, id));
+        return errorResponse(405, "That is not allowed.");
     }
 
     // ---- characters ----

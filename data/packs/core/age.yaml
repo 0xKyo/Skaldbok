@@ -1,22 +1,16 @@
-format: 1
+kind: age
 rollable:
-  - Effects of Age
+  - Age
 entities:
   - name: Young
-    kind: age
-    category: Effects of Age
     fields:
       TRAINED SKILLS: 6+2
       ATTRIBUTES: AGL and CON +1
   - name: Adult
-    kind: age
-    category: Effects of Age
     fields:
       TRAINED SKILLS: 6+4
       ATTRIBUTES: —
   - name: Old
-    kind: age
-    category: Effects of Age
     fields:
       TRAINED SKILLS: 6+6
       ATTRIBUTES: STR, AGL and CON −2, INT and WIL +1

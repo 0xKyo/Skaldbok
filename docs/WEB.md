@@ -53,6 +53,12 @@ En **Gear**, además de los sets, hay **Custom**: se busca y se agrega cualquier
 
 Las reglas son las de la app (`game/creation.cpp`); la web solo junta las elecciones: `GET /api/gm/creation` (todo lo que ofrece cada paso, con las tablas del libro cara por cara), `POST /api/gm/creation/preview` (problemas, atributos con la edad, HP/WP/movimiento y la hoja en texto), `POST /api/gm/creation/random` (una creación aleatoria) y `POST /api/gm/characters` con `{creation: {...}}` (400 con el primer problema si algo falta). Solo con el token del máster.
 
+## Homebrew (máster)
+
+La pestaña **Homebrew**, solo del máster, es donde se hace contenido propio. Por ahora: **criaturas**. A la izquierda la lista de las que hiciste (**+ New creature**, o **Start from a creature…** para partir de una copia de cualquiera del libro) y a la derecha el formulario: nombre, tipo (monster / npc / animal), categoría, dado de ataque, cita, descripción, **bloques de estadísticas** (con sus campos etiqueta/valor; un bloque puede tener variante), **ataques** (tirada, nombre, texto), **aptitudes**, semilla de aventura y encuentro aleatorio. **Save** la guarda, **Delete** la borra (con confirmación). En el teléfono la lista y el formulario se turnan.
+
+Se guardan en un pack propio, **My Homebrew** (`custom`, en la carpeta de packs del usuario; se crea la primera vez que se guarda algo), en su `creatures.yaml`, como cualquier pack (ver [`HOMEBREW.md`](HOMEBREW.md)); después de guardar el servidor lo lee de nuevo y la criatura aparece enseguida en **Rules › Creatures**, para el máster y para los jugadores, con la etiqueta *Source · My Homebrew*. Rutas (solo con el token del máster): `GET|POST /api/gm/homebrew/creatures` y `PUT|DELETE /api/gm/homebrew/creatures/<id>`; se valida todo (nombre, tipo, dado, tamaños) y un error llega con su motivo (400). La ilustración todavía no se sube desde la página.
+
 ## NPC Creator (solo máster)
 
 En **Reference › World**, debajo de *Non-Player Characters*, hay una entrada **NPC Creator**: el botón **Create Random NPC** saca un valor al azar de cada lista de *Creating NPCs* (nombre, attitude, kin, motivation, profession y trait) y cada resultado tiene su propio botón **Re-roll**. Las listas salen de `data/system/npcs.yaml` (`GET /api/npcs`, o `GET /api/gm/npcs`); la entrada es un nodo de `rules.yaml` con `tool: npc-creator`.

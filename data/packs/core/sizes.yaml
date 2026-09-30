@@ -1,32 +1,18 @@
-format: 1
+kind: size
+source: bestiary
 entities:
   - name: Small
-    kind: size
-    category: Sizes
-    source: bestiary
     fields:
       DESCRIPTION: A small monster is less than a meter tall and cannot block any area. It can easily pass through tiny passages.
   - name: Normal
-    kind: size
-    category: Sizes
-    source: bestiary
     fields:
       DESCRIPTION: A normal-sized monster is roughly the size of a human. It can block an area of 2×2 meters (one square on a combat map) and pass through a passage half a meter wide.
   - name: Large
-    kind: size
-    category: Sizes
-    source: bestiary
     fields:
       DESCRIPTION: A large monster can block an area of 4×4 meters and pass through a 1-meter-wide passage.
   - name: Huge
-    kind: size
-    category: Sizes
-    source: bestiary
     fields:
       DESCRIPTION: A huge monster can block an area of 8×8 meters and pass through a 2-meter-wide passage.
   - name: Swarm
-    kind: size
-    category: Sizes
-    source: bestiary
     fields:
       DESCRIPTION: A swarm can range in size from Normal to Huge, but never blocks the area it is in, and can pass through tiny passages.

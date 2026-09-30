@@ -1,8 +1,6 @@
-format: 1
 professions:
   - id: artisan
     name: Artisan
-    source: rulebook
     description: |
       “Now this may sound a bit pretentious, but whatever you’re making, you must be able to imagine the finished thing, and then make it real. That’s the whole of it, really. Well, tools are important too. Good tools.”
       – Bore Tvartoff
@@ -27,34 +25,24 @@ professions:
     entities:
       - name: Warhammer (small), leather armor, blacksmith’s tools, torch, flint & tinder, D8 food rations, D8 silver
         kind: gear
-        category: "Artisan: Gear"
       - name: Handaxe, leather armor, carpentry tools, torch, rope (hemp), flint & tinder, D8 food rations, D8 silver
         kind: gear
-        category: "Artisan: Gear"
       - name: Knife, leather armor, tanner’s tools, lantern, lamp oil, flint & tinder, D8 food rations, D8 silver
         kind: gear
-        category: "Artisan: Gear"
       - name: Stonehammer
         kind: nickname
-        category: "Artisan: Nickname"
       - name: Woodcleaver
         kind: nickname
-        category: "Artisan: Nickname"
       - name: Strongfist
         kind: nickname
-        category: "Artisan: Nickname"
       - name: Barrelmaker
         kind: nickname
-        category: "Artisan: Nickname"
       - name: Bridgebuilder
         kind: nickname
-        category: "Artisan: Nickname"
       - name: Ironmaster
         kind: nickname
-        category: "Artisan: Nickname"
   - id: bard
     name: Bard
-    source: rulebook
     description: |
       “A few off-key notes, a couple of lost words, or a troll-sneeze that sprays over the audience – it doesn’t matter. To captivate an audience, all you truly need is charisma, that you shine like a mid-summer sun. Like me!”
       – Malva Sneezeweed
@@ -77,34 +65,24 @@ professions:
     entities:
       - name: Lyre, knife, oil lamp, lamp oil, flint & tinder, D6 food rations, D8 silver
         kind: gear
-        category: "Bard: Gear"
       - name: Flute, dagger, rope (hemp), torch, flint & tinder, D6 food rations, D8 silver
         kind: gear
-        category: "Bard: Gear"
       - name: Horn, knife, torch, flint & tinder, D6 food rations, D8 silver
         kind: gear
-        category: "Bard: Gear"
       - name: Odemaker
         kind: nickname
-        category: "Bard: Nickname"
       - name: Talespinner
         kind: nickname
-        category: "Bard: Nickname"
       - name: Silvervoice
         kind: nickname
-        category: "Bard: Nickname"
       - name: Gildenclef
         kind: nickname
-        category: "Bard: Nickname"
       - name: Honeytongue
         kind: nickname
-        category: "Bard: Nickname"
       - name: Rhymesmith
         kind: nickname
-        category: "Bard: Nickname"
   - id: fighter
     name: Fighter
-    source: rulebook
     description: |
       “Uh, well, of course a warrior must be able to kill things. Creatures and monsters and such. Being able to avoid getting killed is also good. Then... well, there are different weapons, different techniques and... Anyway, the basis is simple: kill, and avoid dying.”
       – Norde from Boar Ridge
@@ -127,34 +105,24 @@ professions:
     entities:
       - name: Broadsword/battle axe/morning star, small shield, chainmail, torch, flint & tinder, D6 food rations, D6 silver
         kind: gear
-        category: "Fighter: Gear"
       - name: Short sword/handaxe/short spear, light crossbow, quiver, leather armor, torch, flint & tinder, D6 food rations, D6 silver
         kind: gear
-        category: "Fighter: Gear"
       - name: Long spear, studded leather armor, open helmet, torch, flint & tinder, D6 food rations, D6 silver
         kind: gear
-        category: "Fighter: Gear"
       - name: Gravemaker
         kind: nickname
-        category: "Fighter: Nickname"
       - name: Grimjaw
         kind: nickname
-        category: "Fighter: Nickname"
       - name: Windthaw
         kind: nickname
-        category: "Fighter: Nickname"
       - name: Coldsteel
         kind: nickname
-        category: "Fighter: Nickname"
       - name: The Fearless
         kind: nickname
-        category: "Fighter: Nickname"
       - name: The Butcher
         kind: nickname
-        category: "Fighter: Nickname"
   - id: hunter
     name: Hunter
-    source: rulebook
     description: |
       “What is not needed to become a skilled hunter? Agility, stealth? Accuracy with the bow, cunning with the snares? Knowledge of the hunting ground and prey? Sure, you can do without nice manners and fancy talk, but who cares about such nonsense?”
       – Ciliel Nightlake
@@ -177,34 +145,24 @@ professions:
     entities:
       - name: Dagger, short bow, quiver, leather armor, sleeping pelt, torch, flint & tinder, rope (hemp), snare, D8 food rations, D6 silver
         kind: gear
-        category: "Hunter: Gear"
       - name: Knife, longbow, quiver, leather armor, sleeping pelt, torch, flint & tinder, rope (hemp), fishing rod, D8 food rations, D6 silver
         kind: gear
-        category: "Hunter: Gear"
       - name: Dagger, sling, leather armor, sleeping pelt, torch, flint & tinder, rope (hemp), snare, D8 food rations, D6 silver
         kind: gear
-        category: "Hunter: Gear"
       - name: Forest Fox
         kind: nickname
-        category: "Hunter: Nickname"
       - name: Wolfbane
         kind: nickname
-        category: "Hunter: Nickname"
       - name: Pathfinder
         kind: nickname
-        category: "Hunter: Nickname"
       - name: The Weathered
         kind: nickname
-        category: "Hunter: Nickname"
       - name: Bloodhunger
         kind: nickname
-        category: "Hunter: Nickname"
       - name: Shadowbolt
         kind: nickname
-        category: "Hunter: Nickname"
   - id: knight
     name: Knight
-    source: rulebook
     description: |
       “First, you must believe in something. Then you must be prepared to fight and die for this something. Finally, you need to study, train, and practice until you reach the heights of a worthy champion. After that, you are ready to… obey and serve.”
       – Gloriel Sunstreak
@@ -227,34 +185,24 @@ professions:
     entities:
       - name: Broadsword/morning star, shield (small), plate armor, great helm, torch, flint & tinder, D6 food rations, D12 silver
         kind: gear
-        category: "Knight: Gear"
       - name: Flail/warhammer (small), shield (small), chainmail, open helmet, torch, flint & tinder, D6 food rations, D12 silver
         kind: gear
-        category: "Knight: Gear"
       - name: Short sword, lance, shield (small), chainmail, open helmet, combat trained horse, D6 food rations, D12 silver
         kind: gear
-        category: "Knight: Gear"
       - name: Dragonheart
         kind: nickname
-        category: "Knight: Nickname"
       - name: Goldlance
         kind: nickname
-        category: "Knight: Nickname"
       - name: Griffinclaw
         kind: nickname
-        category: "Knight: Nickname"
       - name: The Noble
         kind: nickname
-        category: "Knight: Nickname"
       - name: Gleamhelm
         kind: nickname
-        category: "Knight: Nickname"
       - name: Mourningcloak
         kind: nickname
-        category: "Knight: Nickname"
   - id: mage
     name: Mage
-    source: rulebook
     description: |
       “Forget it, just forget it – if you must ask what it takes to master the secrets of magic, you don’t have it. Or, you can possibly learn to chat with animals or peep on faraway things, but real magic, the magic of the elements... Never!”
       – Cyril Firemane
@@ -266,31 +214,22 @@ professions:
     entities:
       - name: Staff, orbuculum, grimoire, torch, flint & tinder, D6 food rations, D8 silver
         kind: gear
-        category: "Mage: Gear"
       - name: Knife, wand, grimoire, torch, flint & tinder, D6 food rations, D8 silver
         kind: gear
-        category: "Mage: Gear"
       - name: Amulet, grimoire, sleeping pelt, torch, flint & tinder, D6 food rations, D8 silver
         kind: gear
-        category: "Mage: Gear"
       - name: Rootheart
         kind: nickname
-        category: "Mage: Nickname"
       - name: Crookback
         kind: nickname
-        category: "Mage: Nickname"
       - name: Graycape
         kind: nickname
-        category: "Mage: Nickname"
       - name: Stormhand
         kind: nickname
-        category: "Mage: Nickname"
       - name: Stafflimper
         kind: nickname
-        category: "Mage: Nickname"
       - name: Shadowbringer
         kind: nickname
-        category: "Mage: Nickname"
     skills_by_school:
       Animism:
         - Animism
@@ -325,7 +264,6 @@ professions:
       spell_rank: 1
   - id: mariner
     name: Mariner
-    source: rulebook
     description: |
       “You don’t become a sailor, you are born one. If you feel the bedrock sway where you walk, you know you belong out on the waves. Is there anything sadder than seeing a born mariner wobble around on solid ground?”
       – Friga Seawife
@@ -348,34 +286,24 @@ professions:
     entities:
       - name: Dagger, short bow, quiver, rope (hemp), grappling hook, sleeping pelt, torch, flint & tinder, D8 food rations, D10 silver
         kind: gear
-        category: "Mariner: Gear"
       - name: Scimitar, leather armor, rope (hemp), grappling hook, torch, flint & tinder, D8 food rations, D10 silver
         kind: gear
-        category: "Mariner: Gear"
       - name: Trident, spyglass, rope (hemp), grappling hook, torch, flint & tinder, D8 food rations, D10 silver
         kind: gear
-        category: "Mariner: Gear"
       - name: Whitewater
         kind: nickname
-        category: "Mariner: Nickname"
       - name: Waverider
         kind: nickname
-        category: "Mariner: Nickname"
       - name: Foamborn
         kind: nickname
-        category: "Mariner: Nickname"
       - name: Saltsplash
         kind: nickname
-        category: "Mariner: Nickname"
       - name: Seadog
         kind: nickname
-        category: "Mariner: Nickname"
       - name: Stormfarer
         kind: nickname
-        category: "Mariner: Nickname"
   - id: merchant
     name: Merchant
-    source: rulebook
     description: |
       “Yes, many believe that tradecraft is about selling this and that, but its factual fundament is spelled ‘the principle of growth’ – turning what you have into more. If you have understood this, not much else is needed to succeed as a merchant.”
       – Buldil Hale
@@ -398,34 +326,24 @@ professions:
     entities:
       - name: Dagger, sleeping pelt, torch, flint & tinder, rope (hemp), donkey, D6 food rations, D12 silver
         kind: gear
-        category: "Merchant: Gear"
       - name: Knife, sleeping pelt, lantern, lamp oil, flint & tinder, field kitchen, donkey, cart, D6 food rations, D12 silver
         kind: gear
-        category: "Merchant: Gear"
       - name: Dagger, sleeping pelt, large tent, oil lamp, lamp oil, flint & tinder, backpack, D6 food rations, D12 silver
         kind: gear
-        category: "Merchant: Gear"
       - name: Silvergrin
         kind: nickname
-        category: "Merchant: Nickname"
       - name: Goldtooth
         kind: nickname
-        category: "Merchant: Nickname"
       - name: Silktongue
         kind: nickname
-        category: "Merchant: Nickname"
       - name: The Lisping and Truthful
         kind: nickname
-        category: "Merchant: Nickname"
       - name: Lardbelly
         kind: nickname
-        category: "Merchant: Nickname"
       - name: Skinflint
         kind: nickname
-        category: "Merchant: Nickname"
   - id: scholar
     name: Scholar
-    source: rulebook
     description: |
       “You can talk about education, genius, and matter-of-factness all you want, but the scholar is never better than their sources. If you want to become learned, it’s not enough to sit and brood in some dusty tower room – you have to go out, into the world, to where the sources nest!”
       – Quasimo Dearfeather
@@ -448,34 +366,24 @@ professions:
     entities:
       - name: Staff, notebook, quill, sleeping pelt, torch, flint & tinder, D6 food rations, D10 silver
         kind: gear
-        category: "Scholar: Gear"
       - name: Knife, book (any subject), sleeping pelt, oil lamp, lamp oil, flint & tinder, D6 food rations, D10 silver
         kind: gear
-        category: "Scholar: Gear"
       - name: Short sword, bandages, sleeping poison (one dose), sleeping pelt, lantern, lamp oil, flint & tinder, D6 food rations, D10 silver
         kind: gear
-        category: "Scholar: Gear"
       - name: Clearmind
         kind: nickname
-        category: "Scholar: Nickname"
       - name: Dustlung
         kind: nickname
-        category: "Scholar: Nickname"
       - name: Farsight
         kind: nickname
-        category: "Scholar: Nickname"
       - name: The Lettered
         kind: nickname
-        category: "Scholar: Nickname"
       - name: The All-Knowing
         kind: nickname
-        category: "Scholar: Nickname"
       - name: The Plump and Learned
         kind: nickname
-        category: "Scholar: Nickname"
   - id: thief
     name: Thief
-    source: rulebook
     description: |
       “I’d say that there are many kinds of thieves – burglars, pickpockets, charlatans, highwaymen, pirates, and so on. The only thing we have in common is probably a particular view of ownership. I mean, this ‘yours-and-mine’-thing…”
       – Viola Raveneye
@@ -498,31 +406,22 @@ professions:
     entities:
       - name: Dagger, sling, rope (hemp), grappling hook, torch, flint & tinder, D6 food rations, D10 silver
         kind: gear
-        category: "Thief: Gear"
       - name: Knife, lockpicks (simple), torch, flint & tinder, D6 food rations, D10 silver
         kind: gear
-        category: "Thief: Gear"
       - name: Two daggers, marbles, rope (hemp), torch, flint & tinder, D6 food rations, D10 silver
         kind: gear
-        category: "Thief: Gear"
       - name: Halffinger
         kind: nickname
-        category: "Thief: Nickname"
       - name: Blackrat
         kind: nickname
-        category: "Thief: Nickname"
       - name: Redeye
         kind: nickname
-        category: "Thief: Nickname"
       - name: Quickfoot
         kind: nickname
-        category: "Thief: Nickname"
       - name: Doubletongue
         kind: nickname
-        category: "Thief: Nickname"
       - name: Nightstabber
         kind: nickname
-        category: "Thief: Nickname"
 
 rollable:
   - Profession
@@ -530,7 +429,6 @@ entities:
   - name: Artisan
     kind: profession
     category: Profession
-    legacy_key: "#9"
   - name: Bard
     kind: profession
     category: Profession

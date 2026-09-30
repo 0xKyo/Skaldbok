@@ -207,10 +207,6 @@ int main(int argc, char** argv) {
     // keys survive: a saved key finds the same entry again
     check(human && core.idByKey(Kind::Kin, human->key) == human->id && human->key == "core/kin/human", "stable keys: core/kin/human");
     check(centaur && core.idByKey(Kind::Monster, core.keyOf(Kind::Monster, centaur->id)) == centaur->id, "creature key round-trips");
-    {
-        const int table = core.idByKey(Kind::Table, "#31");                  // saved boards and recents from before the move: "#31" (Movement)
-        check(table >= kPackTableBase && core.keyOf(Kind::Table, table).starts_with("core/table/"), "old numeric table keys resolve to the table's new key");
-    }
 
     // tables the character creator rolls on
     const DataTable* weakness = core.tableByRole("weakness");
@@ -219,7 +215,7 @@ int main(int argc, char** argv) {
     for (int r = 1; weakness && r <= 20; ++r) everyRoll &= weakness->rowForRoll(r) >= 0;
     check(everyRoll, "every D20 roll maps to a row");
     check(core.tableByRole("memento") && core.tableByRole("appearance"), "memento and appearance tables exist");
-    {   // the books' own tables live in Core, inside their sections, and keep the numeric keys they had ("#12") as aliases
+    {   // the books' own tables live in Core, inside their sections
         int bookTables = 0, rolled = 0;
         const DataTable* bookWeakness = nullptr;
         for (const DataTable& t : core.packTables())
@@ -229,7 +225,6 @@ int main(int argc, char** argv) {
             }
         check(bookTables >= 30, "the books' tables not on a card of their own are in Core: " + std::to_string(bookTables));
         check(bookWeakness && bookWeakness->rows.size() == 20 && bookWeakness->dieSides() == 20, "the book's Weakness table: D20, 20 rows");
-        check(bookWeakness && core.idByKey(Kind::Table, "#" + std::to_string(35)) != 0, "an old numeric table key still finds a table");
         for (const DataTable& t : core.packTables()) rolled += t.dieSides() > 0;
         check(rolled > 10, "dice tables keep their dice");
     }
@@ -306,7 +301,7 @@ int main(int argc, char** argv) {
             // eight steps that used to have clickable children are now one page each: a table (or props, for Age) and/or named sections
             const RuleNode* age = step("creation-age");
             check(age && age->prop("young_trained_skills") == "6" && age->prop("young_bonus_skills") == "2" && age->prop("young_attribute_mods") == "{\"AGL\":1,\"CON\":1}" &&
-                      age->prop("old_attribute_mods") == "{\"STR\":-2,\"AGL\":-2,\"CON\":-2,\"INT\":1,\"WIL\":1}" && core.tableByName("Effects of Age") && age->body.contains("{{table: Effects of Age}}") &&
+                      age->prop("old_attribute_mods") == "{\"STR\":-2,\"AGL\":-2,\"CON\":-2,\"INT\":1,\"WIL\":1}" && core.tableByName("Age") && age->body.contains("{{table: Age}}") &&
                       age->sections.empty(),
                   "Age has no children: a table like the book's (in age.yaml, shown by its marker), the numbers kept as data on the rule itself");
             auto sectionNames = [](const RuleNode& n) {
@@ -790,6 +785,7 @@ int main(int argc, char** argv) {
         test::write(root + "/mood/manifest.yaml", "{\"format\":1,\"id\":\"mood\",\"name\":\"Mood\"}");
         test::write(root + "/mood/pub-fights.yaml",
                     "format: 1\nrollable:\n  - Pub Fights\nentities:\n  - name: Bar stool\n  - name: Broken bottle\n    category: Other\n  - name: Tankard\n");
+        test::write(root + "/mood/bar-brawls.yaml", "kind: brawl\nsource: tome\ncategory: Brawls\nrollable:\n  - Brawls\nentities:\n  - name: Headbutt\n  - name: Shove\n    kind: move\n");
         ContentStore mood;
         mood.load({PackSpec{coreDir, true, true}, PackSpec{root + "/mood", false, true}});
         const DataTable* pubFights = nullptr;
@@ -798,6 +794,11 @@ int main(int argc, char** argv) {
             if (tb.title == "Pub Fights") pubFights = &tb;
             if (tb.title == "Other") other = &tb;
         }
+        const DataTable* brawls = nullptr;
+        for (const DataTable& tb : mood.packTables())
+            if (tb.title == "Brawls") brawls = &tb;
+        check(brawls && brawls->rows.size() == 2 && brawls->dice == "D2" && brawls->role.empty() == false && brawls->role == "brawl" && brawls->columns.front() == "BRAWL",
+              "a file of entities may say its kind and category once, at its top; an entity that writes its own keeps it");
         check(pubFights && pubFights->rows.size() == 2 && pubFights->rows[0].cells[0] == "Bar stool" && pubFights->dice == "D2" && other && other->rows.size() == 1,
               "entities with no category take the name of their file (pub-fights.yaml -> Pub Fights), one with its own category keeps it");
 

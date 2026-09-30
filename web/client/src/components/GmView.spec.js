@@ -33,7 +33,7 @@ function stub() {
 
 async function mountGm() {
   stub();
-  const w = mount(GmView, { props: { token: 'gm-token' }, global: { stubs: { SheetView: true, ChatView: true, ReferenceView: true } } });
+  const w = mount(GmView, { props: { token: 'gm-token' }, global: { stubs: { SheetView: true, ChatView: true, ReferenceView: true, HomebrewView: true } } });
   await flushPromises();
   return w;
 }
@@ -49,7 +49,7 @@ afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals(); });
 describe('GmView tabs', () => {
   it('has its tabs along the top, like the player page, and no Parties tab', async () => {
     const w = await mountGm();
-    expect(tabLabels(w)).toEqual(['Character', 'Chat (2)', 'Rules']);
+    expect(tabLabels(w)).toEqual(['Character', 'Chat (2)', 'Rules', 'Homebrew']);
     expect(w.get('[data-test=gm-tab][aria-selected=true]').text()).toBe('Character');
     expect(w.find('.gm-sidebar').exists()).toBe(false);
   });
@@ -110,6 +110,12 @@ describe('GmView Chat and Rules tabs', () => {
     await flushPromises();
     expect(w.findComponent(ChatView).props('sendPath')).toBe('/gm/chat/c2');
     expect(w.findComponent(ChatView).props('asGm')).toBe(true);
+  });
+
+  it('Homebrew is the GM\'s own tab', async () => {
+    const w = await mountGm();
+    await goTo(w, 'Homebrew');
+    expect(w.findComponent({ name: 'HomebrewView' }).exists()).toBe(true);
   });
 
   it('Rules is the Reference, the same the players have', async () => {

@@ -1,9 +1,6 @@
-format: 1
 creatures:
   - id: rulebook-gnome
     name: Gnome
-    source: rulebook
-    kind: monster
     category: Summoned creatures (Elementalism)
     description: The spell summons an earth elemental. The gnome takes the form of a humanoid of gray-brown sand or clay, and counts as a monster in combat. It follows its creator’s commands (free action) and acts independently with its own initiative, but must stay within sight of the mage.
     statblocks:
@@ -15,8 +12,6 @@ creatures:
           Pillar: The gnome can cast PILLAR at the same power level as its own, using the mage’s WP.
   - id: rulebook-salamander
     name: Salamander
-    source: rulebook
-    kind: monster
     category: Summoned creatures (Elementalism)
     description: |
       The spell summons a fire elemental. The salamander takes the form of a lizard of fire, and counts as a monster in combat. It follows its creator’s commands
@@ -32,8 +27,6 @@ creatures:
           Immunity: The salamander is immune to fire damage, including magical fire damage.
   - id: rulebook-sylph
     name: Sylph
-    source: rulebook
-    kind: monster
     category: Summoned creatures (Elementalism)
     description: The spell summons a wind elemental. The sylph looks like a storm cloud in the shape of a bird. It counts as a monster in combat, follows its creator’s commands (free action), and can act independently with its own initiative, but must stay within sight of the mage.
     statblocks:
@@ -46,8 +39,6 @@ creatures:
           Resistance: Piercing damage is halved.
   - id: rulebook-undine
     name: Undine
-    source: rulebook
-    kind: monster
     category: Summoned creatures (Elementalism)
     description: The spell summons a water elemental. The undine looks like a tidal wave whose crest is shaped like a woman composed entirely of water. It counts as a monster in combat, follows its creator’s commands (free action), and can act independently with its own initiative, but must stay within sight of the mage.
     statblocks:
@@ -60,8 +51,6 @@ creatures:
           Resistance: Piercing damage is halved.
   - id: rulebook-demon
     name: Demon
-    source: rulebook
-    kind: monster
     category: Bestiary
     description: |
       Demons are mysterious and terrifying creatures from the grim world beyond. Like dragons, they are sprung from ancient magic, and they are driven by the same insatiable, arrogant hunger for power that also burns in the hearts of dragons. They view dragons as mortal enemies and despise all other creatures as lesser and essentially insignificant forms of life. They have a destructive effect on the structures of the world and seek to destroy all that is fixed – from social relationships, peace treaties, and friendships, to nations, civilizations, and cosmic laws.
@@ -95,8 +84,6 @@ creatures:
         text: Possessed! The demon glares at a player character within 10 meters and takes full control of the victim’s body. The player character must make a WIL roll with a bane (not an action). If it fails, the victim must immediately make a movement and perform an action of the demon’s choice, except any action that requires spending WP. The victim also loses their next turn.
   - id: rulebook-dragon
     name: Dragon
-    source: rulebook
-    kind: monster
     category: Bestiary
     description: Dragons are vicious, reptilian beasts mainly found in rugged mountainous areas, where they build their dens in deep caves or abandoned dwarven mines. They are ancient beings of power and magic who consider themselves the true masters of the world. Dragons are cunning and often frighteningly eloquent, notorious for deceiving their victims with fair words and treacherous lies. On the other hand, they are as vain as peacocks and themselves susceptible to silver-tongued flattery. Another weakness is their attraction to gold, which often causes conflicts with dwarves, humans, and others who share the draconic lust for treasure and glittering objects.
     attack_dice: D6
@@ -131,8 +118,6 @@ creatures:
         text: Fire Breath! The dragon towers over the player characters in all its splendor before unleashing a devastating storm of fire from its mouth. The fire forms a cone that is 10 meters long and whose width at any given point equals the distance from the dragon’s mouth. Any player character hit by the flames suffers 3D10 damage. Armor has no effect.
   - id: rulebook-ghost
     name: Ghost
-    source: rulebook
-    kind: monster
     category: Bestiary
     description: Ghosts are the restless spirits of those unable to find peace in death. They are incorporeal undead who usually manifest themselves as translucent figures, often shimmering blue with twisted facial features. They are always bound to certain places, normally linked to their physical remains or the event that caused their premature death. Ghosts almost always have a specific problem that needs to be solved for them to find eternal peace and leave the living alone. It may be a matter of revenge or a debt that must be paid; other times the ghost’s remains must be collected and given a proper burial.
     attack_dice: D6
@@ -168,8 +153,6 @@ creatures:
         text: Cold Strike! The ghost grabs a victim and lets the icy chill of death stream into their body. The player character suffers 2D8 damage and cannot heal HP or WP until they spend one shift in a warm location. Armor has no effect.
   - id: rulebook-giant
     name: Giant
-    source: rulebook
-    kind: monster
     category: Bestiary
     description: Giants are colossal humanoids with a strong but mysterious connection to the very bedrock of the world. Some scholars believe that they are related to dwarves; others maintain that they are remnants of a great civilization that long ago rose against the dragons. Giants are mainly found in mountainous areas, where they live alone or in small families. They are normally quite shy and reclusive, but some are highly territorial and will attack anyone who comes too close to their caves.
     attack_dice: D6
@@ -208,8 +191,6 @@ creatures:
         text: Attacks against the weak spot on the top of a giant’s head inflict double damage. Hitting the top of the head requires either a ranged attack with a bane from an elevated position or that the attacker first climbs onto the giant. The latter requires an ACROBATICS roll with a bane. Once up there, the player character must make another ACROBATICS roll (not an action) on each turn to avoid falling off and taking 2D6 falling damage.
   - id: rulebook-giant-spider
     name: Giant Spider
-    source: rulebook
-    kind: monster
     category: Bestiary
     description: Giant spiders are rapacious predators that can unfortunately be found all over the world. They are drawn to dark and damp spaces, but always on the hunt for living meat in forests and caves as well as mountains and ruined cities. Particularly sly individuals can even build their nests under popular inns or near underground libraries and treasure chambers. Ancient females can grow as large as a house, but most are roughly the size of a well-fed cow. Giant spiders are smarter than they look, and in some parts of the world, older females can attain the status of oracles or demigods.
     attack_dice: D6
@@ -243,8 +224,6 @@ creatures:
         text: Ramming Attack! With a great leap, the giant spider launches its massive body at a player character. The attack inflicts 2D6 bludgeoning damage and knocks the victim down.
   - id: rulebook-goblin
     name: Goblin
-    source: rulebook
-    kind: monster
     category: Bestiary
     description: Goblins are children of the night and shadows. They are relatively small and skinny, but have disproportionately long arms and big, bulbous heads. They primarily make their living hunting, growing mushrooms, and trading with other creatures, mainly orcs and humans, but there are also warlike, aggressive clans specialized in looting and piracy. Many thieves’ guilds also have a large goblin membership. They are cunning creatures who often resort to traps, ambushes, and poisons when attacking their victims. For this reason, there are many who despise the goblins and see them as devious, dishonorable cowards.
     image: images/rulebook/goblin-6.jpg
@@ -275,8 +254,6 @@ creatures:
         text: In direct sunlight, goblins get a bane on all rolls and suffer D6 damage per stretch. A thick layer of clouds or full-cover clothing are enough to avoid the effect.
   - id: rulebook-griffon
     name: Griffon
-    source: rulebook
-    kind: monster
     category: Bestiary
     description: The griffon is an aggressive predator specializing in hunting down prey in the forests of the world. Its hunting grounds extend many tens of kilometers from the tall tree or inaccessible cliff where the beast has its nest. Griffons normally live in pairs and a handful of chicks are often found in their nests, along with a plethora of items – rusted junk mixed with treasures and artifacts – left by unfortunate victims. There are tales of knights who managed to tame griffons and use them as winged mounts. However, it is an irrefutable fact that griffons like to feed on horses and donkeys, which often gets them into trouble with knights, adventurers, and other riders.
     attack_dice: D6
@@ -311,8 +288,6 @@ creatures:
         text: High Drop! The griffon grabs a player character in its claws and takes to the sky. Unless the victim dodges the attack, the griffon grabs them and flies 2D6+6 meters into the air. On its next turn the griffon drops the victim (instead of a new monster attack), who takes damage from the fall.
   - id: rulebook-harpy
     name: Harpy
-    source: rulebook
-    kind: monster
     category: Bestiary
     description: Harpies are large, raven-like birds of prey with humanoid faces and mouths full of serrated fangs. They often seek out places like ruins and abandoned settlements where they live in colonies of different sizes. Harpies are plagued by insatiable hunger and like to supplement their daily diet with careless adventurers who stumble into their nests. They are cowardly but calculating hunters who always attack in flocks, preferably with a massive numerical advantage. The assaults often begin with the harpies
     attack_dice: D6
@@ -348,8 +323,6 @@ creatures:
         text: Excrement Attack! The Harpies open their clo-acae and mouths and release a rain of vomit and excrement on the player characters. Everyone within 10 meters must choose a condition. The attack can be parried with a shield.
   - id: rulebook-manticore
     name: Manticore
-    source: rulebook
-    kind: monster
     category: Bestiary
     description: The peculiar manticore is a bloodthirsty beast that spreads death and terror wherever it goes. Their origin is unknown, but some scholars believe them to be magical creatures that escaped from their dubious master or creator. Others view them as ancient hunger beasts, ruthless remnants from the dawn of time, roused from their slumber by the gods themselves. They have human-like faces, but seem incapable of human speech – probably because their maws are packed with sharp fangs. They have the body of a lion and their tail ends in a swollen lump, covered in spikes and nasty growths.
     attack_dice: D6
@@ -383,8 +356,6 @@ creatures:
         text: Spike Rain! The manticore fires a rain of deadly spikes from its tail. All adventurers within 10 meters suffer D10 piercing damage and are injected with a paralyzing poison with potency 12.
   - id: rulebook-minotaur
     name: Minotaur
-    source: rulebook
-    kind: monster
     category: Bestiary
     description: Minotaurs are semi-intelligent and powerful beasts endowed by the gods with a bull’s head and a humanoid body. They are fearsome in battle, and bards sing songs of their incredible strength and inexhaustible fighting spirit. But minotaurs are also notorious for their inner rage which constantly threatens to break through and turn them into senseless killers. For this reason they tend to live in solitude and exile, restlessly roaming the world in search of food, gold, and glory. Sometimes they claim a small area as their own, often near a mountain pass, a ford, or a similar choke point, demanding road tolls and challenging passing travelers to duels.
     attack_dice: D6
@@ -419,8 +390,6 @@ creatures:
         text: Stomping Attack! The minotaur jumps high in the air and comes crashing down on an adventurer, who suffers 2D10 bludgeoning damage and is knocked down.
   - id: rulebook-orc
     name: Orc
-    source: rulebook
-    kind: monster
     category: Bestiary
     description: "Orcs are strong humanoids who live in well-organized clan societies. Some are settled, digging vast tunnel systems deep beneath the woods and mountains; others wander the vast steppes of the world as nomads. Orcs often have a formidable appearance: glowing black eyes, fangs the size of a wild beast’s tusks, and hard, vaguely camouflage-patterned skin. They are fierce warriors, widely respected for their undeniable bravery and weapon proficiency both in melee and at range. But orcs are also extremely"
     image: images/rulebook/orc-11.png
@@ -463,8 +432,6 @@ creatures:
         text: In direct sunlight, orcs get a bane on all rolls and suffer D6 damage per stretch. A thick layer of clouds or full-cover clothing are enough to avoid the effect.
   - id: rulebook-skeleton
     name: Skeleton
-    source: rulebook
-    kind: monster
     category: Bestiary
     description: Skeletons are the remains of humanoids who have been raised from the dead through powerful magic. They are lesser undead and lack both will and true consciousness. They are primarily used for simple tasks, for instance as guards, foot soldiers, or servants. Powerful sorcerers are also known to use skeletons to dig tunnels, move soil and heavy rocks, and perform other tasks related to construction work. They have difficulty understanding complex instructions, but are cheap and labor without complaint – as long as they are not stopped by meddlesome adventurers.
     image: images/rulebook/skeleton-12.jpg
@@ -508,8 +475,6 @@ creatures:
         text: Skeletons are immune to fear and PERSUASION.
   - id: rulebook-troll
     name: Troll
-    source: rulebook
-    kind: monster
     category: Bestiary
     description: "Stories of cruel, black-hearted trolls are told among most peoples of the world to keep their children in line. And they really are terrifying beasts: as large and massive as moving boulders, with great tusks and staring eyes that glow a sickly yellow. But their reputation is somewhat unfair. It is true that they are often in a terrible mood and exceedingly dangerous to encounter, but the reasons for this are usually their endless hunger and the signals they get from the hostile world around them. Drawn weapons and sudden movements trigger their terrible, all-consuming wrath, but trolls who are offered food and met with kindness can be surprisingly agreeable."
     attack_dice: D6
@@ -546,8 +511,6 @@ creatures:
         text: Mangling Smash! The troll grabs the nearest player character and uses the victim as a weapon by slamming them into another character. Both suffer 2D8 bludgeoning damage and are knocked down.
   - id: rulebook-wight
     name: Wight
-    source: rulebook
-    kind: monster
     category: Bestiary
     description: Wights are the undead spirits of princes, princesses, and great warriors. They are powerful beings and have a will of their own, unlike creatures such as skeletons. However, this will is linked to a torn consciousness where hatred of the living is the dominant feature. Wights differ from ghosts in that they are corporeal, often wearing ancient armor and wielding mighty weapons and artifacts they took with them to their graves. Luckily, they are often bound to certain places, such as the burial mound where they were entombed.
     attack_dice: D6
@@ -583,8 +546,6 @@ creatures:
         text: Power Attack! With creaking joints, the wight swings its weapon in a powerful attack against a character. The damage is rolled with twice the weapon’s normal number of dice, and the victim is knocked to the ground. The attack can be parried.
   - id: rulebook-vampiric-bats
     name: Vampiric Bats
-    source: rulebook
-    kind: monster
     category: Bestiary
     description: There are countless species of bats in the world of Dragonbane. Some are small and virtually harmless, others are as big as winged goblins and can bite the head off a grown human with a single snap of the jaw. The feared vampire bat falls somewhere in between. They have a wingspan of one meter and a strong appetite for human blood. Vampire bats always hunt in flocks and are often found in underground burial chambers, where they feed on grave robbers and other adventurers.
     attack_dice: D6
@@ -610,7 +571,6 @@ creatures:
         text: Mass Attack! The bats split up to attack all characters within 10 meters. Each victim suffers D8 slashing damage and the bat swarm heals the same amount of HP from drinking their victims’ blood.
   - id: rulebook-cat
     name: Cat
-    source: rulebook
     kind: animal
     category: Common Animals
     statblocks:
@@ -621,7 +581,6 @@ creatures:
           Skills: Awareness 12, Evade 14, Sneaking 16
   - id: rulebook-dog
     name: Dog
-    source: rulebook
     kind: animal
     category: Common Animals
     statblocks:
@@ -632,7 +591,6 @@ creatures:
           Skills: Awareness 14, Evade 10, Sneaking 12
   - id: rulebook-goat
     name: Goat
-    source: rulebook
     kind: animal
     category: Common Animals
     statblocks:
@@ -643,7 +601,6 @@ creatures:
           Skills: Awareness 10, Evade 12
   - id: rulebook-donkey
     name: Donkey
-    source: rulebook
     kind: animal
     category: Common Animals
     statblocks:
@@ -654,7 +611,6 @@ creatures:
           Skills: Awareness 10, Evade 6
   - id: rulebook-horse
     name: Horse
-    source: rulebook
     kind: animal
     category: Common Animals
     statblocks:
@@ -665,7 +621,6 @@ creatures:
           Skills: Awareness 12, Evade 8
   - id: rulebook-wild-boar
     name: Wild Boar
-    source: rulebook
     kind: animal
     category: Common Animals
     statblocks:
@@ -676,7 +631,6 @@ creatures:
           Skills: Awareness 10, Evade 8
   - id: rulebook-deer
     name: Deer
-    source: rulebook
     kind: animal
     category: Common Animals
     statblocks:
@@ -687,7 +641,6 @@ creatures:
           Skills: Awareness 12, Evade 12
   - id: rulebook-moose
     name: Moose
-    source: rulebook
     kind: animal
     category: Common Animals
     statblocks:
@@ -698,7 +651,6 @@ creatures:
           Skills: Awareness 10, Evade 8
   - id: rulebook-fox
     name: Fox
-    source: rulebook
     kind: animal
     category: Common Animals
     statblocks:
@@ -709,7 +661,6 @@ creatures:
           Skills: Awareness 12, Evade 10, Sneaking 14
   - id: rulebook-wolf
     name: Wolf
-    source: rulebook
     kind: animal
     category: Common Animals
     statblocks:
@@ -720,7 +671,6 @@ creatures:
           Skills: Awareness 14, Evade 12, Sneaking 14
   - id: rulebook-bear
     name: Bear
-    source: rulebook
     kind: animal
     category: Common Animals
     statblocks:
@@ -731,7 +681,6 @@ creatures:
           Skills: Awareness 10, Evade 8
   - id: rulebook-guard
     name: Guard
-    source: rulebook
     kind: npc
     category: Typical NPCs
     statblocks:
@@ -744,7 +693,6 @@ creatures:
           Gear: Broadsword, studded leather armor
   - id: rulebook-cultist
     name: Cultist
-    source: rulebook
     kind: npc
     category: Typical NPCs
     statblocks:
@@ -757,7 +705,6 @@ creatures:
           Gear: Dagger
   - id: rulebook-thief
     name: Thief
-    source: rulebook
     kind: npc
     category: Typical NPCs
     statblocks:
@@ -770,7 +717,6 @@ creatures:
           Gear: Knife
   - id: rulebook-villager
     name: Villager
-    source: rulebook
     kind: npc
     category: Typical NPCs
     statblocks:
@@ -783,7 +729,6 @@ creatures:
           Gear: Wooden club
   - id: rulebook-hunter
     name: Hunter
-    source: rulebook
     kind: npc
     category: Typical NPCs
     statblocks:
@@ -796,7 +741,6 @@ creatures:
           Gear: Longbow, leather armor
   - id: rulebook-bandit
     name: Bandit
-    source: rulebook
     kind: npc
     category: Typical NPCs
     statblocks:
@@ -809,7 +753,6 @@ creatures:
           Gear: Short sword, short bow
   - id: rulebook-adventurer
     name: Adventurer
-    source: rulebook
     kind: npc
     category: Typical NPCs
     statblocks:
@@ -822,7 +765,6 @@ creatures:
           Gear: Broadsword, studded leather armor
   - id: rulebook-scholar
     name: Scholar
-    source: rulebook
     kind: npc
     category: Typical NPCs
     statblocks:
@@ -835,7 +777,6 @@ creatures:
           Gear: A good book
   - id: rulebook-bandit-chief-boss
     name: Bandit Chief (Boss)
-    source: rulebook
     kind: npc
     category: Typical NPCs
     statblocks:
@@ -848,7 +789,6 @@ creatures:
           Gear: Heavy warhammer, chainmail, open helmet
   - id: rulebook-knight-champion-boss
     name: Knight Champion (Boss)
-    source: rulebook
     kind: npc
     category: Typical NPCs
     statblocks:
@@ -861,7 +801,6 @@ creatures:
           Gear: Longsword, large shield, plate armor, great helm, combat-trained horse
   - id: rulebook-archmage-boss
     name: Archmage (Boss)
-    source: rulebook
     kind: npc
     category: Typical NPCs
     statblocks:
@@ -874,7 +813,6 @@ creatures:
           Gear: Staff, grimoire
   - id: rulebook-the-goblins
     name: The Goblins
-    source: rulebook
     kind: npc
     category: Adventures
     description: bane on AWARENESS rolls). The helmet looks nasty with sharp spikes sticking out of the sides. Have the characters roll MYTHS & LEGENDS – on success, they realize that the helmet was forged by orcs. Anyone who wears it will get into trouble when they encounter the robber knight’s wight later in the adventure
@@ -888,7 +826,6 @@ creatures:
           Weapons: Short bow (skill level 12, damage D10), short sword (skill level 10, damage D10)
   - id: rulebook-jaldo
     name: Jaldo
-    source: rulebook
     kind: npc
     category: Adventures
     description: Small, sneaky, and very imaginative. Jaldo has the gift of the gab and has gathered a dozen goblin followers with promises of wine, silver, and a home of their own – promises which, to his great surprise, he actually managed to keep by finding the castle and quickly realizing that he could use the legend of the robber knight to his advantage.
@@ -906,7 +843,6 @@ creatures:
         text: If the player characters surprise Jaldo
   - id: rulebook-grunta
     name: Grunta
-    source: rulebook
     kind: npc
     category: Adventures
     description: some stolen goods of little value. Player characters who poke around a bit and succeed with SPOT HIDDEN can find something valuable – roll once on the treasure tables on page 121 to see what it is.
@@ -921,8 +857,6 @@ creatures:
           Weapon: Small wooden club (skill level 12, damage D8)
   - id: rulebook-the-robber-knight
     name: The Robber Knight
-    source: rulebook
-    kind: monster
     category: Adventures
     description: The robber knight is a wight and handled as a monster as per the rules. It carries a morningstar (bludgeoning damage 2D8).
     attack_dice: D6
@@ -956,7 +890,6 @@ creatures:
   - id: bestiary-goblin
     name: Goblin
     source: bestiary
-    kind: monster
     category: Nightkin
     description: "It is well established that the core of the army that the sorcerer Visimir assembled to conquer the territory of the Bloodfist orc clan was made up of goblins. He tempted several clans with fine words of plunder and treasure, but also with promises that they would get to keep part of the valley for themselves. It may seem like a blatant lie in retrospect, but this duplicity also cost Visimir his life – when his treachery was discovered, a young scout named Gutsy shot a poisoned black arrow straight into the two-faced sorcerer’s heart. What happened next is common knowledge, at least among the nightkin: the surviving goblins rallied around Gutsy, and she led them deep into the nearby forest, away from the eyes of enemies and traitors."
     quote: |
@@ -1002,7 +935,6 @@ creatures:
   - id: bestiary-hobgoblin
     name: Hobgoblin
     source: bestiary
-    kind: monster
     category: Nightkin
     description: The hobgoblins I have encountered on my travels have, without exception, been extremely hard-working and almost unstoppable in their zeal. In fact, I would go so far as to call them the opposite of halflings in this respect
     quote: |
@@ -1057,7 +989,6 @@ creatures:
   - id: bestiary-ogre
     name: Ogre
     source: bestiary
-    kind: monster
     category: Nightkin
     description: Ogres can use their large bodies to slam an opponent with tremendous force. This counts as an unarmed melee attack with a boon that inflicts 2D6 bludgeoning damage (plus any damage bonus) and cannot be parried. The ogre can also dash before the attack (but does not have to). Humanoid targets of Normal size or smaller who are hit by the attack are automatically knocked down.
     quote: |
@@ -1107,7 +1038,6 @@ creatures:
   - id: bestiary-orc
     name: Orc
     source: bestiary
-    kind: monster
     category: Nightkin
     description: Countless battles have been fought between orcs and other kin. However, few besides yours truly will acknowledge the cause of these misfortunes. The orcs I have spoken to during my travels said they encountered arrogance and ignorance wherever they went, that they were often
     quote: |
@@ -1164,7 +1094,6 @@ creatures:
   - id: bestiary-cat-people
     name: Cat People
     source: bestiary
-    kind: monster
     category: Rare Kin
     description: Even I do not know the exact size of the world’s cat people population, largely because they live in such seclusion and isolation. However, I am convinced that they have come here from warmer regions somewhere in the south, where their kind should be more numerous. The few I
     quote: |
@@ -1207,7 +1136,6 @@ creatures:
   - id: bestiary-centaur
     name: Centaur
     source: bestiary
-    kind: monster
     category: Rare Kin
     description: Although my colleague Virdal would object vociferously, I believe the centaurs are best described as savage and boisterous nature beings. For some reason, Virdal seems to think that they are noble creatures who personify the task of watching over the world’s forests and all that inhabit them. But I have no time for such unscholarly nonsense. Centaurs are big and characterized by a brash, almost cocky attitude – that much is beyond dispute! They can certainly relax at their regular, wine-drenched, excessive parties and appear both light-hearted and good-natured – especially if a satyr or two shows up and adds to the fun. But this is of little comfort to the settlers, hunters, and adventurers who, according to the centaurs, do not show proper regard for nature and therefore incur their wrath.
     quote: |
@@ -1249,7 +1177,6 @@ creatures:
   - id: bestiary-fairy
     name: Fairy
     source: bestiary
-    kind: monster
     category: Rare Kin
     description: Fairies are the bane of my existence. In fact, I considered omitting them from my catalog altogether as punishment for all the misery they have caused us on our travels. At least a wolf or a band of orc bandits has reasonable motives for their actions, but not the fairies – oh no, they cause mischief just to amuse themselves! Indeed, these elf-like little fiends are not content to play innocent pranks on passing travelers; they are most delighted when their victims get into real trouble or suffer harm. To take an example from our own journey, we lost several days’ rations of food when the rascals threw itching powder up the backside of Molly, our trusty mule – she panicked and ran straight into a rapid, kicking off her packs which were then taken by the current. You better believe there was a lot of giggling from the surrounding bushes!
     quote: |
@@ -1292,7 +1219,6 @@ creatures:
   - id: bestiary-frog-people
     name: Frog People
     source: bestiary
-    kind: monster
     category: Rare Kin
     description: Frog people can activate this ability to jump as far as their movement rating horizontally, or up to half their movement rating vertically. No ACROBATICS roll is required. The jump can end with a melee attack, which is made with a boon.
     quote: |
@@ -1334,7 +1260,6 @@ creatures:
   - id: bestiary-harpy
     name: Harpy
     source: bestiary
-    kind: monster
     category: Rare Kin
     description: Harpies are the scourge of nobles, peasants, hunters, merchants, and all who tread the paths of the wilderness; they steal anything they can get their hands on and do not hesitate to harm, maim, or kill the person carrying the coveted treats or valuables. If beset by a large flock, you better run fast or ride hard, that’s for sure. A limping jester named Haarpu whom I met at the Eider & Feather inn last year did claim to have defeated a most ferocious flock – by answering their barrage of taunts and threats with insults of his own, so foul that the harpies fell dead to the ground in shock. Although it sounds like a tall tale, there may be some truth to it – perhaps those who can match the vilest insults of the harpies may be able to escape their unwanted attention.
     quote: |
@@ -1376,7 +1301,6 @@ creatures:
   - id: bestiary-karkion
     name: Karkion
     source: bestiary
-    kind: monster
     category: Rare Kin
     description: Karkions fascinate me to no end. I have personally had the good fortune to speak with two different individuals, and they proved to be absolute treasure troves of knowledge and insight, especially about otherworldly beings. However, they would not talk about themselves, no matter how much I pleaded. They live as lone wanderers, that much is clear, and yet they are united in a common hunt for the
     quote: |
@@ -1420,7 +1344,6 @@ creatures:
   - id: bestiary-lizard-people
     name: Lizard People
     source: bestiary
-    kind: monster
     category: Rare Kin
     description: Lizard people who wish to stay hidden are hard to spot. Activating this ability grants a boon on a SNEAKING roll.
     quote: |
@@ -1482,7 +1405,6 @@ creatures:
   - id: bestiary-mermaid
     name: Mermaid
     source: bestiary
-    kind: monster
     category: Rare Kin
     description: Mermaids can rightly be described as protectors of the seas. Apart from a few lost souls, I have found no evidence that they are upset by sailors and fishermen who live in harmony with the sea; there are even rumors of mermaids saving shipwrecked people from drowning. On the other hand, anyone who cruelly and thoughtlessly harms the waters and their inhabitants has reason to fear the wrath of the sea people. Whether it is true or not is difficult to say, but I have heard stories of mermaids hunting down greedy fishermen and whalers, and even joining with sea giants to attack great warships to prevent the madness on the surface from destroying the world below. Like the elves, mermaids live long lives and over the years they accumulate much knowledge of the sea and its secrets; knowledge that is highly sought after by mages and scholars.
     quote: |
@@ -1524,7 +1446,6 @@ creatures:
   - id: bestiary-minotaur
     name: Minotaur
     source: bestiary
-    kind: monster
     category: Rare Kin
     description: "Based on conversations and learned texts, I would argue that almost all minotaurs view glory as the highest goal in life, or more specifically: glory in battle. This is probably rooted in the legend of King Minas – one of the great rulers of old, so huge and powerful that he could even take on dragons and demons. Minas won glory in abundance, not least by subduing scores of orc and goblin clans who were then forced to fight in the minotaur king’s endless wars with other kin. Present-day minotaurs remember their former ruler with great reverence, and legend has it that whoever recovers King Minas’ axe, the Cleaver, will restore his vast kingdom. It is no wonder that many minotaurs choose to spend their entire lives searching for the weapon in question."
     quote: |
@@ -1565,7 +1486,6 @@ creatures:
   - id: bestiary-naiad
     name: Naiad
     source: bestiary
-    kind: monster
     category: Rare Kin
     description: Naiads are strange creatures found in dark lakes, bogs, and marshes. Except for their pale green skin, they appear as human men or women of staggering beauty. But behind the facade there is only darkness and self-serving evil. Naiads use their powers to attract and trap innocent creatures; the victims are lured into the water, where they are quickly ensnared and brought to the monster’s cave. Only the victims know exactly why, and the few survivors I have encountered tend not to talk about it. But from what little I do know, naiads seem to feed on the dreams and nightmares of other creatures. Their victims often die miserable in the deep, but apparently the naiad sometimes tires of its prisoner and releases it to return home in confusion.
     quote: |
@@ -1609,7 +1529,6 @@ creatures:
   - id: bestiary-satyr
     name: Satyr
     source: bestiary
-    kind: monster
     category: Rare Kin
     description: No one loves singing and dancing as much as the satyrs. Together with their naiad and centaur friends, they hold court in flower-covered glades deep in the world’s deciduous forests. I have been there myself, along with Brasimor (who does his best not to remember that night), and there is no doubt that satyrs literally worship joy. There is always a cause for celebration, and they celebrate by arranging wild feasts where they eat like princes and drink exquisite satyr-made wines. Dancing, singing, and music are part of the festivities as well. According to my observations, their joy is rarely as great in the mornings, but this is quickly remedied by someone finding a new reason to dance, drink, and feast!
     quote: |
@@ -1646,7 +1565,6 @@ creatures:
   - id: bestiary-swan-maiden
     name: Swan Maiden
     source: bestiary
-    kind: monster
     category: Rare Kin
     description: Swan maidens are female elves capable of transforming themselves into magnificent white swans. The elves consider this phenomenon a gift from the gods, and to my knowledge, no one claims to know what causes it. What is clear, however, is that these select few are viewed with great respect among the elven people, sometimes bordering on fear, sometimes on envy. They often live alone in the wilderness, preferably near large bodies of water or rushing rapids, and I would venture to say that it is the feeling of being different that drives them to seek solitude – they simply feel uncomfortable in the company of others. It is also worth mentioning that there are stories of male elves acquiring a similar ability, but from demonic powers that allow them to turn into black swans. According to legend, the black and white swans are bitter enemies, and perhaps this enmity also plays a role in why swan maidens choose to live their lives in solitude.
     quote: |
@@ -1688,7 +1606,6 @@ creatures:
   - id: bestiary-tree-kin
     name: Tree Kin
     source: bestiary
-    kind: monster
     category: Rare Kin
     description: "One of the proudest moments of my journey was when my companions and I were able to verify the existence of a life form that is otherwise only mentioned in half-forgotten legends: the tree kin. I can now say with certainty that they exist! Though my attempts at communication were unsuccessful, I have seen them, even touched them. They roam deep in the most ancient forests, under the mighty crowns of the first trees, difficult to distinguish from the rest of the forest on account of their moss-covered, bark-crusted bodies. It is probably true, as the legend says, that they act as shepherds of the forest, older than they themselves can remember and as powerful as dragons and demons. We saw them lumbering slowly through the forests, talking to the trees and the animals in their crowns. Finally, a word of caution: given their reaction to Brasimor’s axe, they are likely very suspicious of anyone carrying such tools…"
     quote: |
@@ -1732,7 +1649,6 @@ creatures:
   - id: bestiary-ant-people
     name: Ant People
     source: bestiary
-    kind: monster
     category: Insectoids
     description: My colleagues and I were invited to stay with Queen Fzzwzz ww Ozzbazz for twelve hectic days. Judging by what we saw and heard, the ant people live in families of a few hundred individuals, subject to the will and dictates of a queen. The queen plays an extremely important role and is always closely guarded – through her, all individuals are connected; as long as they are within ten kilometers of the regent, they share each other’s sensory impressions. In other words, they communicate telepathically within the family, while sign language is used to communicate with outsiders and ant people from other families. This probably explains why one rarely encounters ant people far from their homes. Groups of warriors are sometimes dispatched on scouting missions or to strike at potential threats. Workers may also join the patrols, tasked with making things more difficult for the enemy, for example by setting traps or destroying cave entrances.
     quote: |
@@ -1773,7 +1689,6 @@ creatures:
   - id: bestiary-beetle-kin
     name: Beetle Kin
     source: bestiary
-    kind: monster
     category: Insectoids
     description: Those who venture underground in search of gold and other riches may have the misfortune of ending up in a beetle hole. These dug, carved-out burrows are home to the beetle kin, enigmatic creatures as big as humans and as armored as knights. They usually live in small groups, about a dozen individuals gathered around an authoritarian leader. The digging of burrows and tunnels is the main cause of conflict between them and other digging creatures, especially dwarven miners. The beetle kin are also formidable warriors, as demonstrated when the group we were following suddenly burrowed their way into a small gnome mine. But as far as I can tell, they prefer not to fight; they are almost always outnumbered and would rather find another dwelling than challenge a stronger opponent. Finally, it should be mentioned that beetle kin can occasionally be encountered above ground, usually as mercenaries or exotic bodyguards at the residences of wealthy nobles or mages.
     quote: |
@@ -1814,7 +1729,6 @@ creatures:
   - id: bestiary-spider-kin
     name: Spider Kin
     source: bestiary
-    kind: monster
     category: Insectoids
     description: Spider kin seem to be the least numerous of the insectoids, and certainly the most mysterious. Our visit to their dark, cobwebbed part of the forest felt almost dreamlike. Brasimor and Kvalka refused to go, so I sought them out with only Virdal in tow. The dozen spider creatures we encountered did not answer when spoken to and seemed barely aware of our presence, as did their friends and neighbors, ranging from giant spider monsters to colonies of ten or so smaller arachnids of different species. Virdal was just as eager as I was to seek confirmation that our hosts were not only hyper-intelligent creatures, but also highly gifted in the arcane arts. We could not find any actual evidence to support the latter assumption, but much suggests that our suspicions are correct. They have a written language and even own works penned by elves and humans; they weave sparkling webs that seem to catch magical energies rather than bugs, and much of what we experienced in the forest can hardly be explained by natural means. It seems to me that whoever antagonizes these immensely powerful creatures will not live to regret it.
     quote: |
@@ -1857,7 +1771,6 @@ creatures:
   - id: bestiary-cave-troll
     name: Cave Troll
     source: bestiary
-    kind: monster
     category: Trolls
     description: Neither I nor other explorers can claim to know much about cave trolls. Trying to talk to them is futile, so all we have to go on are observations. Evidence suggests that they are even more sensitive to sunlight than the nightkin – they live in caves and never leave, except at night or when the fog lies thick over the mountain valleys. They appear to see everything and everyone as a potential meal and their hunger is seemingly insatiable, at least according to all the stories of single trolls devouring entire parties of travelers, draft animals and all. It is true that the occasional orc chief or human ruler has managed to tame cave trolls and use them in battle, perhaps by providing them with a constant supply of food. But I would not dare to, nor would I want to serve in the same unit as such voracious and unpredictable warriors…
     quote: |
@@ -1901,7 +1814,6 @@ creatures:
   - id: bestiary-forest-troll
     name: Forest Troll
     source: bestiary
-    kind: monster
     category: Trolls
     description: Forest trolls really are incredibly stupid. Not like animals or their hunger-driven cousins the cave trolls; after several attempts to converse with them, I would describe them more as defiant children – they think themselves clever and all-knowing and get extremely annoyed if the conversation reveals that they actually have the intellectual agility of a dung beetle. The difference is that defiant children, even if they should want to, rarely have the strength to rip your head off. Forest trolls are usually content to hunt for prey in their woods, but if the pickings are slim, they do not hesitate to target livestock pens and pastures. Nevertheless, I have come across several cases where villages have managed to maintain a fragile peace with forest trolls in their vicinity by offering them regular gifts of ale, prey, and cattle.
     quote: |
@@ -1947,7 +1859,6 @@ creatures:
   - id: bestiary-mountain-troll
     name: Mountain Troll
     source: bestiary
-    kind: monster
     category: Trolls
     description: Mountain trolls seem to thrive in barren highlands and on desolate tundra. That is where they return after their far-flung wanderings in search of places where significant, often world-changing events have taken place. Once back in the frigid north, they carve their observations and newly acquired insights directly into flat rock faces or into boulders they leave behind on mountaintops or tundra plains. The mountain trolls live in solitude and are essentially peaceful creatures. Anyone who angers them, for example by desecrating historical sites, will no doubt suffer their merciless rage, but I am a living example of how these venerable giants are open to conversation and friendship with other kin. Historical anecdotes, a barrel of pipe weed, and patient listening are the way to any mountain troll’s heart.
     quote: |
@@ -1991,7 +1902,6 @@ creatures:
   - id: bestiary-forest-giant
     name: Forest Giant
     source: bestiary
-    kind: monster
     category: Giants
     description: Smaller than others of its kin, forest giants are easily mistaken for trolls as they roam our coniferous forests. They are the easiest giants to communicate with, possibly because of their relatively modest size, but that does not mean they have much patience for conversation. The handful that I have tried to speak with all started darting their eyes around before I had even finished a sentence; a couple of them started staring at Kvalka (who naturally loved the attention and did everything to earn it), while others were distracted by a butterfly, a hopping hare, or a newly blossomed flower. Forest giants seem obsessed with experiencing nature – breathing it, watching it, feeling it – and do not care about much else. Well, except of course for anyone who degrades and destroys their beloved environment. Such people are shown no mercy.
     quote: |
@@ -2033,7 +1943,6 @@ creatures:
   - id: bestiary-mountain-giant
     name: Mountain Giant
     source: bestiary
-    kind: monster
     category: Giants
     description: "Of all the giants in this world, mountain giants are the ones that ordinary people most often have the misfortune to encounter. While they are generally quite meek and peaceful, they seem to regard all small folk in the same way that dragons and demon princes do – as any other animal, or even as livestock. It takes a lot to provoke a mountain giant, but when its patience finally runs out, it explodes into unbridled aggression. Furthermore, their size, clumsiness, and short-sightedness mean that anyone who gets close risks being accidentally crushed – by a misstep or a dropped object. Mountain giants often live alone in the mountains, where they raise goats and sheep. Their temperament can vary considerably: some are accommodating and communicative, but I have also heard many stories of small folk suffering at their hand – whose barns were raided and whose youngsters were abducted and forced to look after the giant’s livestock."
     quote: |
@@ -2074,7 +1983,6 @@ creatures:
   - id: bestiary-sea-giant
     name: Sea Giant
     source: bestiary
-    kind: monster
     category: Giants
     description: As far as I can tell, sea giants are the largest of their kind, standing between eight and twelve times the height of a human. They hunt whales and giant squid in the depths of the oceans, and do not seem to be upset by members of other kin making a living in similar ways. In fact, with few exceptions, these titans of the sea never take any notice of other intelligent creatures; to my knowledge, no man, elf, mallard, or halfling has ever exchanged so much as a word with a sea giant. When they become violent towards seafarers, it is at the behest of mermaids or others who have earned their respect and can convince them that there is an imminent threat to the sea or its inhabitants. Any crew that angers a sea giant in this way would be wise to head for the nearest port!
     quote: |
@@ -2116,7 +2024,6 @@ creatures:
   - id: bestiary-titan
     name: Titan
     source: bestiary
-    kind: monster
     category: Giants
     description: People are afraid of dragons, demons, and ravenous trolls, and rightly so. But there may be an even greater threat lurking out there, though the risk of encountering it is far lower. The titans appear to be related to giants. They can be found standing, sitting, or hibernating in up to twenty known locations in this world, clad in full armor and armed with huge maces or warhammers. I am fairly certain that their number is much higher, and that they were the giants’ greatest champions in the oldest times, when the battle between dragons and demons raged most fiercely – possibly refined into outright monsters of war through powerful rituals. Anyway, as long as they are asleep, the titans pose no threat to anyone. But sometimes they wake, compelled by their duty to fight but unsure of who the enemy is. Sometimes they direct their anger at a halfling village, a noble’s estate, a dwarven mine, or the like. In such cases, the titan will not stop until every last enemy has been vanquished, and then, its work done, it drifts back into slumber.
     quote: |
@@ -2160,7 +2067,6 @@ creatures:
   - id: bestiary-basilisk
     name: Basilisk
     source: bestiary
-    kind: monster
     category: Beasts
     description: The basilisk is a feared, semi-intelligent predator with an unpleasant tendency to appear near villages and other settlements, sometimes even in city catacombs. It is a terrifying abomination with a reptilian body, a rooster’s head, and huge murderous claws. On top of that, it is endowed with poisonous breath and a gaze that can turn its victims to stone. Humans are its main prey, but a hungry basilisk may also feed on dwarves and halflings. It is a formidable opponent in combat – and the bane of many an ambitious knight.
     quote: |
@@ -2203,7 +2109,6 @@ creatures:
   - id: bestiary-brook-horse
     name: Brook Horse
     source: bestiary
-    kind: monster
     category: Beasts
     description: Among rivers and rapids lurks the devious brook horse. To us it may seem like any other horse, large and gray. But unlike our regular steeds, the brook horse is a ruthless predator that feeds on humans, elves, halflings, and anything else that comes its way. The monster can breathe both on land and underwater and makes its nest in flooded caves and caverns, a nest that is quickly filled with the bones of its victims. Its teeth are sharp and pointed and a faint stench of rotten seaweed surrounds its body.
     quote: |
@@ -2244,7 +2149,6 @@ creatures:
   - id: bestiary-calydon
     name: Calydon
     source: bestiary
-    kind: monster
     category: Beasts
     description: With fur as white as snow and a soul as black as the night, the calydon is one of our world’s most fearsome beasts. It is the size of a bull and has huge tusks, sharp as spears. As if that was not enough, it can breathe fire from its snout – giving rise to the theory that they originated from magical experiments that escaped from captivity and established themselves in the forest. The calydon is unpredictable, extremely violent, and is not afraid to attack creatures much larger than itself or charge at large groups of opponents to create chaos and confusion. This mindless ferocity means that they can be lured into traps by skilled trappers, who then sell them to the highest bidder to be tamed and trained into raging war beasts.
     quote: |
@@ -2285,7 +2189,6 @@ creatures:
   - id: bestiary-chimera
     name: Chimera
     source: bestiary
-    kind: monster
     category: Beasts
     description: "A chimera is most likely created by magically merging at least three common animals: it has the front body of a lion, the head and hind quarters of a goat, and a poisonous snake for a tail. My traveling companion Virdal assures me that he has seen scrolls describing experimental rituals that, if they really worked, could concoct such a creature – the answer to some archmage’s nightmare or morbid wish. Regardless, the chimera is a ferocious predator that can easily tear even large prey to pieces. With three creatures to feed, the monster is virtually insatiable and constantly searching for food. It can wreak havoc on livestock, and it is not uncommon for one or two shepherds to be killed as well."
     quote: |
@@ -2326,7 +2229,6 @@ creatures:
   - id: bestiary-giant-amoeba
     name: Giant Amoeba
     source: bestiary
-    kind: monster
     category: Beasts
     description: "Here I must make a value judgment: the giant amoeba is one of the most revolting creatures an adventurer can possibly encounter. It was created or conjured by demon cultists in the oldest times; it is not clear why, but I am convinced it was an accident. The monster in question is a huge lump of slime whose life revolves around finding and consuming organic matter. The amoeba uses its jelly-like form to hide in pits and holes or crawl through narrow cracks to surprise its victims and pull them into its body, where their flesh slowly dissolves. You are not likely to encounter the creature anywhere but in swamps or deep caves, but they have been sighted elsewhere: in ruin complexes, dark forest lakes, and even in city sewers"
     quote: |
@@ -2370,7 +2272,6 @@ creatures:
   - id: bestiary-giant-octopus
     name: Giant Octopus
     source: bestiary
-    kind: monster
     category: Beasts
     description: "Giant octopi are typically found in large bodies of water such as oceans and great lakes, and I am personally skeptical of reports that they can also be encountered in rivers and swamps. The fact that they live in both salt and fresh water suggests they are bred or magically created, possibly to guard moats or the waters around islands and peninsulas. The giant octopus’s many abilities certainly make it well suited for that purpose. It has large eyes and excellent vision and can sense the presence of other creatures through vibrations in the water if they so much as go near the water’s edge. Furthermore, it is able to squeeze through narrow cracks to reach escaping prey or escape its own hunters. Finally, their remarkable wintering ability should be mentioned: in extreme cold, they can freeze solid and thaw out when the temperature rises again."
     quote: |
@@ -2415,7 +2316,6 @@ creatures:
   - id: bestiary-giant-spider
     name: Giant Spider
     source: bestiary
-    kind: monster
     category: Beasts
     description: There are few predators in the wilderness that can match the giant spiders – as fast as hawks, as strong as oxen, as cunning as foxes. Add to that the ability to spin trapping webs and you have a near-perfect hunter. Their speed allows them to work together to cut off their prey’s escape route by spinning thinner webs and thus direct the intended meal to one of several sturdier webs spun in advance. They can also catch prey by simply dropping down on them from hiding places in the treetops or on ledges high up steep mountainsides. If they have a weakness, it is their eyes’ sensitivity to bright light. Those unfortunate enough to be chased by a giant spider may be able to escape by blinding the monster, but a torch is not enough – the light must be as bright as direct sunlight.
     quote: |
@@ -2458,7 +2358,6 @@ creatures:
   - id: bestiary-griffon
     name: Griffon
     source: bestiary
-    kind: monster
     category: Beasts
     description: Watching griffons soar on updrafts between snow-capped peaks, watching them swoop down on hapless adventurers and their mounts from a clear blue sky, is truly a wonderful and terrifying experience. But grandest of them all are the elven war griffons. Captured as cubs, they are raised over a long period of time by a single warrior who becomes the only person capable of commanding the griffin once it is old enough to be used as a mount. Together the griffin and its warrior guard the elven realms, patrolling high above our heads in search of monsters and beasts. Evidence suggests that not even dragons will pass through airspace patrolled by griffon riders.
     quote: |
@@ -2499,7 +2398,6 @@ creatures:
   - id: bestiary-hippogriff
     name: Hippogriff
     source: bestiary
-    kind: monster
     category: Beasts
     description: With the front half of an enormous bird of prey and the back half of a horse, one might think that the hippogriff would look rather ridiculous, but nothing could be further from the truth. Exuding authority and pride, they are formidable opponents both on the ground and in the air – in fact, they are rightly feared on battlefields all over the world. They usually live high above cloud-covered mountaintops, wild and free and exceedingly difficult to tame. But legends tell of both dragon knights and elves battling demons and other horrors from the backs of gold-feathered hippogriffs. Not all of them have gold-colored plumage, however; only the oldest bloodlines have golden feathers and white fur, while younger bloodlines tend to be mottled gray.
     quote: |
@@ -2542,7 +2440,6 @@ creatures:
   - id: bestiary-hydra
     name: Hydra
     source: bestiary
-    kind: monster
     category: Beasts
     description: Hydras live in swamps and marshes where they mostly hunt small game to survive, but they will feast on larger prey if the opportunity arises, preferably in the form of carrion. Whether hydras are related to dragons is a matter of dispute, but it makes little difference to anyone who comes face to face with this many-headed beast. The hydra’s heads are its most distinctive feature and its greatest strength. Countless fighters have succumbed to the venom-dripping jaws of a hydra, and as each severed head is replaced by two, the number of jaws soon overwhelms even the fiercest of warriors. Only through cunning, courage, and a bit of fire can the hydra be defeated!
     quote: |
@@ -2583,7 +2480,6 @@ creatures:
   - id: bestiary-manticore
     name: Manticore
     source: bestiary
-    kind: monster
     category: Beasts
     description: "My observations and conversations seem to confirm what is written in the scroll I found in the arcane library of Fanghald (author unknown): manticores are extremely rare, and although their average lifespan is quite long (somewhere between two hundred and four hundred years), their numbers are decreasing every decade. This, of course, is of little comfort to those who find themselves in the clutches of a manticore – the beast’s insatiable hunger drives it to kill and devour everything in sight. And it will not be scared or lured away; if a manticore moves into your area, it is you who must run, or hire someone bold enough to take it on. In the latter case, be sure to word the contract so that it grants you ownership of the carcass. Mages can use its parts to create potions, enchanted weapons, and ingredients for spells – if you find the right buyer, you can even make a profit!"
     quote: |
@@ -2624,7 +2520,6 @@ creatures:
   - id: bestiary-medusa
     name: Medusa
     source: bestiary
-    kind: monster
     category: Beasts
     description: It is hard to stick to actual knowledge here, but my overall assessment of what I have read and heard is that the first medusa came into existence when one of the most powerful witches of the oldest times challenged the tyranny of the ruling powers. She failed and suffered a terrible revenge, by demons or dragons or both – she was cursed with a petrifying gaze, a mane of mockingly whispering serpents, useless hands of bronze, and a huge pair of bat wings. As for the other medusas, the prevailing theory seems to be that they were created by the first one because she wanted others to share the curse with. But we will never know for sure, because who would even try to approach the archmedusa for conversation…?
     quote: |
@@ -2667,7 +2562,6 @@ creatures:
   - id: bestiary-pegasus
     name: Pegasus
     source: bestiary
-    kind: monster
     category: Beasts
     description: So we come to the pegasus. While it does not really belong with monsters and beasts, it has at least one thing in common with the other creatures in this chapter – it is the subject of countless legends, different versions of which are found in all cultures. There is little bad to say about these noble equines; they are rightly described as peaceful and shy and would never hurt a fly. No, only a demon would find the pegasi anything other than delightful, because if there is one thing they hate, it is demons and their followers. Normally, the pegasi would rather run than fight, especially from undead which they fear beyond reason, but they will fight to the death any champion of the demonic realm. Finally, I should mention that any attempt to tame a pegasus as if it were a horse or other mount is futile. You can instead try to befriend the creature; if successful, you can count on it for help, but entirely on the pegasus’ terms, almost as if it were a farm cat.
     quote: |
@@ -2709,7 +2603,6 @@ creatures:
   - id: bestiary-roc
     name: Roc
     source: bestiary
-    kind: monster
     category: Beasts
     description: If you come to a region devoid of farm animals, you can be pretty sure there is a roc or two nesting nearby. Trying to raise livestock under such a constant threat is a fool’s errand. As a human, halfling, or orc, you rarely need to worry about this marvelous bird of prey – you are little more than a crumb on its floor. The only exception is if you are walking around with gemmed jewelry glittering in the sun; such ornaments are like beacons in the dark for a roc. Naturally, this has caused many a fortune hunter to think it is a good idea to raid the creature’s nests, high up in the mountains or at the top of giant pine trees – a hazardous enterprise that, as far as I can tell, often results in the fortune hunter ending up as bird food.
     quote: |
@@ -2751,7 +2644,6 @@ creatures:
   - id: bestiary-sea-serpent
     name: Sea Serpent
     source: bestiary
-    kind: monster
     category: Beasts
     description: Sea serpents are primitive but long-lived predators found in freshwater, primarily in lakes and rivers, but there have been reports of occasional sightings in other habitats such as moats and flooded mines. Indeed, they may even be found in deep wells, where they have waited for potential prey for hundreds of years, buried in mud and increasingly hungry. Some sea serpents do not get much bigger than a good-sized eel or pike, while others grow so huge that they can crush boats and drawbridges with their writhing bodies. The larger specimens are revered as gods by certain lizard people clans, who sacrifice both prisoners and their own offspring to these ever-hungry beasts.
     quote: |
@@ -2793,7 +2685,6 @@ creatures:
   - id: bestiary-werewolf
     name: Werewolf
     source: bestiary
-    kind: monster
     category: Beasts
     description: By day they look like anyone else, like you or me or your neighbor. But when night falls and the moon rises, the werewolf goes on the hunt, blinded by rage and bloodlust. In the moonlight, the creature changes drastically in body and mind – into a great wolf walking upright, with enormous claws, fanged jaws, and an unquenchable thirst for blood. In monster form, the werewolf loses all control over its actions, and when morning dawns it wakes up with no memory of the evil it committed. However, some legends tell of werewolves who can control their own transformation and who do not suffer any memory loss. If that is true, these individuals must have the darkest of souls, for how else could they live with all the suffering and death they cause?
     quote: |
@@ -2837,7 +2728,6 @@ creatures:
   - id: bestiary-worg
     name: Worg
     source: bestiary
-    kind: monster
     category: Beasts
     description: Worgs are larger than ordinary wolves and far more dangerous. With their glowing red eyes, they can see perfectly in the dark. But not only that – worgs also have the uncanny ability to spot camouflaged and otherwise concealed, even invisible, creatures by detecting their body heat. And yet their greatest weapon is their cunning. Among other things, they have a fully developed language based on howls and guttural yaps which allows them to communicate complex messages over long distances – for instance about approaching adventurers, heavily loaded trade caravans, and other potential prey. Worgs usually attack in packs, in a coordinated and disciplined manner, but outcasts may target armed people on their own when they are desperate.
     quote: |
@@ -2878,7 +2768,6 @@ creatures:
   - id: bestiary-ghost
     name: Ghost
     source: bestiary
-    kind: monster
     category: Undead
     description: The term “ghost” is here used to refer to spirits that for one reason or another have not found peace in death. Some linger because they refuse to abandon a loved one; some because they seek justice or revenge for what they perceived as a shameful death; some because they possess knowledge or information that must be passed on. Either way, it never ends well. The ghost may have memories of the time before its death, but in spirit form its mind becomes confused and its purpose unclear. This is probably why ghosts are almost always characterized by severe mood swings and fits of anger – the inability to think and act with clarity frustrates them to the point of rage, and sometimes beyond. Indeed, it takes both courage and patience to try to help a ghost, or even to understand how it can be helped. Sometimes the attempt claims the helper’s life.
     quote: |
@@ -2920,7 +2809,6 @@ creatures:
   - id: bestiary-ghoul
     name: Ghoul
     source: bestiary
-    kind: monster
     category: Undead
     description: "I struggle to find any redeeming features in the abominable ghouls. There are various theories as to their origin, but it would seem that the most plausible one is also the most horrific: that they are born from a curse that affects cannibals, those who feed on the flesh of their own kin or that of other intelligent beings. The result is a revolting creature – both undead and alive; half-blind; with loose, spongy, grayish-white skin; reeking of death and decay. Unsurprisingly, ghouls are often found near graveyards or places where great battles have recently been fought. Some stories even mention groups of corpse-eaters secretly following armies on their march to the battlefield, waiting for a chance to feast on the fallen under cover of darkness."
     quote: |
@@ -2963,7 +2851,6 @@ creatures:
   - id: bestiary-living-dead
     name: Living Dead
     source: bestiary
-    kind: monster
     category: Undead
     description: "Are they living or undead? Well, those who like to split hairs might find this question very interesting. I tend to fall into that category myself, but in this case I am more concerned with the facts: there is a disease that prevents people from dying and instead turns them into walking, rotting corpses whose only purpose in life is to feast on living flesh. Whether the disease is demonic, magical, or even natural in origin does not really matter. What does raise questions and doubts is that these disgusting creatures seem to retain memories from before the transformation, at least judging by the reports that they are capable of recognizing old acquaintances, muttering intelligible phrases, and grasping and using tools. Surely this must mean that they are still themselves, that they are living some kind of half-life, darkened by their abominable hunger?"
     quote: |
@@ -3006,7 +2893,6 @@ creatures:
   - id: bestiary-mummy
     name: Mummy
     source: bestiary
-    kind: monster
     category: Undead
     description: In the oldest times, it was customary in certain regions to embalm the dead. Not just anyone, of course – only the bodies of deceased rulers, fallen heroes, and high-born nobles were treated with alchemy and magic; furthermore, their internal organs were removed and preserved in vessels filled with vinegar and mystical herbs. Because of this process – complemented by demonic rituals, according to some – the dead soon rose again. Wearing only their burial shrouds, they guard the crypts in which they were buried, filled with treasures brought back from the realm of the dead. If their tombs are desecrated, they may cast powerful curses on the intruders, curses that can bring down even the strongest warriors and the mightiest of mages.
     quote: |
@@ -3048,7 +2934,6 @@ creatures:
   - id: bestiary-skeleton
     name: Skeleton
     source: bestiary
-    kind: monster
     category: Undead
     description: There were probably both practical and cultural reasons why so many ancient rulers reanimated skeletons to watch over their tombs and shrines. They are practical in the sense that they never tire or betray their duties; culturally, they clearly became something of a fad – at the expense of golems, pact-bound demons, and other alternatives.
     quote: |
@@ -3098,7 +2983,6 @@ creatures:
   - id: bestiary-vampire
     name: Vampire
     source: bestiary
-    kind: monster
     category: Undead
     description: "Perhaps the most powerful of the undead beings that plague our world are the vampires. They are cunning and secretive, but apart from being vulnerable to sunlight and feeding on the blood of others, they vary greatly in many respects. Some hide in cities where they prowl the streets at night; others have spent centuries building veritable kingdoms which they rule from remote castles. Either way, they always surround themselves with thralls, both living and undead; the most powerful ones also have the ability to raise the dead as new vampires, who tend to serve their creators with blind obedience. And slaying a vampire is no easy task: one must first knock it unconscious and then – before the beast can escape in the form of fog, bats, or ravens – drive a wooden stake through its heart."
     quote: |
@@ -3142,7 +3026,6 @@ creatures:
   - id: bestiary-wight
     name: Wight
     source: bestiary
-    kind: monster
     category: Undead
     description: The being known as the wight is by far the most hateful and murderous of the undead. Their entire existence is based on their hatred of all living things, and they usually spend hundreds and hundreds of years dreaming of revenge on the world that, in their minds, betrayed, wronged, and hurt them. Based on my studies, I would argue that most wights are bound to a specific location, often their own tomb or place of death. But I can also conclude that some manage to break free, which allows them to move freely through the world. Some of these immediately begin to pursue their dreams of revenge; others are able to control their urges long enough to raise an entire army of undead, which they then command against any living creature that gets in their way. In conclusion, if life itself can be said to have a mortal enemy, the wight is most certainly a candidate for the position.
     quote: |
@@ -3184,7 +3067,6 @@ creatures:
   - id: bestiary-will-o-the-wisp
     name: Will-o’-the-Wisp
     source: bestiary
-    kind: monster
     category: Undead
     description: I have always wondered why this ghostly being was named will-o’-the-wisp – it sounds so delightfully pleasant, when in fact they are anything but. These damned entities appear to be the echoes of truly vile creatures who in life enjoyed tormenting others until they met their well-deserved demise in some marshland. Reanimated in spectral form, the cruelty is all that remains of their nature. As wraiths carrying beckoning lights, they continue to torment those passing through their swamps, possibly in the vain hope that the victims’ terror will alleviate their own suffering. Will-o’-the-wisps are mainly feared for their ability to lure people off their paths, causing them to fall into sinkholes or drown in bogs. But they take equal pleasure in simply scaring people out of their wits.
     quote: |
@@ -3226,7 +3108,6 @@ creatures:
   - id: bestiary-hatchling-dragon
     name: Hatchling Dragon
     source: bestiary
-    kind: monster
     category: Dragons
     description: A dragon’s egg is as hard as rock and looks more like a boulder than an egg, although its scaly surface reveals what is inside the shell. Once strong enough, the dragon spawn breaks free and immediately begins to explore the world, watched over by its mother or father – adult dragons who only leave their offspring’s side to search for food. As a hatchling, the dragon is not very intimidating. It cannot fly and has not yet developed the ability to breathe fire. On the other hand, the puffs of smoke coming out of its mouth can be quite dangerous, as they are highly toxic and may paralyze creatures that come too close – an effective defense mechanism that often keeps the hatchling alive until it has grown into a young dragon, ready to leave the nest.
     quote: |
@@ -3267,7 +3148,6 @@ creatures:
   - id: bestiary-young-dragon
     name: Young Dragon
     source: bestiary
-    kind: monster
     category: Dragons
     description: Young dragons have recently left their parents and learned to fly and hunt on their own. They are recognized by their size but also by being more slender than their elders. However, their hard scales and natural weapons quickly grow to proportionate size. Despite their age, a young dragon is still a formidable predator; life is a feast and the world its festival grounds. It develops by curiously exploring and playing with its surroundings – hunting small game to become fast and agile; going after larger prey to build up its strength. But whatever the prey, the hunt is everything – its entertainment, training, and survival. Later, as the dragon grows and matures, the greed awakens as well; the desire to take, own, and hoard. Even in its youth, it may start collecting gold and precious stones. These treasures are hidden in various places until, as an adult, it comes back for them and adds them to a growing pile in its very own cave.
     quote: |
@@ -3308,7 +3188,6 @@ creatures:
   - id: bestiary-adult-dragon
     name: Adult Dragon
     source: bestiary
-    kind: monster
     category: Dragons
     description: Having left the wildness of youth behind, the dragon begins to develop both impulse control and a more analytical mind. This eventually leads it to establish a home – a cave, valley, or castle ruin that it claims for itself, whether the other creatures in the area like it or not. There it begins to build its nest. The nest in question is not made of twigs and straw. No, it is made of gold, precious stones, and objects crafted from said materials, and it is built with absolute precision – even the smallest coin or tiniest ruby shard is placed with the utmost care, according to a meticulously planned design. The procedure is probably based on the fact that it makes it easier to see if anything is missing, or rather, if anything has been stolen. But it is also an expression of (or possibly reason for) the dragon’s increasing demand for order and stability as it grows older – which surely helps explain their profound aversion to the chaos-loving demons.
     quote: |
@@ -3349,7 +3228,6 @@ creatures:
   - id: bestiary-ancient-dragon
     name: Ancient Dragon
     source: bestiary
-    kind: monster
     category: Dragons
     description: It is very hard to say how many dragons remain from the oldest times, who lived in the days of the Dragon Empire and fought in the great demon wars. By their own account, they can lie dormant for hundreds of years, slumbering on their mountains of treasure, which means they are very rarely seen. What is more, they tend to move further and further into the wilderness as they get older – away from people who disturb their hunting grounds, away from the arrows of bothersome heroes. But an educated guess tells me that there may be between five and ten of them, including the legendary Arknarath and Nielfrung. These oldest of dragons rarely attack halflings, humans, and other civilized kin, perhaps because they view us as subjects or as their (inferior) equals. They are wise beyond our comprehension; they have power over language and therefore over the world; they are immensely strong and virtually invulnerable. As indicated above, they can be talked to, but know that you risk catching the dragon on a bad day – which often ends in disaster.
     quote: |
@@ -3389,7 +3267,6 @@ creatures:
   - id: bestiary-lindworm
     name: Lindworm
     source: bestiary
-    kind: monster
     category: Dragons
     description: "I thought long and hard about whether to include the lindworm in this chapter or in the one on beasts. It ended up here, because although the creature in question is not technically a dragon, I want to emphasize the theory that I myself favor (unlike most of my colleagues, including Virdal who is adamant on this point): that lindworms are what is left of the earliest ancestors of the dragon species. In terms of behavior and temperament, they have much in common with young dragons – they are predators whose lives consist of eating, sleeping, and growing. But there are major physiological differences: they are less intelligent and cannot breathe fire or fly. They do not collect treasure either, but for fortune hunters it can still be worthwhile to raid their nests. Their underground lairs always consist of a central chamber from which a number of winding passages lead up to the surface. This is where they drag their victims to eat in peace, which means that the victims’ packs and belongings can often be found in some corner."
     quote: |
@@ -3430,7 +3307,6 @@ creatures:
   - id: bestiary-blood-demon
     name: Blood Demon
     source: bestiary
-    kind: monster
     category: Demons
     description: "This vile monstrosity goes by two names: blood demon or onaqui. I prefer the former, which refers to the creature’s thirst for blood – something that long led scholars to think of it as a kind of arch-vampire rather than a demon. The name onaqui stems from the oldest times, when the creatures served as scouts and advance units for the vast armies of the demonic realm; the name presumably alludes to the sound of their dreadful roar. Although the vampire theory has long since been disproved, there may be reason to consider the idea of a kinship between them. According to several accounts, both old and new, the blood demon does not only drink blood but feasts on the hearts of vanquished foes, preferably just as they stop beating. Could blood demons be the original source of vampirism?"
     quote: |
@@ -3474,7 +3350,6 @@ creatures:
   - id: bestiary-chaos-demon
     name: Chaos Demon
     source: bestiary
-    kind: monster
     category: Demons
     description: Endowed with wings and armed with black, life-leeching runic swords, chaos demons are the epitome of demonic invaders. These creatures formed the backbone of the ancient demon armies, and they are a scourge whenever they intrude into our world. They live to create chaos, to upset any kind of order, to tear down any kind of structure. Paradoxically, we may well have the chaos demons to thank for the favorable outcome of the wars. If they had been capable of submitting to the will of demon princes and fire demons, if they had not resisted any attempt at coordinated strategy, the dragons and their knights would likely never have stood a chance against the enemy’s onslaught.
     quote: |
@@ -3517,7 +3392,6 @@ creatures:
   - id: bestiary-fire-demon
     name: Fire Demon
     source: bestiary
-    kind: monster
     category: Demons
     description: If the disorganized hordes of the demonic realm can be said to have any commanders at all, it is the fire demons. Although they are hardly well-coordinated amongst themselves, their size and fiery authority cause many lesser demons to follow their example, on the battlefield as well as in other contexts. Those that are invited to our world, or somehow find their own way here, are inevitably drawn to volcanoes and other powerful heat sources, as some blacksmiths have experienced when the forge burns particularly hot. And if they cannot find a heat source intense enough, they do not mind creating one themselves. On the contrary, they seem to love spreading their flames, often resulting in calamitous forest fires, scorched fields, and burned-down villages.
     quote: |
@@ -3560,7 +3434,6 @@ creatures:
   - id: bestiary-golem
     name: Golem
     source: bestiary
-    kind: monster
     category: Demons
     description: Demons are not the only beings that can be summoned from the chaos of the demonic realm. It is also home to numerous disembodied spirits, dancing in seas of fire and acid rain. Skilled mages with access to ancient rituals (several of which are actually described in the Codex Chaosium) can summon such demonic ghosts and bind them to matter in our own world. Thus, a golem is formed – a creature made from clay and stone according to the creator’s wishes, whose eyes burn with the fire of the tethered spirit. Once bound, the golem obeys its creator’s commands without question. They are mostly used as bodyguards, as sentries guarding a certain location, or as workers doing heavy, repetitive labor. When the creator dies, the creature continues its work until the end of time.
     quote: |
@@ -3603,7 +3476,6 @@ creatures:
   - id: bestiary-guardian-demon
     name: Guardian Demon
     source: bestiary
-    kind: monster
     category: Demons
     description: Whenever a portal opens between the demonic world and our own, the guardian demons are always there. They thrive on chaos just like any other demon, but are clearly less restless in temperament, as they usually remain in the place they have been assigned to guard. The Codex Chaosium offers no information on these creatures, but since other sources describe guardian demons as particularly vulnerable to the aggression of other (greater) demons, it may well be that they simply do not dare to leave their post. This in turn could explain why they are so brutally hard on each other and on the inhabitants of our world. I pity the halfling, mallard, or human who ends up in a prison camp guarded by guardian demons…
     quote: |
@@ -3645,7 +3517,6 @@ creatures:
   - id: bestiary-shadow-demon
     name: Shadow Demon
     source: bestiary
-    kind: monster
     category: Demons
     description: Shadow demons are another example of incorporeal demonic entities. It is a fiend that haunts our dreams and thoughts, corrupting our minds in order to bring us to our knees. It is always searching for cracks in the fabric that separates our worlds. Great sorrow, tragic fates, magical mishaps, terror and pain – all of it can open rifts large enough for shadow demons to slip through. Once here, they assault our minds, destroying and diminishing our thoughts, making us doubt ourselves, our friends, and all that is good. According to the Codex Chaosium, they literally feed on this; to them our misery and anguish are like the sweetest and most nutritious honey. No wonder they do everything in their power to cast us into the deep well of despair.
     quote: |
@@ -3702,7 +3573,6 @@ creatures:
   - id: adventure-the-worg-rider
     name: The Worg Rider
     source: adventure
-    kind: monster
     category: Opening Scene
     description: The goblin commander is armed with a scimitar and a long spear and rides a bloodthirsty worg. The worg rider counts as a monster in combat and acts on a separate turn.
     attack_dice: D6
@@ -3849,7 +3719,6 @@ creatures:
   - id: adventure-demonic-bats
     name: Demonic Bats
     source: adventure
-    kind: monster
     category: Outskirt
     description: Through Azrahel Koth, Leanara has gained command of a swarm of demonically controlled vampiric bats. Some are kept in a cage, but most of them are scattered in the area around Outskirt. The swarm arrives two rounds after being telepathically summoned by Leanara. For stats, see page 99 in the Rulebook.
     stats_ref: For stats, see page 99 in the Rulebook.
@@ -3983,7 +3852,6 @@ creatures:
   - id: adventure-the-lady
     name: The Lady
     source: adventure
-    kind: monster
     category: Riddermound
     description: The Lady is a translucent, faintly blue shimmering phantom of a tall warrior maiden in full-length chainmail and a gilded headband. Her face looks sad and dignified, but when she attacks it contorts into a terrifying death mask with empty eye sockets. The Lady is a ghost with stats as per page 87 in the Rulebook.
     stats_ref: The Lady is a ghost with stats as per page 87 in the Rulebook.
@@ -3992,14 +3860,12 @@ creatures:
   - id: adventure-the-wight
     name: The Wight
     source: adventure
-    kind: monster
     category: Riddermound
     description: "The wight is a huge warrior in antiquated plate mail and a horned great helm. The open visor reveals a grim skeleton face with empty eye sockets. It moves slowly and heavily through the mound to the awful sound of scraping metal. The wight is protected by ancient draconic magic inside the mound. It takes damage as per the rules, but if defeated inside the gate in the antechamber (#3), it will rise again in room #9 within one shift (exactly when is up to you). The wight has stats as per page 98 in the Rulebook. It has armor rating 8 and wields a morningstar."
     stats_ref: The wight has stats as per page 98 in the Rulebook.
   - id: adventure-the-white-death
     name: The White Death
     source: adventure
-    kind: monster
     category: Bothild’s Lode
     description: A deathly pale, rough-scaled sea serpent with a thick, wide body and a flat head with milky eyes and three curved horns. The beast emerges silently from the water before letting out a terrible, guttural roar that reeks of centuries of death as it attacks. The White Death can be lured to the surface by lowering a suitable prey into the water. In its belly rests Bothild’s mastercrafted battle axe Bothild’s Broadaxe (STR Requirement 10, durability 12), adorned with runes that recount its owner’s exploits.
     attack_dice: D6
@@ -4050,7 +3916,6 @@ creatures:
   - id: adventure-worgs
     name: Worgs
     source: adventure
-    kind: monster
     category: Bothild’s Lode
     attack_dice: D6
     statblocks:
@@ -4073,7 +3938,6 @@ creatures:
   - id: adventure-bothild-s-ghost
     name: Bothild’s Ghost
     source: adventure
-    kind: monster
     category: Bothild’s Lode
     description: The ghost is a blurred echo from the moment of Bothild’s death at the jaws of the White Death. The gaping wound between her neck and shoulder draws all attention from other details, such as the short, scraggly hair, the razor-sharp fringe, and the rat tail-like temple braids. She has also adopted a raspy, hissing voice for dramatic effect. She hates orcs and goblins too much to ever share her secret with them. Bothild has the stats of a ghost as per page 87 in the Rulebook.
     stats_ref: Bothild has the stats of a ghost as per page 87 in the Rulebook.
@@ -4127,7 +3991,6 @@ creatures:
   - id: adventure-murderous-briars
     name: Murderous Briars
     source: adventure
-    kind: monster
     category: Temple of the Purple Flame
     description: The demonic energies leaking out of the portal have caused the briars around the temple to grow huge and develop an appetite for fresh meat. Anyone who gets too close risks being attacked. The briars lack consciousness and act on instinct alone.
     attack_dice: D6
@@ -4190,7 +4053,6 @@ creatures:
   - id: adventure-manticore
     name: Manticore
     source: adventure
-    kind: monster
     category: Temple of the Purple Flame
     description: The manticore has stats as per the Rulebook, but with 56 HP and Ferocity equal to the number of player characters minus one (minimum 1).
     stats_ref: The manticore has stats as per the Rulebook, but with 56 HP and Ferocity equal to the number of player characters minus one (minimum 1).
@@ -4242,7 +4104,6 @@ creatures:
   - id: adventure-glam-glam-the-giant
     name: Glam-Glam the Giant
     source: adventure
-    kind: monster
     category: Tower of Sighs
     description: |
       in order to enter the cellar. The easiest way is to get Glam-Glam to do it. Otherwise, it must be chipped away, which takes at least a shift of hard work and of course wakes up the giant. Pickaxes, chisels, and sledgehammers can be found on the second floor.
@@ -4252,7 +4113,6 @@ creatures:
   - id: adventure-the-eel-beast
     name: The Eel Beast
     source: adventure
-    kind: monster
     category: Oracle Cave
     description: The sea serpent in the lake looks like a large, pale eel. Its glistening body is fast and strong and would like nothing more than to wrap itself around the player characters’ legs and drag them into the deep.
     attack_dice: D4
@@ -4279,7 +4139,6 @@ creatures:
   - id: adventure-spiderlings
     name: Spiderlings
     source: adventure
-    kind: monster
     category: Oracle Cave
     attack_dice: D4
     statblocks:
@@ -4306,7 +4165,6 @@ creatures:
   - id: adventure-the-she-spider-s-offspring
     name: The She-Spider’s Offspring
     source: adventure
-    kind: monster
     category: Oracle Cave
     description: |
       In this lair dwell the older offspring of the ancient female – giant spiders with stats as per page 89 in the Rulebook. They are half as many as the player characters, rounded up.
@@ -4322,7 +4180,6 @@ creatures:
   - id: adventure-the-she-spider-saak-shal
     name: The She-Spider Saak’shal
     source: adventure
-    kind: monster
     category: Oracle Cave
     description: |
       the Misty Vale and can pass on the legend of Um-Durman as well as the rumors about the other adventure sites.
@@ -4373,7 +4230,6 @@ creatures:
   - id: adventure-ambrosius-the-toad
     name: Ambrosius the Toad
     source: adventure
-    kind: monster
     category: Troll’s Spire
     description: The horned toad Ambrosius is the size of a dog and the result of Harga’s experiments. He guards against intruders, but also takes care of the flies that were interfering with the troll’s magical research. Ambrosius keeps still and quiet; only when he has eaten can he be heard croaking contentedly.
     attack_dice: D4
@@ -4427,7 +4283,6 @@ creatures:
   - id: adventure-thistle-prickle-and-thorn
     name: Thistle, Prickle, and Thorn
     source: adventure
-    kind: monster
     category: Troll’s Spire
     description: The harpies roosting atop the tower are the three sisters Thistle, Prickle, and Thorn – cunning creatures who use their home as a lookout when searching for prey. They live safely among the rose bushes, happily bathing in the pool of rainwater and perfuming themselves with rose nectar. They are immune to the scent of roses. They have stats as harpies as per the Rulebook, page 92. If two of them are killed, the last one will retreat to the highest point of the tower and may attack again.
     stats_ref: They have stats as harpies as per the Rulebook, page 92.
@@ -4491,7 +4346,6 @@ creatures:
   - id: adventure-the-basilisk
     name: The Basilisk
     source: adventure
-    kind: monster
     category: Dead Eyes Cave
     description: The basilisk in the Dead Eyes Cave is unusually large – a terrifying beast with a reptilian body, a rooster’s head, and huge, murderous claws.
     attack_dice: D6
@@ -4596,7 +4450,6 @@ creatures:
   - id: adventure-rotlaug
     name: Rotlaug
     source: adventure
-    kind: monster
     category: Fort Malus
     description: |
       The nature spirit Rotlaug is as crooked as a dwarf birch, with skin as rough and pale as the bark of a birch tree. His face is dominated by a wide, toothless mouth. His nose is like a small bud and his eyes like tiny peppercorns. As for his goals in life, he has only two: to be free and take revenge for all his years in captivity (see below).
@@ -4656,7 +4509,6 @@ creatures:
   - id: adventure-gorm
     name: Gorm
     source: adventure
-    kind: monster
     category: The Village of the Day Before
     description: Gorm is an aged cave troll wearing a livery of black and scarlet velvet. His belt is full of various scalpels, severed hands and legs, whole heads, and other trophies from uninvited guests who disturbed the peace. Gorm has stats as a troll, as per page 97 in the Rulebook.
     stats_ref: Gorm has stats as a troll, as per page 97 in the Rulebook.
@@ -4672,7 +4524,6 @@ creatures:
   - id: adventure-the-demon-ix
     name: The Demon Ix
     source: adventure
-    kind: monster
     category: The Village of the Day Before
     attack_dice: D6
     statblocks:
@@ -4711,7 +4562,6 @@ creatures:
   - id: adventure-bone-shambler
     name: Bone Shambler
     source: adventure
-    kind: monster
     category: Road’s End Inn
     description: A damaged skeleton shambling around on broken bones. This undead monstrosity thrives in damp ruins and can silently climb up walls and hang from ceilings, where it waits to ambush its victims.
     attack_dice: D6
@@ -4761,7 +4611,6 @@ creatures:
   - id: adventure-stare
     name: Stare
     source: adventure
-    kind: monster
     category: Road’s End Inn
     description: The player characters can only see Stare’s recessed eyes and what might generously be called teeth. She is chained to the wall but can reach any part of the chamber.
     attack_dice: D6
@@ -4796,7 +4645,6 @@ creatures:
   - id: adventure-witch-hound
     name: Witch Hound
     source: adventure
-    kind: monster
     category: Road’s End Inn
     description: These frothing beasts, with yellow bloodshot eyes, will not stop until their victim is torn to pieces. They are Stare’s old dogs, which she could not be without even after her death.
     attack_dice: D6
@@ -4825,14 +4673,12 @@ creatures:
   - id: adventure-verkon-s-ghost
     name: Verkon’s Ghost
     source: adventure
-    kind: monster
     category: The Isle of Mist
     description: The demon worshiper Verkon served Sathmog back when he ruled the Misty Vale, but lost his life in a ritual gone awry. His restless spirit attacks whoever takes the medallion from his earthly remains. He is a shimmering blue shadow of his living self, robed, with staring eyes and the black mark of Sathmog burned into his forehead. Verkon hisses “All power to Sathmog, our three-tongued liberator” to the player characters, but it takes a successful LANGUAGES roll to understand what he is saying. He is a ghost with stats as per page 96 in the Rulebook. Verkon will leave the player characters alone if they drop his medallion.
     stats_ref: He is a ghost with stats as per page 96 in the Rulebook.
   - id: adventure-the-demon-akrae
     name: The Demon Akrae
     source: adventure
-    kind: monster
     category: The Isle of Mist
     description: Akrae looks human, but with the head and claws of a crab. He lets out a gurgling sound and reeks of rotten seaweed. Akrae is bound to the stone with the pentagram and cannot leave.
     attack_dice: D6
@@ -4873,7 +4719,6 @@ creatures:
   - id: adventure-okvid-the-troll
     name: Okvid the Troll
     source: adventure
-    kind: monster
     category: The Isle of Mist
     description: |
       Okvid is a grumpy old troll who serves as caretaker of the caves under an agreement with Azrahel Koth. As payment, he is allowed to keep all the treasures he picks up from fallen adventurers. Okvid’s regenerative ability allows him to live in the corrosive mist. His voice rumbles like a rockslide, and his stench makes the eyes water. Okvid has stats as a troll on page 97 in the Rulebook, with one addition:
@@ -4943,7 +4788,6 @@ creatures:
   - id: adventure-khaa-the-fire-demon
     name: Khaa the Fire Demon
     source: adventure
-    kind: monster
     category: The Isle of Mist
     description: Khaa was summoned by Azrahel Koth to guard his crypt, but proved to be something of a disappointment as the demon was more interested in discussing the mysteries of existence than fighting. Khaa appears as a humanoid seemingly made of fire, always sizzling, crackling, and smoldering, even while standing still. Its voice hisses like steam escaping wet wood on a large fire.
     attack_dice: D6
@@ -4992,14 +4836,12 @@ creatures:
   - id: adventure-vampire-bats
     name: Vampire Bats
     source: adventure
-    kind: monster
     category: The Isle of Mist
     description: This swarm has stats as per page 99 in the Rulebook. They act on the same turn as Azrahel
     stats_ref: This swarm has stats as per page 99 in the Rulebook.
   - id: adventure-azrahel-koth
     name: Azrahel Koth
     source: adventure
-    kind: monster
     category: The Isle of Mist
     description: The demon sorcerer Azrahel Koth is Sathmog’s greatest servant in the Misty Vale, resurrected by his master to spread the demon cult throughout the world.
     attack_dice: D8

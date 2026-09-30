@@ -426,7 +426,14 @@ struct ContentStore::Loader {
         return out;
     }
 
-    json tablesFromEntities(const json& list, const std::string& where, const std::set<std::string>& rollable = {}, const std::string& fallback = std::string()) {
+    // `defaults`: the file-level "kind", "category" and "source" of a file of entities, which every entity that does not write its own takes
+    // (so a file whose entities all share them says it once).
+    json tablesFromEntities(const json& list, const std::string& where, const std::set<std::string>& rollable = {}, const std::string& fallback = std::string(),
+                            const json& defaults = json::object(), const std::string& cardName = std::string()) {
+        const auto field = [&](const json& e, const char* key) {
+            const std::string own = trimmed(jsonStr(e, key));
+            return own.empty() ? trimmed(jsonStr(defaults, key)) : own;
+        };
         json tables = json::array();
         if (!list.is_array()) return tables;
         std::vector<std::string> order;
@@ -435,7 +442,21 @@ struct ContentStore::Loader {
         for (const json& e : list) {
             ++index;
             const std::string name = e.is_object() ? trimmed(jsonText(e.contains("name") ? e["name"] : json(""))) : std::string();
-            std::string category = e.is_object() ? trimmed(jsonStr(e, "category")) : std::string();
+            std::string category = e.is_object() ? field(e, "category") : std::string();
+            if (category.empty() && !cardName.empty() && e.is_object()) {        // a card's own entity: "<card>: <Kind>" ("Human: First Name")
+                std::string kind = field(e, "kind");
+                bool word = true;
+                for (char& ch : kind) {
+                    if (ch == '-' || ch == '_') {
+                        ch = ' ';
+                        word = true;
+                    } else {
+                        if (word) ch = static_cast<char>(std::toupper(static_cast<unsigned char>(ch)));
+                        word = false;
+                    }
+                }
+                if (!kind.empty()) category = cardName + ": " + kind;
+            }
             if (category.empty()) category = fallback;
             if (name.empty() || category.empty()) {
                 warn(where + ": entity #" + std::to_string(index) + " needs a \"name\" and a \"category\" (skipped)");
@@ -446,7 +467,7 @@ struct ContentStore::Loader {
         }
         for (const std::string& category : order) {
             const std::vector<const json*>& members = groups[category];
-            std::string kind = trimmed(jsonStr(*members.front(), "kind")), dice, source, legacy;
+            std::string kind = field(*members.front(), "kind"), dice, source;
             std::vector<std::string> keys;
             int highest = 0;
             bool described = false;                         // an entity with a "description": a DESCRIPTION column right after the name
@@ -458,8 +479,7 @@ struct ContentStore::Loader {
                 int lo = 0, hi = 0;
                 if (const std::string roll = jsonStr(*e, "roll"); !roll.empty() && parseRoll(roll, lo, hi)) highest = std::max(highest, hi);
                 if (dice.empty()) dice = jsonStr(*e, "dice");
-                if (source.empty()) source = jsonStr(*e, "source");
-                if (legacy.empty()) legacy = jsonStr(*e, "legacy_key");     // the key this category had before (saved boards and recents)
+                if (source.empty()) source = field(*e, "source");
             }
             if (dice.empty() && highest > 0) dice = "D" + std::to_string(highest);
             // a rollable category needs no rolls written: its entities are the numbers 1..N in file order, and the die is as many-sided as they are
@@ -486,14 +506,13 @@ struct ContentStore::Loader {
             if (!dice.empty()) table["dice"] = dice;
             if (!kind.empty()) table["role"] = kind;
             if (!source.empty()) table["source"] = source;
-            if (!legacy.empty()) table["legacy_key"] = legacy;
             tables.push_back(std::move(table));
         }
         return tables;
     }
 
     // The tables an object writes: its "tables" (the plain form, still accepted) and the ones made from its "entities".
-    json tablesOf(const json& o, const std::string& where, const std::string& fallbackCategory = std::string()) {
+    json tablesOf(const json& o, const std::string& where, const std::string& fallbackCategory = std::string(), const json& defaults = json::object(), const std::string& cardName = std::string()) {
         json all = json::array();
         std::set<std::string> rollable;                    // "rollable": the categories the reader can roll on (a random one of them)
         if (const json* r = jsonFind(o, "rollable"); r && r->is_array())
@@ -501,14 +520,14 @@ struct ContentStore::Loader {
         if (const json* t = jsonFind(o, "tables"); t && t->is_array())
             for (const json& x : *t) all.push_back(x);
         if (const json* ents = jsonFind(o, "entities"))
-            for (json& x : tablesFromEntities(*ents, where, rollable, fallbackCategory)) all.push_back(std::move(x));
+            for (json& x : tablesFromEntities(*ents, where, rollable, fallbackCategory, defaults, cardName)) all.push_back(std::move(x));
         return all;
     }
 
     // "tables"/"entities": tables that belong to the card (a kin's first names), shown when it is opened
     void fillCardTables(Kind k, const json& o, const std::string& name, Entry& e) {
         e.tables.clear();          // a replaced card starts over: any table it had is gone unless this JSON writes its own
-        const json tables = tablesOf(o, std::string(kindKey(k)) + " \"" + name + "\"");
+        const json tables = tablesOf(o, std::string(kindKey(k)) + " \"" + name + "\"", std::string(), json::object(), name);
         int index = 0;
         for (const json& t : tables) {
             ++index;
@@ -960,8 +979,6 @@ struct ContentStore::Loader {
         fillTable(o, t);
         t.id = kPackTableBase + static_cast<int>(st.tables_.size()) + 1;
         st.byKey_[static_cast<int>(Kind::Table)][t.key] = t.id;
-        // a key this table had before the books' tables became part of Core ("#12"): saved boards and recents still find it
-        if (const std::string legacy = jsonStr(o, "legacy_key"); !legacy.empty()) st.byKey_[static_cast<int>(Kind::Table)][legacy] = t.id;
         st.tables_.push_back(std::move(t));
         ++pk.counts[static_cast<int>(Kind::Table)];
     }
@@ -1170,7 +1187,10 @@ struct ContentStore::Loader {
                     return false;
                 }
                 if (!root.is_object()) continue;
-                const json tables = tablesOf(root, file, categoryFromFile(file));
+                json fileDefaults = json::object();                 // a file of entities may say their "kind", "category" or "source" once, at its top
+                for (const char* key : {"kind", "category", "source"})
+                    if (const json* v = jsonFind(root, key); v && v->is_string()) fileDefaults[key] = *v;
+                const json tables = tablesOf(root, file, categoryFromFile(file), fileDefaults);
                 int index = 0;
                 for (const json& t : tables) {
                     ++index;

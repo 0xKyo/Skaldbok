@@ -1,18 +1,10 @@
-format: 1
+kind: terrain
 entities:
   - name: Cramped
-    kind: terrain
-    category: Terrain
     description: There is little space or a low ceiling. All melee weapons except piercing weapons and subtle weapons get a bane on all rolls.
   - name: Rough
-    kind: terrain
-    category: Terrain
     description: The terrain is difficult to traverse. Whenever you move, you must make an ACROBATICS roll (not an action). Failure means that you fall over and lose the rest of your movement this round.
   - name: Dimly Lit
-    kind: terrain
-    category: Terrain
     description: Imposes a bane on all ranged attacks.
   - name: Combat Maps
-    kind: terrain
-    category: Terrain
     description: Combat can take place entirely in your imagination, with the GM describing the battlefield and specifying the distance between combatants. However, grid maps are a useful tool in combat, as they can be used to keep track of where everyone is. Each square on the map usually represents an area of 2×2 meters. Doors, walls, and ascents are also shown on the map. Complete adventures for Dragonbane include maps of important sites. As a rule, each square on the map can only be occupied by one person at a time, but it is possible to pass through a square where a friendly combatant is positioned. Diagonal movements and attacks are allowed, but not if both squares you want to pass between are blocked or occupied by hostile opponents. You can use miniature figures to represent combatants on the map. The boxed Dragonbane Core Set includes a number of illustrated cardboard figures with plastic bases. You can also use painted figures of plastic or metal. Five-Foot Squares? If you are used to combat maps with 5×5 foot squares and perhaps even own a bunch of such maps, you can easily use them in Dragonbane – just use the 5×5 foot squares as if they were 2×2 meters. It will not affect anything in the game.

@@ -351,6 +351,36 @@ void chat() {
         for (const char* where : {"weapons", "inventory"})
             for (const json& it : customSheet[where]) carried |= it["name"] == wanted;
         check(withCustom.status == 201 && !weaponCards.empty() && carried, "custom gear chosen freely is on the sheet, and an unknown key is ignored");
+        // homebrew: the GM makes a creature in their own pack, and it shows up in the Reference for everybody; edit and delete work too
+        const std::string homebrew = "/api/gm/homebrew/creatures";
+        const json newCreature = {{"name", "Tundra Shade"}, {"kind", "monster"}, {"category", "Undead"}, {"description", "Risen when a blizzard lasts too long."},
+                                  {"statblocks", json::array({{{"fields", {{"Ferocity", "2"}, {"Movement", "10"}, {"HP", "18"}}}}})},
+                                  {"attacks", json::array({{{"roll", "1-2"}, {"name", "Rimed Claws"}, {"text", "Rakes one target for D8 damage."}}})},
+                                  {"abilities", json::array({{{"name", "Undead"}, {"text", "Immune to poison."}}})}};
+        const WebResponse madeCreature = get(app, homebrew, gmTok, "10.0.0.1", "POST", newCreature.dump());
+        const std::string creatureId = body(madeCreature).value("id", ""), creatureKey = body(madeCreature).value("key", "");
+        check(madeCreature.status == 201 && creatureId == "tundra-shade" && creatureKey == "custom/monster/tundra-shade", "a creature made on the GM page is saved in the GM's own pack");
+        const auto creatureNamed = [&](const std::string& route, const std::string& token) -> json {
+            const json all = body(get(app, route, token));                  // (kept in a variable: a range over a temporary would dangle)
+            for (const json& c : all["creatures"])
+                if (c["name"] == "Tundra Shade") return c;
+            return json(nullptr);
+        };
+        const json listed2 = creatureNamed("/api/gm/creatures", gmTok);
+        check(listed2.is_object() && listed2["key"] == creatureKey && creatureNamed("/api/creatures", brenna).is_object(), "it is in the Reference right away, for the GM and for the players");
+        const json detail = body(get(app, "/api/creatures/" + creatureKey, brenna));
+        check(detail["attacks"].size() == 1 && detail["blocks"].size() == 1 && detail["kind"] == "monster" && detail["category"] == "Undead", "with its stat block and its attacks");
+        check(body(get(app, homebrew, gmTok))["creatures"].size() == 1 && get(app, homebrew, brenna).status != 200, "the GM lists their own creatures; a player cannot");
+        json edited2 = newCreature;
+        edited2["name"] = "Tundra Shade Elder";
+        check(get(app, homebrew + "/" + creatureId, gmTok, "10.0.0.1", "PUT", edited2.dump()).status == 200 && creatureNamed("/api/gm/creatures", gmTok).is_null() &&
+                  body(get(app, homebrew, gmTok))["creatures"][0]["id"] == creatureId,
+              "editing keeps its id and changes its name everywhere");
+        check(get(app, homebrew, gmTok, "10.0.0.1", "POST", R"({"name": "  "})").status == 400 && get(app, homebrew, gmTok, "10.0.0.1", "POST", R"({"name": "X", "kind": "dragon"})").status == 400 &&
+                  get(app, homebrew + "/nope", gmTok, "10.0.0.1", "PUT", newCreature.dump()).status == 404 && get(app, homebrew + "/..%2Fx", gmTok, "10.0.0.1", "PUT", newCreature.dump()).status != 200,
+              "a creature needs a name and a real kind, an unknown id is a 404");
+        check(get(app, homebrew + "/" + creatureId, gmTok, "10.0.0.1", "DELETE").status == 200 && body(get(app, homebrew, gmTok))["creatures"].empty() && get(app, homebrew + "/" + creatureId, gmTok, "10.0.0.1", "DELETE").status == 404,
+              "deleting removes it from the pack");
         // the GM can change kin, profession and school on a sheet (a player cannot: see the sheet-editing checks)
         const json gmSheet = body(get(app, "/api/gm/characters/" + customId, gmTok));
         check(gmSheet["doc"].contains("kin") && gmSheet["doc"].contains("profession") && gmSheet["doc"].contains("school"), "the GM's editable sheet carries kin, profession and school");
