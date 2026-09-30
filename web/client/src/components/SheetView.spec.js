@@ -264,6 +264,47 @@ describe('SheetView editing', () => {
   });
 });
 
+describe('SheetView weapon damage', () => {
+  it('shows the damage bonus next to a weapon\'s damage: STR for a melee weapon, AGL for a ranged one', () => {
+    const m = meReadonly();
+    m.derived.damageBonus = { str: 'D4', agl: 'D6' };
+    m.equipment.weapons[0].ranged = false;
+    m.equipment.weapons[1].ranged = true;
+    const w = mount(SheetView, { props: { me: m } });
+    const bonuses = w.findAll('[data-test=weapon-damage-bonus]');
+    expect(bonuses.map((b) => b.text())).toEqual(['+D4', '+D6']);
+    expect(bonuses[0].attributes('title')).toBe('Damage bonus STR');
+    expect(bonuses[1].attributes('title')).toBe('Damage bonus AGL');
+  });
+
+  it('shows nothing when the character has no damage bonus of that kind', () => {
+    const m = meReadonly();
+    m.derived.damageBonus = { str: '', agl: '' };
+    const w = mount(SheetView, { props: { me: m } });
+    expect(w.find('[data-test=weapon-damage-bonus]').exists()).toBe(false);
+  });
+});
+
+describe('SheetView tabs for a phone', () => {
+  it('is tabs on a phone: stats, skills, abilities, gear and details, opening on the stats', async () => {
+    const w = mount(SheetView, { props: { me: meReadonly() } });
+    const tabs = w.findAll('[data-test=sheet-tabs] button');
+    expect(tabs.map((t) => t.text())).toEqual(['Stats', 'Skills', 'Abilities', 'Gear', 'Details']);
+    expect(w.get('.sheet').attributes('data-tab')).toBe('stats');
+    expect(w.get('[data-test=sheet-tab-stats]').attributes('aria-pressed')).toBe('true');
+    await w.get('[data-test=sheet-tab-gear]').trigger('click');
+    expect(w.get('.sheet').attributes('data-tab')).toBe('gear');
+    expect(w.get('[data-test=sheet-tab-gear]').attributes('aria-pressed')).toBe('true');
+    expect(w.get('[data-test=sheet-tab-stats]').attributes('aria-pressed')).toBe('false');
+    await w.get('[data-test=sheet-tab-skills]').trigger('click');
+    expect(w.get('.sheet').attributes('data-tab')).toBe('skills');
+    await w.get('[data-test=sheet-tab-abilities]').trigger('click');
+    expect(w.get('.sheet').attributes('data-tab')).toBe('abilities');
+    await w.get('[data-test=sheet-tab-details]').trigger('click');
+    expect(w.get('.sheet').attributes('data-tab')).toBe('details');
+  });
+});
+
 describe('SheetView worn banes', () => {
   it('applies the banes of the worn armor and helmet by itself: on the skills, on the item and on ranged attacks', () => {
     const m = meReadonly();
@@ -271,11 +312,13 @@ describe('SheetView worn banes', () => {
     m.equipment.weapons[0].ranged = true;
     const w = mount(SheetView, { props: { me: m } });
     expect(w.get('[data-test=armor-bane]').text()).toContain('Evade · Sneaking');
-    expect(w.get('[data-test=helmet-bane]').text()).toContain('Awareness · Ranged attacks');
+    expect(w.get('[data-test=helmet-bane]').text()).toContain('Awareness');
+    expect(w.get('[data-test=helmet-bane]').text()).not.toContain('Ranged attacks');            // not written: the ranged weapons are outlined instead
     const flaggedSkills = w.findAll('.skill.flagged').map((s) => s.text());
     for (const name of ['Evade', 'Awareness']) expect(flaggedSkills.some((t) => t.includes(name))).toBe(true);
     expect(flaggedSkills.some((t) => t.includes('Acrobatics'))).toBe(false);
-    expect(w.find('[data-test=weapon-bane]').exists()).toBe(true);
+    expect(w.find('[data-test=weapon-bane]').exists()).toBe(false);
+    expect(w.get('[data-test=weapon]').classes()).toContain('flagged');
   });
 
   it('shows no bane line and flags nothing extra when nothing worn has one', () => {

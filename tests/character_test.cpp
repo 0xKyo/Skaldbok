@@ -8,7 +8,6 @@
 #include "game/creation.h"
 #include "game/dice.h"
 #include "parsing/packs.h"
-#include "game/party.h"
 #include "testutil.h"
 
 using namespace gm;
@@ -331,47 +330,6 @@ int main(int argc, char** argv) {
     for (const Character& ch : std::vector<Character>(store.all())) store.remove(ch.id);
     SDL_RemovePath((dir + "/junk.json").c_str());
     SDL_RemovePath(exported.c_str());
-
-    // ---------------------------------------------------------------------------------------- parties
-    {
-        const std::string pdir = test::scratch("parties");
-        PartyStore parties;
-        parties.setDir(pdir);
-        for (const Party& old : std::vector<Party>(parties.all())) parties.remove(old.id);
-        Party party;
-        party.name = "Zeta party";
-        party.members = {"c-1", "c-2"};
-        party.notes = "line one\nwith \"quotes\" and ü";
-        check(parties.save(party, &err) && !party.id.empty() && party.id[0] == 'p' && party.createdAt.size() == 20, "a party is saved with an id and timestamps");
-        Party second;
-        second.name = "Alpha party";
-        parties.save(second);
-        check(parties.all().size() == 2 && parties.all()[0].name == "Alpha party", "parties are kept sorted by name");
-        Party back2;
-        check(Party::fromJson(party.toJson(), back2, nullptr) && back2.members == party.members && back2.notes == party.notes && back2.name == party.name,
-              "a party survives a JSON round-trip");
-        Party dupes;
-        check(Party::fromJson("{\"name\":\"D\",\"members\":[\"a\",\"b\",\"a\"]}", dupes, nullptr) && dupes.members.size() == 2, "a character listed twice counts once");
-        check(!Party::fromJson("[1]", dupes, &err) && !Party::fromJson("{ nope", dupes, &err), "garbage is refused");
-
-        check(parties.addMember(party.id, "c-3") && parties.find(party.id)->members.size() == 3 && !parties.addMember(party.id, "c-3") &&
-                  !parties.addMember("p-nope", "c-9") && !parties.addMember(party.id, ""),
-              "adding a member: once, to an existing party, not empty");
-        check(parties.partyOf("c-2") && parties.partyOf("c-2")->id == party.id && !parties.partyOf("c-404"), "which party a character is in");
-        parties.forgetCharacter("c-2");
-        check(!parties.find(party.id)->has("c-2") && parties.find(party.id)->members.size() == 2, "a deleted character leaves every party");
-        PartyStore fresh;
-        fresh.setDir(pdir);
-        check(fresh.all().size() == 2 && fresh.find(party.id) && !fresh.find(party.id)->has("c-2"),
-              "a new store reads the parties from disk, changes included");
-        test::write(pdir + "/junk.json", "not json");
-        test::write(pdir + "/bad id.json", "{\"name\":\"x\"}");
-        fresh.reload();
-        check(fresh.all().size() == 2, "a damaged file, or one with an unsafe name, is skipped");
-        check(!parties.remove("../x") && parties.remove(party.id) && parties.remove(second.id) && parties.all().empty(), "removing checks the id and deletes the file");
-        SDL_RemovePath((pdir + "/junk.json").c_str());
-        SDL_RemovePath((pdir + "/bad id.json").c_str());
-    }
 
     return test::finish();
 }

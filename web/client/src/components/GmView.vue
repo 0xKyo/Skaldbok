@@ -1,11 +1,10 @@
 <script setup>
-// GM interface: tabs along the top, like the player's page. Character (a dropdown of every character, with its sheet), Parties (every
-// party with its characters as a reduced sheet), Chat and Rules (the Reference, the same the players have).
+// GM interface: tabs along the top, like the player's page. Character (a dropdown of every character, with its sheet), Chat and Rules
+// (the Reference, the same the players have).
 import { computed, onBeforeUnmount, onMounted, ref, watchEffect } from 'vue';
 import { ApiError, apiGet, apiSend } from '../api.js';
 import ChatView from './ChatView.vue';
 import CharacterCreator from './CharacterCreator.vue';
-import GmPartyPanel from './GmPartyPanel.vue';
 import ReferenceView from './ReferenceView.vue';
 import { useReference } from '../reference.js';
 import SheetView from './SheetView.vue';
@@ -18,10 +17,9 @@ const props = defineProps({
 
 // ---- state ----
 const characters = ref([]);
-const parties = ref([]);
 const threads = ref([]);
 
-const tab = ref('character');       // 'character' | 'party' | 'chat' | 'rules'
+const tab = ref('character');       // 'character' | 'chat' | 'rules'
 const selectedId = ref(null);       // the character the Character and Chat tabs show
 const sheet = ref(null);
 const chat = ref({ messages: [], gmRead: '', playerRead: '' });
@@ -29,21 +27,16 @@ const reference = useReference(props.token, '/gm');
 
 const offline = ref(false);
 const problem = ref('');
-const newPartyName = ref('');
-const showNewParty = ref(false);
 const creator = ref(null);          // null, or the creator is open: 'wizard' from the first step, 'random' already filled in
 const confirmingCharDelete = ref(false);
 let timer = null;
 
 const selected = computed(() => characters.value.find((c) => c.id === selectedId.value) ?? null);
-const inAParty = computed(() => new Set(parties.value.flatMap((p) => p.members)));
-const soloCharacters = computed(() => characters.value.filter((c) => !inAParty.value.has(c.id)));
 const unreadOf = (id) => threads.value.find((t) => t.characterId === id)?.unread ?? 0;
 const totalUnread = computed(() => threads.value.reduce((n, t) => n + (t.unread ?? 0), 0));
 
 const tabs = computed(() => [
   { id: 'character', label: 'Character' },
-  { id: 'party', label: 'Parties' },
   { id: 'chat', label: totalUnread.value > 0 && tab.value !== 'chat' ? `Chat (${totalUnread.value})` : 'Chat' },
   { id: 'rules', label: 'Rules' },
 ]);
@@ -71,14 +64,9 @@ async function loadThreadSummaries() {
   threads.value = data.threads ?? [];
 }
 
-async function loadParties() {
-  const data = await apiGet('/gm/parties', props.token);
-  parties.value = data.parties ?? [];
-}
-
 async function refresh() {
   try {
-    await Promise.all([loadCharacterList(), loadThreadSummaries(), loadParties()]);
+    await Promise.all([loadCharacterList(), loadThreadSummaries()]);
     // the dropdown always has a character picked while there is one
     if (!characters.value.some((c) => c.id === selectedId.value)) {
       selectedId.value = null;
@@ -107,12 +95,6 @@ async function selectCharacter(id) {
   if (id) await loadSelected();
 }
 
-// A name in a party opens that character's sheet.
-async function openCharacter(id) {
-  tab.value = 'character';
-  await selectCharacter(id);
-}
-
 function openCreator(mode) {
   tab.value = 'character';
   creator.value = mode;
@@ -121,10 +103,11 @@ function openCreator(mode) {
 async function characterCreated(id) {
   creator.value = null;
   await refresh();
-  await openCharacter(id);
+  tab.value = 'character';
+  await selectCharacter(id);
 }
 
-// Deleting a character removes its file (and it leaves every party); it asks first.
+// Deleting a character removes its file; it asks first.
 async function deleteCharacter() {
   const id = selectedId.value;
   if (!id) return;
@@ -135,17 +118,6 @@ async function deleteCharacter() {
   selectedId.value = null;
   sheet.value = null;
   await refresh();
-}
-
-// ---- parties ----
-async function createParty() {
-  if (!newPartyName.value.trim()) return;
-  try {
-    await apiSend('POST', '/gm/parties', props.token, { name: newPartyName.value.trim() });
-    newPartyName.value = '';
-    showNewParty.value = false;
-    await loadParties();
-  } catch { /* the list shows nothing new */ }
 }
 
 // If the sheet links to a rule, open it in the Rules tab
@@ -222,42 +194,6 @@ watchEffect(() => {
         <p v-else class="muted" style="padding: 1rem;">There are no characters yet. Use “+ New character” or “Random”.</p>
       </template>
 
-      <!-- Parties: every party, with its characters as a reduced sheet -->
-      <template v-else-if="tab === 'party'">
-        <div class="parties-bar">
-          <button v-if="!showNewParty" type="button" class="pick-btn" data-test="new-party" @click="showNewParty = true">+ New party</button>
-          <form v-else class="new-party" @submit.prevent="createParty">
-            <input v-model="newPartyName" placeholder="Party name…" aria-label="Party name" data-test="new-party-name" />
-            <button type="submit" class="pick-btn" :disabled="!newPartyName.trim()">Create</button>
-            <button type="button" class="pick-btn" @click="showNewParty = false">Cancel</button>
-          </form>
-        </div>
-        <p v-if="!parties.length" class="muted" style="padding: 0 0 1rem;">There are no parties yet.</p>
-        <GmPartyPanel
-          v-for="p in parties"
-          :key="p.id"
-          :party="p"
-          :characters="characters"
-          :token="token"
-          @changed="loadParties"
-          @deleted="loadParties"
-          @open-character="openCharacter"
-        />
-        <section v-if="soloCharacters.length" class="solo" data-test="solo">
-          <h2>Solo <span class="muted">characters in no party</span></h2>
-          <table class="members">
-            <thead><tr><th>Name</th><th>Class</th><th>Kin</th></tr></thead>
-            <tbody>
-              <tr v-for="c in soloCharacters" :key="c.id" data-test="solo-member">
-                <td><button type="button" class="member-name" @click="openCharacter(c.id)">{{ c.name || c.id }}</button></td>
-                <td>{{ c.profession }}</td>
-                <td>{{ c.kin }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </section>
-      </template>
-
       <!-- Chat: for now the player's own view, of the character picked above -->
       <template v-else-if="tab === 'chat'">
         <ChatView
@@ -280,13 +216,11 @@ watchEffect(() => {
 </template>
 
 <style scoped>
-.pick-bar, .parties-bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.pick-bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
 .pick-bar select { flex: 1 1 260px; max-width: 460px; font: inherit; padding: 6px 10px; border: 1px solid var(--line); border-radius: 8px; background: #fbf6e6; color: var(--ink); }
 .pick-btn { padding: 5px 14px; border: 1px solid var(--green-dark); border-radius: 20px; background: none; color: var(--green-dark); font: inherit; font-size: 0.85rem; font-weight: 600; cursor: pointer; }
 .pick-btn:hover:not(:disabled) { background: var(--green-dark); color: #f3ead2; }
 .pick-btn:disabled { opacity: 0.45; cursor: default; }
-.new-party { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.new-party input { font: inherit; padding: 5px 10px; border: 1px solid var(--line); border-radius: 8px; background: #fbf6e6; color: var(--ink); }
 
 .char-actions { margin-left: auto; display: inline-flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: flex-end; }
 .player-link { font-size: 0.85rem; color: var(--green-dark); }
@@ -296,12 +230,5 @@ watchEffect(() => {
 .del-btn.sure { background: var(--danger, #c0392b); border-color: var(--danger, #c0392b); color: #fff; }
 .confirm { display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 0.85rem; color: var(--danger, #c0392b); }
 
-.solo h2 { font-size: 1.1rem; margin: 0 0 8px; color: var(--green-dark); }
-.solo h2 .muted { font-size: 0.8rem; font-weight: 400; margin-left: 8px; }
-.members { width: 100%; border-collapse: collapse; border: 1px solid var(--line); border-radius: var(--radius); background: var(--cream); }
-.members th { text-align: left; padding: 7px 12px; }
-.members td { padding: 8px 12px; border-top: 1px solid var(--line); }
-.member-name { border: 0; background: none; padding: 0; font: inherit; font-weight: 600; color: var(--green-dark); cursor: pointer; text-align: left; }
-.member-name:hover { text-decoration: underline; }
 .muted { color: var(--muted); }
 </style>

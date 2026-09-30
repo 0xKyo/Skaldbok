@@ -74,7 +74,7 @@ void SettingsScreen::draw() {
 
     // ---- the web server ----------------------------------------------------------------------------------
     bigText("Web server for players", 1.6f, kAccent);
-    ImGui::TextWrapped("Each player opens their own link in a browser (a phone is fine) and sees their character, their party and the rules. "
+    ImGui::TextWrapped("Each player opens their own link in a browser (a phone is fine) and sees their character and the rules. "
                        "You open the GM page with the button below. The page updates by itself when anything changes. The server is off until you start it below.");
 
     // ---- state ---------------------------------------------------------------------------------------------

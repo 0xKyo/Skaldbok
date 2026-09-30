@@ -84,16 +84,6 @@ p { margin: 0 0 0.6em; }
 .chip.on { color: #fff; background: var(--red-dark); border-color: var(--red-dark); }
 .chip.src { color: var(--green-dark); border-color: var(--green-light); }
 .chip.homebrew { color: #6a3f8f; border-color: #b59bd0; }
-.chip.you { color: #fff; background: var(--green); border-color: var(--green-dark); }
-
-/* hit / willpower points on the party page */
-.meter { margin: 6px 0 12px; }
-.meter .head { display: flex; justify-content: space-between; font-size: 0.9rem; }
-.meter .bar { height: 12px; border-radius: 6px; background: var(--parchment-dark); overflow: hidden; margin-top: 3px; }
-.meter .fill { height: 100%; background: var(--green); transition: width 0.4s; }
-.meter.warn .fill { background: var(--yellow); }
-.meter.danger .fill { background: var(--red); }
-.meter.wp .fill { background: var(--green-light); }
 
 table { width: 100%; border-collapse: collapse; }
 th { text-align: left; color: var(--brown); font-weight: 600; font-size: 0.8rem; padding: 4px 6px; border-bottom: 1px solid var(--line); }
@@ -156,8 +146,24 @@ input[type='search']:focus-visible { outline: 2px solid var(--green); }
 
 /* ---- the character sheet (page 1 of the printed sheet: the green one) ------------------------------------- */
 .sheet { display: grid; gap: 14px; grid-template-columns: minmax(0, 1fr);
-  grid-template-areas: 'tools' 'issues' 'name' 'ident' 'appear' 'attrs' 'points' 'skills' 'abil' 'inv' 'coins' 'armor' 'helmet' 'weapons' 'memento' 'tiny' 'about';
+  grid-template-areas: 'tools' 'issues' 'name' 'attrs' 'points' 'subtabs' 'ident' 'appear' 'skills' 'abil' 'inv' 'coins' 'armor' 'helmet' 'weapons' 'memento' 'tiny' 'about';
 }
+.a-subtabs { grid-area: subtabs; margin: 0; }
+/* under 900px the sheet is tabs, one at a time: stats, skills, abilities, gear, details; the name stays on top */
+@media (max-width: 899px) {
+  .sheet { display: flex; flex-direction: column; }                                  /* one column: what is hidden leaves no gap behind */
+  .sheet .a-tools, .sheet .a-issues, .sheet .a-name { order: -2; }                  /* the name, then the tab bar, then the tab */
+  .sheet .a-subtabs { order: -1; flex-wrap: nowrap; gap: 4px; overflow-x: auto; padding: 0 0 2px; }
+  .sheet .a-subtabs button { flex: 1 1 auto; padding: 6px 8px; font-size: 0.85rem; white-space: nowrap; }
+  .sheet .a-ident, .sheet .a-appear { order: 1; } .sheet .a-about { order: 2; }
+  .sheet .a-abil { grid-template-columns: minmax(0, 1fr) max-content; justify-content: stretch; }          /* the abilities column fills the width: the banners stretch, the values sit at the right */
+  .sheet:not([data-tab='stats']) :is(.a-attrs, .a-points) { display: none; }
+  .sheet:not([data-tab='details']) :is(.a-ident, .a-appear, .a-about) { display: none; }
+  .sheet:not([data-tab='abilities']) .a-abil { display: none; }
+  .sheet:not([data-tab='skills']) .a-skills { display: none; }
+  .sheet:not([data-tab='gear']) :is(.a-weapons, .a-armor, .a-helmet, .a-inv, .a-coins, .a-memento, .a-tiny) { display: none; }
+}
+@media (min-width: 900px) { .a-subtabs { display: none; } }
 .sheet > * { min-width: 0; }
 .a-tools { grid-area: tools; } .a-issues { grid-area: issues; } .a-name { grid-area: name; } .a-ident { grid-area: ident; } .a-appear { grid-area: appear; } .a-attrs { grid-area: attrs; }
 .a-abil { grid-area: abil; } .a-skills { grid-area: skills; } .a-inv { grid-area: inv; }
@@ -165,6 +171,7 @@ input[type='search']:focus-visible { outline: 2px solid var(--green); }
 .a-helmet { grid-area: helmet; } .a-weapons { grid-area: weapons; } .a-about { grid-area: about; }
 .a-points { grid-area: points; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .a-hp { grid-column: 1; } .a-wp { grid-column: 2; }
+@media (max-width: 479px) { .a-points { grid-template-columns: 1fr; } .a-hp, .a-wp { grid-column: 1; } }          /* on a phone HP and WP take a row each: their circles have room */
 .a-hp, .a-wp { display: flex; }                                  /* the two cards are as tall as the taller one */
 .a-hp > .points, .a-wp > .points { flex: 1; min-width: 0; }
 
@@ -193,7 +200,7 @@ input[type='search']:focus-visible { outline: 2px solid var(--green); }
       '.      skills  skills  tiny'
       'about  about   about   about'; }
   .skill-cols { grid-template-columns: 1fr 1fr; }
-  .a-name { justify-self: center; width: min(100%, 26rem); }                  /* the name sits in the middle of the page, between the two columns
+  .a-name { justify-self: center; width: min(100%, 26rem); }                  /* the name sits in the middle of the page, between the two columns */
 }
 
 /* the green ornamented banner that heads every block */
@@ -212,7 +219,7 @@ input[type='search']:focus-visible { outline: 2px solid var(--green); }
 /* the banners of the abilities column (damage bonuses, movement, abilities & spells) are as wide as the widest one, so they line up */
 .a-abil { grid-template-columns: max-content max-content; justify-content: start; column-gap: 5px; }
 .a-abil > .field-row { display: contents; }
-.a-abil > .banner { width: auto; }
+.a-abil .banner { width: auto; }
 .a-abil > :not(.field-row):not(.banner) { grid-column: 1 / -1; }
 .field { display: flex; align-items: center; justify-content: center; min-height: 1.7rem; padding: 2px 6px; border: 1px solid var(--line); border-radius: 6px;
   background: linear-gradient(var(--parchment), #e2d3a8); font-family: var(--display); font-weight: 800; font-size: 1rem; color: var(--ink); }
@@ -225,8 +232,9 @@ input[type='search']:focus-visible { outline: 2px solid var(--green); }
 
 /* underlined "form line" rows */
 .lines { display: grid; }
+.lines { --label-w: 6.6rem; }                                   /* one label width for every line: the values all start at the same place */
 .line { display: flex; align-items: baseline; gap: 8px; min-height: 2rem; padding: 3px 2px 1px; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
-.line .k { flex: 0 0 auto; min-width: 4.6rem; font-family: var(--display); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.line .k { flex: 0 0 var(--label-w, 6.6rem); min-width: var(--label-w, 6.6rem); font-family: var(--display); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
 /* number column shared by skill lines and edit rows */
 .n { flex: 0 0 1.4rem; color: var(--muted); font-size: 0.85rem; }
 .line.empty { color: transparent; }
@@ -300,6 +308,7 @@ input[type='search']:focus-visible { outline: 2px solid var(--green); }
 .weapon { padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--parchment); }
 .weapon .name { font-weight: 700; }
 .weapon .stats { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 2px; font-size: 0.85rem; }
+.weapon .stats .dmg-bonus { margin-left: 4px; font-weight: 700; color: var(--green); }          /* the damage bonus (STR melee, AGL ranged) next to the weapon's damage */
 .weapon .stats span b { font-family: var(--display); font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--brown); margin-right: 4px; }
 
 .box { min-height: 5.5rem; padding: 8px 10px; border: 1px solid #b7a26f; border-radius: 6px; background: linear-gradient(#efe4c0, #e4d4a6); overflow-wrap: anywhere; }
@@ -330,9 +339,8 @@ textarea.edit { resize: none; field-sizing: content; min-height: 1.5em; }
 input[type="number"].edit:not(:focus) { -moz-appearance: textfield; }
 input[type="number"].edit:not(:focus)::-webkit-outer-spin-button,
 input[type="number"].edit:not(:focus)::-webkit-inner-spin-button { -webkit-appearance: none; }
-.line .edit { flex: 1 1 auto; }
-.line.line-top { display: grid; grid-template-columns: max-content 1fr; gap: 8px; align-items: start; }
-.line .age-select { flex: 0 0 auto; }
+.line .edit { flex: 1 1 auto; padding-left: 0; padding-right: 0; }          /* what is typed or chosen starts where plain text would */
+.line.line-top { display: grid; grid-template-columns: var(--label-w, 6.6rem) 1fr; gap: 8px; align-items: baseline; }        /* the label and the first line of its text share a baseline */
 
 /* transparent text-buttons for skill names and weapon titles */
 .skill-link, .weapon-title { background: none; border: none; padding: 0; font: inherit; cursor: pointer; text-align: left; }
@@ -385,6 +393,8 @@ button.pip.tap { padding: 0; cursor: pointer; width: 1.6rem; height: 1.6rem; }
 .issue.rejected { border-color: var(--red-dark); background: #f3c9be; }
 .gem.flagged .ring { border-color: var(--red); box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--red); }
 .skill.flagged { color: var(--red-dark); }
+.weapon.flagged { border-radius: 6px; outline: 2px solid var(--red); outline-offset: 2px; }          /* a bane on these attacks: the same red as a skill with a bane */
+.weapon.flagged .weapon-title, .weapon.flagged .stats b { color: var(--red-dark); }
 .skill.flagged .lvl, .skill.flagged .lvl-input { color: var(--red-dark); border-color: var(--red); }
 .field.flagged { color: var(--red-dark); border-color: var(--red); background: #f7dcd3; }
 

@@ -59,4 +59,18 @@ describe('CreatureView tags', () => {
     await tags[1].trigger('click');
     expect(names(w)).toHaveLength(4);
   });
+
+  it('on a phone the list and the creature take turns: a tap opens the creature and Back returns to the list', async () => {
+    const detail = { id: 1, key: 'a', name: 'Guard', kind: 'npc', category: '', pack: 'Core', image: null, blocks: [], attacks: [], abilities: [], description: '', body: '', tables: [], statsRef: '' };
+    const w = await mountIt();
+    vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, status: 200, json: async () => structuredClone(detail) })));
+    expect(w.find('[data-test=creature-back]').exists()).toBe(false);
+    expect(w.get('.c-layout').classes()).not.toContain('detail-open');
+    await w.get('.c-row').trigger('click');
+    await flushPromises();
+    expect(w.get('.c-layout').classes()).toContain('detail-open');
+    expect(w.get('[data-test=creature-back]').exists()).toBe(true);
+    await w.get('[data-test=creature-back]').trigger('click');
+    expect(w.get('.c-layout').classes()).not.toContain('detail-open');
+  });
 });

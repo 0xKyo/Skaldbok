@@ -29,6 +29,11 @@ let request = 0;
 
 const showDetail = computed(() => selected.value !== null);
 
+// Side by side (wide screens) the list always has something open beside it: the first entry. On a phone the list and the entry take turns,
+// so nothing is opened by itself: the list is what you see first.
+const sideBySide = () => (typeof window.matchMedia === 'function' ? window.matchMedia('(min-width: 640px)').matches : true);
+const firstOf = (list) => (sideBySide() ? (list[0] ?? null) : null);
+
 // The rule chapter object for the currently selected type (null in Tables mode — only active in Rules mode)
 const currentChapter = computed(() =>
   props.mode === 'rules'
@@ -72,7 +77,7 @@ const grouped = computed(() => props.mode === 'rules' && layout.value === 'group
 const groupNames = computed(() => [...new Set(entries.value.map((e) => e.tab).filter(Boolean))]);
 const groupTab = ref(0);
 watch(groupTab, () => {
-  if (!shownEntries.value.includes(selected.value)) selected.value = shownEntries.value[0] ?? null;   // a new tab shows its first rule
+  if (!shownEntries.value.includes(selected.value)) selected.value = firstOf(shownEntries.value);   // a new tab shows its first rule (not on a phone)
 });
 
 // Chapters with `layout: tabs` (Actions): every entry is a tab, and the rows of its table are the list, with each row's info beside it.
@@ -128,8 +133,8 @@ async function load() {
       entries.value = sects;
       if (entries.value.length) {
         selected.value = pendingKey
-          ? (entries.value.find((e) => e.key === pendingKey || e.title?.toLowerCase() === pendingKey) ?? entries.value[0])
-          : entries.value[0];
+          ? (entries.value.find((e) => e.key === pendingKey || e.title?.toLowerCase() === pendingKey) ?? firstOf(entries.value))
+          : firstOf(entries.value);
         pendingKey = null;
       }
     } else if (isRulesChapter.value) {
@@ -141,8 +146,8 @@ async function load() {
       layout.value = res.layout ?? '';
       if (entries.value.length) {
         selected.value = pendingKey
-          ? (entries.value.find((e) => e.key === pendingKey || e.title?.toLowerCase() === pendingKey) ?? entries.value[0])
-          : entries.value[0];
+          ? (entries.value.find((e) => e.key === pendingKey || e.title?.toLowerCase() === pendingKey) ?? firstOf(entries.value))
+          : firstOf(entries.value);
         pendingKey = null;
       }
     } else {
@@ -152,8 +157,8 @@ async function load() {
       intro.value = res.intro ?? null;
       if (entries.value.length) {
         selected.value = pendingKey
-          ? (entries.value.find((e) => e.key === pendingKey) ?? entries.value[0])
-          : entries.value[0];
+          ? (entries.value.find((e) => e.key === pendingKey) ?? firstOf(entries.value))
+          : firstOf(entries.value);
         pendingKey = null;
       }
     }
@@ -230,7 +235,7 @@ watch(query, () => {
       const other = groupNames.value.findIndex((name) => entries.value.some((e) => e.tab === name && haystack(e).includes(q)));
       if (other >= 0) groupTab.value = other;
     }
-    if (selected.value && !shownEntries.value.includes(selected.value)) selected.value = shownEntries.value[0] ?? null;
+    if (selected.value && !shownEntries.value.includes(selected.value)) selected.value = firstOf(shownEntries.value);
     return;
   }
   clearTimeout(timer);

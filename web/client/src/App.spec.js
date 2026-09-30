@@ -2,7 +2,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { flushPromises, mount } from '@vue/test-utils';
 import App from './App.vue';
 import me from './test/fixtures/me.json';
-import party from './test/fixtures/party.json';
 import content from './test/fixtures/content.json';
 import spells from './test/fixtures/spells.json';
 import chat from './test/fixtures/chat.json';
@@ -40,20 +39,20 @@ describe('App', () => {
     expect(f).not.toHaveBeenCalled();
   });
 
-  it('with the link it shows the sheet, and removes the token from the address bar', async () => {
-    vi.stubGlobal('fetch', server({ '/me': me, '/party': party }));
+  it('with the link it shows the sheet, and keeps the token in the address bar', async () => {
+    vi.stubGlobal('fetch', server({ '/me': me }));
     window.history.replaceState(null, '', '/?t=good-token');
     const w = mount(App);
     await flushPromises();
     expect(w.get('[data-test=name]').element.value).toContain('Brenna');
     expect(w.get('[data-test=who]').text()).toContain('Human Fighter');
-    expect(window.location.search).toBe('');
+    expect(window.location.search).toBe('?t=good-token');
     expect(localStorage.getItem('skaldbok.token')).toBe('good-token');
     expect(document.title).toBe('Brenna · Skaldbok');
   });
 
   it('a link that does not work is forgotten and explained', async () => {
-    vi.stubGlobal('fetch', server({ '/me': me, '/party': party }));
+    vi.stubGlobal('fetch', server({ '/me': me }));
     localStorage.setItem('skaldbok.token', 'stale-token');
     const w = mount(App);
     await flushPromises();
@@ -62,18 +61,14 @@ describe('App', () => {
     expect(localStorage.getItem('skaldbok.token')).toBeNull();
   });
 
-  it('switches between the sheet, the party and the rules', async () => {
-    vi.stubGlobal('fetch', server({ '/me': me, '/party': party, '/content': content, '/content/spells': spells }));
+  it('switches between the sheet, the chat and the rules', async () => {
+    vi.stubGlobal('fetch', server({ '/me': me, '/content': content, '/content/spells': spells }));
     localStorage.setItem('skaldbok.token', 'good-token');
     const w = mount(App);
     await flushPromises();
     const tabs = w.findAll('[role=tab]');
-    expect(tabs.map((t) => t.text())).toEqual(['My character', 'Party', 'Chat', 'Rules']);
-    await tabs[1].trigger('click');
-    expect(w.get('[data-test=party-name]').text()).toBe('The Misty Vale party');
-    expect(w.findAll('[data-test=member]').length).toBe(party.party.members.length);
-    expect(w.text()).toContain('you');
-    await tabs[3].trigger('click');
+    expect(tabs.map((t) => t.text())).toEqual(['My character', 'Chat', 'Rules']);
+    await tabs[2].trigger('click');
     await flushPromises();
     await w.findAll('.ref-item').find((i) => i.text().startsWith('Magic')).trigger('click');
     await flushPromises();
@@ -84,12 +79,12 @@ describe('App', () => {
 
   it('counts what the GM wrote since the player last read, and tells the server when they open the chat', async () => {
     const thread = structuredClone(chat);
-    const f = server({ '/me': me, '/party': party, '/chat': thread });
+    const f = server({ '/me': me, '/chat': thread });
     vi.stubGlobal('fetch', f);
     localStorage.setItem('skaldbok.token', 'good-token');
     const w = mount(App);
     await flushPromises();
-    const tab = () => w.findAll('[role=tab]')[2];
+    const tab = () => w.findAll('[role=tab]')[1];
     expect(tab().text()).toBe('Chat (1)');
     await tab().trigger('click');
     await flushPromises();
@@ -107,17 +102,17 @@ describe('App', () => {
   });
 
   it('works with a server that has no chat yet', async () => {
-    vi.stubGlobal('fetch', server({ '/me': me, '/party': party }));
+    vi.stubGlobal('fetch', server({ '/me': me }));
     localStorage.setItem('skaldbok.token', 'good-token');
     const w = mount(App);
     await flushPromises();
     expect(w.get('[data-test=name]').element.value).toContain('Brenna');
     expect(w.text()).not.toContain('offline');
-    expect(w.findAll('[role=tab]')[2].text()).toBe('Chat');
+    expect(w.findAll('[role=tab]')[1].text()).toBe('Chat');
   });
 
   it('keeps showing the last data when the connection drops, and says so', async () => {
-    const f = server({ '/me': me, '/party': party });
+    const f = server({ '/me': me });
     vi.stubGlobal('fetch', f);
     localStorage.setItem('skaldbok.token', 'good-token');
     const w = mount(App);
@@ -131,7 +126,7 @@ describe('App', () => {
 
   it('refreshes by itself: a change the GM makes shows up', async () => {
     const changing = structuredClone(me);
-    const f = server({ '/me': changing, '/party': party });
+    const f = server({ '/me': changing });
     vi.stubGlobal('fetch', f);
     localStorage.setItem('skaldbok.token', 'good-token');
     const w = mount(App);

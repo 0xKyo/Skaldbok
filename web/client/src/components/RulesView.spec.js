@@ -105,3 +105,24 @@ describe('RulesView order of the rules of a chapter', () => {
     expect(names(w)).toEqual(['1. Kin', '2. Profession', '3. Age']);
   });
 });
+
+describe('RulesView list and entry on a phone', () => {
+  const phone = (matches) => vi.stubGlobal('matchMedia', vi.fn(() => ({ matches })));
+
+  it('opens the first entry beside the list on a wide screen', async () => {
+    phone(true);
+    const w = await mountIt();
+    expect(w.find('.rules-detail').exists()).toBe(true);
+    expect(w.get('.rules-row.active').text()).toContain('Actions');
+  });
+
+  it('does not open any entry by itself on a phone: the list is what shows first, and a tap opens an entry', async () => {
+    phone(false);
+    const w = await mountIt();
+    expect(names(w)).toEqual(['Actions', 'Free Actions', 'Movement']);
+    expect(w.find('.rules-detail').exists()).toBe(false);
+    expect(w.find('.rules-row.active').exists()).toBe(false);
+    await w.findAll('.rules-row')[1].trigger('click');
+    expect(w.get('.rules-detail').text()).toContain('Minor things.');
+  });
+});

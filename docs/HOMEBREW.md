@@ -23,9 +23,8 @@ mi-pack/
   skills.yaml
   kin.yaml
   professions.yaml
-  weapons.yaml
-  armor.yaml
-  gear.yaml
+  equipment.yaml       las armas (`weapons:`), las armaduras (`armor:`) y los objetos (`gear:`), cada uno en su lista (un pack puede seguir usando
+                       `weapons.yaml`, `armor.yaml` y `gear.yaml`, uno por tipo: se cargan igual)
   tables.yaml
   images/              arte de las criaturas (.png .jpg .gif .bmp)
 ```
@@ -219,7 +218,24 @@ personaje (vienen con la profesión).
 * Magia: `skills_by_school: { Animism: [ … ], … }` y `magic: { spells: 3, tricks: 3, spell_rank: 1 }`.
   Si existe `skills_by_school` el creador pide elegir escuela, y la profesión no da aptitud heroica.
 
-### weapons.yaml, armor.yaml, gear.yaml — equipo
+### equipment.yaml — equipo
+Un solo archivo con tres listas de primer nivel, una por tipo (el Core lo usa así; `data/packs/core/equipment.yaml`):
+```yaml
+format: 1
+weapons:
+  - name: Sling
+    kind: ranged
+    damage: D8
+armor:
+  - name: Leather
+    slot: armor
+gear:
+  - name: Boots
+    category: Clothes
+```
+Cualquiera de las tres listas puede faltar. Un pack escrito antes, con `weapons.yaml`, `armor.yaml` y `gear.yaml` por separado, se carga igual
+(y puede convivir con un `equipment.yaml`). La vista no cambia: siguen siendo los tipos *weapons*, *armor* y *gear*.
+
 * Arma: `kind` (`melee`/`ranged`), `grip`, `str_req`, `range`, `damage`, `damage_types` (lista: uno o varios, por ejemplo `[Piercing, Slashing]`),
   `durability`, `cost`, `supply`, `features`.
 * Armadura: `slot` (`armor` o `helmet`), `armor_rating`, `armor_bonuses` (lista de bonus condicionales: `damage_type` y `bonus`, por ejemplo
@@ -337,7 +353,7 @@ rollable:                     # opcional: las categorías sobre las que se puede
 entities:
   - name: Fog                 # obligatorio
     kind: weather             # qué es; encabeza la primera columna (WEATHER) y es el rol de la tabla ("weakness"...)
-    category: Odd Weather     # obligatorio: las entidades de una categoría son las filas de una tabla con ese título
+    category: Odd Weather     # las entidades de una categoría son las filas de una tabla con ese título; si falta, es el nombre del archivo
     description: Nothing is visible.
     fields:                   # el resto de columnas, en este orden
       RANGE: 2 m
@@ -348,7 +364,7 @@ entities:
     fields:
       RANGE: 10 m
 ```
-Las entidades no llevan número: el orden del archivo es el orden de las filas. Una categoría en `rollable` se puede tirar: el dado
+Sin `category`, la categoría es el **nombre del archivo** (`weakness.yaml` → *Weakness*, `improvised-weapons.yaml` → *Improvised Weapons*): así están `weakness.yaml`, `memento.yaml` y `appearance.yaml` del Core, un archivo por categoría. Las entidades no llevan número: el orden del archivo es el orden de las filas. Una categoría en `rollable` se puede tirar: el dado
 tiene tantas caras como entidades hay (dos entidades, D2) y sale una al azar entre ellas. (Con `roll: "1-3"` en cada entidad se
 puede fijar a mano qué tirada da cuál, y con `legacy_key` se conserva la clave que tenía la tabla antes: tableros y recientes guardados.)
 Una regla muestra la tabla de una categoría donde su texto tiene una línea `{{table: Odd Weather}}`; si ningún texto la coloca,

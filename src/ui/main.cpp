@@ -101,14 +101,14 @@ int main(int argc, char** argv) {
 
     // Sets the app's identity for the window manager: the taskbar/dock/alt-tab label on Windows and Linux, and, on
     // Linux, the id Wayland compositors match against a .desktop file (assets/linux/skaldbok.desktop) to find its icon.
-    SDL_SetAppMetadata("Skaldbok", "0.4", "com.skaldbok.app");
+    SDL_SetAppMetadata("Skaldbok", "0.5", "com.skaldbok.app");
 
     if (opt.software) SDL_SetHint(SDL_HINT_RENDER_DRIVER, "software");
     if (!SDL_Init(SDL_INIT_VIDEO)) {
         fail(std::string("SDL could not start: ") + SDL_GetError());
         return 3;
     }
-    SDL_Window* window = SDL_CreateWindow("Skaldbok 0.4", opt.width, opt.height,
+    SDL_Window* window = SDL_CreateWindow("Skaldbok 0.5", opt.width, opt.height,
                                           SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY);
     SDL_Renderer* renderer = window ? SDL_CreateRenderer(window, nullptr) : nullptr;
     if (!renderer) {

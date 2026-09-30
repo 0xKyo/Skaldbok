@@ -165,7 +165,7 @@ static constexpr Kind kLoadOrder[] = {Kind::Spell,  Kind::Ability, Kind::Skill, 
 
 const std::vector<std::string>& packDataFiles() {
     static const std::vector<std::string> files = [] {
-        std::vector<std::string> f = {"rules", "world", "actions"};
+        std::vector<std::string> f = {"rules", "world", "actions", "equipment"};
         for (Kind k : kLoadOrder) f.push_back(kindFile(k));
         return f;
     }();
@@ -409,7 +409,24 @@ struct ContentStore::Loader {
     // as a table, so a table is only ever a way of showing entities. The name is the first column, headed by its "kind" ("hazard" ->
     // HAZARD); "fields" are the other columns, headed by their keys. A "roll" ("3", "4-5") gives the entity when the die is rolled; the die
     // is the highest roll of the category (or an entity's own "dice"). The entities' kind is also the table's role ("weakness").
-    json tablesFromEntities(const json& list, const std::string& where, const std::set<std::string>& rollable = {}) {
+    // A file of entities may leave out their "category": it is then the name of the file ("weakness.yaml" -> "Weakness", "improvised-weapons.yaml" ->
+    // "Improvised Weapons"). `fallback` is that name; "" where there is no file to take it from (an intro, a card), so the category is required.
+    static std::string categoryFromFile(const std::string& file) {
+        std::string stem = file.ends_with(".yaml") ? file.substr(0, file.size() - 5) : file, out;
+        bool word = true;
+        for (char ch : stem) {
+            if (ch == '-' || ch == '_') {
+                out += ' ';
+                word = true;
+            } else {
+                out += word ? static_cast<char>(std::toupper(static_cast<unsigned char>(ch))) : ch;
+                word = false;
+            }
+        }
+        return out;
+    }
+
+    json tablesFromEntities(const json& list, const std::string& where, const std::set<std::string>& rollable = {}, const std::string& fallback = std::string()) {
         json tables = json::array();
         if (!list.is_array()) return tables;
         std::vector<std::string> order;
@@ -418,7 +435,8 @@ struct ContentStore::Loader {
         for (const json& e : list) {
             ++index;
             const std::string name = e.is_object() ? trimmed(jsonText(e.contains("name") ? e["name"] : json(""))) : std::string();
-            const std::string category = e.is_object() ? trimmed(jsonStr(e, "category")) : std::string();
+            std::string category = e.is_object() ? trimmed(jsonStr(e, "category")) : std::string();
+            if (category.empty()) category = fallback;
             if (name.empty() || category.empty()) {
                 warn(where + ": entity #" + std::to_string(index) + " needs a \"name\" and a \"category\" (skipped)");
                 continue;
@@ -475,7 +493,7 @@ struct ContentStore::Loader {
     }
 
     // The tables an object writes: its "tables" (the plain form, still accepted) and the ones made from its "entities".
-    json tablesOf(const json& o, const std::string& where) {
+    json tablesOf(const json& o, const std::string& where, const std::string& fallbackCategory = std::string()) {
         json all = json::array();
         std::set<std::string> rollable;                    // "rollable": the categories the reader can roll on (a random one of them)
         if (const json* r = jsonFind(o, "rollable"); r && r->is_array())
@@ -483,7 +501,7 @@ struct ContentStore::Loader {
         if (const json* t = jsonFind(o, "tables"); t && t->is_array())
             for (const json& x : *t) all.push_back(x);
         if (const json* ents = jsonFind(o, "entities"))
-            for (json& x : tablesFromEntities(*ents, where, rollable)) all.push_back(std::move(x));
+            for (json& x : tablesFromEntities(*ents, where, rollable, fallbackCategory)) all.push_back(std::move(x));
         return all;
     }
 
@@ -551,13 +569,15 @@ struct ContentStore::Loader {
 
     // Reads <file>.json and calls fn for every named object of its array. Core reads it from data/system first (its intro, its rules:
     // what is not an item of the category) and then from the pack folder, which holds the items, like any other pack.
-    bool eachObject(const std::string& file, const std::function<void(const json&, const std::string&)>& fn) {
-        if (!sysDir.empty() && !eachObjectIn(sysDir, file, fn, true)) return false;
-        return eachObjectIn(pk.dir, file, fn, false);
+    // `listKey`: the top-level key holding the list when it is not the file's own name (equipment.yaml holds the weapons, the armor and
+    // the gear under "weapons", "armor" and "gear"); a file that lacks that list is fine then.
+    bool eachObject(const std::string& file, const std::function<void(const json&, const std::string&)>& fn, const std::string& listKey = std::string()) {
+        if (!sysDir.empty() && !eachObjectIn(sysDir, file, fn, true, listKey)) return false;
+        return eachObjectIn(pk.dir, file, fn, listKey.empty() ? false : true, listKey);
     }
 
     // `listOptional`: a system file may hold only an intro.
-    bool eachObjectIn(const std::string& dir, const std::string& file, const std::function<void(const json&, const std::string&)>& fn, bool listOptional) {
+    bool eachObjectIn(const std::string& dir, const std::string& file, const std::function<void(const json&, const std::string&)>& fn, bool listOptional, const std::string& listKey = std::string()) {
         const std::string path = dir + "/" + file + ".yaml";
         if (!isFile(path)) return true;
         std::string text, err;
@@ -618,10 +638,11 @@ struct ContentStore::Loader {
                         st.intros_[static_cast<int>(introKind)] = std::move(in);
                     }
                 }
-        const json* arr = root.is_array() ? &root : jsonFind(root, file.c_str());
+        const std::string key = listKey.empty() ? file : listKey;
+        const json* arr = root.is_array() && listKey.empty() ? &root : jsonFind(root, key.c_str());
         if (!arr && listOptional) return true;
         if (!arr || !arr->is_array()) {
-            pk.error = file + ".yaml: expected a list (either the whole file or under \"" + file + "\")";
+            pk.error = file + ".yaml: expected a list (either the whole file or under \"" + key + "\")";
             return false;
         }
         size_t index = 0;
@@ -1126,7 +1147,7 @@ struct ContentStore::Loader {
     }
 
     // Any data file may carry loose tables of its own: a top-level "tables" list shaped like tables.yaml's (id, name, dice, columns, rows,
-    // browse: false...). That is how a table lives next to what it is about (movement.yaml, hazards.yaml...); a rule shows it where its
+    // browse: false...). That is how a table lives next to what it is about (movement.yaml, improvised-weapons.yaml...); a rule shows it where its
     // text has a "{{table: Name}}" line. Core's data/system files count too; tables.yaml itself is loaded as the Table kind.
     bool looseTables() {
         std::vector<std::string> dirs;
@@ -1149,7 +1170,7 @@ struct ContentStore::Loader {
                     return false;
                 }
                 if (!root.is_object()) continue;
-                const json tables = tablesOf(root, file);
+                const json tables = tablesOf(root, file, categoryFromFile(file));
                 int index = 0;
                 for (const json& t : tables) {
                     ++index;
@@ -1277,8 +1298,13 @@ struct ContentStore::Loader {
 
     void run() {
         setupSources();
-        for (Kind k : kLoadOrder)
-            if (!eachObject(kindFile(k), [&](const json& o, const std::string& n) { (this->*loaderFor(k))(o, n); })) return;
+        for (Kind k : kLoadOrder) {
+            const auto load = [&](const json& o, const std::string& n) { (this->*loaderFor(k))(o, n); };
+            if (!eachObject(kindFile(k), load)) return;
+            // the weapons, the armor and the gear may also share one file, equipment.yaml, with a list each (the files of a pack written
+            // before it, one per kind, keep working)
+            if ((k == Kind::Weapon || k == Kind::Armor || k == Kind::Gear) && !eachObject("equipment", load, kindFile(k))) return;
+        }
         if (!looseTables()) return;
         // last: it may replace a rule an earlier pack loaded, and a broken pack must not have touched those
         for (const char* file : {"rules", "world"})       // world.yaml: rules like rules.yaml's, for the world of the game (adventures, NPCs)

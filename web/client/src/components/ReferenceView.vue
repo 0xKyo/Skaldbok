@@ -11,8 +11,9 @@ defineProps({
 </script>
 
 <template>
-  <section class="ref-view" aria-label="Rules">
+  <section class="ref-view" :class="{ 'is-open': !!state.current }" aria-label="Rules">
     <ReferenceIndex class="ref-view-index" :state="state" />
+    <button v-if="state.current" type="button" class="ref-back link" data-test="reference-back" @click="state.current = null">← All categories</button>
     <ReferencePanel class="ref-view-panel" :state="state" :token="token" :gm-prefix="gmPrefix" />
   </section>
 </template>
@@ -23,4 +24,8 @@ defineProps({
   .ref-view { grid-template-columns: 190px minmax(0, 1fr); }
 }
 .ref-view-panel { min-width: 0; }
+/* on a phone the index and a category take turns (the category used to open below the whole index, out of sight) */
+.ref-back { justify-self: start; }
+@media (min-width: 720px) { .ref-back { display: none; } }
+@media (max-width: 719px) { .ref-view.is-open .ref-view-index { display: none; } }
 </style>

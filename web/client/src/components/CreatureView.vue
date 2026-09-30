@@ -18,6 +18,7 @@ const list = ref([]);       // [{id, key, name, sub, kind}]
 const intro = ref(null);    // the Bestiary's general text: the General Info tab
 const tab = ref('list');    // 'list' | 'info'
 const showList = computed(() => tab.value === 'list' || !intro.value);
+const detailOpen = computed(() => selected.value !== null || loadingDetail.value);      // on a phone the list and the creature take turns
 const tags = ref([]);       // active tag filters; none = every creature
 const shown = computed(() => (tags.value.length ? list.value.filter((c) => tags.value.includes(c.kind)) : list.value));
 
@@ -63,7 +64,7 @@ onMounted(search);
 </script>
 
 <template>
-  <section class="creature-page" aria-label="Creatures">
+  <section class="creature-page" :class="{ 'detail-open': detailOpen }" aria-label="Creatures">
     <!-- same page as every category: tabs, search, (filter tags), then the list with the description beside it; the Bestiary text is the General Info tab -->
     <div v-if="intro" class="subtabs" role="group" aria-label="Sections">
       <button :aria-pressed="tab === 'list'" data-test="creature-tab" @click="tab = 'list'">Creatures</button>
@@ -92,7 +93,7 @@ onMounted(search);
       <DataTable v-for="t in unplacedTables([intro.body, ...intro.sections.map((s) => s.body)], intro.tables)" :key="t.title" :table="t" />
     </div>
 
-    <div v-show="showList" class="c-layout">
+    <div v-show="showList" class="c-layout" :class="{ 'detail-open': detailOpen }">
       <nav class="c-list" aria-label="Creatures">
         <p v-if="loading" class="muted small" style="padding: 8px 12px;">Loading…</p>
         <p v-else-if="!shown.length" class="muted" style="padding: 8px 12px;">Nothing found.</p>
@@ -109,6 +110,7 @@ onMounted(search);
       </nav>
 
       <div class="creature-detail-panel panel">
+      <button v-if="detailOpen" type="button" class="c-back link" data-test="creature-back" @click="selected = null">← Back</button>
       <div v-if="loadingDetail" class="muted" style="padding: 1.5rem;">Loading…</div>
       <div v-else-if="!selected" class="muted placeholder">Select a creature.</div>
       <div v-else class="creature-detail">
@@ -240,6 +242,16 @@ onMounted(search);
 
 .c-name { font-weight: 600; }
 .c-sub { font-size: 0.8rem; color: var(--muted); white-space: nowrap; flex-shrink: 0; }
+
+/* on a phone the list and the creature take turns: a tap opens the creature, Back returns to the list */
+.c-back { margin-bottom: 10px; }
+@media (min-width: 640px) { .c-back { display: none; } }
+@media (max-width: 639px) {
+  .c-layout .creature-detail-panel { display: none; }
+  .c-layout.detail-open .c-list { display: none; }
+  .c-layout.detail-open .creature-detail-panel { display: block; }
+  .creature-page.detail-open :is(.c-search, .tag-row) { display: none; }
+}
 
 /* ---- detail panel ---- */
 .creature-detail-panel { max-height: calc(100vh - 12rem); overflow-y: auto; }

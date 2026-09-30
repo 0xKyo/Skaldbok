@@ -1,0 +1,65 @@
+format: 1
+rollable:
+  - Appearance
+entities:
+  - name: Ugly scar across your cheek
+    kind: appearance
+    legacy_key: "#37"
+    source: rulebook
+  - name: Strange headgear
+    kind: appearance
+    source: rulebook
+  - name: Abnormally pale and pasty
+    kind: appearance
+    source: rulebook
+  - name: A constant smile on your lips
+    kind: appearance
+    source: rulebook
+  - name: Icy, penetrating gaze
+    kind: appearance
+    source: rulebook
+  - name: A bit of extra weight around the middle
+    kind: appearance
+    source: rulebook
+  - name: Thin and wiry
+    kind: appearance
+    source: rulebook
+  - name: Abnormal amounts of body hair (depending on kin)
+    kind: appearance
+    source: rulebook
+  - name: Balding (depending on kin)
+    kind: appearance
+    source: rulebook
+  - name: Prominent tattoo
+    kind: appearance
+    source: rulebook
+  - name: Foul body odor
+    kind: appearance
+    source: rulebook
+  - name: Glorious hairstyle
+    kind: appearance
+    source: rulebook
+  - name: Limp
+    kind: appearance
+    source: rulebook
+  - name: Filthy
+    kind: appearance
+    source: rulebook
+  - name: Honest blue eyes
+    kind: appearance
+    source: rulebook
+  - name: Silver tooth
+    kind: appearance
+    source: rulebook
+  - name: Heavily perfumed
+    kind: appearance
+    source: rulebook
+  - name: Different-colored eyes
+    kind: appearance
+    source: rulebook
+  - name: Hissing voice
+    kind: appearance
+    source: rulebook
+  - name: Weathered face
+    kind: appearance
+    source: rulebook

@@ -1,8 +1,8 @@
 // The web application, independent of any socket: a request goes in, a response comes out. This makes it testable
 // without a network; web_server.h puts it on HTTP.
 //
-// The players' page: they see their sheet, party and the rules, and can edit their own sheet and write in their own chat, nothing else.
-// The GM app writes the files (characters/, parties/, chat/, packs/, settings.json) and so does this, one field at a time; it reads
+// The players' page: they see their sheet and the rules, and can edit their own sheet and write in their own chat, nothing else.
+// The GM app writes the files (characters/, chat/, packs/, settings.json) and so does this, one field at a time; it reads
 // them again whenever they change, so what the GM does shows up within a second, whether or not the GM app is running.
 #pragma once
 
@@ -22,7 +22,6 @@
 #include "game/changelog.h"
 #include "game/messages.h"
 #include "parsing/packs.h"
-#include "game/party.h"
 #include "web/web_access.h"
 #include "web/web_config.h"
 
@@ -94,7 +93,6 @@ private:
     void reloadContentIfChanged();
     bool blocked(const std::string& ip, long long now);
     void failed(const std::string& ip, long long now);
-    const Party* partyOf(const std::string& characterId) const;
 
     WebConfig config_;
     Clock clock_;
@@ -105,7 +103,6 @@ private:
     std::unique_ptr<PackManager> packs_;
     std::string contentSignature_;
     DirCache<Character> characters_;
-    DirCache<Party> parties_;
     MessageStore chat_;                                  // the conversation with the GM, written by both programs
     ChangeLog changes_;                                  // what players changed on their sheets
     WebAccess access_;

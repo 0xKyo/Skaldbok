@@ -1,5 +1,5 @@
 <script setup>
-// The conversation with the GM. Players only ever talk to the GM; a broadcast (the GM writing to the whole party) has its own look.
+// The conversation with the GM. Players only ever talk to the GM; a broadcast (the GM writing to several characters at once) has its own look.
 // Text is always shown as text, never as HTML.
 import { computed, nextTick, ref, watch } from 'vue';
 import { apiSend } from '../api.js';

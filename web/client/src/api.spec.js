@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { ApiError, apiGet, apiSend, captureToken, forgetToken } from './api.js';
+import { ApiError, apiGet, apiSend, captureGmToken, captureToken, forgetToken } from './api.js';
 
 // a tiny stand-in for window: a location, a history and a storage
 function fakeWindow(url) {
@@ -13,11 +13,31 @@ function fakeWindow(url) {
   return win;
 }
 
+describe('the GM and a player in two tabs of the same browser', () => {
+  it('a tab opened with the GM link is the GM, and keeps the link in its address bar', () => {
+    const win = fakeWindow('http://x/?gm=gmtoken');
+    expect(captureGmToken(win)).toBe('gmtoken');
+    expect(win.location.search).toBe('?gm=gmtoken');
+  });
+
+  it('a tab opened with a player link is the player, even though the GM link is saved in the browser', () => {
+    const gm = fakeWindow('http://x/?gm=gmtoken');
+    captureGmToken(gm);
+    const player = fakeWindow('http://x/?t=plr12345');
+    player.localStorage.setItem('skaldbok.gmtoken', 'gmtoken');          // (one browser: the storage is shared by its tabs)
+    expect(captureGmToken(player)).toBeNull();
+    expect(captureToken(player)).toBe('plr12345');
+    player.location.search = '';
+    expect(captureGmToken(player)).toBe('gmtoken');                     // with neither link, the saved GM link still opens the GM page
+  });
+});
+
 describe('captureToken', () => {
-  it('takes the token from the personal link, keeps it, and removes it from the address bar', () => {
-    const win = fakeWindow('http://x/?t=abc123&lang=en#party');
+  it('takes the token from the personal link and keeps it, in the browser and in the address bar', () => {
+    const win = fakeWindow('http://x/?t=abc123&lang=en#chat');
     expect(captureToken(win)).toBe('abc123');
-    expect(win.history.replaceState).toHaveBeenCalledWith(null, '', '/?lang=en#party');
+    expect(win.history.replaceState).not.toHaveBeenCalled();
+    expect(win.location.search).toBe('?t=abc123&lang=en');
     expect(win.localStorage.getItem('skaldbok.token')).toBe('abc123');
   });
 

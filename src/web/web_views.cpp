@@ -30,11 +30,11 @@ const Entry* resolve(const ContentStore& cs, Kind kind, const Ref& r) {
 }
 
 // The raw parts of the sheet a player may change: what the editor works on and sends back as a set.
-json editableDoc(const Character& c) {
+json editableDoc(const Character& c, bool asGm) {
     json all, mine = json::object();
     jsonParse(c.toJson(), all, nullptr);
     for (auto it = all.begin(); it != all.end(); ++it)
-        if (sheet::playerMayEdit(it.key())) mine[it.key()] = it.value();
+        if (sheet::playerMayEdit(it.key()) || (asGm && (it.key() == "kin" || it.key() == "profession" || it.key() == "school"))) mine[it.key()] = it.value();
     return mine;
 }
 
@@ -223,6 +223,7 @@ json publicCard(const ContentStore& cs, const Entry& e) {
             {"kind", kindKey(e.kind)},
             {"name", e.title},
             {"subtitle", e.subtitle},
+            {"slot", e.prop("slot")},                          // armor: "armor" or "helmet", where it is worn
             {"fields", fieldList(e.fields)},
             {"body", e.body},
             {"source", src && src->homebrew ? src->label : std::string()},
@@ -230,7 +231,7 @@ json publicCard(const ContentStore& cs, const Entry& e) {
             {"homebrew", src && src->homebrew}};
 }
 
-json characterView(const Character& c, const ContentStore& cs, const Party* party) {
+json characterView(const Character& c, const ContentStore& cs, bool asGm) {
     const Entry* kin = resolve(cs, Kind::Kin, c.kin);
     const Entry* profession = resolve(cs, Kind::Profession, c.profession);
     const int kinMovement = kin ? std::atoi(kin->prop("movement").c_str()) : 0;
@@ -257,7 +258,6 @@ json characterView(const Character& c, const ContentStore& cs, const Party* part
             {"kin", {{"name", c.kin.name}, {"description", kin ? kin->body : std::string()}}},
             {"profession", {{"name", c.profession.name}, {"description", profession ? profession->body : std::string()}}},
             {"school", c.school},
-            {"party", party ? json(party->name) : json(nullptr)},
             {"attributes", attributes},
             {"hp", {{"current", c.hp}, {"max", maxHp(c)}, {"bonus", c.hpBonus}}},
             {"wp", {{"current", c.wp}, {"max", maxWp(c)}, {"bonus", c.wpBonus}}},
@@ -282,29 +282,7 @@ json characterView(const Character& c, const ContentStore& cs, const Party* part
             {"revision", c.revision},
             {"locked", c.locked},
             {"issues", issuesView(c)},
-            {"doc", editableDoc(c)}};
-}
-
-json partyView(const Party& party, const std::function<const Character*(const std::string&)>& findCharacter, const std::string& meId) {
-    json members = json::array();
-    for (const std::string& id : party.members) {
-        const Character* c = findCharacter(id);
-        if (!c) continue;
-        json conditions = json::array();
-        for (int i = 0; i < 6; ++i)
-            if (c->conditions & (1u << i)) conditions.push_back({{"name", kConditions[i].name}, {"attribute", kConditions[i].attribute}});
-        members.push_back({{"name", c->name},
-                           {"nickname", c->nickname},
-                           {"player", c->player},
-                           {"kin", c->kin.name},
-                           {"profession", c->profession.name},
-                           {"age", ageRule(c->age).label},
-                           {"hp", {{"current", c->hp}, {"max", maxHp(*c)}}},
-                           {"wp", {{"current", c->wp}, {"max", maxWp(*c)}}},
-                           {"conditions", conditions},
-                           {"you", c->id == meId}});
-    }
-    return {{"name", party.name}, {"members", members}};
+            {"doc", editableDoc(c, asGm)}};
 }
 
 // --------------------------------------------------------------------------- Reference views (GM and players alike)

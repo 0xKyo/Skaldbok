@@ -17,7 +17,7 @@ supports **homebrew content** imported as a data plugin.
   *Open in this browser* and *Open as GM*). The window uses the palette of the official
   character sheet (cream paper, parchment, dragon green and red).
 * **The web interface** does everything else, for the GM and for the players (see below): characters and their sheets, the character
-  creator, parties, chat and broadcasts, and the whole Reference (rules, creatures, spells, abilities, skills, kin, professions, gear and the
+  creator, chat and broadcasts, and the whole Reference (rules, creatures, spells, abilities, skills, kin, professions, gear and the
   book chapters with their tables).
 
 ## Web interface
@@ -27,17 +27,16 @@ supports **homebrew content** imported as a data plugin.
 
 * **GM interface** (`/?gm=<token>`): the whole GM side from a browser.
   * **Tabs along the top**, like the player's page: **Character** (a dropdown of every character, with its editable sheet; *+ New
-    character* opens the **character creator**, see [Characters](#characters), and *Random* makes one at once), **Parties** (every party
-    with its characters as a reduced sheet, name / class / kin, each linking to its sheet; adding, renaming, messaging and deleting
-    parties), **Chat** (for now the player's own chat, of the character picked in the dropdown) and **Rules**. Each player's personal link is on their sheet's header (*Player link ↗*).
+    character* opens the **character creator**, see [Characters](#characters), and *Random* makes one at once), **Chat** (for now the
+    player's own chat, of the character picked in the dropdown) and **Rules**. Each player's personal link is on their sheet's header (*Player link ↗*).
   * A **Reference** index, exactly the same one the players have:
     * Entries with tabs: Skills (*All skills* / *General info*), Gear (*General* / *Weapons* / *Armor*).
     * Rule tables drawn in place, and each category's Intro always open above its list.
     * **Creatures** with their picture next to the stat block, and **NPC / Animal / Monster** filter tags.
     * **World › NPC Creator**: *Create Random NPC* rolls a name, attitude, kin, motivation, profession and trait from the book's
       lists (`data/system/npcs.yaml`), and each result has its own *Re-roll*.
-* **Player interface** (`/?t=<token>`): on their phone and with **their personal link**, each player sees their complete sheet,
-  their party's status and the whole Reference (exactly what the GM sees there: rules, creatures, NPC Creator, everything). It updates
+* **Player interface** (`/?t=<token>`): on their phone and with **their personal link**, each player sees their complete sheet
+  and the whole Reference (exactly what the GM sees there: rules, creatures, NPC Creator, everything). It updates
   by itself every few seconds, lets them edit their sheet and chat with the GM, and it shows no GM notes or other players' data.
 
 The normal way is to **open `Skaldbok.bat`** and, when you want the players to join, press **Start server** in the app's **General Settings**
@@ -112,8 +111,7 @@ field ration) against the encumbrance limit. The sheet is laid out like the **fi
 ## Chat and broadcast
 
 The web page has a real chat. Each character has their conversation with the GM (a player never sees another's nor can write to them), ordered
-by activity and with unread counts, with pictures and a "seen" mark when the player has read it. A **broadcast** (to a party, from its page, or to
-everyone) appears in each conversation as a highlighted banner (red border and "BROADCAST"), different from an ordinary message, and the
+by activity and with unread counts, with pictures and a "seen" mark when the player has read it. A **broadcast** (to everyone) appears in each conversation as a highlighted banner (red border and "BROADCAST"), different from an ordinary message, and the
 players' replies come back to you, one by one.
 
 Each message is its own file (`chat/<character>/<id>.json`, pictures in `chat/media/`) and each side saves only how far it has read, so the GM
@@ -151,7 +149,7 @@ CMake downloads SDL3, Dear ImGui, SQLite, stb_image, nlohmann/json, yaml-cpp, mi
 compiles them statically: the executable is self-contained. `scripts\build.ps1 -Headless` compiles only the core and the tests, without a window.
 
 The app looks for `data/` (with `packs/core`) next to the executable, one to three levels up, in `$SKALDBOK_DATA` or with `--data <folder>`.
-The user's files (settings, characters, parties, chat, imported packs) go to `%APPDATA%\skaldbok\gm\` (`--prefs <folder>` to change it).
+The user's files (settings, characters, chat, imported packs) go to `%APPDATA%\skaldbok\gm\` (`--prefs <folder>` to change it).
 
 ## Lightweight
 
@@ -164,7 +162,7 @@ software renderer.
                 ── core (libgm_core): no UI and no server; every front-end uses it ──
 src/parsing/    reads YAML and turns it into the internal model: content (packs), packs (import), jsonutil / yamlutil, jsondir
                 (per-user stores that reread what another program writes), fsutil (files), fts/sql (search index)
-src/game/       the game logic over that model: model (data), character, creation (rules), party, encounter, dice,
+src/game/       the game logic over that model: model (data), character, creation (rules), encounter, dice,
                 messages (chat), sheet_edit (per-field editing and rule review), changelog, settings, web_link
                 ── front-ends: each one links gm_core and nothing else; none includes another ──
 src/ui/         the desktop app (ImGui), only the settings screen: main, app (the shell), settings_screen (content packs and the web
@@ -172,10 +170,10 @@ src/ui/         the desktop app (ImGui), only the settings screen: main, app (th
 src/web/        the web server: a socketless app (web_app), JSON views (web_views), the character creator's data (web_creation),
                 tokens (web_access), HTTP (web_server)
 web/client/     the web page for GM and players (Vue 3 + Vite); built with npm and served by skaldbok_web
-tests/          windowless ctest: content and packs, characters and parties, encounter, chat, sheet editing (two writers on one
+tests/          windowless ctest: content and packs, characters, encounter, chat, sheet editing (two writers on one
                 file) and the web (authentication, privacy, real HTTP); the page's own tests are in web/client (npm test)
 tools/          the PDF → SQLite converter + Core pack in Python, and pack_check
-docs/           HOMEBREW.md (pack format), CHARACTERS.md (characters and parties), WEB.md (the web interfaces)
+docs/           HOMEBREW.md (pack format), CHARACTERS.md (characters), WEB.md (the web interfaces)
 docs/examples/  frostmarch-tales: an example pack, documentation only (the app does not use it)
 scripts/        build.ps1, package.ps1, deploy.ps1 (Windows)
 Build.bat       builds the Vue client and the C++ release in one go

@@ -85,6 +85,12 @@ std::string validate(const std::string& key, const json& v) {
         }
         return {};
     }
+    if (key == "kin" || key == "profession") {                                              // (only the GM's own path gets this far)
+        if (!v.is_object() || !v.contains("name") || !isText(v["name"], 80) || v["name"].get_ref<const std::string&>().empty() || (v.contains("key") && !isText(v["key"], 120)))
+            return key + " must be a card with a name";
+        return {};
+    }
+    if (key == "school") return isText(v, 80) ? "" : "school must be text of at most 80 letters";
     if (key == "locked") return v.is_boolean() ? "" : "locked must be true or false";                  // (only the GM's own path gets this far)
     if (key == "reviews") {
         if (!v.is_object()) return "reviews must be an object";
@@ -111,7 +117,7 @@ std::string validate(const std::string& key, const json& v) {
 const char* labelOf(const std::string& key) {
     static const std::map<std::string, const char*, std::less<>> labels = {
         {"hp", "HP"}, {"wp", "WP"}, {"hp_bonus", "max HP bonus"}, {"wp_bonus", "max WP bonus"}, {"name", "name"}, {"nickname", "nickname"}, {"age", "age"},
-        {"weakness", "weakness"}, {"memento", "memento"}, {"appearance", "appearance"}, {"notes", "notes"}, {"armor", "armor"}, {"helmet", "helmet"}};
+        {"weakness", "weakness"}, {"memento", "memento"}, {"appearance", "appearance"}, {"notes", "notes"}, {"armor", "armor"}, {"helmet", "helmet"}, {"kin", "kin"}, {"profession", "profession"}, {"school", "school of magic"}};
     const auto it = labels.find(key);
     return it == labels.end() ? key.c_str() : it->second;
 }

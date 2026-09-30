@@ -764,6 +764,43 @@ int main(int argc, char** argv) {
               "innate abilities' text appended after, like any kin's)");
         check(cx.count(Kind::Kin) == core.count(Kind::Kin) + 1, "replacing a card does not add a new one, only the brand-new kin does");
 
+        // the weapons, the armor and the gear share one file, equipment.yaml; a pack with the old file per kind loads the same
+        test::write(root + "/equip/manifest.yaml", "{\"format\":1,\"id\":\"equip\",\"name\":\"Equip\"}");
+        test::write(root + "/equip/equipment.yaml",
+                    "{\"format\":1,\"weapons\":[{\"name\":\"Test Axe\",\"kind\":\"melee\",\"damage\":\"D8\",\"cost\":\"5 gold\"}],"
+                    "\"armor\":[{\"name\":\"Test Plate\",\"slot\":\"armor\",\"armor_rating\":\"3\"},{\"name\":\"Test Cap\",\"slot\":\"helmet\",\"armor_rating\":\"1\"}],"
+                    "\"gear\":[{\"name\":\"Test Rope\",\"category\":\"Tools\",\"cost\":\"1 silver\"}]}");
+        test::write(root + "/equip-old/manifest.yaml", "{\"format\":1,\"id\":\"equip-old\",\"name\":\"Equip Old\"}");
+        test::write(root + "/equip-old/weapons.yaml", "{\"format\":1,\"weapons\":[{\"name\":\"Old Axe\",\"kind\":\"melee\",\"damage\":\"D6\"}]}");
+        test::write(root + "/equip-old/gear.yaml", "[{\"name\":\"Old Rope\",\"category\":\"Tools\"}]");
+        ContentStore eq;
+        eq.load({PackSpec{coreDir, true, true}, PackSpec{root + "/equip", false, true}, PackSpec{root + "/equip-old", false, true}});
+        const Entry* newAxe = eq.findByName(Kind::Weapon, "Test Axe");
+        const Entry* newPlate = eq.findByName(Kind::Armor, "Test Plate");
+        const Entry* newCap = eq.findByName(Kind::Armor, "Test Cap");
+        const Entry* newRope = eq.findByName(Kind::Gear, "Test Rope");
+        check(newAxe && newAxe->key == "equip/weapon/test-axe" && newAxe->prop("damage") == "D8" && newPlate && newPlate->key == "equip/armor/test-plate" && newPlate->prop("slot") == "armor" &&
+                  newCap && newCap->prop("slot") == "helmet" && newRope && newRope->key == "equip/gear/test-rope" && newRope->prop("category") == "Tools",
+              "equipment.yaml holds the weapons, the armor and the gear, each in its own list");
+        check(eq.findByName(Kind::Weapon, "Old Axe") && eq.findByName(Kind::Gear, "Old Rope") && eq.count(Kind::Weapon) == core.count(Kind::Weapon) + 2 && eq.count(Kind::Armor) == core.count(Kind::Armor) + 2 &&
+                  eq.count(Kind::Gear) == core.count(Kind::Gear) + 2,
+              "a pack with one file per kind (the old way) loads the same, next to one with equipment.yaml");
+
+        // entities that leave out their "category" take the name of their file
+        test::write(root + "/mood/manifest.yaml", "{\"format\":1,\"id\":\"mood\",\"name\":\"Mood\"}");
+        test::write(root + "/mood/pub-fights.yaml",
+                    "format: 1\nrollable:\n  - Pub Fights\nentities:\n  - name: Bar stool\n  - name: Broken bottle\n    category: Other\n  - name: Tankard\n");
+        ContentStore mood;
+        mood.load({PackSpec{coreDir, true, true}, PackSpec{root + "/mood", false, true}});
+        const DataTable* pubFights = nullptr;
+        const DataTable* other = nullptr;
+        for (const DataTable& tb : mood.packTables()) {
+            if (tb.title == "Pub Fights") pubFights = &tb;
+            if (tb.title == "Other") other = &tb;
+        }
+        check(pubFights && pubFights->rows.size() == 2 && pubFights->rows[0].cells[0] == "Bar stool" && pubFights->dice == "D2" && other && other->rows.size() == 1,
+              "entities with no category take the name of their file (pub-fights.yaml -> Pub Fights), one with its own category keeps it");
+
         // a pack that fails to load leaves the rules of the others alone, and an off pack changes nothing
         test::write(root + "/broken/manifest.yaml", "{\"format\":1,\"id\":\"broken-rules\",\"name\":\"Broken\"}");
         test::write(root + "/broken/spells.yaml", "{ nope");

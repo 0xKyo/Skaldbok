@@ -2,8 +2,8 @@
 
 El servidor `skaldbok_web` sirve **dos interfaces** desde la misma página Vue:
 
-* **Vista del máster** — se abre con `/?gm=<token>`. Es la interfaz principal del máster desde el browser y se parece a la del jugador: **pestañas arriba** — **Character** (un desplegable con todos los personajes y su ficha), **Parties** (todas las parties, con sus personajes como ficha reducida), **Chat** (por ahora, el mismo chat del jugador, del personaje elegido), **Rules** (la Reference, idéntica a la de los jugadores). El enlace personal de cada jugador se ve en la cabecera de su ficha (**Player link ↗**) y se imprime con `skaldbok_web --links`.
-* **Vista del jugador** — se abre con `/?t=<token>`. Cada jugador ve solo su ficha, su party y las reglas; no puede ver ni modificar nada de los demás.
+* **Vista del máster** — se abre con `/?gm=<token>`. Es la interfaz principal del máster desde el browser y se parece a la del jugador: **pestañas arriba** — **Character** (un desplegable con todos los personajes y su ficha), **Chat** (por ahora, el mismo chat del jugador, del personaje elegido), **Rules** (la Reference, idéntica a la de los jugadores). El enlace personal de cada jugador se ve en la cabecera de su ficha (**Player link ↗**) y se imprime con `skaldbok_web --links`.
+* **Vista del jugador** — se abre con `/?t=<token>`. Cada jugador ve solo su ficha, su chat con el máster y las reglas; no puede ver ni modificar nada de los demás.
 
 ```
 skaldbok_web  (C++, sin ventana)  ──JSON──►  web/client (Vue 3, ya compilado)  ──► browser del máster
@@ -11,12 +11,12 @@ skaldbok_web  (C++, sin ventana)  ──JSON──►  web/client (Vue 3, ya com
                   │
                   │ lee y escribe
                   ▼
-         characters/  parties/  packs/  settings.json     (carpeta del usuario)
+         characters/  packs/  settings.json     (carpeta del usuario)
 ```
 
 * **`skaldbok_web`** es un ejecutable aparte, hecho con la misma librería que la app de escritorio (`gm_core`): carga los mismos packs, usa las mismas reglas y lee los mismos archivos. No tiene base de datos propia ni lógica duplicada. Puede correr aunque la app de escritorio esté cerrada, incluso en otra máquina con los archivos sincronizados.
 * **`web/client`** es una página Vue 3 (Vite). Node solo hace falta para *compilarla*; el servidor sirve los archivos ya compilados (`web/client/dist`, o la carpeta `web/` junto al ejecutable en el paquete).
-* **Escritura acotada**: el jugador solo puede cambiar su propia hoja (`PATCH /api/me`) y escribir en su chat; el máster puede editar cualquier ficha y gestionar parties vía `/api/gm/*`.
+* **Escritura acotada**: el jugador solo puede cambiar su propia hoja (`PATCH /api/me`) y escribir en su chat; el máster puede editar cualquier ficha y gestionar personajes y el chat vía `/api/gm/*`.
 
 ## Cómo se ve cada categoría
 
@@ -32,17 +32,14 @@ Las tablas con dado (las categorías `rollable` de los yaml, o con `dice`) tiene
 
 **Reference › Creatures** lista las criaturas con buscador y muestra su ficha completa (estadísticas, ataques, habilidades, texto) **con su ilustración** si la tiene. Arriba de la lista hay tres etiquetas para filtrar, **NPC**, **Animal** y **Monster** (todo lo que no es NPC ni animal); se pueden combinar y, sin ninguna activa, se ve todo. `GET /api/gm/creatures/<key>` trae `image` (la ruta de la imagen, o `null`) y `GET /api/gm/creatures/<key>/image` sirve el archivo; el navegador la pide con el token del máster, igual que las fotos del chat.
 
-## Parties y personajes (máster)
+## Personajes (máster)
 
-Las pestañas **Character** y **Parties** del máster. En **Parties** se ve **cada party** como una tarjeta, con sus personajes en una tabla reducida (**Name**, **Class** y **Kin**; clic en el nombre abre la hoja en la pestaña Character) y, al final, **Solo**: los personajes que no están en ninguna party (un personaje puede estar en varias). **+ New party** crea una. La tarjeta de cada party trae:
+La pestaña **Character** del máster es un desplegable con todos los personajes; **Delete character** (con confirmación) borra su archivo (`DELETE /api/gm/characters/<id>`).
 
-* el **nombre** y todos sus **miembros** (clic en un nombre abre su ficha; la **×** lo saca de la party);
-* **Add to Party**: elige entre los personajes que todavía no están en ella;
-* **Message to the whole party**: escribe a todos los miembros a la vez. Llega a la conversación de cada uno como un *broadcast* que nombra la party (`POST /api/gm/parties/<id>/message`, `{text}`; responde `{sent}`). Los miembros se cambian con `PATCH /api/gm/parties/<id>` (`addMember` / `removeMember`).
-* **Rename** (botón junto al nombre): cambia el nombre de la party (`PATCH` con `{name}`; un nombre vacío se rechaza).
-* **Delete party** (con confirmación): borra la party y **conserva a sus personajes** (`DELETE /api/gm/parties/<id>`).
+El máster puede cambiar **Kin**, **Profession** y, si es mago, **School** desde la ficha (en edición; el jugador no): van en `kin`, `profession` (`{key, name}`) y `school` del `set`, y solo las acepta `PATCH /api/gm/characters/<id>`. La **edad** es su propia línea. Las tarjetas de armadura traen `slot` (`armor` o `helmet`) y en la ficha, **Armor** y **Helmet** son desplegables con las armaduras y los yelmos de las reglas (más *None*).
 
-En la ficha de un personaje, **Delete character** (con confirmación) borra su archivo y lo saca de todas las parties en las que estaba (`DELETE /api/gm/characters/<id>`).
+En el teléfono (menos de 900 px) la ficha son **cinco pestañas**, para no tener que hacer scroll: **Stats** (atributos, HP y WP; abre ahí), **Skills**, **Abilities**, **Gear** (armas, armadura, yelmo, inventario, monedas, recuerdo y objetos chicos) y **Details** (player, kin, age, appearance, profession, weakness y las notas). El recuadro con el nombre queda siempre arriba. En pantallas anchas se ve todo a la vez, en columnas.
+En el teléfono, **Rules** muestra el índice o la categoría elegida, por turnos (**← All categories** vuelve al índice), y una lista con su entrada (Creatures, Kin, etc.) muestra la lista o la entrada, por turnos (**← Back** vuelve a la lista); ninguna entrada se abre sola.
 
 En el inventario de la ficha, cada objeto cuenta para el límite de carga como peso × cantidad. El peso sale del «Weight» de la tarjeta de las reglas (1/4 la ración, — no pesa), se busca por la clave del objeto o, si se escribió a mano, por su nombre; sin tarjeta pesa 1. La web no muestra ni edita el peso; se fija a mano con `weight` en el archivo de la ficha o en el campo de peso de la app de escritorio.
 
@@ -176,20 +173,18 @@ solo lo que cambió, de forma atómica; la app compara el **contenido** de los a
 Cada respuesta se arma campo por campo en `src/web/web_views.cpp`; nada se pasa "tal cual", así que un campo nuevo en los
 archivos del máster **sigue siendo privado** hasta que se añade a propósito.
 
-| De sí mismo | De su party |
-|---|---|
-| Su ficha completa: atributos, PV/PW, condiciones, habilidades, aptitudes y hechizos con su texto, equipo con sus estadísticas, monedas, debilidad, recuerdo, apariencia y las **notas de la ficha** | El nombre de la party y de cada miembro: raza, profesión, edad, PV, PW y condiciones |
+De sí mismo: su ficha completa — atributos, PV/PW, condiciones, habilidades, aptitudes y hechizos con su texto, equipo con sus estadísticas, monedas, debilidad, recuerdo, apariencia y las **notas de la ficha**.
 
 Además, las **reglas**: una sola pestaña **Rules** con el mismo índice que usa el máster en su pestaña Rules (tipos de contenido con su cantidad y capítulos de reglas, en orden alfabético). Un capítulo con el mismo título que un tipo (p. ej. Skills) se fusiona en una entrada con dos pestañas: "All skills" y "General info". **Magic** reúne Spells y el texto general (pestañas Spells y General Info). **Gear** agrupa cuatro pestañas: General, Weapons, Armor y General Info (el texto general de Gear, con Supply y Encumbrance) (ya no hay entradas sueltas de Weapons y Armor). Todo del Core y los packs de homebrew **activos**. El código es compartido con la vista del máster (`reference.js`, `ReferenceIndex.vue`, `ReferencePanel.vue`).
 
-**Nunca**: criaturas y tablas (son del máster), las notas de la party, las conversaciones de otros jugadores, las fichas de
-otros jugadores (solo su resumen de party), ni los tokens. Un pack que el máster apaga o quita deja de verse en la web.
+**Nunca**: criaturas y tablas (son del máster), las conversaciones de otros jugadores, las fichas de
+otros jugadores, ni los tokens. Un pack que el máster apaga o quita deja de verse en la web.
 
 Seguridad:
 
 * El token son 8 caracteres hex (32 bits aleatorios; lo que frena las adivinanzas es el límite de intentos fallidos por dirección; al arrancar, el servidor reemplaza los tokens viejos más largos por otros de 8, así que esos links dejan de valer); identifica **un** personaje y el personaje lo elige el servidor por el token, nunca un parámetro.
 * El token va en la cabecera `Authorization: Bearer` (nunca en la URL de la API, para que no quede en registros). La página lo
-  guarda en el navegador y lo **borra de la barra de direcciones** al abrir el enlace.
+  guarda en el navegador y lo **deja en la barra de direcciones** (`?t=…` o `?gm=…`): cada pestaña dice quién es, así que se puede abrir la del máster y la de un jugador a la vez en el mismo navegador, y cada una se recarga como lo que era (una pestaña con `?t=` es de jugador aunque el enlace del máster esté guardado).
 * Tras 20 intentos fallidos desde una dirección se bloquea unos minutos. Los mensajes de error no dicen por qué falló.
 * GET, y solo dos escrituras (`PATCH /api/me`, `POST /api/chat` y su marca de leído); el token va en una cabecera, no en una cookie, así que no hay CSRF; hasta 60 escrituras cada 10 s por personaje; cuerpos de más de 64 KB se rechazan (salvo una imagen del chat, hasta 12 MB en base64); respuestas de la API con `Cache-Control: no-store`; cabeceras `nosniff`, `X-Frame-Options: DENY`,
   `Referrer-Policy: no-referrer` y una CSP estricta; los textos se muestran siempre como texto (nunca como HTML).
@@ -204,13 +199,12 @@ Todas las rutas menos `/api/health` piden `Authorization: Bearer <token>`.
 |---|---|
 | `GET /api/health` | `{"ok":true}` |
 | `GET /api/me` | la ficha del jugador, con los números derivados (movimiento, bonificación de daño, carga, nivel de cada habilidad) |
-| `GET /api/party` | `{"party": {"name", "members":[…]}}` o `{"party": null}` |
 | `GET /api/content` | tipos de contenido (con su cantidad), packs cargados y capítulos de reglas (`rules[]`; los marcados `introOnly: true` muestran la intro del tipo en lugar de un capítulo YAML) |
 | `GET /api/content/<tipo>?q=texto` | `spells`, `abilities`, `skills`, `kin`, `professions`, `weapons`, `armor`, `gear`; cada entrada tiene `key`, `kind`, `name`, `subtitle`, `fields`, `body`, `tables`, `homebrew`; `source` solo para homebrew. `tables` (y `intro.tables`, y `tables` de cada regla) son `{title, dice, columns[], rows[{roll, cells[]}]}`: las propias más las que el texto nombra con una línea `{{table: Nombre}}`, que el cliente dibuja en ese lugar |
 | `GET /api/creatures?q=texto`, `GET /api/creatures/<clave>`, `GET /api/creatures/<clave>/image`, `GET /api/npcs` | las criaturas del Bestiary (lista con etiquetas NPC / Animal / Monster, ficha completa e ilustración) y las listas del NPC Creator. `contentSummary` trae también el tipo `creatures` |
 | `GET /api/rules/<cap>` | capítulo de reglas YAML por clave (`combat`, `world`, …); devuelve `{key, title, rules[]}` con cada nodo `{key, title, body, sections, parentId}` |
 
-La **Reference es idéntica para el máster y para los jugadores**: son las mismas rutas de solo lectura, con el token del jugador bajo `/api/…` y con el del máster bajo `/api/gm/…` (mismas respuestas). Lo que sigue siendo solo del máster es lo demás de `/api/gm/*`: personajes ajenos, parties, chat, creador de personajes.
+La **Reference es idéntica para el máster y para los jugadores**: son las mismas rutas de solo lectura, con el token del jugador bajo `/api/…` y con el del máster bajo `/api/gm/…` (mismas respuestas). Lo que sigue siendo solo del máster es lo demás de `/api/gm/*`: personajes ajenos, chat, creador de personajes.
 
 Errores: `401` enlace no válido, `429` demasiados intentos, `404` ruta o tipo desconocido, `405` método no permitido.
 
@@ -228,7 +222,7 @@ respuestas de ejemplo (`web/client/src/test/fixtures`) hechas con datos inventad
 
 ## Pruebas del servidor
 
-`tests/web_test.cpp` (parte de `ctest`): autenticación, la ficha y sus números, qué se filtra y qué no, la party, las reglas y
+`tests/web_test.cpp` (parte de `ctest`): autenticación, la ficha y sus números, qué se filtra y qué no, las reglas y
 los packs apagados, cambios en vivo, archivos a medio escribir, tokens (persistencia, regeneración, personajes nuevos y
 borrados), bloqueo por intentos, la página estática y HTTP real (sockets). Usa archivos escritos por la propia app del máster
 (`tests/fixtures/web`) y un Core inventado, así que corre sin los libros; con `data/` presente además comprueba las claves

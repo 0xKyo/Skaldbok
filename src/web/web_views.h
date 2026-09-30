@@ -10,18 +10,15 @@
 #include "parsing/content.h"
 #include "parsing/jsonutil.h"
 #include "game/messages.h"
-#include "game/party.h"
 
 namespace gm {
 
-// The player's own sheet, complete, with the numbers derived (party may be null).
-json characterView(const Character& c, const ContentStore& content, const Party* party);
+// The player's own sheet, complete, with the numbers derived.
+// `asGm`: the editable document also carries kin, profession and school, which only the GM may change.
+json characterView(const Character& c, const ContentStore& content, bool asGm = false);
 
 // Compact summary of one character for the GM's character list.
 json characterSummary(const Character& c, const ContentStore& content, const std::string& link);
-
-// The party as its own members see it: who is in it and how they are doing. Skills, gear and notes stay private.
-json partyView(const Party& party, const std::function<const Character*(const std::string&)>& findCharacter, const std::string& meId);
 
 // The Reference: everything under it is the same for the GM and for the players (types, rule chapters, creatures, the NPC lists).
 json contentSummary(const ContentStore& content);

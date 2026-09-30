@@ -1,4 +1,562 @@
 format: 1
+weapons:
+  - id: sling
+    name: Sling
+    source: rulebook
+    kind: ranged
+    grip: 1H
+    str_req: —
+    range: "20"
+    damage: D8
+    durability: —
+    cost: 1 silver
+    supply: Common
+    features: Tiny item
+    damage_types:
+      - Bludgeoning
+  - id: short-bow
+    name: Short Bow
+    source: rulebook
+    kind: ranged
+    grip: 2H
+    str_req: "7"
+    range: "30"
+    damage: D10
+    durability: "3"
+    cost: 25 gold
+    supply: Common
+    features: Requires quiver
+    damage_types:
+      - Piercing
+  - id: longbow
+    name: Longbow
+    source: rulebook
+    kind: ranged
+    grip: 2H
+    str_req: "13"
+    range: "100"
+    damage: D12
+    durability: "6"
+    cost: 50 gold
+    supply: Uncommon
+    features: Requires quiver
+    damage_types:
+      - Piercing
+  - id: crossbow-light
+    name: Crossbow, Light
+    source: rulebook
+    kind: ranged
+    grip: 2H
+    str_req: "7"
+    range: "40"
+    damage: 2D6
+    durability: "6"
+    cost: 75 gold
+    supply: Uncommon
+    features: Requires quiver, no damage bonus
+    damage_types:
+      - Piercing
+  - id: crossbow-heavy
+    name: Crossbow, Heavy
+    source: rulebook
+    kind: ranged
+    grip: 2H
+    str_req: "13"
+    range: "60"
+    damage: 2D8
+    durability: "9"
+    cost: 200 gold
+    supply: Rare
+    features: Requires quiver, no damage bonus
+    damage_types:
+      - Piercing
+  - id: crossbow-hand
+    name: Crossbow, Hand
+    source: rulebook
+    kind: ranged
+    grip: 1H
+    str_req: "7"
+    range: "30"
+    damage: 2D6
+    durability: "6"
+    cost: 90 gold
+    supply: Rare
+    features: Requires quiver, no damage bonus
+    damage_types:
+      - Piercing
+  - id: unarmed
+    name: Unarmed
+    source: rulebook
+    kind: melee
+    grip: —
+    str_req: —
+    range: "2"
+    damage: D6
+    durability: —
+    cost: —
+    supply: —
+    damage_types:
+      - Bludgeoning
+  - id: blunt-object-light
+    name: Blunt Object, Light
+    source: rulebook
+    kind: melee
+    grip: 1H
+    str_req: —
+    range: STR
+    damage: D8
+    durability: "3"
+    cost: —
+    supply: —
+    features: Can be thrown
+    damage_types:
+      - Bludgeoning
+  - id: blunt-object-heavy
+    name: Blunt Object, Heavy
+    source: rulebook
+    kind: melee
+    grip: 2H
+    str_req: "16"
+    range: "2"
+    damage: 2D8
+    durability: "3"
+    cost: —
+    supply: —
+    damage_types:
+      - Bludgeoning
+  - id: knife
+    name: Knife
+    source: rulebook
+    kind: melee
+    grip: 1H
+    str_req: —
+    range: STR
+    damage: D8
+    durability: "6"
+    cost: 5 silver
+    supply: Common
+    features: Subtle, can be thrown
+    damage_types:
+      - Piercing
+  - id: dagger
+    name: Dagger
+    source: rulebook
+    kind: melee
+    grip: 1H
+    str_req: —
+    range: STR
+    damage: D8
+    durability: "9"
+    cost: 1 gold
+    supply: Common
+    features: Subtle, can be thrown
+    damage_types:
+      - Piercing
+      - Slashing
+  - id: parrying-dagger
+    name: Parrying Dagger
+    source: rulebook
+    kind: melee
+    grip: 1H
+    str_req: —
+    range: "2"
+    damage: D6
+    durability: "15"
+    cost: 2 gold
+    supply: Uncommon
+    features: Subtle
+    damage_types:
+      - Piercing
+      - Slashing
+  - id: short-sword
+    name: Short Sword
+    source: rulebook
+    kind: melee
+    grip: 1H
+    str_req: "7"
+    range: "2"
+    damage: D10
+    durability: "12"
+    cost: 8 gold
+    supply: Common
+    damage_types:
+      - Piercing
+      - Slashing
+  - id: broadsword
+    name: Broadsword
+    source: rulebook
+    kind: melee
+    grip: 1H
+    str_req: "10"
+    range: "2"
+    damage: 2D6
+    durability: "15"
+    cost: 12 gold
+    supply: Common
+    damage_types:
+      - Piercing
+      - Slashing
+  - id: longsword
+    name: Longsword
+    source: rulebook
+    kind: melee
+    grip: 1H
+    str_req: "13"
+    range: "2"
+    damage: 2D8
+    durability: "15"
+    cost: 25 gold
+    supply: Uncommon
+    damage_types:
+      - Piercing
+      - Slashing
+  - id: greatsword
+    name: Greatsword
+    source: rulebook
+    kind: melee
+    grip: 2H
+    str_req: "16"
+    range: "2"
+    damage: 2D10
+    durability: "15"
+    cost: 50 gold
+    supply: Rare
+    damage_types:
+      - Piercing
+      - Slashing
+  - id: scimitar
+    name: Scimitar
+    source: rulebook
+    kind: melee
+    grip: 1H
+    str_req: "10"
+    range: "2"
+    damage: 2D6
+    durability: "12"
+    cost: 10 gold
+    supply: Uncommon
+    features: Toppling
+    damage_types:
+      - Slashing
+  - id: handaxe
+    name: Handaxe
+    source: rulebook
+    kind: melee
+    grip: 1H
+    str_req: "7"
+    range: STR
+    damage: 2D6
+    durability: "9"
+    cost: 2 gold
+    supply: Common
+    features: Toppling, can be thrown
+    damage_types:
+      - Slashing
+  - id: battleaxe
+    name: Battleaxe
+    source: rulebook
+    kind: melee
+    grip: 1H
+    str_req: "13"
+    range: "2"
+    damage: 2D8
+    durability: "9"
+    cost: 10 gold
+    supply: Uncommon
+    features: Toppling
+    damage_types:
+      - Slashing
+  - id: two-handed-axe
+    name: Two-Handed Axe
+    source: rulebook
+    kind: melee
+    grip: 2H
+    str_req: "16"
+    range: "2"
+    damage: 2D10
+    durability: "9"
+    cost: 25 gold
+    supply: Uncommon
+    features: Toppling
+    damage_types:
+      - Slashing
+  - id: mace
+    name: Mace
+    source: rulebook
+    kind: melee
+    grip: 1H
+    str_req: "7"
+    range: "2"
+    damage: 2D4
+    durability: "12"
+    cost: 8 gold
+    supply: Common
+    damage_types:
+      - Bludgeoning
+  - id: morningstar
+    name: Morningstar
+    source: rulebook
+    kind: melee
+    grip: 1H
+    str_req: "13"
+    range: "2"
+    damage: 2D8
+    durability: "12"
+    cost: 14 gold
+    supply: Uncommon
+    damage_types:
+      - Bludgeoning
+  - id: flail
+    name: Flail
+    source: rulebook
+    kind: melee
+    grip: 1H
+    str_req: "13"
+    range: "2"
+    damage: 2D8
+    durability: —
+    cost: 16 gold
+    supply: Uncommon
+    features: Toppling, cannot be used for parrying
+    damage_types:
+      - Bludgeoning
+  - id: warhammer-light
+    name: Warhammer, Light
+    source: rulebook
+    kind: melee
+    grip: 1H
+    str_req: "10"
+    range: "2"
+    damage: 2D6
+    durability: "12"
+    cost: 10 gold
+    supply: Uncommon
+    features: Toppling
+    damage_types:
+      - Bludgeoning
+  - id: warhammer-heavy
+    name: Warhammer, Heavy
+    source: rulebook
+    kind: melee
+    grip: 2H
+    str_req: "16"
+    range: "2"
+    damage: 2D10
+    durability: "12"
+    cost: 20 gold
+    supply: Uncommon
+    features: Toppling
+    damage_types:
+      - Bludgeoning
+  - id: wooden-club-small
+    name: Wooden Club, Small
+    source: rulebook
+    kind: melee
+    grip: 1H
+    str_req: "7"
+    range: "2"
+    damage: D8
+    durability: "9"
+    cost: 1 silver
+    supply: Common
+    damage_types:
+      - Bludgeoning
+  - id: wooden-club-large
+    name: Wooden Club, Large
+    source: rulebook
+    kind: melee
+    grip: 2H
+    str_req: "16"
+    range: "2"
+    damage: 2D8
+    durability: "12"
+    cost: 2 silver
+    supply: Common
+    damage_types:
+      - Bludgeoning
+  - id: staff
+    name: Staff
+    source: rulebook
+    kind: melee
+    grip: 2H
+    str_req: "7"
+    range: "2"
+    damage: D8
+    durability: "9"
+    cost: 2 silver
+    supply: Common
+    features: Toppling
+    damage_types:
+      - Bludgeoning
+  - id: short-spear
+    name: Short Spear
+    source: rulebook
+    kind: melee
+    grip: 1H
+    str_req: "7"
+    range: STR×2
+    damage: D10
+    durability: "9"
+    cost: 5 silver
+    supply: Common
+    features: Can be thrown
+    damage_types:
+      - Piercing
+  - id: long-spear
+    name: Long Spear
+    source: rulebook
+    kind: melee
+    grip: 2H
+    str_req: "10"
+    range: "4"
+    damage: 2D8
+    durability: "9"
+    cost: 1 gold
+    supply: Common
+    features: Long
+    damage_types:
+      - Piercing
+  - id: lance
+    name: Lance
+    source: rulebook
+    kind: melee
+    grip: 1H
+    str_req: "13"
+    range: "4"
+    damage: 2D10
+    durability: "12"
+    cost: 12 gold
+    supply: Rare
+    features: Long, requires combat trained mount
+    damage_types:
+      - Piercing
+  - id: halberd
+    name: Halberd
+    source: rulebook
+    kind: melee
+    grip: 2H
+    str_req: "13"
+    range: "4"
+    damage: 2D8
+    durability: "12"
+    cost: 20 gold
+    supply: Rare
+    features: Long, toppling
+    damage_types:
+      - Piercing
+      - Slashing
+  - id: trident
+    name: Trident
+    source: rulebook
+    kind: melee
+    grip: 1H
+    str_req: "10"
+    range: STR
+    damage: 2D6
+    durability: "9"
+    cost: 5 gold
+    supply: Uncommon
+    features: Toppling, can be thrown
+    damage_types:
+      - Piercing
+  - id: shield-small
+    name: Shield, Small
+    source: rulebook
+    kind: melee
+    grip: 1H
+    str_req: "7"
+    range: "2"
+    damage: D8
+    durability: "15"
+    cost: 4 gold
+    supply: Common
+    damage_types:
+      - Bludgeoning
+  - id: shield-large
+    name: Shield, Large
+    source: rulebook
+    kind: melee
+    grip: 1H
+    str_req: "13"
+    range: "2"
+    damage: D8
+    durability: "18"
+    cost: 12 gold
+    supply: Common
+    damage_types:
+      - Bludgeoning
+  - id: mastercrafted
+    name: Mastercrafted
+    source: rulebook
+    kind: melee
+    cost: ×10
+    features: Reduces STR requirement by 3, increases durability by 3
+armor:
+  - id: leather
+    name: Leather
+    source: rulebook
+    slot: armor
+    armor_rating: "1"
+    armor_bonuses:
+      - damage_type: Bludgeoning
+        bonus: 2
+    cost: 2 gold
+    supply: Common
+  - id: studded-leather
+    name: Studded Leather
+    source: rulebook
+    slot: armor
+    armor_rating: "2"
+    armor_bonuses:
+      - damage_type: Bludgeoning
+        bonus: 2
+    banes:
+      - Sneaking
+    cost: 10 gold
+    supply: Uncommon
+  - id: chainmail
+    name: Chainmail
+    source: rulebook
+    slot: armor
+    armor_rating: "4"
+    armor_bonuses:
+      - damage_type: Slashing
+        bonus: 2
+    banes:
+      - Evade
+      - Sneaking
+    cost: 50 gold
+    supply: Uncommon
+  - id: plate-armor
+    name: Plate Armor
+    source: rulebook
+    slot: armor
+    armor_rating: "6"
+    banes:
+      - Acrobatics
+      - Evade
+      - Sneaking
+    cost: 500 gold
+    supply: Rare
+  - id: open-helmet
+    name: Open Helmet
+    source: rulebook
+    slot: helmet
+    armor_rating: "+1"
+    banes:
+      - Awareness
+    cost: 12 gold
+    supply: Uncommon
+  - id: great-helm
+    name: Great Helm
+    source: rulebook
+    slot: helmet
+    armor_rating: "+2"
+    banes:
+      - Awareness
+      - Ranged attacks
+    cost: 100 gold
+    supply: Rare
 gear:
   - id: boots
     name: Boots

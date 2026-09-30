@@ -1,5 +1,5 @@
 // The chat between the GM and each player: one conversation per character, always with the GM (players never write to each other).
-// The GM can also broadcast to a party or to everyone; a broadcast lands in each player's conversation, marked as one.
+// The GM can also broadcast to several characters at once; a broadcast lands in each player's conversation, marked as one.
 //
 // Written by two programs at once (the app and the web server), so nothing is ever rewritten: every message is its own file
 // (chat/<character id>/<message id>.json, ids sort by time) and each side keeps only a small "read up to" marker. Pictures live in
@@ -19,7 +19,7 @@ struct Message {
     std::string at;                       // ISO 8601, UTC
     std::string from;                     // "gm" or "player"
     std::string kind;                     // "message" or "broadcast" (always from the GM)
-    std::string to;                       // a broadcast's addressee as the GM saw it: "The Misty Vale party", "Everyone"
+    std::string to;                       // a broadcast's addressee as the GM saw it: "Everyone"
     std::string text;
     std::string image;                    // file name inside chat/media/, empty if none
 };

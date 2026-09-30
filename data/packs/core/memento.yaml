@@ -1,0 +1,65 @@
+format: 1
+rollable:
+  - Memento
+entities:
+  - name: Your trusty old shoes
+    kind: memento
+    legacy_key: "#36"
+    source: rulebook
+  - name: A simple silver medallion
+    kind: memento
+    source: rulebook
+  - name: A letter from an old friend or relative
+    kind: memento
+    source: rulebook
+  - name: A ragged old journal
+    kind: memento
+    source: rulebook
+  - name: A bracelet passed down in your family
+    kind: memento
+    source: rulebook
+  - name: A wooden figurine you got as a child
+    kind: memento
+    source: rulebook
+  - name: A strangely shaped stone
+    kind: memento
+    source: rulebook
+  - name: A copper coin from a treasure sought by your mother or father
+    kind: memento
+    source: rulebook
+  - name: An old pewter tankard
+    kind: memento
+    source: rulebook
+  - name: A horn taken as a trophy from a monster
+    kind: memento
+    source: rulebook
+  - name: A fang taken as a trophy from a beast
+    kind: memento
+    source: rulebook
+  - name: A couple of simple dice made of bone
+    kind: memento
+    source: rulebook
+  - name: A locket containing a lock of hair
+    kind: memento
+    source: rulebook
+  - name: An ornate key
+    kind: memento
+    source: rulebook
+  - name: A hand-drawn map you inherited
+    kind: memento
+    source: rulebook
+  - name: A ring with an inscription
+    kind: memento
+    source: rulebook
+  - name: A bone whistle
+    kind: memento
+    source: rulebook
+  - name: Your mother’s or father’s ragged old hat
+    kind: memento
+    source: rulebook
+  - name: A griffin feather
+    kind: memento
+    source: rulebook
+  - name: A beautifully carved pipe
+    kind: memento
+    source: rulebook

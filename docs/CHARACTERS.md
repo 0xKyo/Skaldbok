@@ -98,25 +98,6 @@ La app relee los archivos ~3 veces por segundo comparando su contenido y muestra
 decisión vale solo para eso, y se olvida cuando el problema se arregla. Los fallos que se marcan: PV/PW sobre su máximo, un máximo cambiado sin la aptitud (Robust, Focused),
 un atributo fuera de 3–18, una habilidad sobre 18 y más carga que el límite.
 
-## Parties
-
-Una **party** agrupa a los personajes que juegan juntos. Es un JSON por party en
-la carpeta `parties/` (junto a `characters/`); el nombre del archivo es su `id`.
-
-```json
-{
-  "format": 1,
-  "id": "p-1a0c0163f9b-d77",
-  "name": "The Misty Vale party",
-  "members": ["c-1a0c0163f99-f52", "c-1a0c0163f9a-000"],      // ids de personajes, sin repetir
-  "notes": "Notas del máster: no las ve nadie más.",
-  "created_at": "2026-09-20T14:03:09Z", "updated_at": "2026-09-20T14:10:42Z"
-}
-```
-
-* Un personaje puede estar en más de una party; borrar un personaje lo saca de todas.
-* Los jugadores ven de su party solo el nombre y el estado de los miembros (ver [`WEB.md`](WEB.md)); `notes` no.
-
 ## Acceso web
 
 El servidor web (`skaldbok_web`) guarda un token secreto por personaje en `web-access.yaml` (en la carpeta del usuario, junto a

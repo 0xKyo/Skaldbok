@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 3.24)
 # yaml-cpp 0.8.0 declares cmake_minimum_required(2.8.12); CMake 4.x rejects < 3.5 unless this is set.
 set(CMAKE_POLICY_VERSION_MINIMUM 3.5 CACHE INTERNAL "" FORCE)
 if(WIN32)
-  project(Skaldbok VERSION 0.4.0 LANGUAGES C CXX RC)
+  project(Skaldbok VERSION 0.5.0 LANGUAGES C CXX RC)
 else()
-  project(Skaldbok VERSION 0.4.0 LANGUAGES C CXX)
+  project(Skaldbok VERSION 0.5.0 LANGUAGES C CXX)
 endif()
 
 set(CMAKE_CXX_STANDARD 23)
@@ -36,7 +36,6 @@ add_library(gm_core STATIC
   src/game/dice.cpp
   src/game/encounter.cpp
   src/game/character.cpp
-  src/game/party.cpp
   src/game/changelog.cpp
   src/game/sheet_edit.cpp
   src/game/web_link.cpp

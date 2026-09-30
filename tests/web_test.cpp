@@ -175,7 +175,7 @@ void authentication() {
     check(app.ok(), "the app starts on the fixtures: " + app.error());
     const std::string brenna = tokenOf(app, "Brenna");
     check(get(app, "/api/health").status == 200, "health needs no token");
-    check(get(app, "/api/me").status == 401 && get(app, "/api/party").status == 401 && get(app, "/api/content").status == 401, "without a token every route is refused");
+    check(get(app, "/api/me").status == 401 && get(app, "/api/chat").status == 401 && get(app, "/api/content").status == 401, "without a token every route is refused");
     check(get(app, "/api/me", "not-a-real-token-at-all-1234").status == 401, "a wrong token is refused");
     WebRequest basic;
     basic.path = "/api/me";
@@ -204,7 +204,6 @@ void sheetView() {
     check(me["derived"]["damageBonus"]["str"] == "D4" && me["derived"]["damageBonus"]["agl"] == "", "damage bonus D4 for STR 15, none for AGL 12");
     check(me["derived"]["encumbrance"]["carried"] == 3 && me["derived"]["encumbrance"]["limit"] == 8, "carrying 3 of 8 (rations count one per four)");
     check(me["conditions"].size() == 6 && std::ranges::none_of(me["conditions"], [](const json& c) { return c["active"].get<bool>(); }), "six conditions, none active");
-    check(me["party"] == "The Misty Vale party", "the party's name");
     check(me["about"]["weakness"] == "Child of the Wild. I never sleep indoors." && me["about"]["notes"] == "Owes the innkeeper 3 silver.", "weakness and notes");
     check(me["equipment"]["coins"]["silver"] == 1, "coins");
 
@@ -257,7 +256,7 @@ void privacy() {
     Env e = makeEnv("privacy");
     WebApp app(e.config);
     const std::string token = tokenOf(app, "Brenna");
-    const std::string texts[] = {get(app, "/api/me", token).body, get(app, "/api/party", token).body, get(app, "/api/content/spells", token).body,
+    const std::string texts[] = {get(app, "/api/me", token).body, get(app, "/api/content/spells", token).body,
                                  get(app, "/api/content", token).body};
     bool clean = true;
     std::string leaked;
@@ -291,10 +290,10 @@ void chat() {
     std::string err;
     const std::vector<std::string> onlyBrenna = {brennaId}, bothOfThem = {brennaId, garmanderId};
     check(gm.sendFromGm(onlyBrenna, false, "", "You recognise the symbol.", picture, &err), "the GM writes Brenna a private message with a picture");
-    check(gm.sendFromGm(bothOfThem, true, "The Misty Vale party", "The bridge is out.", "", &err), "and broadcasts a note to the party");
+    check(gm.sendFromGm(bothOfThem, true, "Everyone", "The bridge is out.", "", &err), "and broadcasts a note to several characters");
 
     const json mine = body(get(app, "/api/chat", brenna))["messages"];
-    check(mine.size() == 2 && mine[0]["text"] == "You recognise the symbol." && mine[0]["from"] == "gm" && mine[0]["kind"] == "message" && mine[1]["kind"] == "broadcast" && mine[1]["to"] == "The Misty Vale party",
+    check(mine.size() == 2 && mine[0]["text"] == "You recognise the symbol." && mine[0]["from"] == "gm" && mine[0]["kind"] == "message" && mine[1]["kind"] == "broadcast" && mine[1]["to"] == "Everyone",
           "Brenna sees both, oldest first, the broadcast marked as one");
     check(mine[0]["image"] == "/chat/" + mine[0]["id"].get<std::string>() + "/image" && mine[1]["image"].is_null(), "a picture is named by the address that serves it");
     const json theirs = body(get(app, "/api/chat", garmander))["messages"];
@@ -314,35 +313,8 @@ void chat() {
     check(seenByGm.thread(brennaId).messages.size() == 3 && seenByGm.thread(brennaId).messages.back().from == "player" && seenByGm.unread(brennaId, true) == 1, "and the GM's side reads it, as unread");
     check(body(get(app, "/api/chat", garmander))["messages"].size() == 1, "nobody else sees it: players never write to each other");
     {
-        // the GM web page writes to a whole party: a broadcast into the conversation of each of its characters
+        // the GM web page creates characters: a new one must be read back from the list
         const std::string gmTok = app.access().gmToken();
-        const json parties = body(get(app, "/api/gm/parties", gmTok))["parties"];
-        const std::string pid = parties.empty() ? std::string() : parties[0]["id"].get<std::string>();
-        const std::string partyName = parties.empty() ? std::string() : parties[0]["name"].get<std::string>();
-        const std::string route = "/api/gm/parties/" + pid + "/message";
-        const size_t before = body(get(app, "/api/chat", garmander))["messages"].size();
-        const WebResponse toParty = get(app, route, gmTok, "10.0.0.1", "POST", R"({"text": "Meet at the inn."})");
-        const json afterMsgs = body(get(app, "/api/chat", garmander))["messages"];
-        check(!pid.empty() && toParty.status == 201 && body(toParty)["sent"].get<int>() >= 1 && afterMsgs.size() == before + 1 &&
-                  afterMsgs.back()["kind"] == "broadcast" && afterMsgs.back()["to"] == partyName && afterMsgs.back()["text"] == "Meet at the inn.",
-              "a message to a party reaches each of its characters as a broadcast that names the party");
-        check(get(app, route, gmTok, "10.0.0.1", "POST", R"({"text": ""})").status == 400 && get(app, "/api/gm/parties/no-such-party/message", gmTok, "10.0.0.1", "POST", R"({"text": "x"})").status == 404 &&
-                  get(app, route, brenna, "10.0.0.1", "POST", R"({"text": "x"})").status != 201,
-              "an empty text is refused, so is an unknown party, and a player cannot write to a party");
-        // what the GM page creates must be read back: a new party and a new character show up in the lists, and members can be added
-        const WebResponse made = get(app, "/api/gm/parties", gmTok, "10.0.0.1", "POST", R"({"name": "Test"})");
-        const std::string newParty = body(made).value("id", "");
-        auto partyNamed = [&](const std::string& id) -> json {
-            for (const json& p : body(get(app, "/api/gm/parties", gmTok))["parties"])
-                if (p["id"] == id) return p;
-            return json(nullptr);
-        };
-        check(made.status == 201 && !newParty.empty() && partyNamed(newParty).is_object() && partyNamed(newParty)["name"] == "Test", "a party created from the GM page is listed afterwards");
-        get(app, "/api/gm/parties/" + newParty, gmTok, "10.0.0.1", "PATCH", "{\"addMember\": \"" + brennaId + "\"}");
-        check(partyNamed(newParty).is_object() && partyNamed(newParty)["members"].size() == 1 && partyNamed(newParty)["members"][0] == brennaId, "and a character can be added to it (one character can be in several parties)");
-        check(get(app, "/api/gm/parties/" + newParty, gmTok, "10.0.0.1", "PATCH", R"({"name": "  Renamed  "})").status == 200 && partyNamed(newParty)["name"] == "Renamed" &&
-                  get(app, "/api/gm/parties/" + newParty, gmTok, "10.0.0.1", "PATCH", R"({"name": "   "})").status == 400 && partyNamed(newParty)["name"] == "Renamed",
-              "a party can be renamed (trimmed), and an empty name is refused");
         const WebResponse newChar = get(app, "/api/gm/characters", gmTok, "10.0.0.1", "POST", R"({"name": "Newcomer"})");
         bool listed = false;
         for (const json& c : body(get(app, "/api/gm/characters", gmTok))["characters"]) listed |= c["name"] == "Newcomer";
@@ -379,18 +351,24 @@ void chat() {
         for (const char* where : {"weapons", "inventory"})
             for (const json& it : customSheet[where]) carried |= it["name"] == wanted;
         check(withCustom.status == 201 && !weaponCards.empty() && carried, "custom gear chosen freely is on the sheet, and an unknown key is ignored");
+        // the GM can change kin, profession and school on a sheet (a player cannot: see the sheet-editing checks)
+        const json gmSheet = body(get(app, "/api/gm/characters/" + customId, gmTok));
+        check(gmSheet["doc"].contains("kin") && gmSheet["doc"].contains("profession") && gmSheet["doc"].contains("school"), "the GM's editable sheet carries kin, profession and school");
+        const WebResponse kinEdit = get(app, "/api/gm/characters/" + customId, gmTok, "10.0.0.1", "PATCH",
+                                        R"({"set": {"kin": {"key": "", "name": "Halfling"}, "profession": {"key": "", "name": "Scholar"}, "school": ""}})");
+        const json edited = body(kinEdit);
+        check(kinEdit.status == 200 && edited["kin"]["name"] == "Halfling" && edited["profession"]["name"] == "Scholar", "the GM changes the kin and the profession of a character");
+        check(get(app, "/api/gm/characters/" + customId, gmTok, "10.0.0.1", "PATCH", R"({"set": {"kin": {}}})").status == 400, "a kin needs a name");
         get(app, "/api/gm/characters/" + customId, gmTok, "10.0.0.1", "DELETE");
         check(get(app, "/api/gm/creation", brenna).status != 200 && get(app, "/api/gm/creation/random", brenna, "10.0.0.1", "POST", "{}").status != 200, "players cannot use the creator");
         get(app, "/api/gm/characters/" + builtId, gmTok, "10.0.0.1", "DELETE");
-        // and what it deletes is gone: a deleted party disappears, a deleted character leaves the list and every party it was in
+        // and what it deletes is gone: a deleted character leaves the list
         const std::string newCharId = body(newChar).value("id", "");
-        get(app, "/api/gm/parties/" + newParty, gmTok, "10.0.0.1", "PATCH", "{\"addMember\": \"" + newCharId + "\"}");
-        check(!newCharId.empty() && partyNamed(newParty)["members"].size() == 2, "the new character joins the party");
+        check(!newCharId.empty(), "the new character has an id");
         check(get(app, "/api/gm/characters/" + newCharId, gmTok, "10.0.0.1", "DELETE").status == 200, "a character can be deleted from the GM page");
         bool stillListed = false;
         for (const json& c : body(get(app, "/api/gm/characters", gmTok))["characters"]) stillListed |= c["id"] == newCharId;
-        check(!stillListed && partyNamed(newParty)["members"].size() == 1, "a deleted character is no longer listed and leaves its parties");
-        check(get(app, "/api/gm/parties/" + newParty, gmTok, "10.0.0.1", "DELETE").status == 200 && partyNamed(newParty).is_null(), "a deleted party is no longer listed");
+        check(!stillListed, "a deleted character is no longer listed");
     }
     sent = get(app, "/api/chat", brenna, "10.0.0.1", "POST", "{\"image\": \"" + base64(kPng) + "\"}");
     const std::string sentImage = body(sent)["message"]["image"].is_null() ? "" : body(sent)["message"]["image"].get<std::string>();
@@ -414,7 +392,7 @@ void chat() {
     check(body(get(app, "/api/chat", brenna))["gmRead"] == last, "the player can tell the GM has read it");
 
     check(get(app, "/api/chat", brenna, "10.0.0.1", "PUT", "{}").status == 405 && get(app, "/api/chat", brenna, "10.0.0.1", "DELETE").status == 405 && get(app, "/api/me", brenna, "10.0.0.1", "POST", "{}").status == 405 &&
-              get(app, "/api/chat", brenna, "10.0.0.1", "PATCH", "{}").status == 405 && get(app, "/api/party", brenna, "10.0.0.1", "POST", "{}").status == 405,
+              get(app, "/api/chat", brenna, "10.0.0.1", "PATCH", "{}").status == 405 && get(app, "/api/content", brenna, "10.0.0.1", "POST", "{}").status == 405,
           "only the two writes exist: POST /chat and PATCH /me");
     check(contains(get(app, "/api/chat", brenna).headers.at("Content-Security-Policy"), "blob:"), "the page may show a picture it fetched");
 
@@ -519,33 +497,6 @@ void editing() {
     check(failures == 0, "forty quick edits in a row are fine");
 }
 
-void party() {
-    Env e = makeEnv("party");
-    WebApp app(e.config);
-    const json p = body(get(app, "/api/party", tokenOf(app, "Brenna")))["party"];
-    check(p["name"] == "The Misty Vale party" && p["members"].size() == 3, "the party and its three members");
-    int you = 0;
-    std::string who;
-    for (const json& m : p["members"])
-        if (m["you"] == true) {
-            ++you;
-            who = m["name"];
-        }
-    check(you == 1 && who == "Brenna", "exactly one member is 'you'");
-    std::vector<std::string> keys;
-    for (auto it = p.begin(); it != p.end(); ++it) keys.push_back(it.key());
-    std::sort(keys.begin(), keys.end());
-    std::vector<std::string> memberKeys;
-    for (auto it = p["members"][0].begin(); it != p["members"][0].end(); ++it) memberKeys.push_back(it.key());
-    std::sort(memberKeys.begin(), memberKeys.end());
-    check(keys == std::vector<std::string>{"members", "name"} &&
-              memberKeys == std::vector<std::string>{"age", "conditions", "hp", "kin", "name", "nickname", "player", "profession", "wp", "you"},
-          "the party view has exactly the public fields");
-    const json mate = body(get(app, "/api/party", tokenOf(app, "Garmander")))["party"];
-    check(find(mate["members"], "name", "Brenna") && (*find(mate["members"], "name", "Brenna"))["you"] == false, "for a teammate, Brenna is not 'you'");
-    check(body(get(app, "/api/party", tokenOf(app, "Groddy")))["party"].is_null(), "a character outside any party sees no party");
-}
-
 void rules() {
     Env e = makeEnv("rules");
     WebApp app(e.config);
@@ -589,8 +540,6 @@ void liveUpdates() {
     for (const json& c : me["conditions"])
         if (c["active"] == true) active.push_back(c["name"]);
     check(me["hp"]["current"] == 3 && active == std::vector<std::string>{"Scared", "Dazed"}, "a change made in the GM app shows up on the next request");
-    const json p = body(get(app, "/api/party", token))["party"];
-    check((*find(p["members"], "name", "Brenna"))["hp"]["current"] == 3, "and the party sees it too");
 
     // the GM app does not write atomically: a request can land in the middle of a save
     const std::string file = charFile(e, app, "Brenna");
@@ -687,7 +636,7 @@ void staticClient() {
     check(root.headers.at("X-Content-Type-Options") == "nosniff" && root.headers.at("Referrer-Policy") == "no-referrer" && root.headers.at("X-Frame-Options") == "DENY" &&
               contains(root.headers.at("Content-Security-Policy"), "default-src 'self'"),
           "security headers");
-    check(contains(get(app, "/party").body, "players"), "a deep link falls back to the app");
+    check(contains(get(app, "/sheet").body, "players"), "a deep link falls back to the app");
     const WebResponse js = get(app, "/assets/app.js");
     check(js.status == 200 && js.contentType.contains("javascript") && js.body == "console.log(1)" && contains(js.headers.at("Cache-Control"), "max-age"),
           "assets are served with their type and cached");
@@ -697,7 +646,7 @@ void staticClient() {
     check(get(app, "/api/me").headers.at("Cache-Control") == "no-store", "API answers are never cached");
     e.config.staticDir = e.root + "/missing";
     WebApp none(e.config);
-    check(get(none, "/").status == 200 && contains(get(none, "/").body, "API is running") && get(none, "/party").status == 404, "without a built client the API still runs");
+    check(get(none, "/").status == 200 && contains(get(none, "/").body, "API is running") && get(none, "/sheet").status == 404, "without a built client the API still runs");
 }
 
 void overHttp() {
@@ -725,7 +674,7 @@ void overHttp() {
     check(q && q->status == 200 && contains(q->body, "Frost Nip") && !contains(q->body, "Rime Ward"), "the query string reaches the app");
     auto post = cli.Post("/api/me", "{}", "application/json");
     check(post && (post->status == 401 || post->status == 405), "a POST is not a way in");
-    auto page = cli.Get("/party");
+    auto page = cli.Get("/sheet");
     check(page && page->status == 200 && contains(page->body, "players"), "a deep link over HTTP falls back to the client");
     auto climb = cli.Get("/assets/%2e%2e/%2e%2e/secret.txt");
     check(climb && !contains(climb->body, "not for browsers"), "an encoded path cannot climb out either");
@@ -784,6 +733,10 @@ void realData() {
     for (const json& ch : body(get(app, "/api/content", token))["rules"])
         if (!ch.value("introOnly", false)) sameChapters &= get(app, "/api/rules/" + ch["key"].get<std::string>(), token).body == get(app, "/api/gm/rules/" + ch["key"].get<std::string>(), gmToken).body;
     check(sameChapters, "every rules chapter reads the same for both");
+    std::map<std::string, std::string> slotOf;
+    for (const json& a : body(get(app, "/api/content/armor", token))["entries"]) slotOf[a["name"].get<std::string>()] = a["slot"].get<std::string>();
+    check(slotOf["Leather"] == "armor" && slotOf["Chainmail"] == "armor" && slotOf["Plate Armor"] == "armor" && slotOf["Open Helmet"] == "helmet" && slotOf["Great Helm"] == "helmet",
+          "the armor cards say where they are worn: the four armors are armor, the two helmets are helmet");
     int withTables = 0;
     for (const json& ch : body(get(app, "/api/content", token))["rules"]) {
         if (ch.value("introOnly", false)) continue;
@@ -804,7 +757,6 @@ int main() {
     privacy();
     chat();
     editing();
-    party();
     rules();
     liveUpdates();
     tokens();

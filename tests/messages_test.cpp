@@ -32,13 +32,13 @@ int main() {
     std::string err;
     const std::vector<std::string> aria = {"c-1"}, both = {"c-1", "c-2"}, nobody;
     check(store.sendFromGm(aria, false, "", "You recognise the symbol.", "", &err), "the GM writes to one player");
-    check(store.sendFromGm(both, true, "The Misty Vale party", "The bridge is out.", "", &err), "and broadcasts to the party");
+    check(store.sendFromGm(both, true, "Everyone", "The bridge is out.", "", &err), "and broadcasts to several characters");
     check(store.sendFromGm(aria, false, "", "", picture, &err), "a picture alone is a message");
     const Thread t1 = store.thread("c-1");
     check(t1.messages.size() == 3 && t1.messages[0].text == "You recognise the symbol." && t1.messages[0].from == "gm" && t1.messages[0].kind == "message" &&
               t1.messages[0].at.size() == 20,
           "the conversation is in order, each message from the GM with its time");
-    check(t1.messages[1].kind == "broadcast" && t1.messages[1].to == "The Misty Vale party", "a broadcast is marked and says who it went to");
+    check(t1.messages[1].kind == "broadcast" && t1.messages[1].to == "Everyone", "a broadcast is marked and says who it went to");
     check(t1.messages[2].image.ends_with(".png") && MessageStore::safeMediaName(t1.messages[2].image) && fs::isFile(store.mediaFile(t1.messages[2].image)) &&
               fs::readFile(store.mediaFile(t1.messages[2].image)).value_or("") == kPng,
           "a picture is copied into media/");

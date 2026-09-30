@@ -1,4 +1,4 @@
-// The shape shared by the per-user stores (characters, parties): a folder with one "<id>.yaml" file per item, where the file
+// The shape shared by the per-user stores (characters): a folder with one "<id>.yaml" file per item, where the file
 // name is the identity. T needs `id`, `name`, `createdAt`, `updatedAt`, `toJson()` and a static `fromJson(text, out, error)`.
 //
 // Another program (the web server) may write the same files, so the store can look again with poll() and picks up what changed.

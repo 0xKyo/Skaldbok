@@ -1,5 +1,5 @@
-// Talking to the server. Player token comes from ?t=..., GM token from ?gm=...; both are kept in the browser and
-// removed from the address bar so they don't end up in screenshots or shared URLs.
+// Talking to the server. Player token comes from ?t=..., GM token from ?gm=...; both are kept in the browser and stay in the address
+// bar, so every tab says who it is: a GM tab and a player tab can be open at the same time, and each one reloads as itself.
 const KEY = 'skaldbok.token';
 const GM_KEY = 'skaldbok.gmtoken';
 
@@ -19,9 +19,6 @@ export function captureToken(win = window) {
     } catch {
       /* private mode: the token then lives only as long as this page */
     }
-    params.delete('t');
-    const query = params.toString();
-    win.history.replaceState(null, '', win.location.pathname + (query ? `?${query}` : '') + win.location.hash);
     return fromUrl;
   }
   try {
@@ -48,11 +45,9 @@ export function captureGmToken(win = window) {
     } catch {
       /* private mode */
     }
-    params.delete('gm');
-    const query = params.toString();
-    win.history.replaceState(null, '', win.location.pathname + (query ? `?${query}` : '') + win.location.hash);
     return fromUrl;
   }
+  if (params.get('t')) return null;                     // a tab opened with a player's link is that player's, whatever was saved for the GM
   try {
     return win.localStorage.getItem(GM_KEY);
   } catch {

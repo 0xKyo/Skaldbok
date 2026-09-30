@@ -30,7 +30,7 @@ describe('ChatView', () => {
     expect(bubbles[0].text()).toContain('<b>symbol</b>');
     expect(bubbles[0].find('b').exists()).toBe(false);
     const broadcast = w.get('[data-test=broadcast]');
-    expect(broadcast.text()).toContain('The Misty Vale party');
+    expect(broadcast.text()).toContain('Everyone');
     expect(broadcast.classes()).toContain('broadcast');
     expect(broadcast.findAll('.message-text')).toHaveLength(2);
   });
