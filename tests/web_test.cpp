@@ -359,7 +359,7 @@ void chat() {
                                   {"abilities", json::array({{{"name", "Undead"}, {"text", "Immune to poison."}}})}};
         const WebResponse madeCreature = get(app, homebrew, gmTok, "10.0.0.1", "POST", newCreature.dump());
         const std::string creatureId = body(madeCreature).value("id", ""), creatureKey = body(madeCreature).value("key", "");
-        check(madeCreature.status == 201 && creatureId == "tundra-shade" && creatureKey == "custom/monster/tundra-shade", "a creature made on the GM page is saved in the GM's own pack");
+        check(madeCreature.status == 201 && creatureId == "tundra-shade" && creatureKey == "homebrew/monster/tundra-shade", "a creature made on the GM page is saved in the GM's own pack");
         const auto creatureNamed = [&](const std::string& route, const std::string& token) -> json {
             const json all = body(get(app, route, token));                  // (kept in a variable: a range over a temporary would dangle)
             for (const json& c : all["creatures"])
@@ -381,6 +381,96 @@ void chat() {
               "a creature needs a name and a real kind, an unknown id is a 404");
         check(get(app, homebrew + "/" + creatureId, gmTok, "10.0.0.1", "DELETE").status == 200 && body(get(app, homebrew, gmTok))["creatures"].empty() && get(app, homebrew + "/" + creatureId, gmTok, "10.0.0.1", "DELETE").status == 404,
               "deleting removes it from the pack");
+        // homebrew of every other data file: a schema to build the forms from, entries by index, the pack named as the GM likes
+        const json schema = body(get(app, "/api/gm/homebrew", gmTok));
+        std::set<std::string> kinds;
+        for (const json& s : schema["sections"]) kinds.insert(s["id"].get<std::string>());
+        check(schema["pack"]["id"] == "homebrew" && schema["pack"]["name"] == "Homebrew" && kinds.count("spells") && kinds.count("weapons") && kinds.count("armor") && kinds.count("gear") && kinds.count("terrain") &&
+                  kinds.count("melee-demon-rolls") && get(app, "/api/gm/homebrew", brenna).status != 200,
+              "the Homebrew tab asks the server what it can make; the pack is called Homebrew by default; players cannot");
+        const std::string spells = "/api/gm/homebrew/spells";
+        const WebResponse madeSpell = get(app, spells, gmTok, "10.0.0.1", "POST", R"({"name": "  RimeLance ", "school": "Elementalism", "trick": true, "rank": "2", "description": "A spear of ice.", "bogus": 1})");
+        check(madeSpell.status == 201 && body(madeSpell)["name"] == "RimeLance" && body(madeSpell)["trick"] == true && !body(madeSpell).contains("bogus") && body(madeSpell)["index"] == 0, "a spell is made, trimmed, and what is not a spell's field is dropped");
+        bool spellInRules = false;
+        const json spellList = body(get(app, "/api/gm/content/spells", gmTok));
+        for (const json& sp : spellList.is_array() ? spellList : spellList.value("items", json::array())) spellInRules |= sp.value("name", "") == "RimeLance";
+        check(spellInRules || spellList.dump().find("RimeLance") != std::string::npos, "the new spell is in the Reference right away");
+        check(get(app, spells, gmTok, "10.0.0.1", "POST", R"({"name": "X", "school": "Pyromancy"})").status == 400 && get(app, spells, gmTok, "10.0.0.1", "POST", R"({"description": "no name"})").status == 400 &&
+                  get(app, "/api/gm/homebrew/nothing", gmTok, "10.0.0.1", "POST", R"({"name": "X"})").status == 404,
+              "a spell needs a name and a real school; an unknown kind is a 404");
+        check(get(app, spells + "/0?name=RimeLance", gmTok, "10.0.0.1", "PUT", R"({"name": "RimeSpear", "school": "Elementalism"})").status == 200 && body(get(app, spells, gmTok))["entries"][0]["name"] == "RimeSpear" &&
+                  get(app, spells + "/0?name=RimeLance", gmTok, "10.0.0.1", "PUT", R"({"name": "Old"})").status == 404,
+              "editing needs the name the entry has now: a stale list cannot overwrite another entry");
+        const WebResponse madeWeapon = get(app, "/api/gm/homebrew/weapons", gmTok, "10.0.0.1", "POST", R"({"name": "Ice Axe", "kind": "melee", "grip": "1H", "damage": "D8", "damage_types": ["Slashing"]})");
+        const WebResponse madeArmor = get(app, "/api/gm/homebrew/armor", gmTok, "10.0.0.1", "POST", R"({"name": "Fur Coat", "armor_rating": "1", "armor_bonuses": [{"damage_type": "Cold", "bonus": "2"}]})");
+        check(madeWeapon.status == 201 && madeArmor.status == 201 && body(get(app, "/api/gm/homebrew/weapons", gmTok))["entries"].size() == 1 &&
+                  body(get(app, "/api/gm/homebrew/armor", gmTok))["entries"][0]["armor_bonuses"][0]["bonus"] == 2,
+              "weapons, armor and gear share equipment.yaml without touching each other; a number is stored as a number");
+        const WebResponse madeTerrain = get(app, "/api/gm/homebrew/terrain", gmTok, "10.0.0.1", "POST", R"({"name": "Whiteout", "description": "Bane on ranged attacks."})");
+        check(madeTerrain.status == 201 && body(get(app, "/api/gm/homebrew/terrain", gmTok))["entries"].size() == 1, "a table entry is made like any other");
+        check(get(app, spells + "/0?name=RimeSpear", gmTok, "10.0.0.1", "DELETE").status == 200 && body(get(app, spells, gmTok))["entries"].empty() && get(app, spells + "/0?name=RimeSpear", gmTok, "10.0.0.1", "DELETE").status == 404,
+              "deleting removes the entry");
+        const WebResponse renamed = get(app, "/api/gm/homebrew/pack", gmTok, "10.0.0.1", "PUT", R"({"name": "Frozen North"})");
+        check(renamed.status == 200 && body(renamed)["pack"]["id"] == "frozen-north" && body(renamed)["pack"]["name"] == "Frozen North" && body(get(app, "/api/gm/homebrew/weapons", gmTok))["entries"].empty() &&
+                  get(app, "/api/gm/homebrew/pack", gmTok, "10.0.0.1", "PUT", R"({"name": "  "})").status == 400,
+              "the GM names the pack: what is made from then on goes to a folder of that name");
+        get(app, "/api/gm/homebrew/pack", gmTok, "10.0.0.1", "PUT", R"({"name": "Homebrew"})");
+        // adventures: a pack with an adventure.yaml (here in the book's data folder) is listed and read by the GM
+        test::write(e.data + "/packs/tale/manifest.yaml", "id: tale\nname: A Short Tale\n");
+        test::write(e.data + "/packs/tale/adventure.yaml",
+                    "title: The Tale\nchapters:\n  - id: one\n    title: First\n    kind: chapter\n    page: 5\n    body: |\n      Line one.\n      Line two.\n    sections:\n      - id: one/gate\n        title: Gate\n        kind: location\n        number: \"1\"\n        page: 6\n        creatures:\n          - core/monster/nobody\n      - id: one/events\n        title: Events\n        kind: table\n        page: 7\n        table: Random Events\n");
+        test::write(e.data + "/packs/tale/tables.yaml", "tables:\n  - name: Random Events\n    dice: D6\n    columns:\n      - EVENT\n    rows:\n      - roll: 1-3\n        cells:\n          - A storm\n      - roll: 4-6\n        cells:\n          - Quiet\n  - name: Not Used\n    rows: []\n");
+        const json adventures = body(get(app, "/api/gm/adventures", gmTok))["adventures"];
+        check(adventures.size() == 1 && adventures[0]["id"] == "tale" && adventures[0]["name"] == "A Short Tale" && adventures[0]["title"] == "The Tale" && adventures[0]["chapters"] == 1,
+              "the GM lists the adventures that are loaded (a pack with an adventure.yaml), by the name of the pack");
+        const json tale = body(get(app, "/api/gm/adventures/tale", gmTok));
+        check(tale["chapters"].size() == 1 && tale["chapters"][0]["sections"].size() == 2 && tale["chapters"][0]["body"].get<std::string>().find("Line two.") != std::string::npos &&
+                  tale["tables"].contains("Random Events") && tale["tables"]["Random Events"]["rows"].size() == 2 && tale["tables"]["Random Events"]["dice"] == "D6" && !tale["tables"].contains("Not Used"),
+              "an adventure comes with its tree and only the tables its nodes name");
+        check(get(app, "/api/gm/adventures", brenna).status != 200 && get(app, "/api/gm/adventures/tale", brenna).status != 200 && get(app, "/api/adventures", brenna).status != 200,
+              "a player cannot read the adventures");
+        const std::string notesRoute = "/api/gm/adventures/tale/notes";
+        check(get(app, notesRoute, gmTok, "10.0.0.1", "PUT", R"({"node": "one/gate", "text": "The guard owes a favor."})").status == 200 &&
+                  body(get(app, "/api/gm/adventures/tale", gmTok))["notes"]["one/gate"] == "The guard owes a favor.",
+              "the GM's note on a part of the adventure is kept and comes back with the adventure");
+        check(get(app, notesRoute, gmTok, "10.0.0.1", "PUT", R"({"node": "one/gate", "text": "   "})").status == 200 && body(get(app, "/api/gm/adventures/tale", gmTok))["notes"].empty(),
+              "an empty note removes it");
+        check(get(app, notesRoute, gmTok, "10.0.0.1", "PUT", R"({"text": "no node"})").status == 400 && get(app, "/api/gm/adventures/nope/notes", gmTok, "10.0.0.1", "PUT", R"({"node": "x", "text": "y"})").status == 404 &&
+                  get(app, notesRoute, brenna, "10.0.0.1", "PUT", R"({"node": "x", "text": "y"})").status != 200,
+              "a note needs a node and an adventure that exists; a player cannot write one");
+        test::write(e.data + "/packs/tale/images/maps/gate.png", "not really a picture");
+        test::write(e.data + "/packs/tale/secret.png", "outside images/");
+        const WebResponse picture = get(app, "/api/gm/adventures/tale/image?path=images/maps/gate.png", gmTok);
+        check(picture.status == 200 && picture.contentType == "image/png" && picture.body == "not really a picture" && get(app, "/api/gm/adventures/tale/image?path=images/maps/gate.png", brenna).status != 200,
+              "a picture of the adventure is served to the GM, with its type");
+        check(get(app, "/api/gm/adventures/tale/image?path=secret.png", gmTok).status == 404 && get(app, "/api/gm/adventures/tale/image?path=images/../secret.png", gmTok).status == 404 &&
+                  get(app, "/api/gm/adventures/tale/image?path=images/maps/missing.png", gmTok).status == 404 && get(app, "/api/gm/adventures/tale/image?path=images/maps/gate.png.exe", gmTok).status == 404 &&
+                  get(app, "/api/gm/adventures/tale/image", gmTok).status == 404,
+              "only a picture under the adventure's images folder can be asked for: no other file, no way out of it");
+        check(get(app, "/api/gm/adventures/nope", gmTok).status == 404 && get(app, "/api/gm/adventures/..%2Fcore", gmTok).status == 404, "an unknown adventure is a 404, and an id cannot leave the packs folder");
+        // looking into the other packs (Core included) and house-ruling a card of them: a card of the GM's pack that replaces it
+        const json packList = body(get(app, "/api/gm/homebrew/packs", gmTok))["packs"];
+        check(packList.size() >= 2 && packList[0]["editable"] == true && packList[1]["id"] == "core" && packList[1]["editable"] == false && get(app, "/api/gm/homebrew/packs", brenna).status != 200,
+              "the GM can look into every pack: their own first (the only one that can be changed), then Core");
+        const json coreAbilities = body(get(app, "/api/gm/homebrew/abilities?pack=core", gmTok));
+        check(coreAbilities["entries"].size() > 0 && coreAbilities["canReplace"] == true && coreAbilities["entries"][0].contains("key") && coreAbilities["entries"][0]["key"].get<std::string>().starts_with("core/ability/") &&
+                  get(app, "/api/gm/homebrew/abilities?pack=nope", gmTok).status == 404 && get(app, "/api/gm/homebrew/abilities?pack=..%2Fx", gmTok).status == 404,
+              "Core's cards are listed with the key a house rule would replace; an unknown pack is a 404");
+        const std::string ruledName = coreAbilities["entries"][0]["name"].get<std::string>(), ruledKey = coreAbilities["entries"][0]["key"].get<std::string>();
+        const json ruleBody = {{"name", ruledName}, {"description", "Our table plays it this way."}, {"houseRuleOf", {{"pack", "core"}, {"name", ruledName}}}};
+        const WebResponse houseRule = get(app, "/api/gm/homebrew/abilities", gmTok, "10.0.0.1", "POST", ruleBody.dump());
+        const json afterRule = body(get(app, "/api/gm/homebrew/abilities?pack=core", gmTok));
+        const json mineNow = body(get(app, "/api/gm/homebrew/abilities", gmTok));
+        check(houseRule.status == 201 && body(houseRule)["replaces"] == ruledKey && mineNow["entries"].size() == 1 && afterRule["entries"][0]["houseRuled"] == true,
+              "a house rule is saved in the GM's pack with the key it replaces, and Core's list says it has one");
+        check(get(app, "/api/gm/homebrew/abilities", gmTok, "10.0.0.1", "POST", ruleBody.dump()).status == 400 &&
+                  get(app, "/api/gm/homebrew/traps", gmTok, "10.0.0.1", "POST", R"({"name": "X", "houseRuleOf": {"pack": "core", "name": "Spike Trap"}})").status == 400,
+              "one house rule per card, and only cards can be replaced (a trap cannot)");
+        const json replacedAbility = body(get(app, "/api/gm/content/abilities", gmTok));
+        bool changedBy = false;
+        for (const json& sp : replacedAbility["entries"]) changedBy |= sp["key"] == ruledKey && sp["editedBy"] == "Homebrew" && sp["homebrew"] == true;
+        check(changedBy, "the replaced card says who changed it");
+        get(app, "/api/gm/homebrew/abilities/0?name=" + ruledName, gmTok, "10.0.0.1", "DELETE");
         // the GM can change kin, profession and school on a sheet (a player cannot: see the sheet-editing checks)
         const json gmSheet = body(get(app, "/api/gm/characters/" + customId, gmTok));
         check(gmSheet["doc"].contains("kin") && gmSheet["doc"].contains("profession") && gmSheet["doc"].contains("school"), "the GM's editable sheet carries kin, profession and school");

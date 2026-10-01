@@ -192,6 +192,20 @@ PackManager::PackManager(std::string coreDir, std::string userDir) : coreDir_(no
 std::vector<PackSpec> PackManager::specs(const std::set<std::string>& disabled) const {
     std::vector<PackSpec> out;
     if (!coreDir_.empty()) out.push_back({coreDir_, true, true});             // the base: it opens first and the others build on it
+    // the packs that come with the books, next to Core in the same folder (an adventure): they load like the user's, can be switched off,
+    // and one of the user's with the same name takes their place
+    std::set<std::string> userNames;
+    if (!userDir_.empty())
+        for (const std::string& name : listDir(userDir_)) userNames.insert(name);
+    const size_t slash = coreDir_.find_last_of('/');
+    if (slash != std::string::npos && slash > 0) {
+        const std::string bundled = coreDir_.substr(0, slash), coreName = coreDir_.substr(slash + 1);
+        for (const std::string& name : listDir(bundled)) {
+            if (name.empty() || name[0] == '.' || name == coreName || userNames.count(name)) continue;
+            const std::string dir = bundled + "/" + name;
+            if (isDir(dir) && looksLikePack(dir)) out.push_back({dir, false, disabled.count(name) == 0});
+        }
+    }
     if (userDir_.empty()) return out;
     for (const std::string& name : listDir(userDir_)) {
         if (name.empty() || name[0] == '.') continue;

@@ -4,6 +4,7 @@
 import { computed, onBeforeUnmount, onMounted, ref, watchEffect } from 'vue';
 import { ApiError, apiGet, apiSend } from '../api.js';
 import ChatView from './ChatView.vue';
+import AdventuresView from './AdventuresView.vue';
 import HomebrewView from './HomebrewView.vue';
 import CharacterCreator from './CharacterCreator.vue';
 import ReferenceView from './ReferenceView.vue';
@@ -40,6 +41,7 @@ const tabs = computed(() => [
   { id: 'character', label: 'Character' },
   { id: 'chat', label: totalUnread.value > 0 && tab.value !== 'chat' ? `Chat (${totalUnread.value})` : 'Chat' },
   { id: 'rules', label: 'Rules' },
+  { id: 'adventures', label: 'Adventures' },
   { id: 'homebrew', label: 'Homebrew' },
 ]);
 
@@ -214,6 +216,8 @@ watchEffect(() => {
       <!-- Rules: the Reference, exactly the players' -->
       <ReferenceView v-else-if="tab === 'rules'" :state="reference" :token="token" gm-prefix="/gm" />
 
+      <!-- Adventures: the packs that have an adventure.yaml, to read -->
+      <AdventuresView v-else-if="tab === 'adventures'" :token="token" />
       <!-- Homebrew: the GM's own creatures -->
       <HomebrewView v-else-if="tab === 'homebrew'" :token="token" />
     </template>

@@ -66,3 +66,38 @@ Beyond copying the typed tables it adds what the character creator needs and the
   off the rendered pages and live in `pdfio.RULEBOOK_DROP_CAPS`.
 * Page references *inside* the text ("see page 87") are **printed** page numbers, as in the books.
 * `build_db.py` prints warnings for anything it cannot confirm against the books' own indexes.
+
+## The Misty Vale adventure (`mistyvale.py`)
+
+```
+python tools/mistyvale.py        # writes data/packs/mistyvale/ (safe to rerun: it only writes that folder)
+```
+
+Reads `References/MistyValeAdventure.pdf` with the same library as the rest (`tools/skaldbok`) and writes a pack the app can validate
+(`build/release/pack_check data/packs/mistyvale --data data`):
+
+* `manifest.yaml`: the pack and the PDF it comes from (so a `page` can open the original);
+* `adventure.yaml`: the book as a tree of `sections` (chapter, section, `location` with its number, `npc`, `monster`, `sidebar`, `map`,
+  `table`, `text`). Every node has `id`, `title`, `kind`, the physical `page`, and a `body` when it has text. NPCs and monsters have
+  **no stat block** here: they point at the creature a pack already has: the named NPCs are in the pack's own `creatures.yaml` (`creatures: [mistyvale/monster/hardy]`), the groups and monsters in Core. A `table` node
+  names its table in `tables.yaml` (`table:`). A `text` node titled *Continued* is the place's own text that the book prints after a
+  creature's block (the exits, other notes); it sits right after that creature;
+* `tables.yaml`: the adventure's tables (random events, rumors, random encounters, demonic omens...). The attack tables of creatures
+  are not here: they are in Core with the creature.
+
+Each node can carry `keywords:` (the words of the text that become links to it): the titles of chapters and places, the names of the
+people, and the proper names the book repeats at least `MIN_REPEATS` times that name something with a page. Where a word goes when the
+title does not say it (*Um-Durman*, *Azrahel Koth*, *Eledain*...) is chosen in `KEYWORD_TARGETS`; the script prints the frequent names
+that no page takes (*Sathmog*, *Kummer Mountains*, *Mirror Lake*...).
+
+**Pictures.** Every picture of the PDF that is art is taken out (needs `pillow` too) and given to a node as `images:` (paths inside the
+pack): `images/chapters/` the strip of the map that opens a chapter, `images/maps/` the plan of a place (a `map` node; the big map of the
+valley, printed over two pages, has both halves), `images/people/` the portrait of an NPC or monster (found by the name printed over it),
+`images/art/` the rest (an illustration goes to the heading nearest to it). Left out: the blank parchment boxes the text is printed on and
+the page furniture (pictures used on many pages); the creature art Core had already taken stays where it is. The named NPCs of the pack get
+their portrait as `image:` in `creatures.yaml` too. About 12 MB: maps are flattened on the cream of the app (JPEG) and portraits keep
+their soft edges (PNG or JPEG, small).
+
+Things worth knowing: the 15 chapter-opening drop caps are pictures (their letters are in `DROP_CAPS`); `dice` of a table that the extractor could not read is taken from its last roll (the Fort Malus
+table has no dice because it stops at 7). Creatures printed inside a sidebar whose name is not in Core (the viper of the Dead Eyes
+Cave) keep their stat line in the text.

@@ -227,6 +227,7 @@ json publicCard(const ContentStore& cs, const Entry& e) {
             {"fields", fieldList(e.fields)},
             {"body", e.body},
             {"source", src && src->homebrew ? src->label : std::string()},
+            {"editedBy", e.editedBy},                          // the pack whose house rule replaced this card ("" if none)
             {"pack", packNameOf(cs, e.key)},
             {"homebrew", src && src->homebrew}};
 }

@@ -34,11 +34,7 @@ intro:
     - name: Duration
       body: |
         Each spell specifies the duration of its effect.
-        ✦Instant: The effect occurs instantly and has no lasting effect.
-        ✦Round: The effect lasts until your turn in the next round.
-        ✦Stretch: The effect lasts for one stretch of time.
-        ✦Shift: The effect lasts until the end of the current shift.
-        ✦Concentration: The effect ceases if you perform another action, take damage, or fail a WIL roll for resisting fear. If you are interrupted by a sudden disturbance, such as a sound, you must make a WIL roll (not an action) to maintain your concentration.
+        {{table: Duration}}
     - name: Magic Items
       body: |
         Magic items may contain one or more spells that can be activated even by non-mages. Unless stated otherwise, it takes a successful roll against LANGUAGES or any [[school of magic]] to identify the spells and be able to use them.

@@ -1,0 +1,498 @@
+creatures:
+  - id: hardy
+    name: Hardy
+    source: adventure
+    kind: npc
+    category: Outskirt
+    image: images/people/outskirt-locations-2a-south-gate-hardy.jpg
+    description: Hardy is a battle-hardened war veteran in his 40s, with shoulder-length hair and a broken nose. He is the strong, silent type, but does have a sentimental side that tends to come out after a few mugs of mead at the inn. Sometimes Hardy heads out in the wilds to drive off goblins, bandits, and other potential troublemakers. During these expeditions he is often accompanied by Jory – son of Master Ulvar who runs the village shop (#5) – whom Hardy regards as his future successor.
+    statblocks:
+      - fields:
+          Movement: "12"
+          Damage Bonus: STR +D4
+          Armor: Studded leather and open helmet (3)
+          HP: "16"
+          WP: "14"
+          Skills: Awareness 14, Brawling 14, Evade 12, Healing 8
+          Abilities: Defensive, Veteran
+          Weapons: Broadsword (skill level 14, damage 2D6), heavy crossbow (skill level 12, damage 2D8), large shield
+  - id: vagnhild
+    name: Vagnhild
+    source: adventure
+    kind: npc
+    category: Outskirt
+    image: images/people/outskirt-locations-4-the-three-stags-vagnhild.jpg
+    description: |
+      of her time at the Three Stags, where she has taken on the role of a perky, seemingly trustworthy maid named Annabella. She will not wait long to contact the player characters, as described on page 15.
+      often include the drunken mallard Quasimund and his band of brutes (as many as the player characters). They drink mead and exchange tall tales while glaring suspiciously at the other guests. All of them have sold their souls to Sathmog and obey Leanara’s every command.
+    statblocks:
+      - fields:
+          Movement: "8"
+          Damage Bonus: STR +D4
+          Armor: Leather (1)
+          HP: "12"
+          Skills: Evade 8, Healing 10, Persuasion 14
+          Weapons: Light warhammer (skill level 12, damage 2D6)
+  - id: leanara-annabella
+    name: Leanara/Annabella
+    source: adventure
+    kind: npc
+    category: Outskirt
+    image: images/people/outskirt-locations-4-the-three-stags-leanara-annabella.jpg
+    description: |
+      the Keepers of the Immaculate Flame, Alfilia Shadowleaf – a sworn enemy of Sathmog and his cohorts, but like them she seeks Um-Durman. She is quiet and sullen and throws suspicious glances at Quasimund and his thugs. Read more on page 22.
+      with a SPOT HIDDEN roll will find a cage with D3 sleeping bats hanging outside a window on the second floor. If they hide and keep an eye on the window, they will see Leanara fetch one of the bats within one shift. With a successful SNEAKING roll, the player characters can follow her to the temple area, where she releases the bat after attaching a small piece of paper to its leg.
+    statblocks:
+      - fields:
+          Movement: "14"
+          Damage Bonus: AGL +D4
+          Armor: —
+          HP: "14"
+          WP: "15"
+          Skills: Brawling 12, Evade 14, Persuasion 12, Sneaking 16
+          Abilities: Backstabbing, Fast Footwork, Lightning Fast, Weasel
+          Weapons: Dagger (skill level 16, damage D8 + lethal poison with potency 14)
+  - id: quasimund
+    name: Quasimund
+    source: adventure
+    kind: npc
+    category: Outskirt
+    image: images/people/outskirt-locations-4-the-three-stags-quasimund.jpg
+    description: The mallard Quasimund is a failed fortune hunter who regularly frequents the Three Stags. He has a bitter and violent side which tends to come out when he drinks too much mead. He has sold his soul to Sathmog for a few pieces of silver and half a keg of mead.
+    statblocks:
+      - fields:
+          Movement: "10"
+          Damage Bonus: STR +D4
+          Armor: Leather (1)
+          HP: "14"
+          WP: "12"
+          Skills: Brawling 14, Evade 14, Sneaking 12
+          Abilities: Defensive, Veteran, Weasel
+          Weapons: Scimitar (skill level 16, damage 2D6), light crossbow (skill level 15, damage 2D6)
+  - id: alfilia-shadowleaf
+    name: Alfilia Shadowleaf
+    source: adventure
+    kind: npc
+    category: Outskirt
+    image: images/people/outskirt-locations-4-the-three-stags-alfilia-shadowleaf.jpg
+    description: The knight Alfilia Shadowleaf is sent by the Keepers of the Immaculate Flame. She is looking for the keys to Um-Durman, while at the same time trying to prevent the sword from ending up in the hands of Azrahel Koth. As her base she has chosen the Three Stags, where she is often seen in the large common room. Read more about what Alfilia knows in the sidebar on the next page.
+    statblocks:
+      - fields:
+          Movement: "10"
+          Damage Bonus: STR +D4
+          Armor: Plate (6)
+          HP: "15"
+          WP: "14"
+          Skills: Brawling 14, Evade 12
+          Abilities: Defensive, Veteran
+          Weapons: Morningstar (skill level 16, damage 2D6), small shield
+  - id: master-ulvar
+    name: Master Ulvar
+    source: adventure
+    kind: npc
+    category: Outskirt
+    image: images/people/outskirt-locations-5-master-ulvars-master-ulvar.jpg
+    description: Master Ulvar is a tall, red-faced man in his 50s with an impressive drooping mustache. He has hands the size of hams and speaks with a booming voice that makes his mustache quiver.
+    statblocks:
+      - fields:
+          Movement: "8"
+          Damage Bonus: STR +D4
+          Armor: —
+          HP: "15"
+          Skills: Brawling 12, Sneaking 8
+          Weapons: Long spear (skill level 12, damage 2D8)
+  - id: jory
+    name: Jory
+    source: adventure
+    kind: npc
+    category: Outskirt
+    image: images/people/outskirt-locations-5-master-ulvars-jory.jpg
+    description: Jory is Master Ulvar’s beloved son and designated successor at the shop. Unfortunately, young Jory has little interest in shopkeeping. He would rather be a warrior like Hardy, Jory’s greatest role model in life – and according to persistent rumors, Jory’s real father. The mother is unknown, but there is talk of a half-orcish woman who left for the mountains some years ago.
+    statblocks:
+      - fields:
+          Movement: "12"
+          Damage Bonus: STR +D4
+          Armor: Leather (1)
+          HP: "14"
+          Skills: Evade 12, Sneaking 9
+          Weapons: Broadsword (skill level 12, damage 2D6), short bow (skill level 10, damage D10)
+  - id: okald
+    name: Okald
+    source: adventure
+    kind: npc
+    category: Outskirt
+    image: images/people/outskirt-locations-6-smithy-okald.jpg
+    description: Okald is a heavily tattooed dwarf woman with a thick braided beard and a formidable underbite. She is happy and friendly and likes to tell stories of her wild years in the mountains, where she wrestled with basilisks, out-ate cave trolls, and hunted dragonspawn in abandoned mines.
+    statblocks:
+      - fields:
+          Movement: "8"
+          Damage Bonus: STR +D4
+          Armor: Leather (1)
+          HP: "16"
+          Skills: Crafting 12, Evade 6, Persuasion 10
+          Weapons: Handaxe (skill level 15, damage 2D6)
+  - id: badinor
+    name: Badinor
+    source: adventure
+    kind: npc
+    category: Outskirt
+    image: images/people/outskirt-locations-6-smithy-badinor.jpg
+    description: Badinor is a surly, taciturn dwarf who feels more comfortable around rocks than living creatures. He speaks to the minerals in their own language, and sometimes he even sings – both to his rock and to malleable metal pieces – in an ancient tongue that not even Okald understands. Nevertheless, Badinor is a skillful blacksmith who has the respect of everyone in the village.
+    statblocks:
+      - fields:
+          Movement: "6"
+          Damage Bonus: STR +D4
+          Armor: Leather (1)
+          HP: "14"
+          WP: "15"
+          Skills: Crafting 15, Evade 6
+          Abilities: Master Blacksmith
+          Weapons: Battleaxe (skill level 13, damage 2D8), light crossbow (skill level 12, damage 2D6)
+  - id: semolina-chubbycheeks
+    name: Semolina Chubbycheeks
+    source: adventure
+    kind: npc
+    category: Outskirt
+    image: images/people/outskirt-locations-7-the-mill-semolina-chubbycheeks.jpg
+    description: |
+      Um-Durman.” At the bottom of the niche is a depression. Placing the fully assembled statuette in this depression opens the entrance to the hidden chapel (location #10). When that happens, the ground in front of the niche collapses with a loud crash and reveals a rough-hewn stairway of stone leading down into the dark. A player character standing by the niche must succeed with an EVADE roll or fall four meters and take damage as per the rules on page 53 in the Rulebook.
+      temple during nighttime, they will see Leanara on the first night. She sneaks into the temple area and releases one of her bats, which flutters off over the rooftops with an unpleasant squeak. She then spends about an hour searching the area, seemingly without success, before returning to the Three Stags.
+      occur here.
+    statblocks:
+      - fields:
+          Movement: "8"
+          Damage Bonus: —
+          Armor: Leather (1)
+          HP: "12"
+          Skills: Evade 12, Healing 9, Sneaking 13
+          Weapons: Wooden club (skill level 8, damage D8)
+  - id: baryton-chubbycheeks
+    name: Baryton Chubbycheeks
+    source: adventure
+    kind: npc
+    category: Outskirt
+    image: images/people/outskirt-locations-7-the-mill-baryton-chubbycheeks.jpg
+    description: Baryton is a plump but elegant halfling with handsome curls and a winning smile. He is responsible for stock-keeping and sales, as well as baking the bread. He is always stressed, worrying that their resources might not be enough to feed their numerous offspring.
+    statblocks:
+      - fields:
+          Movement: "8"
+          Damage Bonus: —
+          Armor: —
+          HP: "10"
+          Skills: Evade 14, Persuasion 15, Sneaking 14
+          Weapons: Dagger (skill level 12, damage D8)
+  - id: dranath
+    name: Dranath
+    source: adventure
+    kind: npc
+    category: Outskirt
+    image: images/people/outskirt-locations-9-dranaths-hut-dranath.jpg
+    description: |
+      ters’ injuries with HEAL WOUND at the price of 5 gold coins per power level.
+      and succeed with a PERSUASION roll or offer him mead or sweets, Dranath can tell them the following: – The legend of Um-Durman. – A thousand years ago the Misty Vale was ruled by a warlock named Azrahel Koth who served the demon prince Sathmog. Azrahel Koth resided in an unholy fortress on the mist-shrouded island in Mirror Lake. His remains are said to rest in a labyrinthine burial chamber beneath the island. – Azrahel Koth was defeated by the hero Eledain with the help of ancient dragons. Eledain then declared himself emperor of a dragon-worshiping empire that would rule all of the known world. The temple ruin in Outskirt originates from that empire. – A mysterious woman is sneaking around the temple area at night, seemingly looking for something she lost. Dranath has heard her speak in an ancient language to another creature, which responded with a squeak and flew off.
+      can teach the player characters his skills and spells.
+    statblocks:
+      - fields:
+          Movement: "8"
+          Damage Bonus: —
+          Armor: —
+          HP: "12"
+          WP: "16"
+          Skills: Animism 16, Healing 15, Languages 13, Myths & Legends 15
+          Spells: Sense Magic, Dispel, Protector, Magic Shield, Banish, Ensnaring Roots, Lightning Flash, Treat Wound, Heal Wound, Lightning Bolt, Purge
+          Weapons: Staff (skill level 12, damage D8)
+  - id: grub
+    name: Grub
+    source: adventure
+    kind: npc
+    category: Riddermound
+    image: images/people/riddermound-locations-5-servants-crypt-grub.jpg
+    description: |
+      sage to the Lady’s hall (#8). It can be opened with one of the intact keys from Grub’s iron ring, but it requires a successful SLEIGHT OF HAND roll – on failure the key breaks. The portcullis has armor rating 10 and can be forced open by inflicting 30 points of damage or casting a spell such as PILLAR, but such noise will immediately attract the wight.
+      in front of the barred portcullis. Spotting it requires searching the floor and making a SPOT HIDDEN roll. If this does not happen, the first character to approach the portcullis will fall through the trapdoor. The character falls into a pit with sharp wooden stakes at the bottom and takes 3D6 piercing damage. A successful EVADE roll halves the damage (rounding up).
+      for each full stretch the characters spend here.
+      the Lady’s hall (#8), blocked by an iron portcullis.
+      the mound tunnels (#4).
+    statblocks:
+      - fields:
+          Movement: "12"
+          Damage Bonus: AGL +D4
+          Armor: Leather (1)
+          HP: "9"
+          Skills: Awareness 10, Evade 12, Sneaking 14
+          Weapons: Short sword (skill level 12, damage D10), shortbow (skill level 10, damage D10)
+  - id: malad-k
+    name: Maladûk
+    source: adventure
+    kind: npc
+    category: Bothild’s Lode
+    description: cleft in the Kummer Mountains. This is where Maladûk and her men entered.
+    image: images/malad-k-133.jpg
+    image_page: 48
+    statblocks:
+      - fields:
+          Movement: "12"
+          Damage Bonus: STR +D6
+          Armor: Chainmail (4)
+          HP: "24"
+          WP: "15"
+          Skills: Awareness 16, Brawling 14, Evade 14
+          Abilities: Defensive, Robust × 4, Veteran
+          Weapons: Long spear (skill level 16, damage 2D8)
+  - id: hafarmal
+    name: Hafarmal
+    source: adventure
+    kind: npc
+    category: Temple of the Purple Flame
+    image: images/people/temple-of-the-purple-flame-locations-4-herb-garden-hafarmal.jpg
+    description: Dressed in natural-colored clothes, including a robe and cloak. Has a hoarse voice and is constantly smoking a pipe. Unbeknownst to himself, his eyes have been turned completely black by his proximity to the portal. Hafarmal can heal injured player characters and knows about the secret passage in the north wall of the courtyard (#3). Hafarmal has encountered the cultists and does not like them disturbing the peace. He is aware of the portal in the cellar (#11) and knows how to close it but wants it to stay open. He can be PERSUADED to change his mind.
+    statblocks:
+      - fields:
+          Movement: "10"
+          Damage Bonus: —
+          Armor: —
+          HP: "12"
+          WP: "15"
+          Skills: Animism 13, Mentalism 16, Myths & Legends 14, Bushcraft 15
+          Spells: Flick, Sense Magic, Birdsong, Slow Fall, Dispel, Treat Wound, Animal Whisperer, Farsight, Ironfist, Levitate, Telepathy.
+          Weapon: Staff (skill level 12, damage D8)
+  - id: ursic-one-ear
+    name: Ursic One-Ear
+    source: adventure
+    kind: npc
+    category: Tower of Sighs
+    image: images/people/tower-of-sighs-locations-1-the-island-and-the-bandit-camp-ursic-one-ear.jpg
+    description: A tall, red-haired woman in her forties. She is missing her left ear and has an ugly scar on her neck, as if she has narrowly escaped the gallows. If the player characters are willing to fight Glam-Glam, Ursic will negotiate with them, but intends to betray them so she will not have to share the treasure. If the player characters ignore the bandits, she will keep them in the tower and attack them later if they get out. Read more under Aftermath on page 59.
+    statblocks:
+      - fields:
+          Movement: "12"
+          Damage Bonus: STR +D4
+          Armor: Leather (1)
+          HP: "28"
+          WP: "16"
+          Skills: Awareness 14, Brawling 14, Evade 13
+          Abilities: Berserker, Robust × 6, Veteran
+          Weapons: Broadsword (skill level 15, damage 2D6), light crossbow (skill level 12, damage 2D6)
+  - id: roric
+    name: Roric
+    source: adventure
+    kind: npc
+    category: Oracle Cave
+    image: images/people/oracle-cave-locations-10-the-she-spiders-lair-roric.jpg
+    description: |
+      The terrified child is hanging in the cocoon of cobweb behind the she-spider, saved for later as a particularly delicious treat. It is possible to SNEAK over there if Saak’shal is distracted, but she reacts with violent fury if she notices it.
+      are looking for young Roric and/or a piece of Eledain’s dragon statuette, Saak’shal offers them a deal – they will get what they want if they first kill a group of orcs who have settled in another part of the cave (location #12, the keep). She will keep her promise if they carry out the mission.
+      Emperor Eledain’s statuette here, Saak’shal reveals that she has it. Even if there is no statuette piece, the old she-spider can tell the player characters where to find one, in exchange for them carrying out her mission.
+  - id: agra
+    name: Agra
+    source: adventure
+    kind: npc
+    category: Oracle Cave
+    image: images/people/oracle-cave-locations-12-the-keep-agra.jpg
+    description: Agra is a large, muscular, and scarred orc. She has spent most of her life fighting and is feverishly loyal to Maladûk. She hopes to prove her competence and conviction by finding the dragon emperor’s statuette.
+    statblocks:
+      - fields:
+          Movement: "10"
+          Damage Bonus: STR +D6
+          Armor: Chainmail (4)
+          HP: "16"
+          Skills: Awareness 12, Brawling 14, Evade 10
+          Weapon: Scimitar (skill level 14, damage 2D6)
+  - id: harga
+    name: Harga
+    source: adventure
+    kind: npc
+    category: Troll’s Spire
+    description: |
+      own over many long years and it very much reflects her personality. When the player characters arrive, she is scared and hides among the rubble. If they stay a while and start poking around, she makes herself known: “What are you doing in my house? Leave at once, or I’ll make you disappear for good!”
+      bottles, the player characters can find five doses of herbal concoction (boon on rolls for resisting disease), three doses each of lethal, paralyzing, and sleeping poison (all with potency 12), four doses of healing potion (heals 2D6 HP), two doses of a potion with the same effect on the user as the ELEVATE spell (power level 1), an hourglass, some parchment, a quill, five rations of food, and Harga’s grimoire which contains all her spells. The player characters can find these if they search the laboratory for one stretch.
+      residence (#3).
+    image: images/harga-153.jpg
+    image_page: 72
+    statblocks:
+      - fields:
+          Movement: "8"
+          Damage Bonus: STR +D4
+          Armor: —
+          HP: "28"
+          WP: "16"
+          Skills: Animism 16, Mentalism 17, Evade 8, Healing 15
+          Spells: Fetch, Light, Open/Close, Sense Magic, Dispel, Ensnaring Roots, Lock/Unlock, Power Fist, Stone Skin, Mental Strike, Scrying, Telepathy, Dominate
+          Gear: Ladle (skill level 13, damage D8)
+  - id: gunhill
+    name: Gunhill
+    source: adventure
+    kind: npc
+    category: Dead Eyes Cave
+    image: images/people/dead-eyes-cave-locations-5-gunhills-camp-gunhill.jpg
+    description: "Hildi’s niece has come here in the hope of stopping the monster. Her long hair is streaked with foul-smelling dirt and there are scratches on her body. She is stubborn, thirsts for revenge, and will do anything to kill the basilisk. She is blindfolded and whispers when she speaks. Gunhill has seen the basilisk and can describe it if the player characters gain her trust. She wears a blindfold because she saw the cultist in room #2 drop dead after staring into the creature’s eyes. She also saw another cultist scare the beast away using a chicken. After talking to Gunhill, the player characters can figure out that the beast is a basilisk with a BEAST LORE roll. Gunhill can also show them the hidden passage through the rocks."
+    statblocks:
+      - fields:
+          Movement: "12"
+          Damage Bonus: AGL +D4
+          Armor: Leather (1)
+          HP: "12"
+          Skills: Awareness 12, Evade 14
+          Weapons: Short sword (skill level 12, damage D10), short bow (skill level 13, damage D10)
+  - id: ossiar
+    name: Ossiar
+    source: adventure
+    kind: npc
+    category: Fort Malus
+    image: images/people/fort-malus-locations-1-surrounding-area-ossiar.jpg
+    description: Ossiar poses as a timid explorer but is a fanatical follower of Sathmog. His only goal is to free Blutuld, with or without the player characters’ help. Ossiar has the mark of Sathmog tattooed on his forearm. If the player characters confront him about this, he tries to run away.
+    statblocks:
+      - fields:
+          Movement: "10"
+          Damage Bonus: —
+          Armor: Leather (1)
+          HP: "12"
+          Skills: Awareness 10, Myths & Legends 12
+          Gear: Short sword (skill level 12, damage D10), sleeping fur, two rations of food, 7 silver coins
+  - id: iliel
+    name: Iliel
+    source: adventure
+    kind: npc
+    category: Fort Malus
+    image: images/people/fort-malus-locations-7-iliels-cell-iliel.jpg
+    description: If the player characters free her, Iliel explains that she was taken to Fort Malus against her will by what she believes to be dragon knights. They want her to translate the ancient writing on a door in the keep. Another prisoner was held in the adjacent building – she does not know who it was, but judging by the sounds, smells, and agonized screams that reached her a few hours ago, she assumes that the person is dead.
+    statblocks:
+      - fields:
+          Movement: "12"
+          Damage Bonus: AGL +D4
+          Armor: —
+          HP: "12"
+          Skills: Awareness 12, Bows 14, Evade 14, Swords 13
+          Weapons: —
+  - id: canutus-boetii
+    name: Canutus Boetii
+    source: adventure
+    kind: npc
+    category: The Village of the Day Before
+    description: |
+      it, until no further forward movement is possible. DISPEL has no effect.
+      the pole sticking out of the tower and succeed with BEAST LORE, they realize that it is a landing spot for visiting dragons. What is strange is that such things have not been built on rooftops since the days of the dragon empire.
+      ters are actively looking around, you can have them make an AWARENESS roll. Whoever succeeds sees some kind of flying creatures approaching from the horizon in V-formation. At the moment, they are too far away to be identified.
+    image: images/canutus-boetii-164.jpg
+    image_page: 90
+    statblocks:
+      - fields:
+          Movement: "8"
+          Damage Bonus: —
+          Armor: —
+          HP: "10"
+          Skills: Beast Lore 17, Evade 8, Healing 14, Languages 16, Myths & Legends 15
+          Gear: Knife (skill level 8, damage D8), books, knapsack, field kitchen, sleeping fur, 7 gold coins
+  - id: ukka
+    name: Ukka
+    source: adventure
+    kind: npc
+    category: The Village of the Day Before
+    description: Ukka rules her own clan under Maladûk and accepted the mission to strengthen her position in the orc hierarchy. Her dream is to gather enough support to challenge Maladûk to single combat, but now she has fallen into deep despair, certain that the outside world goes on without her and that all her ambitions have come to nothing. She is big and burly and in poor mental health. Towards the end of the cycle, she becomes very talkative and sentimental if any player character seems willing to listen.
+    image: images/ukka-165.jpg
+    image_page: 92
+    statblocks:
+      - fields:
+          Movement: "8"
+          Damage Bonus: STR +D4
+          Armor: Chainmail (4)
+          HP: "14"
+          Skills: Evade 8
+          Weapon: Scimitar (skill level 15, damage 2D6), 3 silver coins
+  - id: thorendil
+    name: Thorendil
+    source: adventure
+    kind: npc
+    category: The Village of the Day Before
+    image: images/people/the-village-of-the-day-before-locations-5-the-blazing-breath-thorendil.jpg
+    description: of families who live a simple existence in the shadow of the tower. The families tend to be large and poor, and the children take every opportunity to beg.
+    statblocks:
+      - fields:
+          Movement: "10"
+          Damage Bonus: —
+          Armor: —
+          HP: "13"
+          WP: "16"
+          Skills: Elementalism 13, Mentalism 12, Evade 8
+          Spells: Fetch, Dispel, Ignite, Flame, Frost, Shatter, Gust of Wind
+          Gear: Staff (skill level 12, damage D8), 4 silver coins
+  - id: kato-the-curious
+    name: Kato the Curious
+    source: adventure
+    kind: npc
+    category: The Village of the Day Before
+    description: |
+      Kato is very old and in a bad way, as the demon Ix just told him that his tower is about to be attacked by dragons and explained the fine print of the contract he signed. Kato has had a stroke and spends the time cycle trying to crawl to the spot in front of the fireplace where Ix placed his contract. But he can never get there in time. At the end of the cycle, he is badly burned by dragon fire, and then the cycle begins anew. Other than imploring the player characters to burn the contract, Kato is incapable of communication.
+      sitting cross-legged on the stone floor to watch Kato’s final moments of humiliation and torment. This is how the demon gets its nourishment. Ix reacts with curiosity when the player characters show up and defends himself if they act aggressively. See more below.
+      five treasure cards, as well as Kato’s grimoire which contains the spells TRANSFER, MAGIC SEAL, CHARGE, STONE SHIELD, FIREBIRD, GNOME, and SALAMANDER. If a piece of the dragon statuette was placed in this adventure, it is here as well, hidden in a box.
+  - id: helemi
+    name: Helemi
+    source: adventure
+    kind: npc
+    category: Road’s End Inn
+  - id: antelia
+    name: Antelia
+    source: adventure
+    kind: npc
+    category: Road’s End Inn
+    description: One of the guests is Antelia, the missing shepherd. The player characters can learn this by asking Helemi or the guests. She invites the player characters to sit down and brushes aside any questions about her disappearance. “Missing? Oh no, I just walked a bit deeper into the Greatwood than usual. My family worries a lot, that’s all.”
+  - id: grunn-and-edda
+    name: Grunn and Edda
+    source: adventure
+    kind: npc
+    category: Road’s End Inn
+    description: Only two of the guests, a young couple, look unhappy. They sit at a table by themselves, drinking in silence. They can reveal their names, but other than that they have no answers to the player characters’ questions.
+  - id: stig-stonehilt
+    name: Stig Stonehilt
+    source: adventure
+    kind: npc
+    category: Road’s End Inn
+    description: |
+      One of the guests, an impressive-looking dwarf, asks to sit with the player characters. He tells them stories of mining in the Kummer Mountains and of hideous monsters he defeated. Stig is partly aware of the curse, but unable to talk about it. He makes contact with the player characters now in order to talk to them later, at night (see room #2).
+      that something is wrong. The walls and ceiling seem to contract inward. Immediately thereafter, everything goes black. Stare’s curse is putting the player characters to sleep – they can do nothing to prevent this, and the same thing happens the moment they try to leave the inn. Then they wake up in room #2 at the twisted version of the inn.
+  - id: cadal-s-ghost
+    name: Cadal’s Ghost
+    source: adventure
+    kind: npc
+    category: The Isle of Mist
+    description: "The ghost of a handsome young man rises above the skeleton and speaks to the player characters: “My name was Cadal of the Keepers of the Immaculate Flame. I came to free my beloved Tuviel and defeat the wicked sorcerer Azrahel Koth. But here in these caves I met my bane, the malodorous sea demon Akrae. The demon must die for me to have peace. Give my ring to your best fighter and slay the demon. This is my final wish.” If the player characters accept his request, he blesses them in the name of Eledain, which allows them to use his magic ring. If they refuse, the ghost sinks back into the skeleton."
+    image: images/cadal-s-ghost-179.jpg
+    image_page: 109
+  - id: kretscha
+    name: Kretscha
+    source: adventure
+    kind: npc
+    category: The Isle of Mist
+    image: images/people/the-isle-of-mist-locations-10-cells-kretscha.jpg
+    description: "Kretscha was captured by Azrahel Koth’s guards near Mirror Lake. He is keeping the orc alive to obtain information about Um-Durman. If the player characters have met Maladûk and forged an alliance with her, Kretscha is aware of this. If they free her, she tells them that Azrahel Koth cannot leave the labyrinth without Um-Durman – nor can he be killed by anything other than this mighty weapon. He bragged about this during the long interrogations. If the player characters ask for the password to the east door of room #9, Kretscha says she heard the undead guards hiss it, and she can repeat it word for word. If the player characters do not have an alliance with Maladûk, it takes a PERSUASION roll to obtain the information above. Kretscha is not willing to stay and fight alongside the player characters and would rather go back and report to Maladûk, but she can be PERSUADED to stay. You can also have Kretscha show up and save the day if the player characters find themselves in a tight spot."
+    statblocks:
+      - fields:
+          Movement: "10"
+          Damage Bonus: AGL +D4
+          Armor: —
+          HP: 12 (now 6)
+          Skills: Awareness 10, Bows 14, Evade 8, Swords 12
+          Weapons: —
+  - id: emrys
+    name: Emrys
+    source: adventure
+    kind: npc
+    category: The Isle of Mist
+    image: images/people/the-isle-of-mist-locations-10-cells-emrys.jpg
+    description: "Emrys is a knight who serves the Keepers of the Immaculate Flame. Repeated interrogations have left him on the verge of death. Someone must succeed with a HEALING roll within a stretch, or Emrys will draw his last breath. Only one attempt is allowed. The emaciated Emrys alternates between mumbling prayers to Eledain and cursing Azrahel Koth. If the player characters make themselves known, he explains that he came here to rescue his sister Tuviel, also a dragon knight, who was kidnapped by servants of Sathmog. Before he left, Emrys sent word to Cadal, his sister’s betrothed, hoping that he would join him. Emrys demands that the player characters rescue Tuviel. If he learns of her fate (room #11), he flares into a rage and demands that Azrahel Koth be killed at all costs. Emrys has heard the undead guards hiss the password to the east door of room #9, but only remembers the beginning: “Rotar Ebil Dough-Not Ert Ruo, Gomtas…” Clever players can use this to figure out the full password, if they do not get it from Kretscha. If the player characters save Emrys’ life, he can join them on their quest but is of limited use due to his severe injuries. He may sacrifice himself at some crucial stage if the player characters find themselves in dire straits."
+    statblocks:
+      - fields:
+          Movement: "10"
+          Damage Bonus: STR +D4
+          Armor: —
+          HP: 15 (now 0, and the severe injury deep wounds)
+          Skills: Brawling 14, Evade 12, Swords 14
+          Weapons: —
+  - id: tuviel
+    name: Tuviel
+    source: adventure
+    kind: npc
+    category: The Isle of Mist
+    description: |
+      One of the bodies in the pit wears beautiful clothes, elegant chainmail, and a mastercrafted broadsword. The corpse also wears a gold ring with the inscription “Tuviel & Cadal, forever.” It stands up and swings its sword at the player characters if they touch any of the items. However, the skeleton will not attack a player character wearing Cadal’s ring, if that person received his blessing (room #4). If the player characters have defeated Akrae and show Cadal’s ring, the skeleton stops and expresses its gratitude with a deep bow before collapsing into a lifeless heap.
+      for each full stretch the player characters spend here.

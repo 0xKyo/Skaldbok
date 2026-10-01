@@ -1,0 +1,17 @@
+id: mistyvale
+name: "Dragonbane: The Misty Vale"
+version: "1.0.0"
+author: Free League
+description: "The Misty Vale adventure, parsed from the PDF: its chapters, locations, NPCs, monsters, sidebars, maps and tables."
+sources:
+  - key: adventure
+    title: "Dragonbane Adventure: The Misty Vale"
+    short: Adventure
+    file: References/MistyValeAdventure.pdf
+    pages: 120
+    page_offset: 2
+    first_numbered_page: 5
+    unnumbered_pages:
+      - 6
+      - 7
+      - 8

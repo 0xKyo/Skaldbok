@@ -387,7 +387,7 @@ descripción al lado. Otro pack puede **sumar acciones a un grupo que ya existe*
 ```yaml
 format: 1
 source: rulebook            # opcional: la fuente del capítulo
-# el texto general del capítulo (la pestaña General Info) va en `intro:` de data/system/actions.yaml (Core: body y secciones, como cualquier intro) o, si no hay, aquí
+# el texto general del capítulo (la pestaña General Info) va en `intro:` aquí, arriba del todo (Core: body y secciones, como cualquier intro)
 intro: "Texto general que va arriba de todo el capítulo."
 groups:
   - id: stealth             # lo que usan las acciones en "group"

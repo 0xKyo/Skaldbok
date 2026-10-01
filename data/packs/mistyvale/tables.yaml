@@ -1,0 +1,532 @@
+source: adventure
+tables:
+  - name: Demonic Omens
+    dice: D10
+    columns:
+      - OMEN
+    page: 12
+    rows:
+      - roll: "1"
+        cells:
+          - Dark Clouds. The mist over the valley thickens into a dense blanket of dark fog. What little light seeps through turns red and bathes the entire valley in a crimson glow for one shift.
+      - roll: "2"
+        cells:
+          - Blood Rain. A rain of warm blood falls on the player characters. Everyone must make a WIL roll to resist fear.
+      - roll: "3"
+        cells:
+          - "Mad Prophet. A madman dressed in rags chants that “the end is nigh” and “the dark prince approaches.” No one can get any sense out of him."
+      - roll: "4"
+        cells:
+          - Meteors. A rain of star stones falls over the valley in a fiery and terrifying downpour. The player characters must make a WIL roll to resist fear.
+      - roll: "5"
+        cells:
+          - The Black Knight. On a distant hilltop, the player characters see a knight in black on a huge, black horse, like a dark silhouette against the night sky. The knight rears his steed and vanishes. This is Sathmog’s herald, but the player characters cannot stop him now.
+      - roll: "6"
+        cells:
+          - Rain of Frogs. Something hits the ground next to the player characters with a splat. Just as they see it is a frog, the sky opens and releases a downpour of frogs upon them. Anyone who fails to seek shelter suffers D6 damage.
+      - roll: "7"
+        cells:
+          - Earthquake. Suddenly the earth starts shaking violently. The player characters are thrown to the ground and must make a WIL roll to resist fear.
+      - roll: "8"
+        cells:
+          - Locust Swarm. A buzzing cloud draws near, and the player characters realize it is a swarm of locusts devouring all vegetation in its path. Each player character suffers a Condition of their choice.
+      - roll: "9"
+        cells:
+          - Solar Eclipse. Even though it is the middle of the day, the sun stops shining and an eerie darkness covers the valley for one stretch. The player characters must make a WIL roll to resist fear.
+      - roll: "10"
+        cells:
+          - Volcano. A thunderous rumble echoes from the Dragonfang Peaks, and the player characters see a plume of fire and smoke rising into the sky from a mighty mountaintop in the distance.
+  - name: "Outskirt: Random Events"
+    dice: D6
+    columns:
+      - EVENT
+    page: 18
+    rows:
+      - roll: "1"
+        cells:
+          - Demonic Bat. A large bat comes flying from the temple area. It moves quickly and jerkily, and soon disappears north. With a successful AWARENESS roll, a player character notices that there is something attached to its leg. The creature is one of Leanara’s vampire bats on its way to Azrahel Koth with a secret message. The player characters cannot stop it at this time.
+      - roll: "2"
+        cells:
+          - "Quasimund’s Scum. “Oh, lookie here! What fiiine visitors have come to Outskirt! I hope you didn’t forget to pay the toll?” The player characters are surrounded by a group of unsavory types (page 22) led by the mallard Quasimund (page 21). They stink of mead and are as many as the player characters plus 1. The thugs give up if more than half of them are wounded or the player characters give them money for mead. What they are really doing is testing the player characters’ combat capabilities, on orders from Leanara."
+      - roll: "3"
+        cells:
+          - "Troll in the Barn. Pandemonium spreads through the village and a voice shouts “Troll in old man Mifaldor’s barn!” The next moment the troll is right in front of the player characters. It is a huge creature sniffing the air with its enormous nostrils. The player characters are plunged into combat unless they act quickly, but the troll can be placated with a successful PERSUASION roll. For stats, see page 97 in the Core Rulebook."
+      - roll: "4"
+        cells:
+          - "Flour Thieves. Agitated shouting is heard from the mill, and soon the miller Baryton Chubbycheeks (page 25) comes huffing and puffing toward the player characters. Several sacks of his finest flour are missing, and he will pay “whatever it takes” to get these powdered treasures back. Baryton suspects Quasimund and his goons, but with a successful BUSHCRAFT roll, the player characters can find tracks leading to the Iron Forest where some goblins are feasting on the flour. For stats, see page 90 in the Core Rulebook."
+      - roll: "5"
+        cells:
+          - "Dead Messenger. There is a nasty bat carcass on the ground in front of the player characters. The creature is pierced by a crossbow bolt and has a small scroll tied to its foot. The message is written in obscure runes but can be deciphered with a successful LANGUAGES roll: “Newcomers in Outskirt. Purpose unclear. Keeping an eye on them.” The message ends with a disturbing salutation: “All might to Sathmog, our three-tongued liberator.” The bat was shot down by Guard Captain Hardy."
+      - roll: "6"
+        cells:
+          - "Cowardly Murderers. The player characters hear excited cries and clashing swords from a dark alley. If they hurry over there, they find Alfilia Shadowleaf (page 22) lying on the ground. Three shadows are fleeing the scene – they are part of Quasimund’s Scum (page 22) and the player characters may recognize them from the inn. They are trying to run away but will fight to the death if stopped. If questioned, they proudly admit that they are serving Sathmog. Alfilia is fatally wounded and beyond saving. She only manages to utter a gasping warning to the player characters: “They are servants of Sathmog… all of them… Annabella too…” After a final prayer to Eledain, she exhales: “Hail Eledain, master of the immaculate flame!”"
+  - name: "Outskirt: Rumors"
+    dice: D12
+    columns:
+      - RUMOR
+    page: 19
+    rows:
+      - roll: "1"
+        cells:
+          - "Riddermound. “This side of the Iron Forest there’s an unholy place with huge stones rising into the sky. Riddermound it’s called, named after a dark knight who was chained by the gods when the world was young. They say he was buried alive in that mound, along with his family, his servants, and all his riches.”"
+      - roll: "2"
+        cells:
+          - "The Orc Clans. “A human lifetime ago it was the orcs who ran things in the Misty Vale. No one knows why they left, but rumor has it that a chieftain named Maladûk is gathering the clans to reclaim the valley.”"
+      - roll: "3"
+        cells:
+          - "Bothild’s Lode. “The dwarves of the Kummer Mountains are decent and honest folk. It was worse in the old days – during the reign of Bothild the Vile and Greedy – when they dug too deep in their miserable mines and unleashed nameless horrors on the world. But then again, what treasures they found! They unearthed heaps of gold, silver, shimmering emeralds, and crystals the size of a goblin’s head. Apparently, it’s all still down there in Bothild’s Lode, in the far southwest.”"
+      - roll: "4"
+        cells:
+          - "Temple of the Purple Flame. “The Magna Woods is a diseased forest, and we all know where the malady is coming from – the Temple of the Purple Flame, a crumbling remnant of an evil age, where forbidden knowledge and demonic residue rest among untold treasures under the overgrown rocks.”"
+      - roll: "5"
+        cells:
+          - "Tower of Sighs. “There’s a disgusting bog about a day’s march east of here. It’s crawling with bloodsucking leeches and insects, and is a hideout for bandits. But there are vast riches out there in the sludge, buried in the ruins of an ancient watchtower. People around here call it the Tower of Sighs.”"
+      - roll: "6"
+        cells:
+          - "Oracle Cave. “Did you hear about young Roric? The boy was taken from his farm outside Outskirt. The tracks lead to the Iron Forest. People say he was brought to the Oracle Cave. The Oracle is ancient and knows all there is to know about the Misty Vale, and she’s said to be sitting on immense wealth. But now and then she demands a human sacrifice. I reckon we’ll never see Roric again.”"
+      - roll: "7"
+        cells:
+          - "Troll’s Spire. “When the moon is full you can see a tower glittering like a silver spire in the western parts of the valley. A magical tower, no doubt, for none has yet found the way there. Some say it’s home to an age-old alchemist who long ago incurred the wrath of the dragon emperor. She hid from Eledain in her tower, where she concocted an elixir that gave her everlasting life.”"
+      - roll: "8"
+        cells:
+          - "Dead Eyes Cave. “A monstrous beast has crawled down from the mountains and attacked Blind Hildi’s farm southeast of Outskirt. There are whispers about a cave full of torn-out eyes, but also great treasures and powerful weapons from ill-fated adventurers who met their fate in the Dead Eyes Cave.”"
+      - roll: "9"
+        cells:
+          - "Road’s End Inn. “There is something strange about Road’s End Inn by the edge of the Haunted Marshes. Several guests there have disappeared without a trace, among them a small child, and most recently the shepherd Antelia. Her family is worried sick.”"
+      - roll: "10"
+        cells:
+          - "The Village of the Day Before. “Seven centuries ago, this valley was home to Kato the Curious, a sorcerer who served Emperor Eledain but betrayed his liege. Kato’s tower and the nearby village of Blackridge, in the far northeast, perished in dragon fire when his treachery was discovered. Now he’s said to haunt the ruins of his tower, which supposedly holds all kinds of treasures. But no one who tried to loot the ruins has ever returned.”"
+      - roll: "11"
+        cells:
+          - "Fort Malus. “Fort Malus was constructed by House Stoneoak near the end of Emperor Eledain’s reign, to protect the family’s most prized possession – the Malus Aureus, a tree that bore golden fruit, apples of actual gold! The ruins of Fort Malus still stand in the far northwest, probably with thousands of golden apples lying at the roots of the old tree.”"
+      - roll: "12"
+        cells:
+          - "The Isle of Mist. “The island in Mirror Lake at the northern end of the valley is a place of death, avoided by all that live and breathe. Stories tell of ancient magic – and a crypt brimming with gold and wondrous artifacts. But the island is wreathed in demonic fog that sucks the life out of anything that comes near.”"
+  - name: Random Encounters Around Outskirt
+    dice: D12
+    columns:
+      - EVENT
+    page: 30
+    rows:
+      - roll: "1–6"
+        cells:
+          - Nothing Happens. The journey through grain fields and rolling hills is uneventful.
+      - roll: "7"
+        cells:
+          - Merchant. The player characters encounter a good-natured halfling merchant named Theobald. On his donkey-drawn cart he has most of the Common items listed in chapter 6 of the Rulebook, and even a few Uncommon ones. He can also share a rumor about an adventure site (page 17) and would like to hear news from the player characters.
+      - roll: "8"
+        cells:
+          - Farmers. Farmer Oda and her grown son Medvin are on their way to Outskirt to sell their wares and would like to share camp with the player characters. However, Medvin has recently been recruited to the Sathmog cult by Leanara and asks lots of questions about the player characters’ plans. He reports everything they say to Leanara. They can run into Medvin a second time, for example during the confrontation at the crypt of Um-Durman (page 27).
+      - roll: "9"
+        cells:
+          - "Bandits. A band of unwashed thugs jumps out at a bend in the road, weapons drawn and pointed at the player characters. The leader is a rat-like man with a greasy smile that leaves much to be desired in terms of both teeth and personal charm. “Hand over your valuables,” he hisses, “or your lives and adventures end right here.” The bandits outnumber the player characters by one and have the stats of typical bandits on page 105 in the Rulebook. They flee if half of them are defeated."
+      - roll: "10"
+        cells:
+          - Adventurers. Three banged up adventurers on their way home from the same adventure site the player characters are headed to. They are a human thief, a wolfkin warrior, and a mallard wizard, all with stats as typical adventurers on page 105 in the Rulebook. They have taken a brutal beating and warn the player characters to turn back. They can provide details about the site if they get something in return.
+      - roll: "11"
+        cells:
+          - "Dead Cultists. Three dead humans are hanging from a tree by the roadside, all wearing black robes. A closer look reveals sword wounds on their bodies. They bear the mark of Sathmog on their forearms – the player characters notice this if they actively look there or succeed with a SPOT HIDDEN roll. These poor souls are Sathmog cultists slain by the Eledain knight Tylos (page 30) as a warning."
+      - roll: "12"
+        cells:
+          - "Ruin. A short distance from the road is a ruin from the age of the dragon empire. Only wall segments remain of what was once an impressive fortress. Reliefs on the walls show a figure in a horned dragon helmet. If the player characters spend one shift of time investigating the ruin, they find the entrance to a secret cellar. Down there is a chest – draw two treasures cards to see what it contains."
+  - name: Random Encounters in the Magna Woods
+    dice: D12
+    columns:
+      - EVENT
+    page: 31
+    rows:
+      - roll: "1–6"
+        cells:
+          - Nothing Happens. The walk across gnarled roots and peculiar mushrooms is uneventful.
+      - roll: "7"
+        cells:
+          - "Flying Creature. A dreadful noise is heard from above and the player characters are struck by a bizarre sight: a cow is flying backwards over the treetops with anguished moos. On its back sits a horned creature who is pulling the poor animal’s tail while screeching triumphantly. With a successful MYTHS & LEGENDS roll, the player characters recall stories of demonic beings traveling between worlds on bewitched cattle. The creature in question is a lesser servant demon who has seeped into the world through the Temple of the Purple Flame (page 47)."
+      - roll: "8"
+        cells:
+          - "Ancient Milestone. A low obelisk of weathered granite can be seen through the trees. It is partially covered in moss and undergrowth, but at the top is a pointy crown – possibly horned – carved into the stone. Player characters who examine the obelisk and succeed with a SPOT HIDDEN roll find a secret compartment that holds a beautiful gold ring with a stylized crown. The ring contains a MAGIC SEAL with the LIGHT magic trick which is triggered by the phrase “Eledain, lord of the world, give us light!”"
+      - roll: "9"
+        cells:
+          - "Harpies. The player characters hear voices shrieking “Giiive meee”, “Nooo, giiiive meeee”, “Noooo, I waaant the liiittle oneees.” Suddenly three harpies (page 92 in the Rulebook) swoop down and attack them, pri-marily targeting the player character who carries the most metal. If two harpies are defeated, the last one escapes but may come back later with more of its kind."
+      - roll: "10"
+        cells:
+          - A Cry For Help. The player characters hear high-pitched cries for help echoing through the tree trunks. If they follow the sounds through the dense vegetation, they find a group of robed figures armed with scimi-tars. They are carrying a squealing goblin who is chained to a thick log. The figures are cultists in the service of Sathmog. They are on their way to the Temple of the Purple Flame (page 47), where they intend to throw the poor goblin into the demon portal to see how the demonic world affects living matter. They are as many as the player characters and have stats as per page 105 of the Rulebook.
+      - roll: "11"
+        cells:
+          - "Haunted Glade. The player characters wander into a haunted glade and are surrounded by an unnatural darkness. Suddenly a shimmering blue woman with empty eye sockets materializes. The ghost (page 87 in the Rulebook) attacks without mercy but can be appeased with a successful PERSUASION roll. In that case the ghost says it “fell by a murderer’s blade” a long time ago, but that its remains lie scattered in this glade. It takes a successful SPOT HIDDEN roll to find the bones. Burying its remains brings peace to the ghost, and you can reward the player characters by having it recount a legend about the Misty Vale (page 17)."
+      - roll: "12"
+        cells:
+          - "Undead Guard Patrol. The path is blocked by skeletons, as many as the player characters, in antiquated armor. The crumbling ruin of a small watchtower can be seen through the trees. If the player characters draw closer, the captain shouts at them in an archaic dialect. A successful LANGUAGES roll interprets the words as “toll” and “death to the rebels.” If the player characters pay a toll of one gold coin or convince the skeletons that they too hate “the rebels” – which requires a successful PERSUASION roll – they are allowed to pass. Otherwise, they must fight. All skeletons have stats as warriors on page 96 in the Rulebook but are equipped with short spears and chainmail."
+  - name: Random Encounters in the Iron Forest
+    dice: D12
+    columns:
+      - EVENT
+    page: 32
+    rows:
+      - roll: "1–6"
+        cells:
+          - Nothing Happens. The walk under the dark foliage takes place without incident.
+      - roll: "7"
+        cells:
+          - Troll Lair. A foul stench suddenly hits the player characters, and they see the entrance to an underground lair behind some large boulders. Tracks of clawed feet lead down into the dark. The lair is full of bone fragments from animals and humanoids alike. If the player characters search the lair for a stretch of time and succeed with a SPOT HIDDEN roll, they may draw two treasure cards. After one stretch the troll (page 97 in the Rulebook) shows up in a rage.
+      - roll: "8"
+        cells:
+          - "Goblin Trap. A group of sly goblins have set a trap in the middle of the path. The player character must make a SPOT HIDDEN roll. Anyone who fails crashes down into a four-meter-deep pitfall and takes damage from the fall. Then the goblins attack. They are twice as many as the player characters and have stats as Scouts on page 90 in the Core Rulebook. The goblins can be bribed into aborting the attack with D12 gold coins and a successful PERSUASION roll. The goblins serve the orc chieftain Maladûk, which they will admit if asked. They can even reveal that Maladûk is currently at Bothild’s Lode (page 39)."
+      - roll: "9"
+        cells:
+          - "The Dragon Knight. The player characters hear the sound of rapid hoofbeats approaching. Those who succeed with an AWARENESS roll can hide if they want to; the others are stopped by an armored knight. His name is Tylos, and he is a member of the Keepers of the Immaculate Flame, whose mark is also seen on his armor. Tylos asks where the player characters are headed. No matter what they say, they must roll PERSUASION for Tylos to believe them as he suspects them of being Sathmog cultists on their way to Fort Malus (page 79) to free their comrade who is imprisoned there. If the roll fails, Tylos attacks unless they say they are working with Alfilia Shadowleaf (page 22). If they manage to calm him down, Tylos orders them to follow him and leads them to Fort Malus (page 79) for “an important quest” (solving the riddle on the cellar door or hacking through the floor, but Tylos will not reveal that now). If the players characters have already been at Fort Malus, Tylos is not aware of this. If the player characters refuse, they must once again PERSUADE him or be attacked. Tylos has the same stats and gear as Isadelia (page 84), and rides a combat-trained horse."
+      - roll: "10"
+        cells:
+          - "Prowling Manticore. A hungry manticore stalks the player characters through the trees. Let each player characters roll AWARENESS with a bane. If everyone fails, the manticore’s attack counts as surprising, which gives it initiative cards #1 and #2 in the first round. It runs off after losing half its HP."
+      - roll: "11"
+        cells:
+          - "Hunting Elves. The two elven hunters Aldonil and Orifin lie in ambush (stats as hunters as per page 105 in the Rulebook). Let the players roll for AWARENESS with a bane. Those who fail are caught by surprise by the elves, who suddenly appear by the trail, bows drawn. They seek their friend Iliel, who has been abducted by a mounted knight (see encounter #9 and Fort Malus, page 79). Aldonil and Orifin suspect the player characters to be involved, but can be placated with a PERSUASION roll. If the player characters help the elves in some concrete way, they will be rewarded with a mastercrafted elven weapon each next time they meet. If Iliel has already been freed when this encounter occurs, she is with Aldonil and Orifin here, and the player characters are invited to make camp with the three elves"
+      - roll: "12"
+        cells:
+          - "Chanting Cultists. The player characters hear chanting from a gloomy glade. Moving closer, they see hooded figures, as many as the player characters, with burning torches in their hands. Player characters who succeed with a LANGUAGES roll hear the words “Sathmog, our three-tongued master.” The cultists have stats as per page 105 of the Rulebook. If the ritual is interrupted, they attack and fight to the death. If it is allowed to continue for a stretch, the cultists vanish into black smoke and a demon (stats as per page 85 in the Rulebook) materializes and attacks."
+  - name: Random Encounters in the Haunted Marshes
+    dice: D12
+    columns:
+      - EVENT
+    page: 33
+    rows:
+      - roll: "1–6"
+        cells:
+          - Nothing Happens. The player characters slosh tirelessly through the stinking swamp.
+      - roll: "7"
+        cells:
+          - Leeches. A flooded section of the path is riddled with leeches. Anyone wading through the water must roll BUSHCRAFT or take D3 damage and suffer a condition of their choice. Armor has no effect.
+      - roll: "8"
+        cells:
+          - Hunting Trap. A rusty bear trap is hidden under a bunch of old leaves. Let all player characters make an AWARENESS roll in the order in which they walk. The first person to fail triggers the trap and suffers D6 piercing damage.
+      - roll: "9"
+        cells:
+          - "Giant Spider. A ravenous giant spider (page 89 in the Rulebook) has spun its web across the path. All player characters must make an AWARENESS roll – those who fail are trapped in the spider’s web (monster attack #5 on page 89 in the Rulebook) and the spider attacks next round. The trapped characters must roll STR with a bane to break free."
+      - roll: "10"
+        cells:
+          - Restless Spirits. Luminous shapes of orcs in broken armor are floating across the swamp. The player characters must make a roll against WIL to resist fear (page 62 in the Rulebook). These are the spirits of orcs killed in battle around the Tower of Sighs.
+      - roll: "11"
+        cells:
+          - The Herbologist. The player characters encounter an old herbologist named Elmina who lives in a hut in the swamp. She can point them toward the Tower of Sighs and warn them of a giant and a band of brigands who dwell there. For a few gold coins, Elmina can also offer the player characters her services as a healer, or even teach them her skills. Elmina has HEALING 16, ANIMISM 15, and knows the spells COOK FOOD, CLEAN, BANISH, HEAL WOUND, ENSNARING ROOTS, and ANIMAL WHISPERER.
+      - roll: "12"
+        cells:
+          - Ghost Lights. The swamp vegetation grows higher and denser. In the darkness under the trees, ghost lights illuminate the ground. Each player character must make a roll against WIL not to be lured into the swamp. Those who fail soon get stuck in the mud and must make an EVADE roll with a bane not to sink and start drowning (page 53 in the Rulebook). Another player character can save the victim with a successful ACROBATICS roll, but on failure they start sinking as well.
+  - name: Random Encounters at the Foot of the Mountains
+    dice: D12
+    columns:
+      - EVENT
+    page: 34
+    rows:
+      - roll: "1–6"
+        cells:
+          - Nothing Happens. The wind howls across the barren mountain slopes, and the arduous march proceeds without delay.
+      - roll: "7"
+        cells:
+          - "The Silhouette of Death. The player characters are struck by anxiety and suddenly feel small, harmless, and vulnerable. Moments later the world darkens as a huge shadow glides across the sky. All player characters who look up must roll WIL to resist fear (page 52 in the Rulebook). With a successful BEAST LORE roll, the winged shadow – which has spiky growths and an extended snout – is identified as a dragon."
+      - roll: "8"
+        cells:
+          - "Nervous Orcs. The player characters are surrounded by threatening orcs who show up without warning from every direction. They outnumber the player characters by two and have the stats and gear of warriors on page 95 in the Rulebook. The scowling orcs are extremely suspicious of the player characters, but only want to know what they are doing in the area. The orcs serve Maladûk and suspect the intruders of being Sathmog cultists on the hunt for their chieftain. The risk of combat is high, but it can be avoided by silver-tongued players who succeed with a PERSUASION roll."
+      - roll: "9"
+        cells:
+          - Angry Giant. A raging giant (page 88 in the Rulebook) comes charging at the player characters, roaring furi-ously as it swings its enormous wooden club. It reaches them in two rounds. A successful BEAST LORE roll reveals that giants are extremely territorial creatures. The giant aborts its attack if the player characters hurry away from there, which takes a successful EVADE roll and wastes their movement this shift. Alternatively, a player character can make a SNEAKING roll to hide or PERSUADE the giant that they are no threat to his cave. Failed rolls may result in combat, but you should give the player characters several chances to avoid it.
+      - roll: "10"
+        cells:
+          - Mistress of the Winds. The gales of a great storm howl between the mountain peaks. Suddenly the player characters see a hooded figure on a cliff further ahead, gesturing with her arms and reaching for the sky. This is Sephyra, an elementalist mage who is trying to conquer the western wind. Sephyra knows the mountains very well and is familiar with the stories of the dwarf queen Bothild. If the player characters gain her trust (PERSUASION roll), she can show them the way to Bothild’s Lode, or even teach them what she knows. She has skill level 15 in ELEMENTALISM and knows the spells FROST, GUST OF WIND, and WHIRLWIND.
+      - roll: "11"
+        cells:
+          - "The Dragon Egg. Beneath a protruding rock is a human-sized stone with red streaks. Taking a closer look, the player characters realize that the strange thing is an egg – clearly laid by some giant beast. A player character who succeeds with a BEAST LORE roll identifies it as a dragon egg, and also remembers hearing that dragon eggs have poisonous shells. Anyone who touches it is afflicted by a lethal poison with potency 7."
+      - roll: "12"
+        cells:
+          - "Death From Above. A hungry griffon (page 91 in the Rulebook) spots the player characters from its nest at the top of a huge tree and attacks with a blood-curdling shriek. Let each player character roll AWARENESS with a bane. If everyone fails, the griffon’s attack is surprising, and the beast gets initiative card #1 and #2 in the first round. The griffon will flee after losing half its HP."
+  - name: "Riddermound: Random Events"
+    dice: D6
+    columns:
+      - EVENT
+    page: 36
+    rows:
+      - roll: "1"
+        cells:
+          - "Goblins Attack! Having been admonished by their orcish commanders, a patrol of goblins have returned to the barrow to retrieve the treasure and (possibly) save their comrades left behind. They are two more than the number of player characters and immediately attack, but flee if half of them are defeated. The goblins have stats like Grub (page 36). If caught, they can reveal that they serve Maladûk."
+      - roll: "2"
+        cells:
+          - Massacred Goblin. The characters find the sad remains of a dead goblin. The body is severely mangled, but a player character who makes a HEALING roll realizes that the goblin has not been dead very long.
+      - roll: "3"
+        cells:
+          - Giant Spider. The player characters are attacked by a giant spider dwelling in a cavity behind one of the walls. For stats, see page 89 in the Rulebook. This event can only occur once.
+      - roll: "4"
+        cells:
+          - "The Wight. The wight has been disturbed by the character, and it attacks. As it is partially immaterial, it can pass through closed portcullises and doors, but it requires an action to do so. The wight retreats to its tomb (#9) if it loses half of its HP, and fully recovers there in one stretch of time."
+      - roll: "5"
+        cells:
+          - "Restless Spirits. Translucent figures with twisted faces come floating from the shadows, assaulting the player characters with shrieks and screams. The characters must roll against WIL to resist fear (page 52 in the Rulebook). Once servants of the dragon knight’s household, the spirits are attracting their master the barrow wight, who arrives after D3 rounds (see event #4 above)."
+      - roll: "6"
+        cells:
+          - "Draconic Vision. A stray memory envelops one of the characters, who is suddenly looking out over a strange city of turrets, towers, and horn-like spires. Something comes flying straight at the character – a huge dragon ridden by a knight in golden plate mail and a horned great helm. The player character must make a WIL roll with a bane to resist fear. The event can only occur once. 7+ Nothing happens. If the characters leave the mound to rest and heal outside it, roll a D6 for each shift of time: 1–3 Nothing happens. 4–5 A patrol of goblins, twice as many as the characters and with stats like Grub (page 36), arrive and immediately attack. 6 The wight appears by the characters’ camp and attacks them, but disappears as soon as it takes damage."
+  - name: "Leaving the Mound?"
+    dice: D6
+    columns:
+      - EVENT
+    page: 36
+    rows:
+      - roll: "1"
+        cells:
+          - "Goblins Attack! Having been admonished by their orcish commanders, a patrol of goblins have returned to the barrow to retrieve the treasure and (possibly) save their comrades left behind. They are two more than the number of player characters and immediately attack, but flee if half of them are defeated. The goblins have stats like Grub (page 36). If caught, they can reveal that they serve Maladûk."
+      - roll: "2"
+        cells:
+          - Massacred Goblin. The characters find the sad remains of a dead goblin. The body is severely mangled, but a player character who makes a HEALING roll realizes that the goblin has not been dead very long.
+      - roll: "3"
+        cells:
+          - Giant Spider. The player characters are attacked by a giant spider dwelling in a cavity behind one of the walls. For stats, see page 89 in the Rulebook. This event can only occur once.
+      - roll: "4"
+        cells:
+          - "The Wight. The wight has been disturbed by the character, and it attacks. As it is partially immaterial, it can pass through closed portcullises and doors, but it requires an action to do so. The wight retreats to its tomb (#9) if it loses half of its HP, and fully recovers there in one stretch of time."
+      - roll: "5"
+        cells:
+          - "Restless Spirits. Translucent figures with twisted faces come floating from the shadows, assaulting the player characters with shrieks and screams. The characters must roll against WIL to resist fear (page 52 in the Rulebook). Once servants of the dragon knight’s household, the spirits are attracting their master the barrow wight, who arrives after D3 rounds (see event #4 above)."
+      - roll: "6"
+        cells:
+          - "Draconic Vision. A stray memory envelops one of the characters, who is suddenly looking out over a strange city of turrets, towers, and horn-like spires. Something comes flying straight at the character – a huge dragon ridden by a knight in golden plate mail and a horned great helm. The player character must make a WIL roll with a bane to resist fear. The event can only occur once. 7+ Nothing happens. If the characters leave the mound to rest and heal outside it, roll a D6 for each shift of time: 1–3 Nothing happens. 4–5 A patrol of goblins, twice as many as the characters and with stats like Grub (page 36), arrive and immediately attack. 6 The wight appears by the characters’ camp and attacks them, but disappears as soon as it takes damage."
+  - name: "Bothild’s Lode: Random Events"
+    dice: D12
+    columns:
+      - EVENT
+    page: 42
+    rows:
+      - roll: "1–6"
+        cells:
+          - Nothing happens.
+      - roll: "7"
+        cells:
+          - Rattling Chainmail. The distinct rattle of chainmail is suddenly heard from a dramatically appropriate direction. These are echoes from the time when dwarves inhabited the caves. All player characters must make a WIL roll to resist fear.
+      - roll: "8"
+        cells:
+          - "Dwarven Spirits. The player characters feel a cold breeze down their necks and hear faint voices whispering, almost inaudibly, in an old Dwarvish dialect. All player characters must make a WIL roll to resist fear. Those who succeed can roll LANGUAGES to make out phrases such as “help me,” “I’m sinking,” “air,” and “white death.”"
+      - roll: "9"
+        cells:
+          - "Cascade. There is a cracking sound inside the rock wall, which moments later bursts into a cascade of stone and water that hits a player character. The victim must make an EVADE roll – on failure they suffer 2D6 bludgeoning damage and must roll to resist cold (page 54 in the Rulebook)."
+      - roll: "10"
+        cells:
+          - Lure of the Water. A beautiful light is seen below the surface of the water. All player characters must make a roll against WIL not to be lured head-first into the water. Once underwater, the victims must hold their breaths to avoid drowning (page 53 in the Rulebook). The enchantment is lifted if the victim loses at least 1 HP.
+      - roll: "11"
+        cells:
+          - "Collapse. Part of the floor vanishes beneath a player character’s feet. It takes a successful EVADE roll not to be swept away by the swirling water and end up in another room – the GM decides which one."
+      - roll: "12"
+        cells:
+          - The White Death. Suddenly the White Death (next page) bursts out of the water, performs a monster attack against a player character, and disappears back into the tunnels. Large parts of the mine are filled with water, which allows the White Death to move freely. It also limits the player characters’ movements and creates tactical challenges. Since the water is freezing, the player characters must make a BUSHCRAFT roll to resist cold (page 54 in the Rulebook) for each stretch they spend in it. The water has three different depths, which are indicated on the map.
+  - name: "Temple of the Purple Flame: Random Events"
+    dice: D12
+    columns:
+      - EVENT
+    page: 50
+    rows:
+      - roll: "1–6"
+        cells:
+          - Nothing happens.
+      - roll: "7"
+        cells:
+          - Wandering Cultists. The cultists are on their way out of the temple when they suddenly run into the player characters. The risk of combat is high, but they can be reasoned with.
+      - roll: "8"
+        cells:
+          - Fighting Cultists. The player characters hear the sound of combat from an adjacent room. It is the cultists who are fighting a giant spider or murderous briars (next page).
+      - roll: "9"
+        cells:
+          - Cultists Attack. The cultists have spotted the player characters and decided to attack, preferably surprising them with a sneak attack or ambush.
+      - roll: "10"
+        cells:
+          - "Terrible Roar. The player characters hear the roar of a terrible beast. It is coming from the manticore in the vaulted hall (#8). All player characters must make a WIL roll to resist fear."
+      - roll: "11"
+        cells:
+          - Giant Spider. The player characters are attacked by a giant spider enlarged by the energies of the demonic realm. For stats, see page 89 in the Rulebook.
+      - roll: "12"
+        cells:
+          - Murderous Briars. The walls of the room are covered with giant briars that come to life and attack a player character who gets too close. See next page.
+  - name: Successful WIL Rolls
+    columns:
+      - EFFECT
+    page: 56
+    rows:
+      - roll: First
+        cells:
+          - The player character finds something valuable. If you chose to place a piece of the dragon statuette here, it is found by the first character who succeeds with a WIL roll. If not, draw a treasure card.
+      - roll: Second
+        cells:
+          - "The player character finds the portal again and returns to #11."
+  - name: Failed WIL Rolls
+    columns:
+      - EFFECT
+    page: 56
+    rows:
+      - roll: First
+        cells:
+          - The player character gets lost. A shift of time passes in the real world.
+      - roll: Second
+        cells:
+          - The player character wanders deeper into the maze. A day passes in the real world, and the player character must roll D6 on the demonic alterations table.
+      - roll: Third
+        cells:
+          - The player character is about to lose themselves in the demon prince’s realm. A week passes in the real world, and the player character must roll D10 on the demonic alterations table.
+      - roll: Fourth
+        cells:
+          - The player character meets the demon prince Sathmog himself and becomes part of his realm, forever.
+  - name: Demonic Alterations
+    columns:
+      - DEMONIC ALTERATION
+    page: 56
+    rows:
+      - roll: "1–4"
+        cells:
+          - Nothing happens.
+      - roll: "5–6"
+        cells:
+          - "The player character’s eyes turn completely black. This permanently gives them WIL +1 (max 18) but −1 to all CHA-based skills (min 3)."
+      - roll: "7–8"
+        cells:
+          - "The player character's body grows and becomes unnaturally elongated. This permanently gives them STR +1 (max 18) but −1 to all CHA-based skills (min 3)."
+      - roll: "9–10"
+        cells:
+          - "The player character fuses with their armor or clothes. This provides a natural protection with armor rating equal to the armor (min 2) and increases maximum HP by the same amount, but −2 to all CHA-based skills (min 3)."
+  - name: "Oracle Cave: Random Events"
+    dice: D10
+    columns:
+      - EVENT
+    page: 63
+    rows:
+      - roll: "1–5"
+        cells:
+          - Nothing happens.
+      - roll: "6"
+        cells:
+          - Scratching Sound. The player characters hear a scraping, scratching sound echoing through the tunnels. If they try to trace the sound, they find that it is coming from small passageways and cavities they themselves cannot enter.
+      - roll: "7"
+        cells:
+          - Rockfall. Rocks and dirt crash down from the ceiling. A player character must roll EVADE and suffers 2D6 bludgeoning damage on failure.
+      - roll: "8"
+        cells:
+          - Mysterious Mushroom. A dark, foul-smelling mold growing on the cave wall is spewing toxic spores. A player character is exposed to a lethal poison with potency 14.
+      - roll: "9"
+        cells:
+          - "Wounded Brigand. Suddenly a dark figure comes rushing toward the player characters, shouting about “the beasts in the dark.” All player characters must make a WIL roll to resist fear. It is not a monster, however, but one of the brigands who abducted Roric. He has managed to escape the spiders but is out of his mind and attacks the player characters. He is white as a sheet and stares at them with mad eyes. A successful PERSUASION roll calms him down, in which case he tells them about the spiders' attack and that Roric can be found deeper in the cave. The man has stats as a bandit as per the table on page 105 in the Rulebook, but only has 2 HP left."
+      - roll: "10"
+        cells:
+          - Spiderlings. A swarm of spiders, ranging in size from a clenched fist to a large cat, skitter out of every nook and cranny and immediately attack the player characters. These are the spawn of the old she-spider, see page 64 for stats. The spiders disappear after one round of fighting.
+  - name: "Troll’s Spire: Random Events"
+    dice: D8
+    columns:
+      - EVENT
+    page: 70
+    rows:
+      - roll: "1–4"
+        cells:
+          - Nothing happens.
+      - roll: "5"
+        cells:
+          - Falling Rock. A heavy rock comes crashing down toward a player character, who must make an EVADE roll and suffers 2D4 bludgeoning damage on failure.
+      - roll: "6"
+        cells:
+          - Spiders Everywhere. The player characters disturb a nest of large spiders. They swarm all over their bodies and under their clothes. All player characters in the room must make an EVADE roll. Those who fail take D4 damage (armor has no effect) and suffer a condition of their choice.
+      - roll: "7"
+        cells:
+          - "Harga’s Warning. Suddenly a loud voice booms from the upper floors of the tower: “I can hear you down there. Get out of my house or I'll turn you all into toads!” It is Harga who is trying to scare away the intruders."
+      - roll: "8"
+        cells:
+          - "Voice From the Past. Ghostly whispers from the age of the dragon empire fill the room. All player characters must roll WIL to resist fear. Anyone who succeeds with a LANGUAGES roll understands what the voice is saying: “Over moon, under ground, fall the stars.”"
+  - name: "Dead Eyes Cave: Random Events"
+    dice: D8
+    columns:
+      - EVENT
+    page: 77
+    rows:
+      - roll: "1–4"
+        cells:
+          - Nothing happens.
+      - roll: "5"
+        cells:
+          - Rockfall. The basilisk moves through one of the cave's many shafts and the player characters see something scaly slithering somewhere high above. Rocks come crashing down and everyone in the room must succeed with an EVADE roll or suffer D4 bludgeoning damage.
+      - roll: "6"
+        cells:
+          - Lost Cultists. Two cultists have wandered into the cave looking for their comrades and gotten lost. They are startled when they see the player characters and attack immediately. For stats, see page 76. These cultists are not blindfolded.
+      - roll: "7"
+        cells:
+          - Rank Breath. The basilisk passes the player characters in a shaft, and they can smell its rank breath. The player characters must roll against CON and become Dazed on failure.
+      - roll: "8"
+        cells:
+          - Vision. A player character gets the feeling of being watched and has a vision of two staring ice-blue eyes, which terrifies them. The victim must roll against WIL to resist fear.
+  - name: "Fort Malus: Random Events"
+    columns:
+      - EVENT
+    page: 82
+    rows:
+      - roll: "1"
+        cells:
+          - Niklion. The dragon knight Niklion peers out of one of the keep’s windows or takes a stroll around the courtyard. The player characters must make a SNEAKING roll to avoid detection.
+      - roll: "2–4"
+        cells:
+          - Nothing happens.
+      - roll: "5"
+        cells:
+          - Hornets. A swarm of hornets living in the ruin attacks a player character. The victim must make an EVADE roll or be badly stung, which inflicts 2D6 damage and gives the victim a bane on all actions for one a shift.
+      - roll: "6"
+        cells:
+          - "Rotlaug’s Plea. Rotlaug reaches out with his mind and sends a chaotic series of sensations to a player character: the earthy smell of a root cellar, a magnificent tree with golden fruits, an intense sense of captivity and longing for freedom, a trembling voice whispering in an ancient tongue (LANGUAGES: “Help me, free me”)."
+      - roll: "7"
+        cells:
+          - "Collapsing Ceiling. The ruins of Fort Malus are in poor condition. A player character must succeed with an EVADE roll or suffer D8 bludgeoning damage as a boulder falls from the ceiling. Ossiar poses as a timid explorer but is a fanatical follower of Sathmog. His only goal is to free Blutuld, with or without the player characters’ help. Ossiar has the mark of Sathmog tattooed on his forearm. If the player characters confront him about this, he tries to run away. Movement: 10 Damage Bonus: — Armor: Leather (1) HP: 12 Skills: Awareness 10, Myths & Legends 12 Gear: Short sword (skill level 12, damage D10), sleeping fur, two rations of food, 7 silver coins"
+  - name: The Price of Digging
+    dice: D6
+    columns:
+      - CREATURE
+    page: 86
+    rows:
+      - roll: "1–3"
+        cells:
+          - Nothing happens.
+      - roll: "4"
+        cells:
+          - Greedy goblins, twice as many as the player characters (stats as scouts, page 90 in the Rulebook).
+      - roll: "5"
+        cells:
+          - Angry orcs, as many as the player characters (stats as warriors, page 95 in the Rulebook).
+      - roll: "6"
+        cells:
+          - The ravenous troll Yx (stats as per page 97 in
+  - name: "Road’s End Inn: Random Events"
+    dice: D6
+    columns:
+      - EVENT
+    page: 97
+    rows:
+      - roll: "1–3"
+        cells:
+          - Nothing happens.
+      - roll: "4"
+        cells:
+          - Bone Shambler. A bone shambler (page 96) drops from the ceiling and moves quickly towards the player characters.
+      - roll: "5"
+        cells:
+          - Shaking Floor. The floor suddenly begins to shake and crack open. A foul stench rises from the cracks, and all player characters must make a roll against CON not to become Sickly.
+      - roll: "6"
+        cells:
+          - Dense Silence. A thick silence settles over the room. The room drains the player characters’ energy and leaves them famished (page 54 in the Rulebook).
+  - name: "The Isle of Mist: Random Events"
+    dice: D10
+    columns:
+      - EVENT
+    page: 105
+    rows:
+      - roll: "1"
+        cells:
+          - "Vampire Bats: The player characters are attacked by a swarm of demonic bats (stats as per page 99 in the Rulebook)."
+      - roll: "2"
+        cells:
+          - "Okvid the Troll: The player characters encounter the troll Okvid (see location #7). Re-roll if they have already met Okvid."
+      - roll: "3"
+        cells:
+          - "The Voice of Azrahel Koth: A hoarse and urgent voice echoes through the labyrinth. The player characters must roll against WIL to resist fear, but only the first time this event occurs. It takes a successful LANGUAGES roll to understand the words: “All power to Sathmog, our three-tongued liberator.”"
+      - roll: "4–7"
+        cells:
+          - Nothing happens.
+      - roll: "8–9"
+        cells:
+          - "Undead Guards. The player characters encounter a patrol of undead guards (page 108), as many as themselves. Have the player characters make an AWARENESS roll – if they succeed, they can try to hide (SNEAKING roll) or even follow the guards."
+      - roll: "10"
+        cells:
+          - "Azrahel Koth Attacks: The demon sorcerer himself shows up and attacks the player characters to test their strength. Upon taking damage he instantly teleports back to his mausoleum (location #20). The locals avoid the Isle of Mist as the thick magical mist that covers it eats away at all living things. It is extremely painful, and anyone traversing the surface of the island suffers D6 damage per stretch – only the undead are immune. No natural healing can occur here. The mist was created to hold Azrahel Koth, who is particularly vulnerable to it – he takes D6 damage per round if he enters it without Um-Durman. Neither armor nor spells can protect against the mist. However, the sword Um-Durman or Cadal’s ring (#4) keeps the mist at a distance of 10 meters, thus creating a bubble that allows the bearer to move unharmed on the island. The mist only exists on the surface of the island, not in the cave complex below. It also does not reach the cliff with the bat tunnels."

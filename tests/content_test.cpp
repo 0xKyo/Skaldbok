@@ -413,7 +413,7 @@ int main(int argc, char** argv) {
         check(ch && ch->prop("nav") == "Reference" && ch->prop("layout") == "tabs" && info && info->body.contains("perform one action") &&
                   info->sections.size() == 2 && info->sections[0].title == "Reactions" && info->sections[1].title == "Terrain" &&
                   info->sections[1].body.contains("{{table: Terrain}}") && core.tableByName("Terrain") && core.tableByName("Terrain")->rows.size() == 4,
-              "Core's actions.yaml makes the Actions chapter: a page of the Reference with the tabs layout, whose General Info tab is the intro of data/system/actions.yaml (body, a Reactions section and a Terrain section that places the terrain.yaml table)");
+              "Core's actions.yaml makes the Actions chapter: a page of the Reference with the tabs layout, whose General Info tab is the intro at the top of actions.yaml (body, a Reactions section and a Terrain section that places the terrain.yaml table)");
         check(pages == std::vector<std::string>{"Actions", "Free Actions", "Movement", "Melee Combat", "General Info"}, "one page per action group in the order of the file, then General Info");
         const DataTable* acts = core.tableByName("Actions");
         const DataTable* moves = core.tableByName("Movement Actions");
@@ -802,6 +802,15 @@ int main(int argc, char** argv) {
         check(pubFights && pubFights->rows.size() == 2 && pubFights->rows[0].cells[0] == "Bar stool" && pubFights->dice == "D2" && other && other->rows.size() == 1,
               "entities with no category take the name of their file (pub-fights.yaml -> Pub Fights), one with its own category keeps it");
 
+        // what the GM page writes has its keys quoted (JSON): a file of entities written that way loads like one written in YAML
+        test::write(root + "/mood/hunting.yaml", "{\"kind\": \"animal\", \"rollable\": [\"Hunting\"], \"entities\": [{\"name\": \"Snow Hare\", \"fields\": {\"RATIONS\": \"1\"}}]}");
+        ContentStore quoted;
+        quoted.load({PackSpec{coreDir, true, true}, PackSpec{root + "/mood", false, true}});
+        const DataTable* hares = nullptr;
+        for (const DataTable& tb : quoted.packTables())
+            if (tb.title == "Hunting") hares = &tb;
+        check(hares && hares->rows.size() == 1 && hares->rows[0].cells[0] == "Snow Hare", "a file of entities with quoted keys (what the GM page writes) is loaded as a table");
+
         // a pack that fails to load leaves the rules of the others alone, and an off pack changes nothing
         test::write(root + "/broken/manifest.yaml", "{\"format\":1,\"id\":\"broken-rules\",\"name\":\"Broken\"}");
         test::write(root + "/broken/spells.yaml", "{ nope");
@@ -933,18 +942,44 @@ int main(int argc, char** argv) {
               "the pack (with its images) is copied to the user's folder");
         r = pm.import(example);
         check(r.ok && r.replaced, "importing the same pack again updates it");
+        const size_t withBooks = PackManager(coreDir, "").specs({}).size();      // Core and the packs that come with the books (an adventure)
         auto specs = pm.specs({});
-        check(specs.size() == 2 && specs[0].core && specs[0].dir.ends_with("core") && specs[1].dir.contains("frostmarch") && specs[1].enabled,
-              "installed packs are listed after Core");
+        check(specs.size() == withBooks + 1 && specs[0].core && specs[0].dir.ends_with("core") && specs.back().dir.contains("frostmarch") && specs.back().enabled,
+              "installed packs are listed after Core (and the packs of the books)");
         specs = pm.specs({"frostmarch"});
-        check(specs.size() == 2 && !specs[1].enabled, "a disabled pack id switches its spec off");
+        check(specs.size() == withBooks + 1 && !specs.back().enabled, "a disabled pack id switches its spec off");
+
+        {   // a pack that comes with the books (an adventure, next to Core) loads like the user's: it can be switched off, and one of the user's with its name replaces it
+            const std::string books = userDir + "-books";
+            removeTree(books);
+            test::write(books + "/core/manifest.yaml", "{\"format\":1,\"id\":\"core\",\"name\":\"Core\"}");
+            test::write(books + "/tale/manifest.yaml", "{\"format\":1,\"id\":\"tale\",\"name\":\"Tale\"}");
+            test::write(books + "/notes.txt", "not a pack");
+            PackManager bm(books + "/core", userDir);
+            auto bs = bm.specs({});
+            check(bs.size() == 3 && bs[0].core && bs[1].dir.ends_with("/tale") && bs[1].enabled && bs[2].dir.contains("frostmarch"), "the packs of the books are listed after Core, before the user's");
+            bs = bm.specs({"tale"});
+            check(bs.size() == 3 && !bs[1].enabled, "a pack of the books can be switched off");
+            test::write(userDir + "/tale/manifest.yaml", "{\"format\":1,\"id\":\"tale\",\"name\":\"My Tale\"}");
+            bs = bm.specs({});
+            int tales = 0;
+            bool fromUser = false;
+            for (const PackSpec& s : bs)
+                if (s.dir.ends_with("/tale")) {
+                    ++tales;
+                    fromUser = s.dir.rfind(userDir, 0) == 0;
+                }
+            check(tales == 1 && fromUser, "a pack of the user's with the same name takes the place of the book's");
+            removeTree(userDir + "/tale");
+            removeTree(books);
+        }
 
         {   // the app's own pack ("custom") loads LAST, so its "replaces" finds a card of any pack, whatever the folder order
             test::write(userDir + "/custom-kin/kin.yaml", "{\"format\":1,\"name\":\"Custom Kin\",\"kin\":[{\"name\":\"Cat People\"}]}");
             test::write(userDir + "/custom/kin.yaml",
                         "{\"format\":1,\"name\":\"My Homebrew\",\"kin\":[{\"name\":\"Cat Folk\",\"replaces\":\"custom-kin/kin/cat-people\"}]}");
             specs = pm.specs({});
-            check(specs.size() == 4 && specs.back().dir.ends_with("/custom"), "the app's own pack is listed last, after \"custom-kin\"");
+            check(specs.size() == withBooks + 3 && specs.back().dir.ends_with("/custom"), "the app's own pack is listed last, after \"custom-kin\"");
             ContentStore u;
             u.load(specs);
             const Entry* cat = u.findByName(Kind::Kin, "Cat Folk");

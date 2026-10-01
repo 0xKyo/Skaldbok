@@ -1,0 +1,16 @@
+kind: effect
+category: Demon Roll in Melee
+rollable:
+  - Demon Roll in Melee
+entities:
+  - name: You drop your weapon at your feet
+    description: Picking it up is an action.
+  - name: You expose yourself to the enemy, who gets a free attack that cannot be dodged or parried.
+  - name: Your weapon cuts so deep into an object that it gets stuck
+    description: Pulling it free requires a STR roll (counts as an action)
+  - name: You accidentally toss your weapon D3+3 meters
+    description: To pick it up you must move and then perform an action.
+  - name: You slam your weapon into something hard and damage it
+    description: Any use of the weapon gets a bane until it is repaired by an artisan.
+  - name: You hit yourself by mistake
+    description: Roll for damage as usual, but without any damage bonus.

@@ -12,6 +12,7 @@
 #include "game/settings.h"
 #include "web/web_views.h"
 #include "web/web_creation.h"
+#include "web/web_adventures.h"
 #include "web/web_homebrew.h"
 
 namespace gm {
@@ -361,30 +362,131 @@ WebResponse WebApp::gmApi(const WebRequest& request, long long now) {
         return jsonResponse(200, creationPreview(creationFromJson(body, content_), content_, dice_));
     }
 
-    // ---- homebrew: the GM's own pack (creatures so far) ----
-    static const std::string kHomebrew = "/gm/homebrew/creatures";
-    if (sub == kHomebrew || sub.starts_with(kHomebrew + "/")) {
+    // ---- adventures: the packs that have an adventure.yaml, to be read (only the GM has them) ----
+    if (sub == "/gm/adventures" && reading) return jsonResponse(200, adventureList(config_.dataDir, config_.prefsDir));
+    if (sub.starts_with("/gm/adventures/") && sub.ends_with("/notes") && request.method == "PUT") {       // the GM's note on a part of the adventure
+        json body;
+        if (!jsonParse(request.body, body, nullptr) || !body.is_object()) return errorResponse(400, "Send the note as JSON.");
+        const std::string id = sub.substr(15, sub.size() - 15 - 6);
+        const NoteResult saved = saveAdventureNote(config_.dataDir, config_.prefsDir, id, jsonStr(body, "node"), jsonStr(body, "text"));
+        return saved.status >= 300 ? errorResponse(saved.status, saved.error) : jsonResponse(200, {{"ok", true}});
+    }
+    if (sub.starts_with("/gm/adventures/") && sub.ends_with("/image") && reading) {                  // a picture of the adventure
+        const std::string id = sub.substr(15, sub.size() - 15 - 6);
+        const auto asked = request.query.find("path");
+        const std::string file = adventureImagePath(config_.dataDir, config_.prefsDir, id, asked == request.query.end() ? std::string() : asked->second);
+        auto bytes = file.empty() ? std::nullopt : fs::readFile(file);
+        if (!bytes) return errorResponse(404, "No such picture");
+        WebResponse r;
+        r.body = std::move(*bytes);
+        r.contentType = mimeOf(file);
+        r.headers["Cache-Control"] = "private, max-age=86400";
+        return r;
+    }
+    if (sub.starts_with("/gm/adventures/") && reading) {
+        const json adventure = adventureDetail(config_.dataDir, config_.prefsDir, sub.substr(15), content_);
+        return adventure.is_null() ? errorResponse(404, "There is no such adventure.") : jsonResponse(200, adventure);
+    }
+
+    // ---- homebrew: the GM's own pack (creatures, and an entry of every kind of data file of Core) ----
+    if (sub == "/gm/homebrew" || sub.starts_with("/gm/homebrew/")) {
         const std::string pack = customPackDir(config_.prefsDir);
-        const std::string id = sub.size() > kHomebrew.size() ? sub.substr(kHomebrew.size() + 1) : std::string();
-        if (!id.empty() && !fs::safeId(id)) return errorResponse(400, "Invalid creature id.");
+        const std::string coreDir = config_.dataDir + "/packs/core";
         const auto respond = [&](const HomebrewResult& r) {
             if (r.status >= 300) return errorResponse(r.status, r.error);
             contentSignature_.clear();                           // what was just written must be read back now
             reloadContentIfChanged();
             return jsonResponse(r.status, r.body);
         };
-        if (reading && id.empty()) return jsonResponse(200, homebrewCreatures(pack));
+        const auto bodyJson = [&](json& body) { return jsonParse(request.body, body, nullptr); };
+        if (sub == "/gm/homebrew") return reading ? jsonResponse(200, homebrewSchema(config_.prefsDir, coreDir)) : errorResponse(405, "That is not allowed.");
+        if (sub == "/gm/homebrew/pack" && request.method == "PUT") {
+            json body;
+            if (!bodyJson(body) || !body.is_object()) return errorResponse(400, "Send the name as JSON.");
+            const HomebrewResult named = setHomebrewPackName(config_.prefsDir, jsonStr(body, "name"));
+            if (named.status >= 300) return errorResponse(named.status, named.error);
+            contentSignature_.clear();
+            reloadContentIfChanged();
+            return jsonResponse(200, homebrewSchema(config_.prefsDir, coreDir));
+        }
+        if (sub == "/gm/homebrew/packs" && reading) return jsonResponse(200, homebrewPacks(config_.prefsDir, coreDir));
+        const std::string rest = sub.substr(13);                 // "creatures", "creatures/<id>", "spells/3"...
+        const size_t slash = rest.find('/');
+        const std::string section = rest.substr(0, slash);
+        const std::string id = slash == std::string::npos ? std::string() : rest.substr(slash + 1);
+        if (!fs::safeId(section)) return errorResponse(400, "Invalid kind.");
+        if (section == "creatures") {
+            if (!id.empty() && !fs::safeId(id)) return errorResponse(400, "Invalid creature id.");
+            if (reading && id.empty()) return jsonResponse(200, homebrewCreatures(pack));
+            if (request.method == "POST" && id.empty()) {
+                json body;
+                if (!bodyJson(body)) return errorResponse(400, "Send the creature as JSON.");
+                return respond(saveHomebrewCreature(pack, "", body));
+            }
+            if (request.method == "PUT" && !id.empty()) {
+                json body;
+                if (!bodyJson(body)) return errorResponse(400, "Send the creature as JSON.");
+                return respond(saveHomebrewCreature(pack, id, body));
+            }
+            if (request.method == "DELETE" && !id.empty()) return respond(deleteHomebrewCreature(pack, id));
+            return errorResponse(405, "That is not allowed.");
+        }
+        const bool numeric = !id.empty() && id.size() < 6 && id.find_first_not_of("0123456789") == std::string::npos;
+        const auto expected = [&] { const auto it = request.query.find("name"); return it == request.query.end() ? std::string() : it->second; };
+        // the kinds of card a house rule can replace (the others can only be copied), and the key such a card has in its pack
+        static const std::map<std::string, Kind> kCards = {{"abilities", Kind::Ability}, {"spells", Kind::Spell}, {"skills", Kind::Skill}, {"kin", Kind::Kin}, {"professions", Kind::Profession},
+                                                           {"weapons", Kind::Weapon}, {"armor", Kind::Armor}, {"gear", Kind::Gear}};
+        const auto keyOfCard = [&](const std::string& packId, const std::string& name) -> std::string {
+            const auto card = kCards.find(section);
+            if (card == kCards.end()) return std::string();
+            for (const Entry& e : content_.entries(card->second))
+                if (lowerCopy(e.title) == lowerCopy(name) && e.key.starts_with(packId + "/")) return e.key;
+            return std::string();
+        };
+        if (reading && id.empty()) {
+            const auto asked = request.query.find("pack");
+            const std::string packId = asked == request.query.end() ? std::string() : asked->second;
+            const bool own = packId.empty() || packId == pack.substr(pack.find_last_of('/') + 1);
+            const std::string dir = own ? pack : homebrewPackDir(config_.prefsDir, coreDir, packId);
+            if (dir.empty()) return errorResponse(404, "There is no such pack.");
+            json entries = homebrewEntries(dir, coreDir, section);
+            if (entries.is_null()) return errorResponse(404, "There is nothing to make of that kind.");
+            if (!own) {                                           // somebody else's pack: to look into, with the key a house rule would replace, and whether one does
+                std::set<std::string> replaced;
+                for (const json& mine : homebrewEntries(pack, coreDir, section)["entries"])
+                    if (mine.is_object() && !jsonStr(mine, "replaces").empty()) replaced.insert(jsonStr(mine, "replaces"));
+                for (json& e : entries["entries"]) {
+                    const std::string key = e.is_object() ? keyOfCard(packId, e.value("name", "")) : std::string();
+                    if (key.empty()) continue;
+                    e["key"] = key;
+                    e["houseRuled"] = replaced.count(key) > 0;
+                }
+                entries["canReplace"] = kCards.count(section) > 0;
+            }
+            return jsonResponse(200, entries);
+        }
         if (request.method == "POST" && id.empty()) {
             json body;
-            if (!jsonParse(request.body, body, nullptr)) return errorResponse(400, "Send the creature as JSON.");
-            return respond(saveHomebrewCreature(pack, "", body));
+            if (!bodyJson(body)) return errorResponse(400, "Send the entry as JSON.");
+            std::string replaces;
+            json base = nullptr;
+            if (const json* rule = jsonFind(body, "houseRuleOf"); rule && rule->is_object()) {   // {pack, name}: this entry takes the place of that one
+                const std::string from = jsonStr(*rule, "pack"), name = jsonStr(*rule, "name");
+                const std::string dir = homebrewPackDir(config_.prefsDir, coreDir, from);
+                replaces = keyOfCard(from, name);
+                base = dir.empty() ? json(nullptr) : homebrewOriginal(dir, coreDir, section, name);
+                if (replaces.empty() || base.is_null()) return errorResponse(400, "That entry cannot be replaced: it is not one of the cards of a pack.");
+                for (const json& mine : homebrewEntries(pack, coreDir, section)["entries"])
+                    if (mine.is_object() && jsonStr(mine, "replaces") == replaces) return errorResponse(400, "You already have a house rule for it. Edit that one.");
+            }
+            return respond(saveHomebrewEntry(pack, coreDir, section, -1, "", body, replaces, base));
         }
-        if (request.method == "PUT" && !id.empty()) {
+        if (request.method == "PUT" && numeric) {
             json body;
-            if (!jsonParse(request.body, body, nullptr)) return errorResponse(400, "Send the creature as JSON.");
-            return respond(saveHomebrewCreature(pack, id, body));
+            if (!bodyJson(body)) return errorResponse(400, "Send the entry as JSON.");
+            return respond(saveHomebrewEntry(pack, coreDir, section, std::stoi(id), expected(), body));
         }
-        if (request.method == "DELETE" && !id.empty()) return respond(deleteHomebrewCreature(pack, id));
+        if (request.method == "DELETE" && numeric) return respond(deleteHomebrewEntry(pack, coreDir, section, std::stoi(id), expected()));
         return errorResponse(405, "That is not allowed.");
     }
 

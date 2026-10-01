@@ -121,7 +121,7 @@ watchEffect(() => {
   <!-- GM view: full interface when accessed with the GM link -->
   <main v-if="gmToken" class="wrap gm-wrap">
     <header class="top">
-      <span class="wordmark">Skaldbok <small class="ver">0.5</small></span>
+      <span class="wordmark">Skaldbok <small class="ver">0.6</small></span>
       <span class="who">Game Master</span>
       <span class="live"><span class="dot"></span>GM</span>
     </header>
@@ -130,7 +130,7 @@ watchEffect(() => {
 
   <main v-else class="wrap">
     <div v-if="!token" class="notice" data-test="no-link">
-      <h1>Skaldbok <small class="ver">0.5</small></h1>
+      <h1>Skaldbok <small class="ver">0.6</small></h1>
       <p v-if="problem" class="error">{{ problem }}</p>
       <p v-else>Open the personal link your GM sent you. It looks like <span class="gold">…/?t=xxxxxxxx</span>.</p>
       <p class="muted small">The link is yours alone: it opens your character and nobody else's.</p>
@@ -144,7 +144,7 @@ watchEffect(() => {
 
     <template v-else>
       <header class="top">
-        <span class="wordmark">Skaldbok <small class="ver">0.5</small></span>
+        <span class="wordmark">Skaldbok <small class="ver">0.6</small></span>
         <span class="who" data-test="who">{{ me.kin.name }} {{ me.profession.name }} · {{ me.age.label }}<span v-if="me.school"> · {{ me.school }}</span></span>
         <span class="live" :title="offline ? 'Connection lost: showing the last data' : 'Updates by itself every few seconds'">
           <span class="dot" :class="{ off: offline }"></span>{{ offline ? 'offline' : `updated ${updated}` }}

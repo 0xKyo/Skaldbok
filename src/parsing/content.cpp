@@ -1180,7 +1180,11 @@ struct ContentStore::Loader {
                     pk.error = file + ": " + err;
                     return false;
                 }
-                if (!text.starts_with("tables:") && text.find("\ntables:") == std::string::npos && !text.starts_with("entities:") && text.find("\nentities:") == std::string::npos) continue;
+                const auto hasKey = [&](const std::string& key) {                  // written bare (YAML) or quoted (what the GM page writes)
+                    const std::string bare = key + ":", quoted = "\"" + key + "\":";
+                    return text.starts_with(bare) || text.find("\n" + bare) != std::string::npos || text.find(quoted) != std::string::npos;
+                };
+                if (!hasKey("tables") && !hasKey("entities")) continue;
                 json root;
                 if (!jsonParse(text, root, &err)) {
                     pk.error = file + ": " + err;
@@ -1226,18 +1230,9 @@ struct ContentStore::Loader {
             pk.error = "actions.yaml: expected a \"groups\" list and/or an \"actions\" list";
             return false;
         }
-        // The general text of the chapter is its last tab, "General Info": Core keeps it in data/system/actions.yaml (an "intro" with a
-        // body and named sections, like the intro of every other page); a pack may write its own at the top of its actions.yaml instead
-        json generalInfo = root.contains("intro") ? root["intro"] : json(nullptr);
-        if (!sysDir.empty() && isFile(sysDir + "/actions.yaml")) {
-            std::string sysText;
-            json sysRoot;
-            if (!readTextFile(sysDir + "/actions.yaml", sysText, &err) || !jsonParse(sysText, sysRoot, &err)) {
-                pk.error = "system/actions.yaml: " + err;
-                return false;
-            }
-            if (sysRoot.is_object() && sysRoot.contains("intro")) generalInfo = sysRoot["intro"];
-        }
+        // The general text of the chapter is its last tab, "General Info": an "intro" at the top of actions.yaml (a body and named
+        // sections, like the intro of every other page)
+        const json generalInfo = root.contains("intro") ? root["intro"] : json(nullptr);
         const bool newChapter = !st.actionsChapter_;
         if (newChapter) {
             json chapter = {{"id", "actions"}, {"nav", "Reference"}, {"layout", "tabs"}};
