@@ -7,6 +7,7 @@
 #include <SDL3/SDL.h>
 
 #include "parsing/content.h"
+#include "game/messages.h"
 #include "parsing/fsutil.h"
 #include "parsing/fts.h"
 
@@ -101,6 +102,19 @@ bool checked(const json& in, json& out, std::string& error) {
     if (!quote.empty()) out["quote"] = quote;
     if (!description.empty()) out["description"] = description;
     out["attack_dice"] = dice;
+    // the picture: a plain path to a picture inside the pack's images folder ("" takes it away)
+    if (const json* image = jsonFind(in, "image"); image && !image->is_null()) {
+        const std::string path = image->is_string() ? image->get<std::string>() : std::string("?");
+        const std::string lower = lowerCopy(path);
+        if (!path.empty()) {
+            const bool picture = lower.ends_with(".png") || lower.ends_with(".jpg") || lower.ends_with(".jpeg") || lower.ends_with(".webp");
+            if (!picture || path.size() > 200 || !path.starts_with("images/") || path.find("..") != std::string::npos || path.find('\\') != std::string::npos || path.find("//") != std::string::npos) {
+                error = "The picture must be one kept in the pack's images folder.";
+                return false;
+            }
+            out["image"] = path;
+        }
+    }
 
     // stat blocks: a few, each with its labelled fields in the order they were written
     json blocks = json::array();
@@ -242,8 +256,10 @@ HomebrewResult saveHomebrewCreature(const std::string& packDir, const std::strin
         for (json& c : list) {
             if (!c.is_object() || c.value("id", "") != id) continue;
             creature["id"] = id;
-            for (const char* keep : {"image", "image_page", "page", "stats_ref"})         // what the form has no field for stays as it was
+            for (const char* keep : {"image", "image_page", "page", "stats_ref"}) {        // what the form has no field for stays as it was (a picture only when the form says nothing about it)
+                if (std::string(keep) == "image" && body.is_object() && body.contains("image")) continue;
                 if (c.contains(keep)) creature[keep] = c[keep];
+            }
             c = creature;
             found = true;
         }
@@ -259,6 +275,37 @@ HomebrewResult saveHomebrewCreature(const std::string& packDir, const std::strin
         return r;
     }
     r.body = withKey(creature, packDir);
+    return r;
+}
+
+HomebrewResult saveHomebrewCreatureImage(const std::string& packDir, std::string_view bytes) {
+    HomebrewResult r;
+    const std::string ext = MessageStore::imageExtension(bytes);
+    if (ext != "png" && ext != "jpg" && ext != "webp") {
+        r.status = 400;
+        r.error = "The picture must be a PNG, JPEG or WebP file.";
+        return r;
+    }
+    if (bytes.size() > (8u << 20)) {
+        r.status = 413;
+        r.error = "The picture is too big (8 MB at most).";
+        return r;
+    }
+    SDL_CreateDirectory(packDir.c_str());
+    if (!fs::isFile(packDir + "/manifest.yaml")) {
+        const json manifest = {{"format", 1}, {"id", baseName(packDir)}, {"name", homebrewPackName(prefsOf(packDir))}, {"version", "1"}, {"description", "Made on the GM page."}};
+        fs::writeFile(packDir + "/manifest.yaml", manifest.dump(2));
+    }
+    SDL_CreateDirectory((packDir + "/images").c_str());
+    SDL_CreateDirectory((packDir + "/images/creatures").c_str());
+    const std::string name = fs::stampedId("c") + "." + ext;
+    if (!fs::writeFile(packDir + "/images/creatures/" + name, bytes)) {
+        r.status = 500;
+        r.error = "Could not keep the picture.";
+        return r;
+    }
+    r.status = 201;
+    r.body = {{"path", "images/creatures/" + name}};
     return r;
 }
 

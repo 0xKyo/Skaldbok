@@ -15,6 +15,8 @@
 #include "web/web_views.h"
 #include "web/web_creation.h"
 #include "web/web_adventures.h"
+#include "web/web_adventure_editor.h"
+#include "web/web_backup.h"
 #include "web/web_board.h"
 #include "web/web_homebrew.h"
 
@@ -33,6 +35,10 @@ WebResponse jsonResponse(int status, const json& body) {
 
 WebResponse errorResponse(int status, const std::string& message) { return jsonResponse(status, {{"error", message}}); }
 
+// What a store function answered (anything under 300 is fine): its own text as the error, or the body that was asked for.
+template <class Result>
+WebResponse answer(const Result& r, const json& ok) { return r.status >= 300 ? errorResponse(r.status, r.error) : jsonResponse(200, ok); }
+
 std::string mimeOf(const std::string& path) {
     const size_t dot = path.find_last_of('.');
     const std::string ext = dot == std::string::npos ? std::string() : path.substr(dot + 1);
@@ -46,24 +52,22 @@ std::string mimeOf(const std::string& path) {
     return it == types.end() ? "application/octet-stream" : it->second;
 }
 
-// Standard base64 (what a browser's FileReader gives), or nothing if it is not.
-std::optional<std::string> fromBase64(std::string_view in) {
-    static const std::string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-    std::string out;
-    unsigned buffer = 0;
-    int bits = 0;
-    for (char c : in) {
-        if (c == '=' || c == '\n' || c == '\r') continue;
-        const size_t v = alphabet.find(c);
-        if (v == std::string::npos) return std::nullopt;
-        buffer = (buffer << 6) | static_cast<unsigned>(v);
-        bits += 6;
-        if (bits >= 8) {
-            bits -= 8;
-            out += static_cast<char>((buffer >> bits) & 0xFF);
-        }
-    }
-    return out;
+// A picture the browser may keep for a day; the path was chosen by the server, never by the request.
+WebResponse pictureResponse(const std::string& file) {
+    auto bytes = file.empty() ? std::nullopt : fs::readFile(file);
+    if (!bytes) return errorResponse(404, "No such picture");
+    WebResponse r;
+    r.body = std::move(*bytes);
+    r.contentType = mimeOf(file);
+    r.headers["Cache-Control"] = "private, max-age=86400";
+    return r;
+}
+
+// The body as a JSON object; with `lenient`, anything else counts as an empty one.
+bool bodyObject(const WebRequest& request, json& body, bool lenient = false) {
+    if (jsonParse(request.body, body, nullptr) && body.is_object()) return true;
+    if (lenient) body = json::object();
+    return lenient;
 }
 
 constexpr size_t kSmallBody = 64 * 1024;                          // every request but a picture is tiny
@@ -82,6 +86,7 @@ std::string isoNow() {
 }
 
 constexpr size_t kBoardBody = 5 * 1024 * 1024;                   // the master's board: what was pinned on it, as one document
+constexpr size_t kBackupBody = 300 * 1024 * 1024;                // the whole GM folder (pictures included), as one document
 constexpr size_t kPictureBody = 12 * 1024 * 1024;                 // 8 MB of picture, in base64
 constexpr size_t kWritesPerWindow = 60;
 constexpr long long kWriteWindowMs = 10 * 1000;
@@ -208,7 +213,10 @@ WebResponse WebApp::route(const WebRequest& request, long long now) {
     const bool picture = request.method == "POST" && request.path == "/api/chat";
     const bool board = request.method == "PUT" && (request.path == "/api/gm/board" || request.path.starts_with("/api/gm/sessions/"));
     const bool boardPicture = request.method == "POST" && request.path == "/api/gm/board/images";
-    if (request.body.size() > (picture || boardPicture ? kPictureBody : board ? kBoardBody : kSmallBody)) return errorResponse(413, "That is too big.");
+    const bool backup = request.method == "POST" && request.path == "/api/gm/backup/import";
+    const bool adventure = request.path.starts_with("/api/gm/homebrew/adventures/") && request.method == "PUT";
+    const bool adventurePicture = (request.path.starts_with("/api/gm/homebrew/adventures/") && request.path.ends_with("/images") && request.method == "POST") || (request.path == "/api/gm/homebrew/creatures/image" && request.method == "POST");
+    if (request.body.size() > (backup ? kBackupBody : picture || boardPicture || adventurePicture ? kPictureBody : board || adventure ? kBoardBody : kSmallBody)) return errorResponse(413, "That is too big.");
     if (request.path == "/api" || request.path.starts_with("/api/")) return api(request, now);
     return serveStatic(request);
 }
@@ -245,7 +253,7 @@ WebResponse WebApp::api(const WebRequest& request, long long now) {
     if (sub == "/chat") return request.method == "POST" ? postChat(request, id) : jsonResponse(200, chatView(chat_.thread(id)));
     if (sub == "/chat/read") {
         json body;
-        if (!jsonParse(request.body, body, nullptr) || !body.is_object()) return errorResponse(400, "Send {\"upTo\": <message id>}.");
+        if (!bodyObject(request, body)) return errorResponse(400, "Send {\"upTo\": <message id>}.");
         chat_.markRead(id, false, jsonStr(body, "upTo"));
         return jsonResponse(200, {{"ok", true}});
     }
@@ -272,12 +280,12 @@ WebResponse WebApp::chatImage(const std::string& characterId, const std::string&
 
 WebResponse WebApp::postChat(const WebRequest& request, const std::string& characterId) {
     json body;
-    if (!jsonParse(request.body, body, nullptr) || !body.is_object()) return errorResponse(400, "Send {\"text\": ..., \"image\": <base64>}.");
+    if (!bodyObject(request, body)) return errorResponse(400, "Send {\"text\": ..., \"image\": <base64>}.");
     const json* text = jsonFind(body, "text");
     if (text && !text->is_string()) return errorResponse(400, "The text must be text.");
     std::string bytes;
     if (const json* image = jsonFind(body, "image")) {
-        const auto decoded = image->is_string() ? fromBase64(image->get<std::string>()) : std::nullopt;
+        const auto decoded = image->is_string() ? base64Decode(image->get<std::string>()) : std::nullopt;
         if (!decoded) return errorResponse(400, "The picture must be sent as base64.");
         bytes = *decoded;
     }
@@ -311,7 +319,7 @@ bool WebApp::tooManyWrites(const std::string& characterId, long long now) {
 // The GM sends a direct message to one player.
 WebResponse WebApp::postGmChat(const WebRequest& request, const std::string& characterId) {
     json body;
-    if (!jsonParse(request.body, body, nullptr) || !body.is_object()) return errorResponse(400, "Send {\"text\": \"...\"}.");
+    if (!bodyObject(request, body)) return errorResponse(400, "Send {\"text\": \"...\"}.");
     const json* text = jsonFind(body, "text");
     if (!text || !text->is_string() || text->get<std::string>().empty()) return errorResponse(400, "Text is required.");
     const std::vector<std::string> ids = {characterId};
@@ -345,16 +353,8 @@ std::optional<WebResponse> WebApp::referenceApi(const std::string& sub, const We
     if (sub == "/creatures") return jsonResponse(200, monsterList(content_, queryText()));
     if (sub.size() > 14 && sub.starts_with("/creatures/") && sub.ends_with("/image")) {
         const std::string key = sub.substr(11, sub.size() - 11 - 6);
-        for (const Monster& m : content_.monsters()) {
-            if (m.key != key || m.image.empty()) continue;
-            auto bytes = fs::readFile(m.image);           // the path comes from the loaded content, never from the request
-            if (!bytes) break;
-            WebResponse r;
-            r.body = std::move(*bytes);
-            r.contentType = mimeOf(m.image);
-            r.headers["Cache-Control"] = "private, max-age=86400";
-            return r;
-        }
+        for (const Monster& m : content_.monsters())
+            if (m.key == key && !m.image.empty()) return pictureResponse(m.image);     // the path comes from the loaded content
         return errorResponse(404, "No such picture");
     }
     if (sub.starts_with("/creatures/")) {
@@ -378,53 +378,56 @@ WebResponse WebApp::gmApi(const WebRequest& request, long long now) {
     if (sub == "/gm/creation/random" && request.method == "POST") return jsonResponse(200, creationToJson(randomCreation(content_, dice_)));
     if (sub == "/gm/creation/preview" && request.method == "POST") {
         json body;
-        if (!jsonParse(request.body, body, nullptr) || !body.is_object()) return errorResponse(400, "Send a JSON object.");
+        if (!bodyObject(request, body)) return errorResponse(400, "Send a JSON object.");
         return jsonResponse(200, creationPreview(creationFromJson(body, content_), content_, dice_));
+    }
+
+    // ---- a backup of all the GM's work, to move it to another computer (export: a download; import: replaces what is here) ----
+    if (sub == "/gm/backup" && reading) {
+        WebResponse r = jsonResponse(200, backupExport(config_.prefsDir, isoNow()));
+        r.headers["Content-Disposition"] = "attachment; filename=\"skaldbok-backup-" + isoNow().substr(0, 10) + ".json\"";
+        return r;
+    }
+    if (sub == "/gm/backup/import" && request.method == "POST") {
+        json body;
+        if (!bodyObject(request, body)) return errorResponse(400, "Send the backup file.");
+        const BoardResult done = backupImport(config_.prefsDir, body);
+        if (done.status >= 300) return errorResponse(done.status, done.error);
+        refreshedAt_ = -1;                                       // look at the characters again now
+        contentSignature_.clear();                               // and at the homebrew
+        reloadContentIfChanged();
+        return jsonResponse(200, {{"ok", true}, {"files", done.body["files"]}});
     }
 
     // ---- the master's board: what the GM pinned, wrote and linked on the Master tab (one document, kept as it was sent) ----
     if (sub == "/gm/board") {
         if (reading) return jsonResponse(200, boardLoad(config_.prefsDir));
-        if (request.method == "PUT") {
-            json body;
-            if (!jsonParse(request.body, body, nullptr)) return errorResponse(400, "Send the board as JSON.");
-            const BoardResult saved = boardSave(config_.prefsDir, body);
-            return saved.status >= 300 ? errorResponse(saved.status, saved.error) : jsonResponse(200, {{"ok", true}});
-        }
-        return errorResponse(405, "That is not allowed.");
+        if (request.method != "PUT") return errorResponse(405, "That is not allowed.");
+        json body;
+        if (!jsonParse(request.body, body, nullptr)) return errorResponse(400, "Send the board as JSON.");
+        return answer(boardSave(config_.prefsDir, body), {{"ok", true}});
     }
 
     // ---- the pictures of the boards: pasted or dropped on the canvas, kept in the GM's folder ----
     if (sub == "/gm/board/images" && request.method == "POST") {
         json body;
-        if (!jsonParse(request.body, body, nullptr) || !body.is_object()) return errorResponse(400, "Send {\"image\": <base64>}.");
+        if (!bodyObject(request, body)) return errorResponse(400, "Send {\"image\": <base64>}.");
         const json* image = jsonFind(body, "image");
-        const auto bytes = image && image->is_string() ? fromBase64(image->get<std::string>()) : std::nullopt;
+        const auto bytes = image && image->is_string() ? base64Decode(image->get<std::string>()) : std::nullopt;
         if (!bytes) return errorResponse(400, "The picture must be sent as base64.");
         const BoardResult kept = boardImageSave(config_.prefsDir, *bytes);
         return kept.status >= 300 ? errorResponse(kept.status, kept.error) : jsonResponse(kept.status, kept.body);
     }
-    if (sub.starts_with("/gm/board/images/") && reading) {
-        const std::string file = boardImagePath(config_.prefsDir, sub.substr(17));
-        auto bytes = file.empty() ? std::nullopt : fs::readFile(file);
-        if (!bytes) return errorResponse(404, "No such picture");
-        WebResponse r;
-        r.body = std::move(*bytes);
-        r.contentType = mimeOf(file);
-        r.headers["Cache-Control"] = "private, max-age=86400";
-        return r;
-    }
+    if (sub.starts_with("/gm/board/images/") && reading) return pictureResponse(boardImagePath(config_.prefsDir, sub.substr(17)));
 
     // ---- the campaigns: a name and the characters that play it; its sessions are boards of their own ----
     if (sub == "/gm/campaigns") {
         if (reading) return jsonResponse(200, campaignList(config_.prefsDir));
-        if (request.method == "POST") {
-            json body;
-            if (!jsonParse(request.body, body, nullptr) || !body.is_object()) body = json::object();
-            const BoardResult made = campaignCreate(config_.prefsDir, jsonStr(body, "name"), isoNow());
-            return made.status >= 300 ? errorResponse(made.status, made.error) : jsonResponse(made.status, made.body);
-        }
-        return errorResponse(405, "That is not allowed.");
+        if (request.method != "POST") return errorResponse(405, "That is not allowed.");
+        json body;
+        bodyObject(request, body, true);
+        const BoardResult made = campaignCreate(config_.prefsDir, jsonStr(body, "name"), isoNow());
+        return made.status >= 300 ? errorResponse(made.status, made.error) : jsonResponse(made.status, made.body);
     }
     if (sub.starts_with("/gm/campaigns/")) {
         const std::string id = sub.substr(14);
@@ -435,23 +438,21 @@ WebResponse WebApp::gmApi(const WebRequest& request, long long now) {
             const BoardResult saved = campaignSave(config_.prefsDir, id, body);
             return saved.status >= 300 ? errorResponse(saved.status, saved.error) : jsonResponse(200, campaignList(config_.prefsDir));
         }
-        if (request.method == "DELETE") {
-            const BoardResult gone = campaignDelete(config_.prefsDir, id);
-            return gone.status >= 300 ? errorResponse(gone.status, gone.error) : jsonResponse(200, {{"campaigns", campaignList(config_.prefsDir)["campaigns"]}, {"sessions", sessionList(config_.prefsDir)["sessions"]}, {"active", sessionList(config_.prefsDir)["active"]}});
-        }
-        return errorResponse(405, "That is not allowed.");
+        if (request.method != "DELETE") return errorResponse(405, "That is not allowed.");
+        const BoardResult gone = campaignDelete(config_.prefsDir, id);
+        if (gone.status >= 300) return errorResponse(gone.status, gone.error);
+        const json sessions = sessionList(config_.prefsDir);
+        return jsonResponse(200, {{"campaigns", campaignList(config_.prefsDir)["campaigns"]}, {"sessions", sessions["sessions"]}, {"active", sessions["active"]}});
     }
 
     // ---- the sessions: boards of their own, one for each game played; one is active, the others are closed until they are opened again ----
     if (sub == "/gm/sessions") {
         if (reading) return jsonResponse(200, sessionList(config_.prefsDir));
-        if (request.method == "POST") {
-            json body;
-            if (!jsonParse(request.body, body, nullptr) || !body.is_object()) body = json::object();
-            const BoardResult made = sessionCreate(config_.prefsDir, jsonStr(body, "campaign"), jsonStr(body, "name"), isoNow());
-            return made.status >= 300 ? errorResponse(made.status, made.error) : jsonResponse(made.status, made.body);
-        }
-        return errorResponse(405, "That is not allowed.");
+        if (request.method != "POST") return errorResponse(405, "That is not allowed.");
+        json body;
+        bodyObject(request, body, true);
+        const BoardResult made = sessionCreate(config_.prefsDir, jsonStr(body, "campaign"), jsonStr(body, "name"), isoNow());
+        return made.status >= 300 ? errorResponse(made.status, made.error) : jsonResponse(made.status, made.body);
     }
     if (sub.starts_with("/gm/sessions/")) {
         const std::string rest = sub.substr(13);
@@ -465,8 +466,7 @@ WebResponse WebApp::gmApi(const WebRequest& request, long long now) {
         if (action.empty() && request.method == "PUT") {
             json body;
             if (!jsonParse(request.body, body, nullptr)) return errorResponse(400, "Send the session as JSON.");
-            const BoardResult saved = sessionSave(config_.prefsDir, id, body);
-            return saved.status >= 300 ? errorResponse(saved.status, saved.error) : jsonResponse(200, {{"ok", true}});
+            return answer(sessionSave(config_.prefsDir, id, body), {{"ok", true}});
         }
         if (action.empty() && request.method == "DELETE") {
             const BoardResult gone = sessionDelete(config_.prefsDir, id);
@@ -483,26 +483,68 @@ WebResponse WebApp::gmApi(const WebRequest& request, long long now) {
     if (sub == "/gm/adventures" && reading) return jsonResponse(200, adventureList(config_.dataDir, config_.prefsDir));
     if (sub.starts_with("/gm/adventures/") && sub.ends_with("/notes") && request.method == "PUT") {       // the GM's note on a part of the adventure
         json body;
-        if (!jsonParse(request.body, body, nullptr) || !body.is_object()) return errorResponse(400, "Send the note as JSON.");
+        if (!bodyObject(request, body)) return errorResponse(400, "Send the note as JSON.");
         const std::string id = sub.substr(15, sub.size() - 15 - 6);
-        const NoteResult saved = saveAdventureNote(config_.dataDir, config_.prefsDir, id, jsonStr(body, "node"), jsonStr(body, "text"));
-        return saved.status >= 300 ? errorResponse(saved.status, saved.error) : jsonResponse(200, {{"ok", true}});
+        return answer(saveAdventureNote(config_.dataDir, config_.prefsDir, id, jsonStr(body, "node"), jsonStr(body, "text")), {{"ok", true}});
     }
     if (sub.starts_with("/gm/adventures/") && sub.ends_with("/image") && reading) {                  // a picture of the adventure
         const std::string id = sub.substr(15, sub.size() - 15 - 6);
         const auto asked = request.query.find("path");
-        const std::string file = adventureImagePath(config_.dataDir, config_.prefsDir, id, asked == request.query.end() ? std::string() : asked->second);
-        auto bytes = file.empty() ? std::nullopt : fs::readFile(file);
-        if (!bytes) return errorResponse(404, "No such picture");
-        WebResponse r;
-        r.body = std::move(*bytes);
-        r.contentType = mimeOf(file);
-        r.headers["Cache-Control"] = "private, max-age=86400";
-        return r;
+        return pictureResponse(adventureImagePath(config_.dataDir, config_.prefsDir, id, asked == request.query.end() ? std::string() : asked->second));
     }
     if (sub.starts_with("/gm/adventures/") && reading) {
         const json adventure = adventureDetail(config_.dataDir, config_.prefsDir, sub.substr(15), content_);
         return adventure.is_null() ? errorResponse(404, "There is no such adventure.") : jsonResponse(200, adventure);
+    }
+
+    // ---- the adventures the GM writes (Homebrew › Adventure): each is a pack of its own that the Adventures tab reads like the book's ----
+    if (sub == "/gm/homebrew/adventures" || sub.starts_with("/gm/homebrew/adventures/")) {
+        const auto changedPacks = [&] {
+            contentSignature_.clear();                           // a pack was made or removed: the app reads the packs again
+            reloadContentIfChanged();
+        };
+        if (sub == "/gm/homebrew/adventures") {
+            if (reading) return jsonResponse(200, ownAdventures(config_.prefsDir));
+            if (request.method != "POST") return errorResponse(405, "That is not allowed.");
+            json body;
+            bodyObject(request, body, true);
+            const HomebrewResult made = createAdventure(config_.prefsDir, jsonStr(body, "title"));
+            if (made.status >= 300) return errorResponse(made.status, made.error);
+            changedPacks();
+            return jsonResponse(made.status, made.body);
+        }
+        const std::string rest = sub.substr(24);
+        const size_t slash = rest.find('/');
+        const std::string id = rest.substr(0, slash), action = slash == std::string::npos ? std::string() : rest.substr(slash + 1);
+        if (!fs::safeId(id)) return errorResponse(404, "There is no such adventure.");
+        if (action.empty() && reading) {
+            const json adventure = readAdventure(config_.prefsDir, id);
+            return adventure.is_null() ? errorResponse(404, "There is no such adventure.") : jsonResponse(200, adventure);
+        }
+        if (action.empty() && request.method == "PUT") {
+            json body;
+            if (!bodyObject(request, body)) return errorResponse(400, "Send the adventure as JSON.");
+            const HomebrewResult saved = saveAdventure(config_.prefsDir, id, body);
+            if (saved.status >= 300) return errorResponse(saved.status, saved.error);
+            changedPacks();
+            return jsonResponse(200, saved.body);
+        }
+        if (action.empty() && request.method == "DELETE") {
+            const HomebrewResult gone = deleteAdventure(config_.prefsDir, id);
+            if (gone.status >= 300) return errorResponse(gone.status, gone.error);
+            changedPacks();
+            return jsonResponse(200, gone.body);
+        }
+        if (action == "images" && request.method == "POST") {
+            json body;
+            if (!bodyObject(request, body)) return errorResponse(400, "Send {\"image\": <base64>}.");
+            const json* image = jsonFind(body, "image");
+            const auto bytes = image && image->is_string() ? base64Decode(image->get<std::string>()) : std::nullopt;
+            if (!bytes) return errorResponse(400, "The picture must be sent as base64.");
+            const HomebrewResult kept = saveAdventureImage(config_.prefsDir, id, *bytes);
+            return kept.status >= 300 ? errorResponse(kept.status, kept.error) : jsonResponse(kept.status, kept.body);
+        }
+        return errorResponse(405, "That is not allowed.");
     }
 
     // ---- homebrew: the GM's own pack (creatures, and an entry of every kind of data file of Core) ----
@@ -534,6 +576,15 @@ WebResponse WebApp::gmApi(const WebRequest& request, long long now) {
         if (!fs::safeId(section)) return errorResponse(400, "Invalid kind.");
         if (section == "creatures") {
             if (!id.empty() && !fs::safeId(id)) return errorResponse(400, "Invalid creature id.");
+            if (id == "image" && request.method == "POST") {       // a picture for a creature: kept now, named by the creature when it is saved
+                json body;
+                if (!bodyJson(body) || !body.is_object()) return errorResponse(400, "Send {\"image\": <base64>}.");
+                const json* image = jsonFind(body, "image");
+                const auto bytes = image && image->is_string() ? base64Decode(image->get<std::string>()) : std::nullopt;
+                if (!bytes) return errorResponse(400, "The picture must be sent as base64.");
+                const HomebrewResult kept = saveHomebrewCreatureImage(pack, *bytes);
+                return kept.status >= 300 ? errorResponse(kept.status, kept.error) : jsonResponse(kept.status, kept.body);
+            }
             if (reading && id.empty()) return jsonResponse(200, homebrewCreatures(pack));
             if (request.method == "POST" && id.empty()) {
                 json body;
@@ -692,7 +743,7 @@ WebResponse WebApp::gmApi(const WebRequest& request, long long now) {
         if (tail.empty() && request.method == "POST") return postGmChat(request, cid);
         if (tail == "/read" && request.method == "POST") {
             json body;
-            if (!jsonParse(request.body, body, nullptr) || !body.is_object()) return errorResponse(400, "Send {\"upTo\": <message id>}.");
+            if (!bodyObject(request, body)) return errorResponse(400, "Send {\"upTo\": <message id>}.");
             chat_.markRead(cid, true, jsonStr(body, "upTo"));
             return jsonResponse(200, {{"ok", true}});
         }

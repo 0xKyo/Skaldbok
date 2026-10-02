@@ -1,7 +1,7 @@
 <script setup>
 // GM interface: tabs along the top, like the player's page. Character (a dropdown of every character, with its sheet), Chat, Rules
 // (the Reference, the same the players have) and Homebrew (only the GM has it: what the GM makes).
-import { computed, inject, onBeforeUnmount, onMounted, provide, ref, watch, watchEffect } from 'vue';
+import { computed, inject, onBeforeUnmount, onMounted, provide, ref, watch } from 'vue';
 import { ApiError, apiGet, apiSend } from '../api.js';
 import ChatView from './ChatView.vue';
 import AdventuresView from './AdventuresView.vue';
@@ -171,12 +171,6 @@ onMounted(async () => {
   schedule();
 });
 onBeforeUnmount(() => clearTimeout(timer));
-
-watchEffect(() => {
-  if (tab.value === 'rules' && reference.current) document.title = `GM · ${reference.current.label} · Skaldbok`;
-  else if (tab.value === 'character' && selected.value) document.title = `GM · ${selected.value.name} · Skaldbok`;
-  else document.title = 'GM · Skaldbok';
-});
 </script>
 
 <template>

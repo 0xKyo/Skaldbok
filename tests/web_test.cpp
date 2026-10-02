@@ -370,6 +370,27 @@ void chat() {
         check(listed2.is_object() && listed2["key"] == creatureKey && creatureNamed("/api/creatures", brenna).is_object(), "it is in the Reference right away, for the GM and for the players");
         const json detail = body(get(app, "/api/creatures/" + creatureKey, brenna));
         check(detail["attacks"].size() == 1 && detail["blocks"].size() == 1 && detail["kind"] == "monster" && detail["category"] == "Undead", "with its stat block and its attacks");
+        // a picture for the creature: uploaded first (kept in the pack), named by the creature when it is saved
+        const std::string creaturePng = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==";
+        const WebResponse shadePicture = get(app, homebrew + "/image", gmTok, "10.0.0.1", "POST", json({{"image", creaturePng}}).dump());
+        const std::string shadePath = body(shadePicture).value("path", "");
+        check(shadePicture.status == 201 && shadePath.starts_with("images/creatures/") && shadePath.ends_with(".png") && get(app, homebrew + "/image", brenna, "10.0.0.1", "POST", json({{"image", creaturePng}}).dump()).status != 201 &&
+                  get(app, homebrew + "/image", gmTok, "10.0.0.1", "POST", R"({"image": "bm90IGEgcGljdHVyZQ=="})").status == 400,
+              "a picture for a creature is kept in the pack; something that is not a picture is refused, and a player cannot");
+        json withPicture = newCreature;
+        withPicture["image"] = shadePath;
+        const WebResponse pictured = get(app, homebrew + "/" + creatureId, gmTok, "10.0.0.1", "PUT", withPicture.dump());
+        const WebResponse shadeImage = get(app, "/api/gm/creatures/" + creatureKey + "/image", gmTok);
+        check(pictured.status == 200 && body(pictured).value("image", "") == shadePath && shadeImage.status == 200 && shadeImage.contentType == "image/png" && !body(get(app, "/api/gm/creatures/" + creatureKey, gmTok))["image"].is_null(),
+              "the creature shows its picture in the Reference, served with its type");
+        const std::string keptPicture2 = body(get(app, homebrew + "/" + creatureId, gmTok, "10.0.0.1", "PUT", newCreature.dump())).value("image", "");      // a form that says nothing about the picture keeps it
+        json noPicture = newCreature;
+        noPicture["image"] = "";
+        const json removedPicture = body(get(app, homebrew + "/" + creatureId, gmTok, "10.0.0.1", "PUT", noPicture.dump()));
+        check(keptPicture2 == shadePath && !removedPicture.contains("image") && get(app, "/api/gm/creatures/" + creatureKey + "/image", gmTok).status == 404, "saving without saying anything about the picture keeps it; an empty one takes it away");
+        json outsidePicture = newCreature;
+        outsidePicture["image"] = "../secret.png";
+        check(get(app, homebrew + "/" + creatureId, gmTok, "10.0.0.1", "PUT", outsidePicture.dump()).status == 400, "a picture outside the pack's images folder is refused");
         check(body(get(app, homebrew, gmTok))["creatures"].size() == 1 && get(app, homebrew, brenna).status != 200, "the GM lists their own creatures; a player cannot");
         json edited2 = newCreature;
         edited2["name"] = "Tundra Shade Elder";
@@ -430,6 +451,23 @@ void chat() {
         const std::string bigText(100000, 'x');
         const json bigBoard = {{"items", json::array({{{"id", "n"}, {"kind", "note"}, {"text", bigText}}})}, {"arrows", json::array()}};
         check(get(app, "/api/gm/board", gmTok, "10.0.0.1", "PUT", bigBoard.dump()).status == 200, "a board of some size (more than the usual 64 KB of a request) can be saved");
+        // a backup: the whole folder in one document, to move the work to another computer; importing replaces
+        const WebResponse backupDoc = get(app, "/api/gm/backup", gmTok);
+        const json backup = body(backupDoc);
+        check(backupDoc.status == 200 && backup["format"] == "skaldbok-backup" && backup["files"].contains("board.json") && !backup["files"].contains("web-access.yaml") && !backup["files"].contains("settings.json") &&
+                  get(app, "/api/gm/backup", brenna).status != 200,
+              "the backup has the GM's files, not the ones of this computer, and only the GM can ask for it");
+        get(app, "/api/gm/board", gmTok, "10.0.0.1", "PUT", R"({"items": [{"id": "z", "kind": "note", "text": "after the backup"}], "arrows": []})");
+        const WebResponse restored = get(app, "/api/gm/backup/import", gmTok, "10.0.0.1", "POST", backup.dump());
+        const json afterImport = body(get(app, "/api/gm/board", gmTok));
+        check(restored.status == 200 && body(restored)["files"].get<int>() == static_cast<int>(backup["files"].size()) && afterImport["items"].size() == 1 && afterImport["items"][0]["text"].get<std::string>().size() == 100000,
+              "importing a backup puts the work back as it was, and replaces what changed since");
+        check(get(app, "/api/gm/backup/import", gmTok, "10.0.0.1", "POST", R"({"format": "other", "files": {}})").status == 400 &&
+                  get(app, "/api/gm/backup/import", gmTok, "10.0.0.1", "POST", R"({"format": "skaldbok-backup", "files": {"../evil.txt": "aGk="}})").status == 400 &&
+                  get(app, "/api/gm/backup/import", gmTok, "10.0.0.1", "POST", R"({"format": "skaldbok-backup", "files": {"settings.json": "aGk="}})").status == 400 &&
+                  get(app, "/api/gm/backup/import", gmTok, "10.0.0.1", "POST", R"({"format": "skaldbok-backup", "files": {"board.json": "not base64!"}})").status == 400 &&
+                  get(app, "/api/gm/backup/import", brenna, "10.0.0.1", "POST", backup.dump()).status != 200 && body(get(app, "/api/gm/board", gmTok))["items"].size() == 1,
+              "a document that is not a backup, or has paths that are not allowed, is refused and nothing changes");
         // the sessions: boards of their own, one active at a time; a closed one cannot be changed until it is opened again
         const json noSessions = body(get(app, "/api/gm/sessions", gmTok));
         check(noSessions["sessions"].empty() && noSessions["active"] == "" && get(app, "/api/gm/sessions", brenna).status != 200, "there are no sessions at first, and they are the GM's alone");
@@ -498,6 +536,40 @@ void chat() {
         check(keptPicture.status == 201 && pictureId.starts_with("i") && pictureId.ends_with(".png") && servedPicture.status == 200 && servedPicture.contentType == "image/png" && servedPicture.body.size() > 20 &&
                   get(app, "/api/gm/board/images/" + pictureId, brenna).status != 200,
               "a picture pasted on a board is kept and served back to the GM, with its type");
+        // the adventures the GM writes: a pack of their own that the Adventures tab reads
+        const std::string adv = "/api/gm/homebrew/adventures";
+        const WebResponse madeAdv = get(app, adv, gmTok, "10.0.0.1", "POST", R"({"title": "The Stolen Bell"})");
+        const std::string advId = body(madeAdv).value("id", "");
+        check(madeAdv.status == 201 && advId == "the-stolen-bell" && get(app, adv, brenna, "10.0.0.1", "POST", R"({"title": "x"})").status != 201 && get(app, adv, gmTok, "10.0.0.1", "POST", R"({"title": "  "})").status == 400 &&
+                  body(get(app, adv, gmTok))["adventures"].size() == 1 && body(get(app, adv, gmTok, "10.0.0.1", "POST", R"({"title": "The Stolen Bell"})")).value("id", "") == "the-stolen-bell-2",
+              "an adventure is made with a name; the id is its slug, and a second one with the same name gets another");
+        const WebResponse advPicture = get(app, adv + "/" + advId + "/images", gmTok, "10.0.0.1", "POST", json({{"image", tinyPng}}).dump());
+        const std::string advPicturePath = body(advPicture).value("path", "");
+        const json tree = {{"title", "The Stolen Bell"},
+                           {"chapters", json::array({{{"id", "c1"}, {"title", "The Village"}, {"kind", "chapter"}, {"body", "A quiet place."}, {"junk", "dropped"},
+                                                       {"sections", json::array({{{"id", "c1-inn"}, {"title", "The Inn"}, {"kind", "location"}, {"number", "1"}, {"images", json::array({advPicturePath})}},
+                                                                                 {{"id", "c1-gob"}, {"title", "Goblin"}, {"kind", "monster"}, {"creatures", json::array({"core/goblin"})}}})}}})}};
+        const WebResponse savedAdv = get(app, adv + "/" + advId, gmTok, "10.0.0.1", "PUT", tree.dump());
+        const json readBack = body(get(app, adv + "/" + advId, gmTok));
+        check(advPicture.status == 201 && advPicturePath.starts_with("images/uploads/") && savedAdv.status == 200 && readBack["chapters"][0]["sections"].size() == 2 && !readBack["chapters"][0].contains("junk") &&
+                  readBack["chapters"][0]["sections"][1]["creatures"][0] == "core/goblin" && readBack["chapters"][0]["sections"][0]["images"][0] == advPicturePath,
+              "the tree is saved as sent (only the fields of an adventure) and a picture is kept inside the adventure");
+        const json shownAdv = body(get(app, "/api/gm/adventures/" + advId, gmTok));
+        const WebResponse servedAdvPicture = get(app, "/api/gm/adventures/" + advId + "/image?path=" + advPicturePath, gmTok);
+        check(shownAdv["title"] == "The Stolen Bell" && shownAdv["chapters"][0]["title"] == "The Village" && servedAdvPicture.status == 200 && servedAdvPicture.contentType == "image/png",
+              "the Adventures tab reads the GM's adventure and serves its pictures like the book's");
+        const json badTree = {{"title", "The Stolen Bell"}, {"chapters", json::array({{{"id", "a"}, {"title", "One"}, {"kind", "chapter"}}, {{"id", "a"}, {"title", "Same id"}, {"kind", "chapter"}}})}};
+        check(get(app, adv + "/" + advId, gmTok, "10.0.0.1", "PUT", badTree.dump()).status == 400 &&
+                  get(app, adv + "/" + advId, gmTok, "10.0.0.1", "PUT", R"({"title": "x", "chapters": [{"id": "a", "title": "T", "kind": "dragon"}]})").status == 400 &&
+                  get(app, adv + "/" + advId, gmTok, "10.0.0.1", "PUT", R"({"title": "x", "chapters": [{"id": "a", "title": "T", "kind": "chapter", "images": ["../secret.png"]}]})").status == 400 &&
+                  get(app, adv + "/" + advId, gmTok, "10.0.0.1", "PUT", R"({"title": "x", "chapters": "no"})").status == 400 && get(app, adv + "/" + advId, brenna, "10.0.0.1", "PUT", tree.dump()).status != 200 &&
+                  get(app, adv + "/nope", gmTok, "10.0.0.1", "PUT", tree.dump()).status == 404 && body(get(app, adv + "/" + advId, gmTok))["chapters"][0]["title"] == "The Village" &&
+                  get(app, adv + "/" + advId + "/images", gmTok, "10.0.0.1", "POST", R"({"image": "bm90IGEgcGljdHVyZQ=="})").status == 400,
+              "a tree with repeated ids, an unknown kind, a picture outside images/, or something that is not a picture is refused and nothing changes");
+        check(get(app, adv + "/" + advId, gmTok, "10.0.0.1", "DELETE").status == 200 && get(app, adv + "/" + advId, gmTok).status == 404 && body(get(app, adv, gmTok))["adventures"].size() == 1 &&
+                  get(app, "/api/gm/adventures/" + advId, gmTok).status == 404,
+              "deleting an adventure removes its pack");
+        get(app, adv + "/the-stolen-bell-2", gmTok, "10.0.0.1", "DELETE");
         check(get(app, "/api/gm/board/images", gmTok, "10.0.0.1", "POST", json({{"image", "bm90IGEgcGljdHVyZQ=="}}).dump()).status == 400 && get(app, "/api/gm/board/images", gmTok, "10.0.0.1", "POST", R"({"image": "***"})").status == 400 &&
                   get(app, "/api/gm/board/images/..%2Fboard.json", gmTok).status == 404 && get(app, "/api/gm/board/images/i1-2.png", gmTok).status == 404,
               "only pictures are kept; only the ones the server made are served");

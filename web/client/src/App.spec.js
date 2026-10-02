@@ -48,7 +48,7 @@ describe('App', () => {
     expect(w.find('[data-test=who]').exists()).toBe(false);   // the summary is gone from the header
     expect(window.location.search).toBe('?t=good-token');
     expect(localStorage.getItem('skaldbok.token')).toBe('good-token');
-    expect(document.title).toBe('Brenna · Skaldbok');
+    expect(document.title).toBe('Skaldbok');
   });
 
   it('a link that does not work is forgotten and explained', async () => {

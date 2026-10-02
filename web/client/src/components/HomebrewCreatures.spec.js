@@ -25,6 +25,7 @@ beforeEach(() => {
     calls.push({ method, path, body });
     const ok = (data, status = 200) => ({ ok: true, status, json: async () => structuredClone(data) });
     if (method === 'GET' && path === '/gm/homebrew/creatures') return ok({ creatures: mine });
+    if (method === 'POST' && path === '/gm/homebrew/creatures/image') return ok({ path: 'images/creatures/c1.png' }, 201);
     if (method === 'POST' && path === '/gm/homebrew/creatures') { const c = { ...body, id: 'new-one', key: 'custom/monster/new-one' }; mine.push(c); return ok(c, 201); }
     if (method === 'PUT' && path.startsWith('/gm/homebrew/creatures/')) { const id = path.split('/')[4]; const c = { ...body, id }; mine = mine.map((x) => (x.id === id ? c : x)); return ok(c); }
     if (method === 'DELETE' && path.startsWith('/gm/homebrew/creatures/')) { mine = mine.filter((x) => x.id !== path.split('/')[4]); return ok({ ok: true }); }
@@ -52,6 +53,42 @@ describe('HomebrewCreatures', () => {
     expect(w.findAll('[data-test=stat-field]')).toHaveLength(2);
     expect(w.findAll('[data-test=attack-row]')).toHaveLength(1);
     expect(w.findAll('[data-test=ability-row]')).toHaveLength(1);
+  });
+
+  it('the category is a combobox: the categories of the books and of your own creatures are offered, and a new one can be written', async () => {
+    const w = await mountIt();
+    await w.get('[data-test=new-creature]').trigger('click');
+    const input = w.get('[data-test=f-category]');
+    expect(input.attributes('list')).toBe('creature-categories');
+    expect(w.findAll('#creature-categories option').map((o) => o.element.value)).toEqual(['Undead', 'Wild animals']);
+    await input.setValue('A brand new category');
+    expect(input.element.value).toBe('A brand new category');
+  });
+
+  it('a picture can be uploaded for the creature, is sent with it when it is saved, and can be taken away', async () => {
+    URL.createObjectURL = vi.fn(() => 'blob:preview');
+    URL.revokeObjectURL = vi.fn();
+    const w = await mountIt();
+    await w.get('[data-test=new-creature]').trigger('click');
+    expect(w.get('[data-test=picture-add]').text()).toBe('Upload picture');
+    expect(w.find('[data-test=picture-remove]').exists()).toBe(false);
+    await w.get('[data-test=f-name]').setValue('Bog Hag');
+    const input = w.get('[data-test=picture-file]');
+    Object.defineProperty(input.element, 'files', { value: [new File(['x'], 'hag.png', { type: 'image/png' })], configurable: true });
+    await input.trigger('change');
+    await vi.waitFor(() => expect(calls.some((c) => c.path === '/gm/homebrew/creatures/image')).toBe(true));
+    await flushPromises();
+    expect(calls.find((c) => c.path === '/gm/homebrew/creatures/image').body.image).toBeTruthy();
+    expect(w.get('[data-test=picture-preview]').attributes('src')).toBe('blob:preview');
+    expect(w.get('[data-test=picture-add]').text()).toBe('Change picture');
+    await w.get('[data-test=creature-form]').trigger('submit');
+    await flushPromises();
+    expect(calls.find((c) => c.method === 'POST' && c.path === '/gm/homebrew/creatures').body.image).toBe('images/creatures/c1.png');
+    await w.get('[data-test=picture-remove]').trigger('click');
+    expect(w.find('[data-test=picture-preview]').exists()).toBe(false);
+    await w.get('[data-test=creature-form]').trigger('submit');
+    await flushPromises();
+    expect(calls.filter((c) => c.method === 'PUT').at(-1).body.image).toBe('');
   });
 
   it('makes a new creature: a stat block to fill in, rows to add, and what is sent is clean', async () => {

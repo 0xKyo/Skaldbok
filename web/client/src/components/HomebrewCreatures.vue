@@ -3,6 +3,8 @@
 // they made on the left and the form on the right; a new creature can start from any creature of the books (a copy to change).
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { ApiError, apiGet, apiSend } from '../api.js';
+import { pictureForBoard } from '../lib/pictures.js';
+import MessageImage from './MessageImage.vue';
 
 const props = defineProps({
   token: { type: String, required: true },
@@ -13,12 +15,14 @@ const KINDS = [{ id: 'monster', label: 'Monster' }, { id: 'npc', label: 'NPC' },
 const DICE = ['D4', 'D6', 'D8', 'D10', 'D12', 'D20'];
 
 const blank = () => ({
-  name: '', kind: 'monster', category: '', quote: '', description: '', attack_dice: 'D6',
+  name: '', kind: 'monster', category: '', image: '', quote: '', description: '', attack_dice: 'D6',
   statblocks: [{ variant: '', fields: STAT_LABELS.map((label) => ({ label, value: '' })) }],
   attacks: [], abilities: [], adventure_seed: '', random_encounter: '',
 });
 
 const creatures = ref([]);            // the GM's own, as stored
+const editingKey = ref('');            // the key of the creature being edited, to ask for its picture
+const localPreview = ref('');         // the picture just chosen, until it is saved and the server can show it
 const editingId = ref(null);          // null: nothing open; '' a new one; otherwise the id being edited
 const form = ref(blank());
 const status = ref('');
@@ -43,7 +47,18 @@ async function load() {
     loadError.value = e instanceof ApiError ? e.message : 'Could not load your creatures.';
   }
 }
-onMounted(load);
+// the categories the books use (Undead, Trolls, Demons…), to choose from: the field is a combobox, so a new one can still be written
+const bookCategories = ref([]);
+const categories = computed(() => [...new Set([...bookCategories.value, ...creatures.value.map((c) => c.category).filter(Boolean)])].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' })));
+async function loadCategories() {
+  try {
+    const all = (await apiGet('/gm/creatures', props.token)).creatures ?? [];
+    bookCategories.value = all.filter((c) => c.key?.startsWith('core/')).map((c) => String(c.sub ?? '').split(' · ').pop().trim()).filter(Boolean);
+  } catch {
+    bookCategories.value = [];
+  }
+}
+onMounted(() => { load(); loadCategories(); });
 onBeforeUnmount(() => clearTimeout(copyTimer));
 
 // ---- stored <-> form ----
@@ -52,6 +67,7 @@ function toForm(c) {
   f.name = c.name ?? '';
   f.kind = c.kind ?? 'monster';
   f.category = c.category ?? '';
+  f.image = c.image ?? '';
   f.quote = c.quote ?? '';
   f.description = Array.isArray(c.description) ? c.description.join('\n') : (c.description ?? '');
   f.attack_dice = c.attack_dice ?? 'D6';
@@ -83,7 +99,7 @@ function fromDetail(d) {
 
 function toPayload(f) {
   return {
-    name: f.name.trim(), kind: f.kind, category: f.category.trim(), quote: f.quote, description: f.description, attack_dice: f.attack_dice,
+    name: f.name.trim(), kind: f.kind, category: f.category.trim(), image: f.image, quote: f.quote, description: f.description, attack_dice: f.attack_dice,
     adventure_seed: f.adventure_seed, random_encounter: f.random_encounter,
     statblocks: f.statblocks
       .map((b) => ({ variant: b.variant.trim(), fields: Object.fromEntries(b.fields.filter((r) => r.label.trim()).map((r) => [r.label.trim(), r.value])) }))
@@ -94,7 +110,14 @@ function toPayload(f) {
 }
 
 // ---- opening, saving, deleting ----
+function forgetPreview() {
+  if (localPreview.value) URL.revokeObjectURL(localPreview.value);
+  localPreview.value = '';
+}
+
 function openNew() {
+  forgetPreview();
+  editingKey.value = '';
   form.value = blank();
   editingId.value = '';
   status.value = '';
@@ -103,6 +126,8 @@ function openNew() {
 }
 
 function openCreature(c) {
+  forgetPreview();
+  editingKey.value = c.key ?? '';
   form.value = toForm(c);
   editingId.value = c.id;
   status.value = '';
@@ -111,7 +136,33 @@ function openCreature(c) {
   copying.value = false;
 }
 
+// ---- the picture: uploaded to the pack at once, and named by the creature when it is saved ----
+const fileInput = ref(null);
+const pictureSrc = computed(() => (!localPreview.value && form.value.image && editingKey.value ? `/gm/creatures/${editingKey.value}/image` : ''));
+async function upload(event) {
+  const file = event.target.files?.[0];
+  event.target.value = '';
+  if (!file) return;
+  try {
+    const picture = await pictureForBoard(file, 900);
+    const kept = await apiSend('POST', '/gm/homebrew/creatures/image', props.token, { image: picture.base64 });
+    forgetPreview();
+    localPreview.value = URL.createObjectURL(file);
+    form.value.image = kept.path;
+    failed.value = false;
+    status.value = 'Picture added: save the creature to keep it.';
+  } catch (e) {
+    failed.value = true;
+    status.value = e instanceof ApiError ? e.message : e.message || 'Could not add the picture.';
+  }
+}
+function removePicture() {
+  forgetPreview();
+  form.value.image = '';
+}
+
 function close() {
+  forgetPreview();
   editingId.value = null;
   confirmingDelete.value = false;
 }
@@ -126,6 +177,7 @@ async function save() {
       ? await apiSend('PUT', `/gm/homebrew/creatures/${editingId.value}`, props.token, payload)
       : await apiSend('POST', '/gm/homebrew/creatures', props.token, payload);
     editingId.value = saved.id;
+    editingKey.value = saved.key ?? editingKey.value;
     status.value = 'Saved. It is in the Rules now, under Creatures.';
     await load();
   } catch (e) {
@@ -219,10 +271,21 @@ const removeAt = (list, i) => list.splice(i, 1);
           <label>Type
             <select v-model="form.kind" data-test="f-kind"><option v-for="k in KINDS" :key="k.id" :value="k.id">{{ k.label }}</option></select>
           </label>
-          <label>Category<input v-model="form.category" maxlength="60" placeholder="Undead, Trolls…" data-test="f-category" /></label>
+          <label>Category<input v-model="form.category" maxlength="60" list="creature-categories" placeholder="Choose or write: Undead, Trolls…" autocomplete="off" data-test="f-category" /></label>
+          <datalist id="creature-categories"><option v-for="c in categories" :key="c" :value="c" /></datalist>
           <label>Attack die
             <select v-model="form.attack_dice" data-test="f-dice"><option v-for="d in DICE" :key="d" :value="d">{{ d }}</option></select>
           </label>
+        </div>
+        <div class="picture" data-test="creature-picture">
+          <span class="plabel">Picture</span>
+          <img v-if="localPreview" :src="localPreview" alt="" class="creature-pic" data-test="picture-preview" />
+          <MessageImage v-else-if="pictureSrc" :key="pictureSrc + form.image" class="creature-pic" :token="token" :path="pictureSrc" :alt="form.name" />
+          <div class="pbtns">
+            <button type="button" class="btn" data-test="picture-add" @click="fileInput.click()">{{ form.image ? 'Change picture' : 'Upload picture' }}</button>
+            <button v-if="form.image" type="button" class="btn" data-test="picture-remove" @click="removePicture">Remove picture</button>
+          </div>
+          <input ref="fileInput" type="file" accept="image/png,image/jpeg,image/webp" hidden data-test="picture-file" @change="upload" />
         </div>
         <label>Quote<textarea v-model="form.quote" rows="2" maxlength="600"></textarea></label>
         <label>Description<textarea v-model="form.description" rows="5" maxlength="4000" data-test="f-description"></textarea></label>
@@ -281,6 +344,10 @@ const removeAt = (list, i) => list.splice(i, 1);
 </template>
 
 <style scoped>
+.picture { display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap; margin: 4px 0 8px; }
+.plabel { width: 100%; font-size: 0.85rem; color: var(--muted); }
+.creature-pic { max-height: 160px; max-width: 220px; object-fit: contain; border: 1px solid var(--line); border-radius: 6px; }
+.pbtns { display: flex; gap: 8px; align-items: center; }
 .layout { display: grid; grid-template-columns: 1fr; gap: 14px; align-items: start; }
 @media (min-width: 720px) { .layout { grid-template-columns: minmax(220px, 300px) 1fr; } .back { display: none; } }
 @media (max-width: 719px) { .layout.form-open .list { display: none; } }

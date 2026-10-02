@@ -74,6 +74,7 @@ beforeEach(() => {
 });
 afterEach(() => vi.unstubAllGlobals());
 
+const shown = (w, test) => w.get(`[data-test=${test}]`).element.style.display !== 'none';
 const mountIt = async () => {
   const w = mount(HomebrewView, { props: { token: 'gm' } });
   await flushPromises();
@@ -83,7 +84,8 @@ const mountIt = async () => {
 describe('HomebrewView', () => {
   it('offers creatures and every kind the server lists, creatures first', async () => {
     const w = await mountIt();
-    expect(w.findAll('.chip').map((c) => c.text())).toEqual(['Creatures', 'Spells', 'Kin', 'Abilities', 'Armor', 'Terrain']);
+    expect(w.findAll('.chip').map((c) => c.text()).sort()).toEqual(['Abilities', 'Adventure', 'Armor', 'Creatures', 'Kin', 'Spells', 'Terrain']);
+    expect(w.findAll('.chip')[0].text()).toBe('Creatures');
     expect(w.find('[data-test=creature-form]').exists()).toBe(false);
     expect(w.find('[data-test=new-creature]').exists()).toBe(true);
   });
@@ -97,6 +99,22 @@ describe('HomebrewView', () => {
     await flushPromises();
     expect(calls.find((c) => c.method === 'PUT' && c.path === '/gm/homebrew/pack').body).toEqual({ name: 'Frozen North' });
     expect(w.get('[data-test=pack-status]').text()).toContain('Frozen North');
+  });
+
+  it('the kinds come in groups: only the ones of the open group are shown, and a click on a group opens its first kind', async () => {
+    const w = await mountIt();
+    const groups = w.findAll('[role=tab]').map((b) => b.attributes('data-test'));
+    expect(groups.length).toBeGreaterThanOrEqual(5);
+    expect(groups[0]).toBe('group-creatures');
+    expect(w.get('[data-test=group-creatures]').attributes('aria-selected')).toBe('true');
+    expect(shown(w, 'kind-creatures')).toBe(true);
+    expect(shown(w, 'kind-spells')).toBe(false);
+    await w.get('[data-test=group-magic]').trigger('click');
+    await flushPromises();
+    expect(w.get('[data-test=group-magic]').attributes('aria-selected')).toBe('true');
+    expect(shown(w, 'kind-spells')).toBe(true);
+    expect(w.get('[data-test=kind-spells]').classes()).toContain('active');
+    expect(shown(w, 'kind-creatures')).toBe(false);
   });
 
   it('lists the entries of a kind and edits one: the PUT names the entry it replaces', async () => {
@@ -319,6 +337,6 @@ describe('HomebrewView', () => {
   it('still works as the creatures editor when the server has no schema', async () => {
     vi.stubGlobal('fetch', vi.fn(async () => ({ ok: false, status: 404, json: async () => ({ error: 'no' }) })));
     const w = await mountIt();
-    expect(w.findAll('.chip').map((c) => c.text())).toEqual(['Creatures']);
+    expect(w.findAll('.chip').map((c) => c.text())).toEqual(['Creatures', 'Adventure']);
   });
 });

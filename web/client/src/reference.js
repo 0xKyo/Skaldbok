@@ -15,6 +15,8 @@ const GROUPS = {
 export function useReference(token, gmPrefix = '') {
   const contentTypes = ref([]); // [{id, label, count}]
   const rulesChapters = ref([]); // [{key, title, introOnly?}]
+  const query = ref(''); // what the search bar asks for
+  const only = ref(true); // true: it filters the open category; false: it looks everywhere
   const current = ref(null); // {mode, type, label, tabs[], tab (index), entryKey}
 
   const items = computed(() => {
@@ -92,7 +94,7 @@ export function useReference(token, gmPrefix = '') {
     };
     if (rulesChapters.value.some((r) => r.key === key)) {
       const found = hostOf('rules', key);
-      if (found) select(found.item, null, found.tab);
+      if (found) select(found.item, target?.entry || null, found.tab);
       return;
     }
     const typeId = target?.type || key;
@@ -110,5 +112,5 @@ export function useReference(token, gmPrefix = '') {
     }
   }
 
-  return reactive({ contentTypes, rulesChapters, current, items, jump, load, select, goTo, seen });
+  return reactive({ contentTypes, rulesChapters, query, only, current, items, jump, load, select, goTo, seen });
 }

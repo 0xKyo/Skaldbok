@@ -5,6 +5,7 @@ import DataTable from './DataTable.vue';
 import NpcCreator from './NpcCreator.vue';
 import PinButton from './PinButton.vue';
 import RuleText from './RuleText.vue';
+import { ruleHaystack } from '../lib/globalSearch.js';
 import { tablesMarkedIn, textBlocks, unplacedTables } from '../lib/ruletables.js';
 
 const props = defineProps({
@@ -13,12 +14,13 @@ const props = defineProps({
   mode: { type: String, default: 'tables' }, // 'tables' | 'rules'
   gmPrefix: { type: String, default: '' },   // '/gm' when used in GM view, '' for player
   hideTabs: { type: Boolean, default: false }, // GM sidebar already picks the category
+  query: { type: String, default: '' },        // what the search bar of the Reference asks for in this category
 });
 const emit = defineEmits(['follow-key', 'seen']);
 
 const summary = ref(null);
 const type = ref(props.jumpTo?.type ?? (props.mode === 'rules' ? '' : 'spells'));
-const query = ref('');
+const query = computed(() => props.query);
 const entries = ref([]);
 const intro = ref(null);      // {body, sections} — for inline-intro types
 const loading = ref(false);
@@ -71,11 +73,7 @@ const paragraphs = computed(() =>
 const selectedSections = computed(() => selected.value?.sections ?? []);
 
 // Rules chapters are filtered here (title, text, sections and table contents); the other types are searched by the server
-const haystack = (e) => [
-  e.title, e.name, e.body,
-  ...(e.sections ?? []).flatMap((s) => [s.title, s.body]),
-  ...(e.tables ?? []).flatMap((t) => [t.title, ...(t.columns ?? []), ...t.rows.flatMap((r) => r.cells)]),
-].filter(Boolean).join('\n').toLowerCase();
+const haystack = ruleHaystack;
 const byTitle = (a, b) => (a.title ?? '').localeCompare(b.title ?? '', undefined, { sensitivity: 'base' });
 const shownEntries = computed(() => {
   const q = query.value.trim().toLowerCase();
@@ -272,7 +270,7 @@ watch(
 
 <template>
   <section aria-label="Rules" class="rules-root">
-    <!-- toolbar: search (tables non-rules types only) + type tabs -->
+    <!-- toolbar: the sections of the page, and (outside the Reference) the type tabs; the search bar belongs to the Reference -->
     <div class="rules-bar">
       <div v-if="grouped" class="subtabs" role="group" aria-label="Sections">
         <button v-for="(g, i) in groupNames" :key="g" :aria-pressed="groupTab === i" data-test="group-tab" @click="groupTab = i">{{ g }}</button>
@@ -280,13 +278,6 @@ watch(
       <div v-if="tabbed" class="subtabs" role="group" aria-label="Sections">
         <button v-for="(e, i) in entries" :key="e.key" :aria-pressed="tab === i" data-test="chapter-tab" @click="tab = i">{{ e.title }}</button>
       </div>
-      <input
-        v-model="query"
-        type="search"
-        placeholder="Search…"
-        aria-label="Search"
-        class="rules-search"
-      />
       <div v-if="summary && !hideTabs" class="subtabs" role="group" aria-label="Kind">
         <template v-if="mode === 'tables'">
           <button v-for="t in summary.types" :key="t.id" :aria-pressed="type === t.id" @click="type = t.id">
@@ -438,9 +429,6 @@ watch(
 .rules-root { display: flex; flex-direction: column; gap: 10px; }
 
 .rules-bar { display: flex; flex-direction: column; gap: 8px; }
-.rules-search { width: 100%; background: #fbf6e6; border: 1px solid var(--line); color: var(--ink);
-  border-radius: 8px; padding: 10px 12px; font: inherit; }
-.rules-search:focus-visible { outline: 2px solid var(--green); }
 
 .rules-chapter-tab { font-style: italic; }
 

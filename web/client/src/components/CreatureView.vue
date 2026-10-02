@@ -10,6 +10,8 @@ import { textBlocks, unplacedTables } from '../lib/ruletables.js';
 
 const props = defineProps({
   token: { type: String, required: true },
+  query: { type: String, default: '' },       // what the search bar of the Reference asks for
+  jumpKey: { type: String, default: null },   // a creature to open when the list is read (a result of the search)
   prefix: { type: String, default: '' },      // '/gm' when the GM is signed in, '' for a player: the creatures are the same for both
 });
 
@@ -34,10 +36,11 @@ function pinCreature() {
   if (!c) return null;
   return { type: 'creature', key: c.key, title: c.name, data: { kind: c.kind, category: c.category, blocks: c.blocks, attacks: c.attacks, abilities: c.abilities, description: c.description ?? '' } };
 }
-const query = ref('');
+const query = computed(() => props.query);
 const loading = ref(false);
 const loadingDetail = ref(false);
 let searchTimer = null;
+let openedFor = null;
 
 async function search() {
   loading.value = true;
@@ -47,6 +50,8 @@ async function search() {
     list.value = data.creatures ?? [];
     intro.value = data.intro ?? null;
     if (selected.value && !list.value.find((c) => c.id === selected.value.id)) selected.value = null;
+    const wanted = props.jumpKey && list.value.find((c) => c.key === props.jumpKey);
+    if (wanted && wanted.key !== openedFor) { openedFor = wanted.key; pick(wanted); }
   } finally {
     loading.value = false;
   }
@@ -79,7 +84,6 @@ onMounted(search);
       <button :aria-pressed="tab === 'info'" data-test="creature-tab" @click="tab = 'info'">General Info</button>
     </div>
 
-    <input v-show="showList" v-model="query" class="c-search" placeholder="Search…" aria-label="Search" type="search" />
     <div v-show="showList" class="tag-row" role="group" aria-label="Creature type">
       <button v-for="t in TAGS" :key="t.id" class="tag" :aria-pressed="tags.includes(t.id)" data-test="creature-tag" @click="toggleTag(t.id)">{{ t.label }}</button>
     </div>
@@ -206,9 +210,6 @@ onMounted(search);
 <style scoped>
 .creature-page { display: flex; flex-direction: column; gap: 10px; }
 
-.c-search { width: 100%; background: #fbf6e6; border: 1px solid var(--line); color: var(--ink);
-  border-radius: 8px; padding: 10px 12px; font: inherit; }
-.c-search:focus-visible { outline: 2px solid var(--green); }
 
 .c-intro .intro-p { font-size: 0.88rem; color: var(--ink); margin: 0 0 0.5em; line-height: 1.5; }
 .c-intro .intro-section-name { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--brown); margin: 0.6em 0 0.2em; }
@@ -259,7 +260,7 @@ onMounted(search);
   .c-layout .creature-detail-panel { display: none; }
   .c-layout.detail-open .c-list { display: none; }
   .c-layout.detail-open .creature-detail-panel { display: block; }
-  .creature-page.detail-open :is(.c-search, .tag-row) { display: none; }
+  .creature-page.detail-open .tag-row { display: none; }
 }
 
 /* ---- detail panel ---- */

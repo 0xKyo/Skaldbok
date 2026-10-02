@@ -1,9 +1,10 @@
 <script setup>
 // App root: detects GM vs player mode from the URL token (?gm=... or ?t=...) and renders the matching view.
-import { computed, onBeforeUnmount, onMounted, provide, ref, watch, watchEffect } from 'vue';
+import { computed, onBeforeUnmount, onMounted, provide, ref, watch } from 'vue';
 import { ApiError, apiGet, apiSend, captureToken, captureGmToken, forgetToken } from './api.js';
 import ChatView from './components/ChatView.vue';
 import GmView from './components/GmView.vue';
+import BackupMenu from './components/BackupMenu.vue';
 import NavButtons from './components/NavButtons.vue';
 import ReferenceView from './components/ReferenceView.vue';
 import SheetView from './components/SheetView.vue';
@@ -123,18 +124,17 @@ onBeforeUnmount(() => {
 });
 
 const updated = computed(() => (lastUpdate.value ? lastUpdate.value.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : ''));
-watchEffect(() => {
-  document.title = me.value ? `${me.value.name} · Skaldbok` : 'Skaldbok';
-});
+document.title = 'Skaldbok';                         // the tab is always called Skaldbok
 </script>
 
 <template>
   <!-- GM view: full interface when accessed with the GM link -->
   <main v-if="gmToken" class="wrap gm-wrap">
     <header class="top gm-top">
-      <span class="wordmark">Skaldbok <small class="ver">0.7</small></span>
+      <span class="wordmark">Skaldbok <small class="ver">0.8</small></span>
       <NavButtons />
       <div id="gm-tabs" class="gm-tabs"></div>
+      <BackupMenu :token="gmToken" />
       <span class="live"><span class="dot"></span>GM</span>
     </header>
     <GmView :token="gmToken" />
@@ -142,7 +142,7 @@ watchEffect(() => {
 
   <main v-else class="wrap">
     <div v-if="!token" class="notice" data-test="no-link">
-      <h1>Skaldbok <small class="ver">0.7</small></h1>
+      <h1>Skaldbok <small class="ver">0.8</small></h1>
       <p v-if="problem" class="error">{{ problem }}</p>
       <p v-else>Open the personal link your GM sent you. It looks like <span class="gold">…/?t=xxxxxxxx</span>.</p>
       <p class="muted small">The link is yours alone: it opens your character and nobody else's.</p>
@@ -156,7 +156,7 @@ watchEffect(() => {
 
     <template v-else>
       <header class="top gm-top">
-        <span class="wordmark">Skaldbok <small class="ver">0.7</small></span>
+        <span class="wordmark">Skaldbok <small class="ver">0.8</small></span>
         <NavButtons />
         <div class="gm-tabs">
           <nav class="tabs" role="tablist">

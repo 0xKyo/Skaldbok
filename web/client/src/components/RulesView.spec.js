@@ -31,15 +31,14 @@ const names = (w) => w.findAll('.rules-row-name').map((n) => n.text());
 afterEach(() => vi.unstubAllGlobals());
 
 describe('RulesView search in a rules chapter', () => {
-  it('has a search bar and filters the chapter by title, text and table contents', async () => {
+  it('filters the chapter by title, text and table contents when the Reference asks for a search', async () => {
     const w = await mountIt();
     expect(names(w)).toEqual(['Actions', 'Free Actions', 'Movement']);
-    const box = w.get('input[type=search]');
-    await box.setValue('shout');
+    await w.setProps({ query: 'shout' });
     expect(names(w)).toEqual(['Free Actions']);
-    await box.setValue('meters');
+    await w.setProps({ query: 'meters' });
     expect(names(w)).toEqual(['Movement']);
-    await box.setValue('');
+    await w.setProps({ query: '' });
     expect(names(w)).toHaveLength(3);
   });
 
@@ -51,10 +50,9 @@ describe('RulesView search in a rules chapter', () => {
 
   it('keeps a valid entry selected and says so when nothing matches', async () => {
     const w = await mountIt();
-    const box = w.get('input[type=search]');
-    await box.setValue('shout');
+    await w.setProps({ query: 'shout' });
     expect(w.get('.rules-detail-name').text()).toBe('Free Actions');
-    await box.setValue('zzzz');
+    await w.setProps({ query: 'zzzz' });
     expect(w.text()).toContain('Nothing found');
   });
 });

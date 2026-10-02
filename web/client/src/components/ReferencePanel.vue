@@ -12,6 +12,8 @@ const props = defineProps({
 
 const tab = computed(() => props.state.current?.tabs[props.state.current.tab] ?? null);
 const mode = computed(() => tab.value?.mode ?? props.state.current?.mode);
+// the search bar of the Reference filters the open category when it says "only in this one" (otherwise it lists matches from everywhere)
+const query = computed(() => (props.state.only === false ? '' : (props.state.query ?? '').trim()));
 const type = computed(() => tab.value?.type ?? props.state.current?.type);
 </script>
 
@@ -22,7 +24,7 @@ const type = computed(() => tab.value?.type ?? props.state.current?.type);
         {{ t.label }}
       </button>
     </div>
-    <CreatureView v-if="type === 'creatures'" :token="token" :prefix="gmPrefix" />
+    <CreatureView v-if="type === 'creatures'" :token="token" :prefix="gmPrefix" :query="query" :jump-key="state.jump?.key ?? null" />
     <RulesView
       v-else
       :key="type + mode"
@@ -30,6 +32,7 @@ const type = computed(() => tab.value?.type ?? props.state.current?.type);
       :mode="mode"
       :jump-to="state.jump"
       :gm-prefix="gmPrefix"
+      :query="query"
       hide-tabs
       @follow-key="(key) => state.goTo({ key })"
       @seen="(key) => state.seen(key)"

@@ -12,7 +12,7 @@ WebServer::WebServer(WebApp& app) : app_(app), server_(std::make_unique<httplib:
 WebServer::~WebServer() { stop(); }
 
 void WebServer::install() {
-    server_->set_payload_max_length(13 * 1024 * 1024);   // only a chat picture is big; WebApp refuses anything else above 64 KB
+    server_->set_payload_max_length(320 * 1024 * 1024);   // only a chat picture and a backup are big; WebApp refuses anything else above 64 KB (a board 5 MB)
     server_->set_read_timeout(10, 0);
     server_->set_write_timeout(10, 0);
     server_->set_keep_alive_timeout(5);

@@ -87,10 +87,10 @@ describe('RulesView with layout: tabs', () => {
 
   it('searches the rows, moving to the tab that has a match, and an empty intro adds no panel', async () => {
     const w = await mountIt();
-    await w.get('input[type=search]').setValue('shout');
+    await w.setProps({ query: 'shout' });
     expect(rows(w)).toEqual(['Shout']);
     expect(w.findAll('[data-test=chapter-tab]')[1].attributes('aria-pressed')).toBe('true');
-    await w.get('input[type=search]').setValue('');
+    await w.setProps({ query: '' });
     await w.findAll('[data-test=chapter-tab]')[2].trigger('click');
     expect(w.findAll('.inline-intro')).toHaveLength(1);
   });
@@ -136,7 +136,7 @@ describe('RulesView with layout: groups', () => {
 
   it('searches across tabs, moving to the tab that has the match', async () => {
     const w = await mountWorld();
-    await w.get('input[type=search]').setValue('random npc');
+    await w.setProps({ query: 'random npc' });
     expect(w.findAll('[data-test=group-tab]')[1].attributes('aria-pressed')).toBe('true');
     expect(listed(w)).toEqual(['NPC Creator']);
     expect(w.get('.rules-detail-name').text()).toBe('NPC Creator');

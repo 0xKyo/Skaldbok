@@ -5,6 +5,7 @@
 #pragma once
 
 #include <string>
+#include <string_view>
 
 #include "parsing/jsonutil.h"
 
@@ -47,5 +48,8 @@ json homebrewCreatures(const std::string& packDir);
 HomebrewResult saveHomebrewCreature(const std::string& packDir, const std::string& id, const json& body);
 
 HomebrewResult deleteHomebrewCreature(const std::string& packDir, const std::string& id);
+
+// Keeps a picture for a creature (PNG, JPEG or WebP, 8 MB at most) in the pack's images/creatures folder: `body["path"]` is what the creature's "image" says.
+HomebrewResult saveHomebrewCreatureImage(const std::string& packDir, std::string_view bytes);
 
 }  // namespace gm

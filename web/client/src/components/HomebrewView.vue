@@ -4,6 +4,7 @@
 import { computed, inject, onMounted, ref, watch } from 'vue';
 import { ApiError, apiGet, apiSend } from '../api.js';
 import HomebrewCreatures from './HomebrewCreatures.vue';
+import HomebrewAdventure from './HomebrewAdventure.vue';
 import HomebrewEntries from './HomebrewEntries.vue';
 
 const props = defineProps({
@@ -38,7 +39,23 @@ if (nav) {
   watch(() => nav.tick.value, putBack);
 }
 
-const kinds = computed(() => [...(viewed.value ? [] : [{ id: 'creatures', label: 'Creatures' }]), ...sections.value.map((s) => ({ id: s.id, label: s.label }))]);
+const kinds = computed(() => [...(viewed.value ? [] : [{ id: 'creatures', label: 'Creatures' }]), ...sections.value.map((s) => ({ id: s.id, label: s.label })), ...(viewed.value ? [] : [{ id: 'adventure', label: 'Adventure' }])]);
+// the kinds are many, so they come in groups (the row on top); a kind that is in none of them goes to "More"
+const GROUPS = [
+  { id: 'creatures', label: 'Creatures', kinds: ['creatures', 'weakness', 'fear'] },
+  { id: 'characters', label: 'Characters', kinds: ['kin', 'professions', 'abilities', 'skills', 'age', 'appearance', 'memento'] },
+  { id: 'magic', label: 'Magic', kinds: ['spells', 'magic', 'duration', 'mishaps'] },
+  { id: 'equipment', label: 'Equipment', kinds: ['weapons', 'armor', 'gear', 'improvised-weapons'] },
+  { id: 'combat', label: 'Combat', kinds: ['actions', 'damage-types', 'injuries', 'melee-demon-rolls', 'ranged-demon-rolls'] },
+  { id: 'world', label: 'World', kinds: ['traps', 'terrain', 'treasure', 'hunting'] },
+  { id: 'adventure', label: 'Adventure', kinds: ['adventure'] },       // the adventures the GM writes: not a kind of data file, but its own editor
+];
+const groups = computed(() => {
+  const known = new Set(GROUPS.flatMap((g) => g.kinds));
+  const all = [...GROUPS, { id: 'more', label: 'More', kinds: kinds.value.map((k) => k.id).filter((id) => !known.has(id)) }];
+  return all.map((g) => ({ ...g, kinds: g.kinds.filter((id) => kinds.value.some((k) => k.id === id)) })).filter((g) => g.kinds.length);
+});
+const group = computed(() => groups.value.find((g) => g.kinds.includes(kind.value)) ?? groups.value[0] ?? null);
 const section = computed(() => sections.value.find((s) => s.id === kind.value) ?? null);
 
 function take(schema) {
@@ -132,8 +149,13 @@ async function rename() {
       <button type="button" class="pill" data-test="back-to-mine" @click="look(pack.id)">Back to my pack</button>
     </p>
 
-    <nav class="kinds" aria-label="What to make">
-      <button v-for="k in kinds" :key="k.id" type="button" class="chip" :class="{ active: kind === k.id }" :data-test="`kind-${k.id}`" @click="pick(k.id)">{{ k.label }}</button>
+    <nav class="groups" role="tablist" aria-label="Kinds of homebrew">
+      <button v-for="g in groups" :key="g.id" type="button" role="tab" class="group" :aria-selected="group?.id === g.id" :data-test="`group-${g.id}`" @click="pick(g.kinds[0])">{{ g.label }}</button>
+    </nav>
+    <nav v-show="group && group.kinds.length > 1" class="kinds" aria-label="What to make">
+      <template v-for="g in groups" :key="g.id">
+        <button v-for="id in g.kinds" v-show="group?.id === g.id" :key="id" type="button" class="chip" :class="{ active: kind === id }" :data-test="`kind-${id}`" @click="pick(id)">{{ kinds.find((k) => k.id === id).label }}</button>
+      </template>
     </nav>
 
     <p v-if="pending" class="making panel" data-test="making">
@@ -141,6 +163,7 @@ async function rename() {
       <button type="button" class="pill" data-test="making-cancel" @click="comeBack(null)">Cancel, go back</button>
     </p>
     <HomebrewCreatures v-if="kind === 'creatures'" :token="token" />
+    <HomebrewAdventure v-else-if="kind === 'adventure'" :token="token" />
     <HomebrewEntries v-else-if="section" :key="section.id + (viewed ? '@' + viewed.id : '') + (pending ? '-making' : '') + (restore ? '-back' : '')" :token="token" :section="section" :restore="restore" :pack="viewed ? viewed.id : ''" :pack-name="viewed ? viewed.name : ''"
                      :start-new="!!pending" :prefill="prefill" @request-new="makeFor" @made="comeBack" />
   </section>
@@ -150,6 +173,9 @@ async function rename() {
 .pack { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 8px 12px; margin-bottom: 10px; }
 .pack label { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--muted); }
 .pack input { font: inherit; color: var(--ink); padding: 4px 10px; border: 1px solid var(--line); border-radius: 8px; background: #fbf6e6; }
+.groups { display: flex; flex-wrap: wrap; gap: 4px; border-bottom: 2px solid var(--green-dark); margin-bottom: 10px; }
+.group { background: none; border: 0; border-bottom: 4px solid transparent; padding: 8px 14px; font: inherit; font-family: var(--display); font-weight: 700; font-size: 0.85rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); cursor: pointer; }
+.group[aria-selected='true'] { color: var(--green-dark); border-bottom-color: var(--red); }
 .kinds { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
 .chip, .pill { padding: 4px 14px; border: 1px solid var(--green-dark); border-radius: 20px; background: none; color: var(--green-dark); font: inherit; font-size: 0.85rem; font-weight: 600; cursor: pointer; white-space: nowrap; }
 .chip:hover, .pill:hover:not(:disabled) { background: var(--parchment); }
