@@ -71,7 +71,12 @@ export function useReference(token, gmPrefix = '') {
   }
 
   function select(item, entryKey = null, tab = 0) {
-    current.value = { mode: item.mode, type: item.type, label: item.label, tabs: item.tabs ?? [], tab, entryKey };
+    current.value = { mode: item.mode, type: item.type, label: item.label, tabs: item.tabs ?? [], tab, entryKey, seen: entryKey };
+  }
+
+  // the entry the list has open now (the list picks it by itself): kept so that going back to this page opens the same one
+  function seen(key) {
+    if (current.value && (current.value.seen ?? null) !== (key ?? null)) current.value.seen = key ?? null;
   }
 
   // Open whatever a link points at: {key, type?} — a chapter, or an entry of a content type
@@ -105,5 +110,5 @@ export function useReference(token, gmPrefix = '') {
     }
   }
 
-  return reactive({ contentTypes, rulesChapters, current, items, jump, load, select, goTo });
+  return reactive({ contentTypes, rulesChapters, current, items, jump, load, select, goTo, seen });
 }

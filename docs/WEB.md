@@ -18,6 +18,12 @@ skaldbok_web  (C++, sin ventana)  ──JSON──►  web/client (Vue 3, ya com
 * **`web/client`** es una página Vue 3 (Vite). Node solo hace falta para *compilarla*; el servidor sirve los archivos ya compilados (`web/client/dist`, o la carpeta `web/` junto al ejecutable en el paquete).
 * **Escritura acotada**: el jugador solo puede cambiar su propia hoja (`PATCH /api/me`) y escribir en su chat; el máster puede editar cualquier ficha y gestionar personajes y el chat vía `/api/gm/*`.
 
+## Ir hacia atrás y hacia adelante
+
+Arriba, junto al nombre, hay dos botones **◀ ▶** (en la página del máster y en la del jugador) para **moverte entre lo que ya viste**, como en un navegador. Cada paso recuerda: la **pestaña** (y el personaje elegido, en la del máster), la **página del Rules** abierta con la entrada de su lista, la **aventura** con su pestaña (*Story* / *NPCs*), la página o el NPC abierto, y lo que está abierto en **Homebrew** (el tipo, y el pack que estás mirando). Ir atrás vuelve a poner todo eso; si después abrís otra cosa, lo que quedaba adelante se descarta. Los botones se apagan cuando no hay adónde ir. El historial vive en la pantalla (hasta 100 pasos): al recargar la página empieza de nuevo. El botón *Atrás* del navegador sigue cambiando las pestañas del jugador como antes.
+
+**Encabezado del máster:** el nombre *Skaldbok* con la versión, las flechas y las pestañas van en **una sola línea** (ya no hay etiqueta "Game Master"); el encabezado queda fijo arriba al hacer scroll. Lo mismo en la página del jugador (sin el resumen del personaje).
+
 ## Cómo se ve cada categoría
 
 Todas las páginas de Reference (también Creatures, cuyo texto general del Bestiary es la pestaña **General Info**) tienen la misma estructura, de arriba a abajo: **pestañas** (solo si la entrada las tiene, como Gear o Skills), **barra de búsqueda**, **intro** (el texto general de la categoría o el texto propio del capítulo, siempre desplegado) y la **lista con la descripción al lado**. No hay título encima. En los capítulos de reglas la búsqueda filtra en el navegador por título, texto y contenido de las tablas; la respuesta de `GET /api/rules/<cap>` (y `/api/gm/rules/<cap>`) trae el texto de la raíz del capítulo como `intro`, y `GET /api/gm/creatures` trae el `intro` del Bestiary.
@@ -80,6 +86,38 @@ Debajo del desplegable hay dos pestañas: **Story** (lo de arriba) y **NPCs**, q
 **Imágenes.** Las ilustraciones del PDF salen en su lugar: la tira de mapa que abre cada capítulo, el **plano** de cada lugar (un click lo agranda a pantalla completa), el **retrato** de cada NPC o monstruo junto a su nombre y en su página de la pestaña NPCs, y las demás ilustraciones junto al texto al que acompañan. Las sirve `GET /api/gm/adventures/<id>/image?path=images/…` (solo con el token del máster, y solo archivos de imagen dentro de la carpeta `images/` del pack).
 
 Es solo lectura y por ahora no está ligado al resto (los NPCs aparecen como etiqueta, sin abrir la criatura). El archivo lo hace `tools/mistyvale.py` a partir del PDF (ver `tools/README.md`): `adventure.yaml` es un árbol de `chapters` con `sections` anidadas (`id`, `title`, `kind`, `page`, `body`, y según el caso `number`, `creatures: [clave de Core]` o `table: <nombre en tables.yaml>`) y `tables.yaml` trae las tablas. Rutas (solo con el token del máster): `GET /api/gm/adventures` (la lista) y `GET /api/gm/adventures/<id>` (el árbol, más `tables` —solo las que nombran sus nodos— y `creatures` —clave → nombre—).
+
+## Master: el tablero (máster)
+
+La pestaña **Master** es un **lienzo a pantalla completa**, como un Miro liviano, donde ponés a mano lo que querés tener a la vista durante la partida:
+
+* **📌 Pin desde cualquier lado.** Un botón **📌 Pin** (solo el máster lo ve) en una entrada de **Rules** (reglas, hechizos, equipo…), en una **criatura**, en una página de una **aventura** o en un **NPC** de ella, y en cada **tabla** (el 📌 chiquito junto a su título). Clavar algo lo copia al tablero tal como se ve en ese momento (texto, campos, tablas, ficha de la criatura) y aparece un aviso abajo. Clavar lo mismo dos veces no lo duplica.
+* **Notas.** **+ Note** (con tres colores más) o **doble click** en el fondo; se escribe directo y se guarda solo.
+* **Flechas.** Pasá el mouse por una tarjeta y arrastrá el **➜** del borde hasta otra: queda una flecha. Un click en la flecha la selecciona: le podés poner un **nombre** o borrarla.
+* **Del ancho del resto de la app**, y tan alto como la ventana deja (hasta el borde de abajo; la página de atrás no se desplaza). El botón **⤢ Full screen** lo pone encima de todo, pestañas incluidas, y **Esc** (o ⤡ Exit full screen) vuelve.
+* **Moverse.** Arrastrar el fondo mueve el lienzo; la **rueda** (o dos dedos) acerca y aleja; **−, %, +** y **Fit** (muestra todo) arriba a la izquierda. Una tarjeta se arrastra por su barra de arriba, se agranda por la esquina de abajo y se quita con la ×; **Supr** borra lo seleccionado.
+
+El tablero (sus tarjetas, flechas y la posición del lienzo) se guarda **solo en el servidor del máster** (`<carpeta del máster>/board.json`: `GET` y `PUT /api/gm/board`, hasta 4 MB, 400 tarjetas) un instante después de cada cambio, así que lo encontrás igual al volver o desde otro equipo; si no se pudo leer nunca se pisa. También se puede abrir una pestaña del máster por su dirección (`…/?gm=…#master`), y al recargar vuelve a la misma.
+
+## Master: Campaigns y Sessions
+
+La pestaña **Master** tiene dos partes (los botones de arriba): **Master Screen**, el tablero de arriba, y **Campaigns**. Una **campaña** es lo que se juega: tiene un nombre, los **personajes que la juegan** y sus **sesiones**; una sesión es un tablero del mismo tipo que la Screen, **uno por cada partida jugada**: lo que pasó, lo que encontraron.
+
+**Todo en una sola línea:** campaña, personajes, sesión, etiqueta de estado y botones (*+ Session*, *+ Campaign*, *End/Open Session*) van en una barra; en pantallas angostas pasa a la línea de abajo. Renombrar es el **✎** (el desplegable se vuelve un campo: Enter guarda, Esc deja el nombre como estaba) y borrar es el **✕**; las confirmaciones aparecen en una línea debajo de la barra.
+
+* **Campaña.** Se elige con el desplegable **Campaign**, se renombra escribiendo sobre su nombre, y **+ New Campaign** crea una (*Campaign 2*). **Delete campaign** (pide confirmación, dice cuántas sesiones se van) la borra **con todas sus sesiones**. Hace falta una campaña para poder crear sesiones.
+* **Personajes.** El desplegable **Characters** abre una lista con una casilla por cada personaje: marcás los que juegan esa campaña (un personaje puede estar en varias) y el botón muestra sus nombres. Se guarda al marcar.
+* **Sesiones.** El desplegable **Session** lista las de **esa campaña**.
+
+* **Una sola sesión activa.** **+ New Session** crea una en la campaña elegida, con nombre automático (*Session 3*) y la fecha de inicio, y pasa a ser **la activa**; **solo hay una sesión activa en toda la app** (aunque sea de otra campaña): si ya había una, avisa que la **cierra** antes. El nombre se cambia escribiendo sobre él; el desplegable lista todas con su día (*Oct 2, 2026*), la más nueva primero y la activa con ●; al lado, una etiqueta *Active* o *Closed*.
+* **End Session** (pide confirmación) la **cierra con su fecha**: queda como está, se puede mirar y moverse por ella, pero **no se puede cambiar** (sin botones de agregar, tarjetas fijas, notas de solo lectura). Después de cerrar **no queda ninguna activa** hasta que crees otra o abras una.
+* **Delete** (pide confirmación) borra la sesión **para siempre**, con todo lo que tiene (si era la activa, no queda ninguna). Las imágenes que trajiste siguen en el servidor.
+* **Open Session** (en una cerrada) la **reabre para editarla** y pasa a ser la activa (la que estaba activa se cierra). Se anota cuántas veces se reabrió.
+* **Enviar desde la Master Screen.** Cada tarjeta de la Screen trae un **→** en su barra: manda una **copia** a la sesión activa (el original se queda en la Screen) y avisa «Sent to “Session 3”». Una nota con *“Pelearon contra el ogro y ganaron; botín: un anillo de plata”*, la ficha de la criatura, una tabla o una imagen: todo se puede enviar. El cartelito de arriba de la Screen dice la campaña y la sesión activa (*→ The Misty Vale · Session 3*), o *No active session*, y entonces el → está apagado.
+
+**Imágenes.** Se pueden poner en cualquier tablero: **+ Image** (elegir un archivo), **pegar** (Ctrl+V) o **arrastrar** un archivo sobre el lienzo, y las del libro con el **📌** que aparece en la esquina de cada mapa o retrato de **Adventures**. Las tuyas se guardan en el servidor (`<carpeta del máster>/board-images/`, se achican a 1600 px, hasta 8 MB); las del libro se enlazan, no se copian.
+
+Cada campaña es un archivo del servidor (`<carpeta del máster>/campaigns/<id>.json`) y cada sesión otro (`<carpeta del máster>/sessions/<id>.json`, hasta 4 MB y 400 tarjetas; las sesiones de antes de que existieran las campañas quedan en una llamada *Campaign 1*). Rutas (solo con el token del máster): `GET|POST /api/gm/campaigns`, `PUT|DELETE /api/gm/campaigns/<id>` (nombre y personajes; `DELETE` borra también sus sesiones), `GET /api/gm/sessions` (lista, con la campaña de cada una, y cuál es la activa), `POST /api/gm/sessions` (crear, con `campaign`), `GET|PUT|DELETE /api/gm/sessions/<id>` (la sesión, su nombre y su tablero; un tablero cerrado responde 409; `DELETE` la borra), `POST /api/gm/sessions/<id>/end` y `/open`, `POST /api/gm/board/images` y `GET /api/gm/board/images/<id>`. La parte abierta va en la dirección (`…#master/campaigns`).
 
 ## NPC Creator (solo máster)
 

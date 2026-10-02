@@ -1,17 +1,22 @@
 <script setup>
 // GM interface: tabs along the top, like the player's page. Character (a dropdown of every character, with its sheet), Chat, Rules
 // (the Reference, the same the players have) and Homebrew (only the GM has it: what the GM makes).
-import { computed, onBeforeUnmount, onMounted, ref, watchEffect } from 'vue';
+import { computed, inject, onBeforeUnmount, onMounted, provide, ref, watch, watchEffect } from 'vue';
 import { ApiError, apiGet, apiSend } from '../api.js';
 import ChatView from './ChatView.vue';
 import AdventuresView from './AdventuresView.vue';
 import HomebrewView from './HomebrewView.vue';
+import MasterView from './MasterView.vue';
 import CharacterCreator from './CharacterCreator.vue';
 import ReferenceView from './ReferenceView.vue';
+import { useBoard } from '../board.js';
+import { useCampaigns } from '../campaigns.js';
 import { useReference } from '../reference.js';
+import { useSessions } from '../sessions.js';
 import SheetView from './SheetView.vue';
 
 const POLL_MS = 3000;
+const nav = inject('nav', null);        // back and forward between what was looked at (App provides it)
 
 const props = defineProps({
   token: { type: String, required: true },
@@ -21,11 +26,19 @@ const props = defineProps({
 const characters = ref([]);
 const threads = ref([]);
 
-const tab = ref('character');       // 'character' | 'chat' | 'rules' | 'homebrew'
+const TABS = ['character', 'chat', 'rules', 'adventures', 'master', 'homebrew'];
+const tab = ref(TABS.includes(window.location.hash.slice(1).split('/')[0]) ? window.location.hash.slice(1).split('/')[0] : 'character');       // the tab is in the address (#master), so a reload comes back to it
 const selectedId = ref(null);       // the character the Character and Chat tabs show
 const sheet = ref(null);
 const chat = ref({ messages: [], gmRead: '', playerRead: '' });
 const reference = useReference(props.token, '/gm');
+const board = useBoard(() => props.token);      // the Master tab's canvas; a 📌 anywhere in the app adds to it
+provide('board', board);
+const sessions = useSessions(() => props.token, board.say);      // a board for each game played; the Screen sends copies to the active one
+provide('sessions', sessions);
+const campaigns = useCampaigns(() => props.token, board.say);      // a name and the characters that play it; each has its sessions
+provide('campaigns', campaigns);
+provide('characters', characters);                                   // for assigning them to a campaign
 
 const offline = ref(false);
 const problem = ref('');
@@ -42,6 +55,7 @@ const tabs = computed(() => [
   { id: 'chat', label: totalUnread.value > 0 && tab.value !== 'chat' ? `Chat (${totalUnread.value})` : 'Chat' },
   { id: 'rules', label: 'Rules' },
   { id: 'adventures', label: 'Adventures' },
+  { id: 'master', label: 'Master' },
   { id: 'homebrew', label: 'Homebrew' },
 ]);
 
@@ -99,6 +113,17 @@ async function selectCharacter(id) {
   if (id) await loadSelected();
 }
 
+watch(tab, (t) => window.history.replaceState(window.history.state, '', `${window.location.pathname}${window.location.search}#${t}`));
+
+// the tab and the character picked are two of the things the ◀ ▶ buttons remember
+watch([tab, selectedId], ([, now], old) => nav?.record('gm', { tab: tab.value, char: selectedId.value }, old?.[1] === null && now !== null && !!nav?.slice('gm')), { immediate: true });
+watch(() => nav?.tick.value, async () => {
+  const s = nav.slice('gm');
+  if (!s) return;
+  if (s.tab) tab.value = s.tab;
+  if (s.char && s.char !== selectedId.value && characters.value.some((c) => c.id === s.char)) await selectCharacter(s.char);
+});
+
 function openCreator(mode) {
   tab.value = 'character';
   creator.value = mode;
@@ -138,8 +163,11 @@ function schedule() {
   }, POLL_MS);
 }
 
+// the tabs live in the header row of App (next to the name); on their own they stay here
+const tabsSlot = ref(null);
 onMounted(async () => {
-  await Promise.all([refresh(), reference.load().catch(() => {})]);
+  tabsSlot.value = document.getElementById('gm-tabs');
+  await Promise.all([refresh(), reference.load().catch(() => {}), board.load(), sessions.refresh(), campaigns.refresh()]);
   schedule();
 });
 onBeforeUnmount(() => clearTimeout(timer));
@@ -153,9 +181,11 @@ watchEffect(() => {
 
 <template>
   <div class="gm-view">
-    <nav class="tabs" role="tablist">
-      <button v-for="t in tabs" :key="t.id" role="tab" :aria-selected="tab === t.id" data-test="gm-tab" @click="tab = t.id">{{ t.label }}</button>
-    </nav>
+    <Teleport :to="tabsSlot" :disabled="!tabsSlot">
+      <nav class="tabs" role="tablist">
+        <button v-for="t in tabs" :key="t.id" role="tab" :aria-selected="tab === t.id" data-test="gm-tab" @click="tab = t.id">{{ t.label }}</button>
+      </nav>
+    </Teleport>
 
     <p v-if="problem" class="error" style="padding: 1rem;">{{ problem }}</p>
     <p v-else-if="offline" class="error" style="padding: 0 0 1rem;">Cannot reach the server. Trying again…</p>
@@ -218,9 +248,13 @@ watchEffect(() => {
 
       <!-- Adventures: the packs that have an adventure.yaml, to read -->
       <AdventuresView v-else-if="tab === 'adventures'" :token="token" />
+      <!-- Master: the board where the GM pins things from anywhere, writes notes and links them -->
+      <MasterView v-else-if="tab === 'master'" :token="token" />
       <!-- Homebrew: the GM's own creatures -->
       <HomebrewView v-else-if="tab === 'homebrew'" :token="token" />
     </template>
+
+    <p v-if="board.notice.value" class="board-toast" role="status" data-test="board-toast">{{ board.notice.value }}</p>
   </div>
 </template>
 
@@ -238,6 +272,8 @@ watchEffect(() => {
 .del-btn:hover { color: var(--danger, #c0392b); border-color: var(--danger, #c0392b); }
 .del-btn.sure { background: var(--danger, #c0392b); border-color: var(--danger, #c0392b); color: #fff; }
 .confirm { display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 0.85rem; color: var(--danger, #c0392b); }
+
+.board-toast { position: fixed; z-index: 9000; left: 50%; bottom: 22px; transform: translateX(-50%); margin: 0; padding: 8px 18px; border-radius: 22px; background: var(--green-dark); color: #f3ead2; font-size: 0.88rem; box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3); }
 
 .muted { color: var(--muted); }
 </style>

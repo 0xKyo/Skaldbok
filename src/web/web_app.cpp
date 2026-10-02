@@ -1,5 +1,7 @@
 #include "web/web_app.h"
 
+#include <ctime>
+
 #include <algorithm>
 #include <cctype>
 #include <chrono>
@@ -13,6 +15,7 @@
 #include "web/web_views.h"
 #include "web/web_creation.h"
 #include "web/web_adventures.h"
+#include "web/web_board.h"
 #include "web/web_homebrew.h"
 
 namespace gm {
@@ -64,6 +67,21 @@ std::optional<std::string> fromBase64(std::string_view in) {
 }
 
 constexpr size_t kSmallBody = 64 * 1024;                          // every request but a picture is tiny
+// "2026-10-02T03:15:00Z": when a session starts or ends (the clock of the computer, not the steady one the rest of the server counts with)
+std::string isoNow() {
+    const std::time_t now = std::time(nullptr);
+    std::tm utc{};
+#ifdef _WIN32
+    gmtime_s(&utc, &now);
+#else
+    gmtime_r(&now, &utc);
+#endif
+    char text[32];
+    std::strftime(text, sizeof text, "%Y-%m-%dT%H:%M:%SZ", &utc);
+    return text;
+}
+
+constexpr size_t kBoardBody = 5 * 1024 * 1024;                   // the master's board: what was pinned on it, as one document
 constexpr size_t kPictureBody = 12 * 1024 * 1024;                 // 8 MB of picture, in base64
 constexpr size_t kWritesPerWindow = 60;
 constexpr long long kWriteWindowMs = 10 * 1000;
@@ -188,7 +206,9 @@ WebResponse WebApp::handle(const WebRequest& request) {
 
 WebResponse WebApp::route(const WebRequest& request, long long now) {
     const bool picture = request.method == "POST" && request.path == "/api/chat";
-    if (request.body.size() > (picture ? kPictureBody : kSmallBody)) return errorResponse(413, "That is too big.");
+    const bool board = request.method == "PUT" && (request.path == "/api/gm/board" || request.path.starts_with("/api/gm/sessions/"));
+    const bool boardPicture = request.method == "POST" && request.path == "/api/gm/board/images";
+    if (request.body.size() > (picture || boardPicture ? kPictureBody : board ? kBoardBody : kSmallBody)) return errorResponse(413, "That is too big.");
     if (request.path == "/api" || request.path.starts_with("/api/")) return api(request, now);
     return serveStatic(request);
 }
@@ -360,6 +380,103 @@ WebResponse WebApp::gmApi(const WebRequest& request, long long now) {
         json body;
         if (!jsonParse(request.body, body, nullptr) || !body.is_object()) return errorResponse(400, "Send a JSON object.");
         return jsonResponse(200, creationPreview(creationFromJson(body, content_), content_, dice_));
+    }
+
+    // ---- the master's board: what the GM pinned, wrote and linked on the Master tab (one document, kept as it was sent) ----
+    if (sub == "/gm/board") {
+        if (reading) return jsonResponse(200, boardLoad(config_.prefsDir));
+        if (request.method == "PUT") {
+            json body;
+            if (!jsonParse(request.body, body, nullptr)) return errorResponse(400, "Send the board as JSON.");
+            const BoardResult saved = boardSave(config_.prefsDir, body);
+            return saved.status >= 300 ? errorResponse(saved.status, saved.error) : jsonResponse(200, {{"ok", true}});
+        }
+        return errorResponse(405, "That is not allowed.");
+    }
+
+    // ---- the pictures of the boards: pasted or dropped on the canvas, kept in the GM's folder ----
+    if (sub == "/gm/board/images" && request.method == "POST") {
+        json body;
+        if (!jsonParse(request.body, body, nullptr) || !body.is_object()) return errorResponse(400, "Send {\"image\": <base64>}.");
+        const json* image = jsonFind(body, "image");
+        const auto bytes = image && image->is_string() ? fromBase64(image->get<std::string>()) : std::nullopt;
+        if (!bytes) return errorResponse(400, "The picture must be sent as base64.");
+        const BoardResult kept = boardImageSave(config_.prefsDir, *bytes);
+        return kept.status >= 300 ? errorResponse(kept.status, kept.error) : jsonResponse(kept.status, kept.body);
+    }
+    if (sub.starts_with("/gm/board/images/") && reading) {
+        const std::string file = boardImagePath(config_.prefsDir, sub.substr(17));
+        auto bytes = file.empty() ? std::nullopt : fs::readFile(file);
+        if (!bytes) return errorResponse(404, "No such picture");
+        WebResponse r;
+        r.body = std::move(*bytes);
+        r.contentType = mimeOf(file);
+        r.headers["Cache-Control"] = "private, max-age=86400";
+        return r;
+    }
+
+    // ---- the campaigns: a name and the characters that play it; its sessions are boards of their own ----
+    if (sub == "/gm/campaigns") {
+        if (reading) return jsonResponse(200, campaignList(config_.prefsDir));
+        if (request.method == "POST") {
+            json body;
+            if (!jsonParse(request.body, body, nullptr) || !body.is_object()) body = json::object();
+            const BoardResult made = campaignCreate(config_.prefsDir, jsonStr(body, "name"), isoNow());
+            return made.status >= 300 ? errorResponse(made.status, made.error) : jsonResponse(made.status, made.body);
+        }
+        return errorResponse(405, "That is not allowed.");
+    }
+    if (sub.starts_with("/gm/campaigns/")) {
+        const std::string id = sub.substr(14);
+        if (!fs::safeId(id)) return errorResponse(404, "There is no such campaign.");
+        if (request.method == "PUT") {
+            json body;
+            if (!jsonParse(request.body, body, nullptr)) return errorResponse(400, "Send the campaign as JSON.");
+            const BoardResult saved = campaignSave(config_.prefsDir, id, body);
+            return saved.status >= 300 ? errorResponse(saved.status, saved.error) : jsonResponse(200, campaignList(config_.prefsDir));
+        }
+        if (request.method == "DELETE") {
+            const BoardResult gone = campaignDelete(config_.prefsDir, id);
+            return gone.status >= 300 ? errorResponse(gone.status, gone.error) : jsonResponse(200, {{"campaigns", campaignList(config_.prefsDir)["campaigns"]}, {"sessions", sessionList(config_.prefsDir)["sessions"]}, {"active", sessionList(config_.prefsDir)["active"]}});
+        }
+        return errorResponse(405, "That is not allowed.");
+    }
+
+    // ---- the sessions: boards of their own, one for each game played; one is active, the others are closed until they are opened again ----
+    if (sub == "/gm/sessions") {
+        if (reading) return jsonResponse(200, sessionList(config_.prefsDir));
+        if (request.method == "POST") {
+            json body;
+            if (!jsonParse(request.body, body, nullptr) || !body.is_object()) body = json::object();
+            const BoardResult made = sessionCreate(config_.prefsDir, jsonStr(body, "campaign"), jsonStr(body, "name"), isoNow());
+            return made.status >= 300 ? errorResponse(made.status, made.error) : jsonResponse(made.status, made.body);
+        }
+        return errorResponse(405, "That is not allowed.");
+    }
+    if (sub.starts_with("/gm/sessions/")) {
+        const std::string rest = sub.substr(13);
+        const size_t slash = rest.find('/');
+        const std::string id = rest.substr(0, slash), action = slash == std::string::npos ? std::string() : rest.substr(slash + 1);
+        if (!fs::safeId(id)) return errorResponse(404, "There is no such session.");
+        if (action.empty() && reading) {
+            const json s = sessionGet(config_.prefsDir, id);
+            return s.is_null() ? errorResponse(404, "There is no such session.") : jsonResponse(200, s);
+        }
+        if (action.empty() && request.method == "PUT") {
+            json body;
+            if (!jsonParse(request.body, body, nullptr)) return errorResponse(400, "Send the session as JSON.");
+            const BoardResult saved = sessionSave(config_.prefsDir, id, body);
+            return saved.status >= 300 ? errorResponse(saved.status, saved.error) : jsonResponse(200, {{"ok", true}});
+        }
+        if (action.empty() && request.method == "DELETE") {
+            const BoardResult gone = sessionDelete(config_.prefsDir, id);
+            return gone.status >= 300 ? errorResponse(gone.status, gone.error) : jsonResponse(200, sessionList(config_.prefsDir));
+        }
+        if ((action == "end" || action == "open") && request.method == "POST") {
+            const BoardResult done = action == "end" ? sessionEnd(config_.prefsDir, id, isoNow()) : sessionOpen(config_.prefsDir, id, isoNow());
+            return done.status >= 300 ? errorResponse(done.status, done.error) : jsonResponse(200, sessionList(config_.prefsDir));
+        }
+        return errorResponse(405, "That is not allowed.");
     }
 
     // ---- adventures: the packs that have an adventure.yaml, to be read (only the GM has them) ----

@@ -32,6 +32,7 @@ const type = computed(() => tab.value?.type ?? props.state.current?.type);
       :gm-prefix="gmPrefix"
       hide-tabs
       @follow-key="(key) => state.goTo({ key })"
+      @seen="(key) => state.seen(key)"
     />
   </div>
   <p v-else class="muted" style="padding: 1rem;">Pick something from the index.</p>

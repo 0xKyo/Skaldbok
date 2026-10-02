@@ -3,6 +3,7 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { apiGet } from '../api.js';
 import DataTable from './DataTable.vue';
 import NpcCreator from './NpcCreator.vue';
+import PinButton from './PinButton.vue';
 import RuleText from './RuleText.vue';
 import { tablesMarkedIn, textBlocks, unplacedTables } from '../lib/ruletables.js';
 
@@ -13,7 +14,7 @@ const props = defineProps({
   gmPrefix: { type: String, default: '' },   // '/gm' when used in GM view, '' for player
   hideTabs: { type: Boolean, default: false }, // GM sidebar already picks the category
 });
-const emit = defineEmits(['follow-key']);
+const emit = defineEmits(['follow-key', 'seen']);
 
 const summary = ref(null);
 const type = ref(props.jumpTo?.type ?? (props.mode === 'rules' ? '' : 'spells'));
@@ -28,6 +29,20 @@ let timer = null;
 let request = 0;
 
 const showDetail = computed(() => selected.value !== null);
+
+// what the 📌 button puts on the master's board: the entry open now, as it is on screen
+function pinSelected() {
+  const e = selected.value;
+  if (!e) return null;
+  const title = e.step ? `${e.step}. ${e.name ?? e.title}` : (e.name ?? e.title);
+  return {
+    type: e.fields?.length ? 'card' : 'rule',
+    key: e.key,
+    title,
+    data: { subtitle: e.subtitle ?? '', fields: e.fields ?? [], body: e.body ?? '', sections: e.sections ?? [], tables: e.tables ?? [] },
+  };
+}
+watch(selected, (e) => emit('seen', e?.key ?? null));       // the page you are on, for going back to it
 
 // Side by side (wide screens) the list always has something open beside it: the first entry. On a phone the list and the entry take turns,
 // so nothing is opened by itself: the list is what you see first.
@@ -380,6 +395,7 @@ watch(
         <div class="rules-detail-head">
           <h2 class="rules-detail-name">{{ selected.step ? `${selected.step}. ${selected.name ?? selected.title}` : (selected.name ?? selected.title) }}</h2>
           <div class="chips" style="margin-top: 4px;">
+            <PinButton :snapshot="pinSelected" />
             <span v-if="selected.pack" class="chip" :class="{ homebrew: selected.homebrew }" data-test="source-chip">Source · {{ selected.pack }}</span>
             <span v-if="selected.subtitle" class="chip">{{ selected.subtitle }}</span>
           </div>

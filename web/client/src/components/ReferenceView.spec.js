@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'vitest';
+import { flushPromises } from '@vue/test-utils';
+import { createNav } from '../nav.js';
 import { mount } from '@vue/test-utils';
 import { reactive } from 'vue';
 import ReferenceView from './ReferenceView.vue';
@@ -16,5 +18,30 @@ describe('ReferenceView on a phone', () => {
     await open.get('[data-test=reference-back]').trigger('click');
     expect(open.vm.state.current).toBeNull();
     expect(open.find('[data-test=reference-back]').exists()).toBe(false);
+  });
+});
+
+describe('ReferenceView and the back / forward buttons', () => {
+  it('the page open and the entry of its list are steps: going back opens them again', async () => {
+    const nav = createNav();
+    const state = reactive({ current: null });
+    const w = mount(ReferenceView, { props: { state, token: 't' }, global: { stubs, provide: { nav } } });
+    state.current = { mode: 'tables', type: 'spells', label: 'Spells', tabs: [], tab: 0, entryKey: null, seen: null };
+    await flushPromises();
+    state.current.seen = 'core/spell/fireball';                                    // the list opened an entry
+    await flushPromises();
+    state.current = { mode: 'tables', type: 'skills', label: 'Skills', tabs: [], tab: 0, entryKey: null, seen: null };
+    await flushPromises();
+    nav.back();
+    await flushPromises();
+    expect(state.current.type).toBe('spells');
+    expect(state.current.entryKey).toBe('core/spell/fireball');                    // the entry is asked for again
+    nav.back();
+    await flushPromises();
+    expect(state.current.seen).toBeNull();
+    nav.back();
+    await flushPromises();
+    expect(state.current).toBeNull();                                             // before anything was open
+    w.unmount();
   });
 });

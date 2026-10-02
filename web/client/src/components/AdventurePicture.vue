@@ -3,6 +3,7 @@
 // the text and big, over the page, when it is clicked.
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { apiBlobUrl } from '../api.js';
+import PinButton from './PinButton.vue';
 
 const props = defineProps({
   token: { type: String, required: true },
@@ -30,11 +31,15 @@ onBeforeUnmount(() => {
 });
 
 const close = () => { big.value = false; };
+
+// what the 📌 button puts on the master's board: this picture
+const pinPicture = () => ({ type: 'image', key: `image:${props.adventure}:${props.file}`, title: props.alt || 'Picture', data: { adventure: props.adventure, file: props.file } });
 </script>
 
 <template>
   <figure v-if="url" class="pic" :class="role" data-test="picture">
     <img :src="url" :alt="alt" loading="lazy" @click="big = true" />
+    <PinButton class="pin-corner" :snapshot="pinPicture" small />
   </figure>
   <p v-else-if="failed" class="muted pic-missing" data-test="picture-missing">A picture is missing.</p>
 
@@ -46,7 +51,9 @@ const close = () => { big.value = false; };
 </template>
 
 <style scoped>
-.pic { margin: 6px 0 10px; }
+.pic { margin: 6px 0 10px; position: relative; }
+.pin-corner { position: absolute; top: 4px; right: 4px; opacity: 0; transition: opacity 0.15s; background: rgba(251, 246, 230, 0.92); border-radius: 12px; }
+.pic:hover .pin-corner, .pin-corner:focus-visible { opacity: 1; }
 .pic img { display: block; width: 100%; height: auto; cursor: zoom-in; }
 .pic.maps img { border: 1px solid var(--line); border-radius: 6px; }
 .pic.chapters img { border-radius: 6px; }

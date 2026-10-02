@@ -8,6 +8,10 @@ const file = ['src/style.css', 'client/src/style.css', 'web/client/src/style.css
 const css = readFileSync(file, 'utf8');
 
 describe('style.css', () => {
+  it('keeps the scrollbar always on, so a short page and a long one are the same width and the tabs do not shift', () => {
+    expect(css).toMatch(/html\s*\{[^}]*overflow-y:\s*scroll/);
+  });
+
   it('closes every comment', () => {
     expect((css.match(/\/\*/g) ?? []).length).toBe((css.match(/\*\//g) ?? []).length);
   });

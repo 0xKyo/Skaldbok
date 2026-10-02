@@ -2,11 +2,12 @@
 // The adventures the GM has loaded (a pack with an adventure.yaml): a dropdown to pick one, its outline on the left (chapters, sections,
 // locations) and the text of what is picked on the right. A chapter shows its text and the list of what is in it; anything else shows its
 // text and, below, everything inside it (the NPCs, sidebars, tables...) in the order of the book.
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, inject, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { ApiError, apiGet, apiSend } from '../api.js';
 import DataTable from './DataTable.vue';
 import AdventurePicture from './AdventurePicture.vue';
 import LinkedText from './LinkedText.vue';
+import PinButton from './PinButton.vue';
 
 const props = defineProps({
   token: { type: String, required: true },
@@ -23,11 +24,15 @@ const expanded = ref(new Set());
 const contentOpen = ref(false);       // on a phone the outline and the text take turns
 const loadError = ref('');
 const loading = ref(false);
+const nav = inject('nav', null);      // back and forward between what was looked at (App provides it)
+let pendingNav = null;                // a step being put back that has to wait for its adventure to load
 
 onMounted(async () => {
+  pendingNav = nav?.restoring.value ? nav.slice('adv') : null;      // opened by going back to this tab
   try {
     adventures.value = (await apiGet('/gm/adventures', props.token)).adventures ?? [];
-    if (adventures.value.length) chosen.value = adventures.value[0].id;
+    const wanted = pendingNav?.adventure && adventures.value.some((a) => a.id === pendingNav.adventure) ? pendingNav.adventure : adventures.value[0]?.id;
+    if (wanted) chosen.value = wanted;
   } catch (e) {
     loadError.value = e instanceof ApiError ? e.message : 'Could not load the adventures.';
   }
@@ -46,6 +51,11 @@ watch(chosen, async (id) => {
     loadError.value = '';
     const first = adventure.value.chapters?.[0];
     if (first) selectedId.value = first.id;
+    if (pendingNav && pendingNav.adventure === id) {
+      const step = pendingNav;
+      pendingNav = null;
+      await putBackPage(step);
+    }
   } catch (e) {
     loadError.value = e instanceof ApiError ? e.message : 'Could not open that adventure.';
   } finally {
@@ -294,6 +304,67 @@ watch(chosen, () => {
   npcId.value = '';
   npcOpen.value = false;
 });
+// ---- what the 📌 button puts on the master's board: the page open (with what is inside it), or the NPC open with its stat block ----
+function pinPage() {
+  const n = selected.value;
+  if (!n) return null;
+  const kids = n.kind === 'chapter' ? inlineKids(n) : n.sections ?? [];
+  const tables = [n, ...kids].map(tableOf).filter(Boolean);
+  const creatures = [n, ...kids].flatMap((k) => creaturesOf(k).map((c) => c.name));
+  return {
+    type: 'adventure',
+    key: `adventure:${chosen.value}:${n.id}`,
+    title: n.number ? `${n.number}. ${n.title}` : n.title,
+    data: { body: n.body ?? '', sections: kids.map((k) => ({ title: k.title, body: k.body ?? '' })), tables, creatures },
+    w: 380,
+    h: 320,
+  };
+}
+
+function pinNpc() {
+  const row = npcSelected.value;
+  if (!row) return null;
+  const c = creatureDetail.value[row.node.creatures?.[0]] ?? {};
+  return {
+    type: 'creature',
+    key: `npc:${chosen.value}:${row.node.id}`,
+    title: row.node.title,
+    data: { kind: row.node.kind, category: row.place, intro: row.node.body ?? '', blocks: c.blocks ?? [], attacks: c.attacks ?? [], abilities: c.abilities ?? [], description: '' },
+    w: 360,
+    h: 340,
+  };
+}
+
+// ---- back and forward: the adventure, the tab, the page and the NPC are one step of what was looked at ----
+const navState = computed(() => (adventure.value ? { adventure: chosen.value, view: view.value, story: selectedId.value, npc: npcId.value, monsters: withMonsters.value } : null));
+const expandTo = (id) => { expanded.value = new Set([...expanded.value, ...chainOf(id).map((n) => n.id)]); };
+
+async function putBackPage(s) {
+  withMonsters.value = !!s.monsters;
+  view.value = s.view ?? 'story';
+  if (s.story && index.value.has(s.story)) {
+    expandTo(s.story);
+    selectedId.value = s.story;
+    contentOpen.value = true;
+  }
+  const row = s.npc ? npcs.value.find((r) => r.node.id === s.npc) : null;
+  if (row) await pickNpc(row);
+  else npcId.value = '';
+}
+
+if (nav) {
+  watch(navState, (s) => { if (s) nav.record('adv', s); }, { immediate: true });
+  watch(() => nav.tick.value, async () => {
+    const s = nav.slice('adv');
+    if (!s?.adventure) return;
+    if (s.adventure !== chosen.value) {
+      pendingNav = s;
+      chosen.value = s.adventure;
+    } else {
+      await putBackPage(s);
+    }
+  });
+}
 </script>
 
 <template>
@@ -331,7 +402,7 @@ watch(chosen, () => {
       <article v-if="npcSelected" class="page panel" data-test="npc-page">
         <button type="button" class="back link" data-test="npc-back" @click="npcOpen = false">← NPCs</button>
         <button v-if="jumps.length" type="button" class="link jump-back" data-test="jump-back" @click="goBack">↩ Back</button>
-        <h2>{{ npcSelected.node.title }} <span class="chip">{{ kindLabel(npcSelected.node) }}</span> <span v-if="npcSelected.node.page" class="muted pg">p.{{ npcSelected.node.page }}</span></h2>
+        <h2>{{ npcSelected.node.title }} <span class="chip">{{ kindLabel(npcSelected.node) }}</span> <span v-if="npcSelected.node.page" class="muted pg">p.{{ npcSelected.node.page }}</span> <PinButton :snapshot="pinNpc" small /></h2>
         <AdventurePicture v-for="file in picturesOf(npcSelected.node)" :key="file" :token="token" :adventure="chosen" :file="file" :alt="npcSelected.node.title" />
         <p class="trail muted" data-test="npc-place">{{ npcSelected.chapter.title }}<template v-if="npcSelected.place"> › {{ npcSelected.place }}</template>
           <a v-if="npcSelected.home" href="#" class="story-link" data-test="npc-story" @click.prevent="showInStory(npcSelected)">Open in the story</a></p>
@@ -380,7 +451,7 @@ watch(chosen, () => {
         <p v-if="trail.length > 1" class="trail muted" data-test="trail">
           <template v-for="(t, i) in trail.slice(0, -1)" :key="t.id"><a href="#" @click.prevent="pick(t)">{{ t.title }}</a><span v-if="i < trail.length - 2"> › </span></template>
         </p>
-        <h2>{{ selected.number ? `${selected.number}. ` : '' }}{{ selected.title }} <span v-if="kindLabel(selected)" class="chip">{{ kindLabel(selected) }}</span> <span v-if="selected.page" class="muted pg">p.{{ selected.page }}</span></h2>
+        <h2>{{ selected.number ? `${selected.number}. ` : '' }}{{ selected.title }} <span v-if="kindLabel(selected)" class="chip">{{ kindLabel(selected) }}</span> <span v-if="selected.page" class="muted pg">p.{{ selected.page }}</span> <PinButton :snapshot="pinPage" small /></h2>
 
         <AdventurePicture v-for="file in picturesOf(selected)" :key="file" :token="token" :adventure="chosen" :file="file" :alt="selected.title" />
         <template v-for="(b, i) in blocks(selected.body)" :key="i">

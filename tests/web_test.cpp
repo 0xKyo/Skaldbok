@@ -415,6 +415,92 @@ void chat() {
                   get(app, "/api/gm/homebrew/pack", gmTok, "10.0.0.1", "PUT", R"({"name": "  "})").status == 400,
               "the GM names the pack: what is made from then on goes to a folder of that name");
         get(app, "/api/gm/homebrew/pack", gmTok, "10.0.0.1", "PUT", R"({"name": "Homebrew"})");
+        // the master's board: saved as sent (items, arrows, view), only for the GM
+        const json emptyBoard = body(get(app, "/api/gm/board", gmTok));
+        check(emptyBoard["items"].empty() && emptyBoard["arrows"].empty() && emptyBoard["view"]["zoom"] == 1 && get(app, "/api/gm/board", brenna).status != 200, "the board starts empty, and is the GM's alone");
+        const json boardBody = {{"items", json::array({{{"id", "n1"}, {"kind", "note"}, {"x", 10}, {"y", 20}, {"text", "Remember the ambush"}}, {{"id", "p1"}, {"kind", "pin"}, {"pin", {{"type", "rule"}, {"title", "Melee"}}}}})},
+                                {"arrows", json::array({{{"id", "a1"}, {"from", "n1"}, {"to", "p1"}}})}, {"view", {{"x", -40}, {"y", 15}, {"zoom", 1.5}}}, {"junk", "dropped"}};
+        const WebResponse savedBoard = get(app, "/api/gm/board", gmTok, "10.0.0.1", "PUT", boardBody.dump());
+        const json again = body(get(app, "/api/gm/board", gmTok));
+        check(savedBoard.status == 200 && again["items"].size() == 2 && again["items"][0]["text"] == "Remember the ambush" && again["arrows"][0]["to"] == "p1" && again["view"]["zoom"] == 1.5 && !again.contains("junk"),
+              "what is pinned, written and linked comes back as it was saved");
+        check(get(app, "/api/gm/board", gmTok, "10.0.0.1", "PUT", R"({"items": "no", "arrows": []})").status == 400 && get(app, "/api/gm/board", gmTok, "10.0.0.1", "PUT", R"({"items": [{"text": "no id"}], "arrows": []})").status == 400 &&
+                  get(app, "/api/gm/board", brenna, "10.0.0.1", "PUT", boardBody.dump()).status != 200,
+              "a board needs lists, and an id on every item; a player cannot change it");
+        const std::string bigText(100000, 'x');
+        const json bigBoard = {{"items", json::array({{{"id", "n"}, {"kind", "note"}, {"text", bigText}}})}, {"arrows", json::array()}};
+        check(get(app, "/api/gm/board", gmTok, "10.0.0.1", "PUT", bigBoard.dump()).status == 200, "a board of some size (more than the usual 64 KB of a request) can be saved");
+        // the sessions: boards of their own, one active at a time; a closed one cannot be changed until it is opened again
+        const json noSessions = body(get(app, "/api/gm/sessions", gmTok));
+        check(noSessions["sessions"].empty() && noSessions["active"] == "" && get(app, "/api/gm/sessions", brenna).status != 200, "there are no sessions at first, and they are the GM's alone");
+        // the campaigns: sessions belong to one, and the characters that play it are assigned to it
+        check(get(app, "/api/gm/campaigns", brenna).status != 200 && body(get(app, "/api/gm/campaigns", gmTok))["campaigns"].empty() &&
+                  get(app, "/api/gm/sessions", gmTok, "10.0.0.1", "POST", "{}").status == 400 && get(app, "/api/gm/sessions", gmTok, "10.0.0.1", "POST", R"({"campaign": "nope"})").status == 400,
+              "there are no campaigns at first; a session needs one that exists");
+        const WebResponse campaignMade = get(app, "/api/gm/campaigns", gmTok, "10.0.0.1", "POST", R"({"name": "  The Misty Vale "})");
+        const std::string campaignId = body(campaignMade).value("id", "");
+        const std::string inCampaign = json({{"campaign", campaignId}}).dump();
+        check(campaignMade.status == 201 && body(campaignMade)["name"] == "The Misty Vale" && body(campaignMade)["characters"].empty() && body(get(app, "/api/gm/campaigns", gmTok))["campaigns"].size() == 1,
+              "a campaign is made with its name");
+        const std::string brennaId = byName(app, "Brenna")->id, garmanderId = byName(app, "Garmander")->id;
+        const json assigned = body(get(app, "/api/gm/campaigns/" + campaignId, gmTok, "10.0.0.1", "PUT", json({{"characters", json::array({brennaId, garmanderId, brennaId})}}).dump()));
+        check(assigned["campaigns"][0]["characters"].size() == 2 && assigned["campaigns"][0]["characters"][0] == brennaId && assigned["campaigns"][0]["name"] == "The Misty Vale", "characters are assigned to it, once each");
+        check(get(app, "/api/gm/campaigns/" + campaignId, gmTok, "10.0.0.1", "PUT", R"({"characters": "no"})").status == 400 && get(app, "/api/gm/campaigns/" + campaignId, gmTok, "10.0.0.1", "PUT", R"({"characters": ["../x"]})").status == 400 &&
+                  get(app, "/api/gm/campaigns/" + campaignId, gmTok, "10.0.0.1", "PUT", R"({"name": "  "})").status == 400 && get(app, "/api/gm/campaigns/nope", gmTok, "10.0.0.1", "PUT", "{}").status == 404 &&
+                  get(app, "/api/gm/campaigns/" + campaignId, brenna, "10.0.0.1", "PUT", "{}").status != 200,
+              "a campaign needs a name, characters are ids, an unknown campaign is a 404, a player cannot change one");
+        const WebResponse firstMade = get(app, "/api/gm/sessions", gmTok, "10.0.0.1", "POST", inCampaign);
+        const std::string firstId = body(firstMade).value("id", "");
+        check(firstMade.status == 201 && body(firstMade)["name"] == "Session 1" && body(firstMade)["ended"] == "" && !body(firstMade)["created"].get<std::string>().empty() && body(get(app, "/api/gm/sessions", gmTok))["active"] == firstId,
+              "a session starts active, named after its number and dated");
+        const json sessionBoard = {{"board", {{"items", json::array({{{"id", "n1"}, {"kind", "note"}, {"text", "They beat the ogre"}}})}, {"arrows", json::array()}, {"view", {{"x", 0}, {"y", 0}, {"zoom", 1}}}}}};
+        check(get(app, "/api/gm/sessions/" + firstId, gmTok, "10.0.0.1", "PUT", sessionBoard.dump()).status == 200 &&
+                  body(get(app, "/api/gm/sessions/" + firstId, gmTok))["board"]["items"][0]["text"] == "They beat the ogre" && body(get(app, "/api/gm/sessions", gmTok))["sessions"][0]["items"] == 1,
+              "what is written in the active session is kept, and the list counts it");
+        const WebResponse secondMade = get(app, "/api/gm/sessions", gmTok, "10.0.0.1", "POST", json({{"campaign", campaignId}, {"name", "  The Misty Vale, part 2  "}}).dump());
+        const std::string secondId = body(secondMade).value("id", "");
+        const json afterSecond = body(get(app, "/api/gm/sessions", gmTok));
+        check(secondMade.status == 201 && body(secondMade)["name"] == "The Misty Vale, part 2" && afterSecond["active"] == secondId && afterSecond["sessions"].size() == 2 && afterSecond["sessions"][0]["id"] == secondId &&
+                  afterSecond["sessions"][1]["ended"] != "",
+              "a new session ends the one that was active, and the newest is listed first");
+        check(get(app, "/api/gm/sessions/" + firstId, gmTok, "10.0.0.1", "PUT", sessionBoard.dump()).status == 409 &&
+                  get(app, "/api/gm/sessions/" + firstId, gmTok, "10.0.0.1", "PUT", R"({"name": "The ogre"})").status == 200 && body(get(app, "/api/gm/sessions/" + firstId, gmTok))["name"] == "The ogre",
+              "a closed session cannot have its board changed, but it can be renamed");
+        const json opened = body(get(app, "/api/gm/sessions/" + firstId + "/open", gmTok, "10.0.0.1", "POST"));
+        check(opened["active"] == firstId && body(get(app, "/api/gm/sessions/" + secondId, gmTok))["ended"] != "" && body(get(app, "/api/gm/sessions/" + firstId, gmTok))["reopened"] == 1 &&
+                  get(app, "/api/gm/sessions/" + firstId, gmTok, "10.0.0.1", "PUT", sessionBoard.dump()).status == 200,
+              "opening a closed session makes it the active one (the other is closed) and it can be changed again");
+        check(body(get(app, "/api/gm/sessions/" + firstId + "/end", gmTok, "10.0.0.1", "POST"))["active"] == "", "ending the session leaves none active");
+        check(get(app, "/api/gm/sessions/nope", gmTok).status == 404 && get(app, "/api/gm/sessions/..%2Fx", gmTok).status == 404 && get(app, "/api/gm/sessions/nope/open", gmTok, "10.0.0.1", "POST").status == 404 &&
+                  get(app, "/api/gm/sessions/" + firstId + "/open", brenna, "10.0.0.1", "POST").status != 200 && get(app, "/api/gm/sessions/" + firstId, gmTok, "10.0.0.1", "PUT", R"({"name": "  "})").status == 400,
+              "an unknown session is a 404; a session needs a name; a player cannot open one");
+        const std::string doomedId = body(get(app, "/api/gm/sessions", gmTok, "10.0.0.1", "POST", json({{"campaign", campaignId}, {"name", "To delete"}}).dump())).value("id", "");
+        const json afterDelete = body(get(app, "/api/gm/sessions/" + doomedId, gmTok, "10.0.0.1", "DELETE"));
+        check(afterDelete["active"] == "" && afterDelete["sessions"].size() == 2 && get(app, "/api/gm/sessions/" + doomedId, gmTok).status == 404 && get(app, "/api/gm/sessions/" + doomedId, gmTok, "10.0.0.1", "DELETE").status == 404 &&
+                  get(app, "/api/gm/sessions/" + firstId, gmTok, "10.0.0.1", "DELETE").status == 200 && get(app, "/api/gm/sessions/" + firstId, brenna, "10.0.0.1", "DELETE").status != 200 &&
+                  body(get(app, "/api/gm/sessions", gmTok))["sessions"].size() == 1,
+              "a session can be deleted (the active one too, and then none is active); an unknown one is a 404; a player cannot");
+        // a session of the time before campaigns goes into one called Campaign 1; deleting a campaign deletes its sessions
+        test::write(e.prefs + "/sessions/sold-1.json", R"({"name": "Old game", "created": "2026-01-01T10:00:00Z", "ended": "2026-01-01T12:00:00Z", "board": {"items": [], "arrows": []}})");
+        const json withOrphan = body(get(app, "/api/gm/campaigns", gmTok));
+        std::string oldCampaign;
+        for (const json& c : withOrphan["campaigns"])
+            if (c["name"] == "Campaign 1") oldCampaign = c["id"].get<std::string>();
+        check(!oldCampaign.empty() && body(get(app, "/api/gm/sessions/sold-1", gmTok))["campaign"] == oldCampaign, "a session of the time before campaigns is adopted by a campaign of its own");
+        const json afterCampaignDelete = body(get(app, "/api/gm/campaigns/" + oldCampaign, gmTok, "10.0.0.1", "DELETE"));
+        check(afterCampaignDelete["campaigns"].size() == 1 && get(app, "/api/gm/sessions/sold-1", gmTok).status == 404 && afterCampaignDelete["sessions"].size() == 1 && get(app, "/api/gm/campaigns/" + oldCampaign, gmTok, "10.0.0.1", "DELETE").status == 404,
+              "deleting a campaign deletes its sessions, and only its own");
+        // the pictures of the boards
+        const std::string tinyPng = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==";
+        const WebResponse keptPicture = get(app, "/api/gm/board/images", gmTok, "10.0.0.1", "POST", json({{"image", tinyPng}}).dump());
+        const std::string pictureId = body(keptPicture).value("id", "");
+        const WebResponse servedPicture = get(app, "/api/gm/board/images/" + pictureId, gmTok);
+        check(keptPicture.status == 201 && pictureId.starts_with("i") && pictureId.ends_with(".png") && servedPicture.status == 200 && servedPicture.contentType == "image/png" && servedPicture.body.size() > 20 &&
+                  get(app, "/api/gm/board/images/" + pictureId, brenna).status != 200,
+              "a picture pasted on a board is kept and served back to the GM, with its type");
+        check(get(app, "/api/gm/board/images", gmTok, "10.0.0.1", "POST", json({{"image", "bm90IGEgcGljdHVyZQ=="}}).dump()).status == 400 && get(app, "/api/gm/board/images", gmTok, "10.0.0.1", "POST", R"({"image": "***"})").status == 400 &&
+                  get(app, "/api/gm/board/images/..%2Fboard.json", gmTok).status == 404 && get(app, "/api/gm/board/images/i1-2.png", gmTok).status == 404,
+              "only pictures are kept; only the ones the server made are served");
         // adventures: a pack with an adventure.yaml (here in the book's data folder) is listed and read by the GM
         test::write(e.data + "/packs/tale/manifest.yaml", "id: tale\nname: A Short Tale\n");
         test::write(e.data + "/packs/tale/adventure.yaml",

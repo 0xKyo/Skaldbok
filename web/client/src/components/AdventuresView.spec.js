@@ -1,6 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { flushPromises, mount } from '@vue/test-utils';
 import AdventuresView from './AdventuresView.vue';
+import NavButtons from './NavButtons.vue';
+import { createNav } from '../nav.js';
 
 let calls;
 let saved;                     // the notes the server holds
@@ -233,6 +235,40 @@ describe('AdventuresView', () => {
     await w.get('[data-test=note]').trigger('blur');                              // leaving the box saves at once
     await flushPromises();
     expect(saved).toEqual({});
+  });
+
+  it('back and forward go through what was looked at: pages, tabs and NPCs', async () => {
+    const nav = createNav();
+    const w = mount({ components: { AdventuresView, NavButtons }, template: '<div><NavButtons /><AdventuresView token="gm" /></div>' }, { global: { provide: { nav } } });
+    await flushPromises();
+    const back = () => w.get('[data-test=nav-back]');
+    const forward = () => w.get('[data-test=nav-forward]');
+    const outline = () => w.findAll('[data-test=outline-item]');
+    expect(back().attributes('disabled')).toBeDefined();                                    // nothing yet to go back to
+    await outline()[1].trigger('click');                                                    // Outskirt
+    expect(w.get('[data-test=page]').text()).toContain('A village.');
+    await w.get('[data-test=tab-npcs]').trigger('click');
+    await w.get('[data-test=npc-row]').trigger('click');
+    await flushPromises();
+    expect(w.get('[data-test=npc-page]').text()).toContain('A war veteran.');
+    expect(back().attributes('disabled')).toBeUndefined();
+    await back().trigger('click');                                                          // the NPCs tab, before Hardy was opened
+    await flushPromises();
+    expect(w.find('[data-test=npc-page]').exists()).toBe(false);
+    await back().trigger('click');                                                          // the story, Outskirt
+    await flushPromises();
+    expect(w.find('[data-test=npcs]').exists()).toBe(false);
+    expect(w.get('[data-test=page]').text()).toContain('A village.');
+    await back().trigger('click');                                                          // the first page
+    await flushPromises();
+    expect(w.get('[data-test=page]').text()).toContain('Welcome to the book.');
+    expect(back().attributes('disabled')).toBeDefined();
+    await forward().trigger('click');
+    await forward().trigger('click');
+    await forward().trigger('click');
+    await flushPromises();
+    expect(w.get('[data-test=npc-page]').text()).toContain('A war veteran.');               // all the way forward: Hardy again
+    expect(forward().attributes('disabled')).toBeDefined();
   });
 
   it('says so when no adventure is loaded', async () => {

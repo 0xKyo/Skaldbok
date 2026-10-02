@@ -1,7 +1,7 @@
 <script setup>
 // The GM's homebrew: a pack of their own (named as they like, "Homebrew" by default) that holds what they make, and the Reference shows it like any
 // other pack. A choice of what to make on top — creatures, or one of the kinds of data file of Core — and the editor of that kind below.
-import { computed, onMounted, ref } from 'vue';
+import { computed, inject, onMounted, ref, watch } from 'vue';
 import { ApiError, apiGet, apiSend } from '../api.js';
 import HomebrewCreatures from './HomebrewCreatures.vue';
 import HomebrewEntries from './HomebrewEntries.vue';
@@ -21,6 +21,22 @@ const failed = ref(false);
 const packs = ref([]);                    // the packs one can look into: [{id, name, editable}], the GM's own first, then Core and the others
 const viewing = ref('');                  // the id of the pack being looked at; empty: the GM's own
 const viewed = computed(() => packs.value.find((p) => p.id === viewing.value && !p.editable) ?? null);   // null: it is the GM's own
+
+// what is open (the kind, and the pack being looked into) is one of the things the ◀ ▶ buttons remember
+const nav = inject('nav', null);
+function putBack() {
+  const s = nav.slice('hb');
+  if (!s) return;
+  pending.value = null;
+  restore.value = null;
+  viewing.value = s.viewing ?? '';
+  kind.value = s.kind ?? 'creatures';
+}
+if (nav?.restoring.value) putBack();                     // opened by going back to this tab
+if (nav) {
+  watch([kind, viewing], () => nav.record('hb', { kind: kind.value, viewing: viewing.value }), { immediate: true });
+  watch(() => nav.tick.value, putBack);
+}
 
 const kinds = computed(() => [...(viewed.value ? [] : [{ id: 'creatures', label: 'Creatures' }]), ...sections.value.map((s) => ({ id: s.id, label: s.label }))]);
 const section = computed(() => sections.value.find((s) => s.id === kind.value) ?? null);

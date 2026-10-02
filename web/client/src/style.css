@@ -22,7 +22,8 @@
 }
 
 * { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; overflow-x: hidden; }
+html.board-open { overflow: hidden !important; }   /* the Master board is the window: the page behind it does not scroll */
+html { -webkit-text-size-adjust: 100%; overflow-x: hidden; overflow-y: scroll; scrollbar-gutter: stable; }   /* the scrollbar is always there: a short page (Rules) and a long one (Character) have the same width, so nothing shifts between tabs */
 body {
   margin: 0;
   overflow-x: hidden;
@@ -422,3 +423,12 @@ button.pip.tap { padding: 0; cursor: pointer; width: 1.6rem; height: 1.6rem; }
 .composer textarea { width: 100%; resize: none; font: inherit; color: var(--ink); background: #fbf6e6; border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; }
 .composer-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
 .composer-row .btn[type='submit'] { margin-left: auto; }
+
+/* GM: name, version, arrows and tabs share one line */
+.gm-top { flex-wrap: nowrap; align-items: center; position: sticky; top: 0; z-index: 5; background: var(--paper); padding-bottom: 0; gap: 14px; }
+.gm-top .wordmark, .gm-top .live { flex: none; }
+.gm-top .gm-tabs { flex: 1 1 auto; min-width: 0; }
+.gm-top .tabs { position: static; margin: 0; }
+.gm-top .tabs button { padding: 14px 6px; }
+@media (max-width: 760px) { .gm-top { flex-wrap: wrap; } .gm-top .gm-tabs { order: 5; flex-basis: 100%; } }
+.gm-top { padding-left: 16px; padding-right: 16px; }

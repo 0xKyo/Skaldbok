@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { flushPromises, mount } from '@vue/test-utils';
 import GmView from './GmView.vue';
+import { createNav } from '../nav.js';
 import ChatView from './ChatView.vue';
 import SheetView from './SheetView.vue';
 
@@ -31,9 +32,9 @@ function stub() {
   }));
 }
 
-async function mountGm() {
+async function mountGm(nav = null) {
   stub();
-  const w = mount(GmView, { props: { token: 'gm-token' }, global: { stubs: { SheetView: true, ChatView: true, ReferenceView: true, HomebrewView: true, AdventuresView: true } } });
+  const w = mount(GmView, { props: { token: 'gm-token' }, global: { provide: nav ? { nav } : {}, stubs: { SheetView: true, ChatView: true, ReferenceView: true, HomebrewView: true, AdventuresView: true, MasterView: true } } });
   await flushPromises();
   return w;
 }
@@ -49,7 +50,7 @@ afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals(); });
 describe('GmView tabs', () => {
   it('has its tabs along the top, like the player page, and no Parties tab', async () => {
     const w = await mountGm();
-    expect(tabLabels(w)).toEqual(['Character', 'Chat (2)', 'Rules', 'Adventures', 'Homebrew']);
+    expect(tabLabels(w)).toEqual(['Character', 'Chat (2)', 'Rules', 'Adventures', 'Master', 'Homebrew']);
     expect(w.get('[data-test=gm-tab][aria-selected=true]').text()).toBe('Character');
     expect(w.find('.gm-sidebar').exists()).toBe(false);
   });
@@ -116,6 +117,34 @@ describe('GmView Chat and Rules tabs', () => {
     const w = await mountGm();
     await goTo(w, 'Homebrew');
     expect(w.findComponent({ name: 'HomebrewView' }).exists()).toBe(true);
+  });
+
+  it('the tab is in the address: a link or a reload opens it, and changing tabs updates it', async () => {
+    window.history.replaceState(null, '', '/#master');
+    const w = await mountGm();
+    expect(w.findComponent({ name: 'MasterView' }).exists()).toBe(true);
+    await goTo(w, 'Rules');
+    expect(window.location.hash).toBe('#rules');
+    window.history.replaceState(null, '', '/');
+  });
+
+  it('back and forward go through the tabs that were looked at', async () => {
+    const nav = createNav();
+    const w = await mountGm(nav);
+    await goTo(w, 'Rules');
+    await goTo(w, 'Adventures');
+    expect(w.findComponent({ name: 'AdventuresView' }).exists()).toBe(true);
+    nav.back();
+    await flushPromises();
+    expect(w.findComponent({ name: 'AdventuresView' }).exists()).toBe(false);
+    expect(w.findComponent({ name: 'ReferenceView' }).exists()).toBe(true);
+    nav.back();
+    await flushPromises();
+    expect(w.findComponent({ name: 'ReferenceView' }).exists()).toBe(false);                 // back on the Character tab
+    nav.forward();
+    nav.forward();
+    await flushPromises();
+    expect(w.findComponent({ name: 'AdventuresView' }).exists()).toBe(true);
   });
 
   it('Adventures is a tab for the GM to read what is loaded', async () => {

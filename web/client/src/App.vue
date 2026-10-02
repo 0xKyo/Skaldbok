@@ -1,11 +1,13 @@
 <script setup>
 // App root: detects GM vs player mode from the URL token (?gm=... or ?t=...) and renders the matching view.
-import { computed, onBeforeUnmount, onMounted, ref, watchEffect } from 'vue';
+import { computed, onBeforeUnmount, onMounted, provide, ref, watch, watchEffect } from 'vue';
 import { ApiError, apiGet, apiSend, captureToken, captureGmToken, forgetToken } from './api.js';
 import ChatView from './components/ChatView.vue';
 import GmView from './components/GmView.vue';
+import NavButtons from './components/NavButtons.vue';
 import ReferenceView from './components/ReferenceView.vue';
 import SheetView from './components/SheetView.vue';
+import { createNav } from './nav.js';
 import { useReference } from './reference.js';
 
 const POLL_MS = 3000; // a change by the GM shows up within a few seconds
@@ -20,6 +22,8 @@ const lastUpdate = ref(null);
 const tab = ref(['sheet', 'chat', 'rules'].includes(window.location.hash.slice(1)) ? window.location.hash.slice(1) : 'sheet');
 const reference = useReference(() => token.value); // shared with the GM view; kept here so it survives tab switches
 let timer = null;
+const nav = createNav();            // back and forward between what was looked at; the parts of the app report to it
+provide('nav', nav);
 
 // what the GM wrote after the last message this player read (the server keeps the marker, so it follows them from phone to phone)
 const unread = computed(() => chat.value.messages.filter((m) => m.from === 'gm' && m.id > chat.value.playerRead).length);
@@ -48,6 +52,13 @@ function pick(id, replace = false) {
   if (replace) window.history.replaceState(null, '', url);
   else window.history.pushState(null, '', url);
 }
+
+// the player's tab is one of the things the ◀ ▶ buttons remember (the GM's is kept by GmView)
+watch(tab, (t) => { if (!gmToken.value) nav.record('tab', t); }, { immediate: true });
+watch(() => nav.tick.value, () => {
+  const t = nav.slice('tab');
+  if (!gmToken.value && t && t !== tab.value) pick(t, true);
+});
 
 const onPopState = () => {
   const id = window.location.hash.slice(1);
@@ -120,9 +131,10 @@ watchEffect(() => {
 <template>
   <!-- GM view: full interface when accessed with the GM link -->
   <main v-if="gmToken" class="wrap gm-wrap">
-    <header class="top">
-      <span class="wordmark">Skaldbok <small class="ver">0.6</small></span>
-      <span class="who">Game Master</span>
+    <header class="top gm-top">
+      <span class="wordmark">Skaldbok <small class="ver">0.7</small></span>
+      <NavButtons />
+      <div id="gm-tabs" class="gm-tabs"></div>
       <span class="live"><span class="dot"></span>GM</span>
     </header>
     <GmView :token="gmToken" />
@@ -130,7 +142,7 @@ watchEffect(() => {
 
   <main v-else class="wrap">
     <div v-if="!token" class="notice" data-test="no-link">
-      <h1>Skaldbok <small class="ver">0.6</small></h1>
+      <h1>Skaldbok <small class="ver">0.7</small></h1>
       <p v-if="problem" class="error">{{ problem }}</p>
       <p v-else>Open the personal link your GM sent you. It looks like <span class="gold">…/?t=xxxxxxxx</span>.</p>
       <p class="muted small">The link is yours alone: it opens your character and nobody else's.</p>
@@ -143,16 +155,18 @@ watchEffect(() => {
     </div>
 
     <template v-else>
-      <header class="top">
-        <span class="wordmark">Skaldbok <small class="ver">0.6</small></span>
-        <span class="who" data-test="who">{{ me.kin.name }} {{ me.profession.name }} · {{ me.age.label }}<span v-if="me.school"> · {{ me.school }}</span></span>
+      <header class="top gm-top">
+        <span class="wordmark">Skaldbok <small class="ver">0.7</small></span>
+        <NavButtons />
+        <div class="gm-tabs">
+          <nav class="tabs" role="tablist">
+            <button v-for="t in tabs" :key="t.id" role="tab" :aria-selected="tab === t.id" @click="pick(t.id)">{{ t.label }}</button>
+          </nav>
+        </div>
         <span class="live" :title="offline ? 'Connection lost: showing the last data' : 'Updates by itself every few seconds'">
           <span class="dot" :class="{ off: offline }"></span>{{ offline ? 'offline' : `updated ${updated}` }}
         </span>
       </header>
-      <nav class="tabs" role="tablist">
-        <button v-for="t in tabs" :key="t.id" role="tab" :aria-selected="tab === t.id" @click="pick(t.id)">{{ t.label }}</button>
-      </nav>
       <SheetView v-if="tab === 'sheet'" :me="me" :token="token" @updated="(fresh) => (me = fresh)" @goto-rules="goToRules" />
       <ChatView v-else-if="tab === 'chat'" :thread="chat" :token="token" @sent="refresh" />
       <ReferenceView v-else-if="tab === 'rules'" :state="reference" :token="token" />

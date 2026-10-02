@@ -2,8 +2,13 @@
 // A table of the rules: optional dice, a roll column when it has dice, then the columns. A table with a die can be rolled:
 // the button picks a random result and marks its row.
 import { computed, ref } from 'vue';
+import PinButton from './PinButton.vue';
 
-const props = defineProps({ table: { type: Object, required: true } }); // {title, dice, columns[], rows[{roll, cells[]}]}
+const props = defineProps({
+  table: { type: Object, required: true },        // {title, dice, columns[], rows[{roll, cells[]}]}
+  pinnable: { type: Boolean, default: true },     // the 📌 button (the GM's board has none: it is already there)
+  hideTitle: { type: Boolean, default: false },   // when what holds the table already says its name
+});
 
 const sides = computed(() => Number.parseInt((props.table.dice ?? '').replace(/\D/g, ''), 10) || 0);
 const rolled = ref(null); // {value, row}
@@ -17,6 +22,9 @@ function rowFor(value) {
   return at >= 0 ? at : Math.min(value, props.table.rows.length) - 1;
 }
 
+// what the 📌 button puts on the master's board: this table
+const pinTable = () => ({ type: 'table', key: `table:${props.table.title}`, title: props.table.title, data: { title: props.table.title, dice: props.table.dice, columns: props.table.columns, rows: props.table.rows }, w: 360, h: 280 });
+
 function roll() {
   const value = 1 + Math.floor(Math.random() * sides.value);
   rolled.value = { value, row: rowFor(value) };
@@ -26,9 +34,10 @@ function roll() {
 <template>
   <div class="data-table">
     <div class="dt-title">
-      {{ table.title }}<span v-if="table.dice" class="dt-dice">{{ table.dice }}</span>
+      <template v-if="!hideTitle">{{ table.title }}</template><span v-if="table.dice" class="dt-dice">{{ table.dice }}</span>
       <button v-if="sides" type="button" class="dt-roll-btn" data-test="table-roll" @click="roll">Roll {{ table.dice }}</button>
       <span v-if="rolled" class="dt-result" data-test="table-rolled">rolled {{ rolled.value }}</span>
+      <PinButton v-if="pinnable" :snapshot="pinTable" small />
     </div>
     <div class="dt-scroll">
       <table>

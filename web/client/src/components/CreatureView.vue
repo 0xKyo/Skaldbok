@@ -4,6 +4,7 @@ import { computed, onMounted, ref, watch } from 'vue';
 import { apiGet } from '../api.js';
 import DataTable from './DataTable.vue';
 import MessageImage from './MessageImage.vue';
+import PinButton from './PinButton.vue';
 import RuleText from './RuleText.vue';
 import { textBlocks, unplacedTables } from '../lib/ruletables.js';
 
@@ -26,6 +27,13 @@ function toggleTag(id) {
   tags.value = tags.value.includes(id) ? tags.value.filter((t) => t !== id) : [...tags.value, id];
 }
 const selected = ref(null); // full monster detail
+
+// what the 📌 button puts on the master's board: the creature open now, with its stat block
+function pinCreature() {
+  const c = selected.value;
+  if (!c) return null;
+  return { type: 'creature', key: c.key, title: c.name, data: { kind: c.kind, category: c.category, blocks: c.blocks, attacks: c.attacks, abilities: c.abilities, description: c.description ?? '' } };
+}
 const query = ref('');
 const loading = ref(false);
 const loadingDetail = ref(false);
@@ -121,6 +129,7 @@ onMounted(search);
             {{ selected.kind === 'npc' ? 'NPC' : selected.kind === 'animal' ? 'Animal' : 'Monster' }}
             <template v-if="selected.category"> · {{ selected.category }}</template>
           </span>
+          <PinButton :snapshot="pinCreature" style="margin-left: 8px;" />
           <span v-if="selected.pack" class="chip" style="margin-left: 8px;" data-test="source-chip">Source · {{ selected.pack }}</span>
         </div>
 

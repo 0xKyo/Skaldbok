@@ -45,7 +45,7 @@ describe('App', () => {
     const w = mount(App);
     await flushPromises();
     expect(w.get('[data-test=name]').element.value).toContain('Brenna');
-    expect(w.get('[data-test=who]').text()).toContain('Human Fighter');
+    expect(w.find('[data-test=who]').exists()).toBe(false);   // the summary is gone from the header
     expect(window.location.search).toBe('?t=good-token');
     expect(localStorage.getItem('skaldbok.token')).toBe('good-token');
     expect(document.title).toBe('Brenna · Skaldbok');
