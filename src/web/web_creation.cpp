@@ -114,7 +114,7 @@ json creationCatalog(const ContentStore& content) {
     c["professions"] = profs;
 
     json ages = json::array();
-    for (const char* id : {"young", "adult", "old"}) {
+    for (const std::string id : {"young", "adult", "old"}) {
         const AgeRule& r = ageRule(id);
         json mods = json::array();
         for (int m : r.attrMod) mods.push_back(m);

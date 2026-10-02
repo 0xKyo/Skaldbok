@@ -135,7 +135,8 @@ data/system/        (the books' generic rules and tables, the World chapter, the
    powershell -ExecutionPolicy Bypass -File scripts\build.ps1 -Test
    build\release\skaldbok.exe
    ```
-3. **App on Linux**:
+3. **App on Linux**: `./Build.sh --deps` installs the compiler, CMake, Node and SDL's libraries (apt, asks for sudo) and builds
+   everything; afterwards `./Build.sh` rebuilds (`--test`, `--clean` as on Windows) and `./Skaldbok.sh` opens the app. By hand:
    ```
    sudo apt install build-essential cmake ninja-build pkg-config libx11-dev libxext-dev libxcursor-dev libxi-dev \
         libxrandr-dev libxfixes-dev libxss-dev libxkbcommon-dev libwayland-dev libdrm-dev libgbm-dev \
@@ -143,7 +144,7 @@ data/system/        (the books' generic rules and tables, the World chapter, the
    cmake -S . -B build/release -G Ninja -DCMAKE_BUILD_TYPE=Release && cmake --build build/release
    ctest --test-dir build/release && build/release/skaldbok
    ```
-   *(Only tested on Windows; the code uses nothing platform-specific. It needs a C++23 compiler.)*
+   *(It needs a C++23 compiler: GCC 13+ or Clang 17+.)*
 
 CMake downloads SDL3, Dear ImGui, SQLite, stb_image, nlohmann/json, yaml-cpp, miniz (zip) and cpp-httplib (web server) as source files and
 compiles them statically: the executable is self-contained. `scripts\build.ps1 -Headless` compiles only the core and the tests, without a window.

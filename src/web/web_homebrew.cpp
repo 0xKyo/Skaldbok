@@ -325,6 +325,9 @@ namespace gm {
 namespace {
 
 struct HbField {
+    HbField() = default;
+    HbField(std::string k, std::string l, std::string t, std::vector<std::string> o = {}, std::vector<HbField> c = {})
+        : key(std::move(k)), label(std::move(l)), type(std::move(t)), options(std::move(o)), cols(std::move(c)) {}
     std::string key, label, type;                  // text | long | number | bool | select | list | pairs | rows
     std::vector<std::string> options;              // select
     std::vector<HbField> cols;                       // rows

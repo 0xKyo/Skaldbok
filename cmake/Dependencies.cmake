@@ -92,6 +92,10 @@ target_include_directories(sqlite3_static PUBLIC ${sqlite_src_SOURCE_DIR})
 target_compile_definitions(sqlite3_static PUBLIC
   SQLITE_ENABLE_FTS5 SQLITE_THREADSAFE=0 SQLITE_OMIT_LOAD_EXTENSION SQLITE_DQS=0 SQLITE_DEFAULT_MEMSTATUS=0)
 set_target_properties(sqlite3_static PROPERTIES C_STANDARD 11)
+# third-party amalgamation: its own warnings are not ours to fix
+if(NOT MSVC)
+  target_compile_options(sqlite3_static PRIVATE -w)
+endif()
 
 # stb_image lives next to the downloaded header
 set(STB_INCLUDE_DIR "${stb_image_h_SOURCE_DIR}" CACHE INTERNAL "")

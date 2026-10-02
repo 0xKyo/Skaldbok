@@ -1,5 +1,6 @@
 // The Core content pack, homebrew packs (loading, validation, importing, homerules) and search.
 // Needs data/packs/core (the book pack, kept out of git because the books are copyrighted).
+#include <algorithm>
 #include <set>
 #include <string>
 #include <vector>
