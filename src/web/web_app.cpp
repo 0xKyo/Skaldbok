@@ -10,6 +10,7 @@
 
 #include "parsing/fsutil.h"
 #include "parsing/fts.h"
+#include "game/creation.h"
 #include "game/sheet_edit.h"
 #include "game/settings.h"
 #include "web/web_views.h"
@@ -153,6 +154,19 @@ void WebApp::reloadContentIfChanged() {
     content_.load(specs);                                // Core and the enabled packs, exactly as the GM app sees them
 }
 
+// Items that weigh nothing live in the tiny items, not in the inventory: moves the ones that are not there yet and saves the file.
+bool WebApp::moveTinyToList(const std::string& id) {
+    const Character* c = characters_.find(id);
+    if (!c) return false;
+    Character copy = *c;
+    if (!moveTinyItems(copy, content_)) return false;
+    json doc, set = json::object();
+    if (!jsonParse(copy.toJson(), doc, nullptr)) return false;
+    set["inventory"] = doc["inventory"];
+    set["tiny_items"] = doc["tiny_items"];
+    return sheet::editFile(config_.prefsDir + "/characters/" + id + ".yaml", id, set, false, nullptr).ok;
+}
+
 void WebApp::refresh(long long now) {
     if (!ok()) return;
     if (refreshedAt_ >= 0 && now - refreshedAt_ < config_.refreshMs) return;
@@ -163,6 +177,13 @@ void WebApp::refresh(long long now) {
         return true;
     });
     reloadContentIfChanged();
+    bool moved = false;
+    for (const auto& [id, item] : characters_.items) moved = moveTinyToList(id) || moved;
+    if (moved) {                                         // the files changed: read them again
+        refreshedAt_ = -1;
+        refresh(now);
+        return;
+    }
     // every character has a token; new characters get one as soon as they appear
     std::vector<std::string> readable;
     for (const auto& [id, item] : characters_.items) readable.push_back(id);
@@ -304,7 +325,8 @@ WebResponse WebApp::editSheet(const WebRequest& request, const std::string& char
     if (!r.ok) return errorResponse(r.status, r.error);
     refreshedAt_ = -1;                                   // the next look must see the file we just wrote
     refresh(now);
-    return jsonResponse(200, characterView(r.character, content_, !asPlayer));
+    const Character* fresh = characters_.find(characterId);
+    return jsonResponse(200, characterView(fresh ? *fresh : r.character, content_, !asPlayer));
 }
 
 // Somebody typing quickly is fine; a script hammering the server is not.

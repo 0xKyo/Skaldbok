@@ -57,6 +57,8 @@ std::vector<const Entry*> magicChoices(const ContentStore& content, const Entry&
 double catalogWeight(const Entry& e);
 // Gives the inventory items that were never weighed the weight of their card, so the encumbrance follows the book.
 void fillWeights(Character& c, const ContentStore& content);
+// Moves the inventory items that weigh nothing (a card's dash, or a weight of 0) to the tiny items. True if anything moved.
+bool moveTinyItems(Character& c, const ContentStore& content);
 // Builds the sheet. Dice picks that were not rolled yet are rolled now. Call validateCreation first.
 Character buildCharacter(const Creation& c, const ContentStore& content, Dice& dice);
 // Picks a random row's first cell from a table; empty if the table has no rows.

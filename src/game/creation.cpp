@@ -354,6 +354,23 @@ void fillWeights(Character& c, const ContentStore& content) {
     }
 }
 
+bool moveTinyItems(Character& c, const ContentStore& content) {
+    Character weighed = c;
+    fillWeights(weighed, content);
+    bool moved = false;
+    std::vector<Item> kept;
+    for (const Item& it : weighed.inventory) {
+        if (it.weight != 0) {
+            kept.push_back(it);
+            continue;
+        }
+        c.tinyItems.push_back(it.count > 1 ? it.name + " x" + std::to_string(it.count) : it.name);
+        moved = true;
+    }
+    if (moved) c.inventory = kept;
+    return moved;
+}
+
 Character buildCharacter(const Creation& cr, const ContentStore& content, Dice& dice) {
     Character c;
     const Entry* kin = content.entry(Kind::Kin, content.idByKey(Kind::Kin, cr.kinKey));
@@ -403,7 +420,10 @@ Character buildCharacter(const Creation& cr, const ContentStore& content, Dice& 
         if (e && e->kind == Kind::Armor && e->prop("slot") == "helmet" && c.helmet.name.empty()) c.helmet = it;
         else if (e && e->kind == Kind::Armor && c.armor.name.empty()) c.armor = it;
         else if (e && e->kind == Kind::Weapon && c.weapons.size() < 3) c.weapons.push_back(it);
-        else {
+        else if (e && it.weight == 0) {                                          // weighs nothing ("—"): a tiny item, outside the inventory
+            const int n = std::max(1, count);
+            c.tinyItems.push_back(n > 1 ? it.name + " x" + std::to_string(n) : it.name);
+        } else {
             it.count = std::max(1, count);
             c.inventory.push_back(it);
         }

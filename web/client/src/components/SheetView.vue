@@ -521,7 +521,10 @@ const setInt = (target, key, value, lo, hi) => (target[key] = num(value, lo, hi)
           <input v-model="draft.tiny_items[i]" class="edit" maxlength="120" :aria-label="`Tiny item ${i + 1}`" />
           <button type="button" class="x" aria-label="Remove" @click="removeAt(draft.tiny_items, i)">×</button>
         </div>
-        <button type="button" class="btn secondary small-btn" @click="draft.tiny_items.push('')">Add a tiny item</button>
+        <div class="inv-add">
+          <EntryPicker :token="token" :prefix="apiPrefix" type="tiny" label="Add a tiny item…" @pick="(e) => draft.tiny_items.push(e.name)" />
+          <button type="button" class="btn secondary small-btn" @click="draft.tiny_items.push('')">+ Custom</button>
+        </div>
       </template>
       <template v-else>
         <span v-for="(t, i) in eq.tinyItems" :key="i">{{ t }}<template v-if="i < eq.tinyItems.length - 1">, </template></span>

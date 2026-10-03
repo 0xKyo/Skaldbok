@@ -91,6 +91,7 @@ private:
     bool tooManyWrites(const std::string& characterId, long long now);
     void refresh(long long now);
     void reloadContentIfChanged();
+    bool moveTinyToList(const std::string& id);
     bool blocked(const std::string& ip, long long now);
     void failed(const std::string& ip, long long now);
 

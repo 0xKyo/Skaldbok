@@ -7,6 +7,8 @@ const MERGED = ['attributes', 'coins'];
 
 export const clone = (value) => JSON.parse(JSON.stringify(value ?? null));
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+// The server drops blank tiny items, so a row the player has added but not yet typed in exists only in the draft.
+const filled = (key, value) => (key === 'tiny_items' && Array.isArray(value) ? value.filter((t) => t.trim()) : value);
 
 /** The set that turns `base` into `draft` ({} when nothing differs). */
 export function diffDoc(base, draft) {
@@ -16,8 +18,8 @@ export function diffDoc(base, draft) {
       const sub = {};
       for (const k of Object.keys(draft[key] ?? {})) if (!same(base[key]?.[k], draft[key][k])) sub[k] = draft[key][k];
       if (Object.keys(sub).length) set[key] = sub;
-    } else if (!same(base[key], draft[key])) {
-      set[key] = clone(draft[key]);
+    } else if (!same(filled(key, base[key]), filled(key, draft[key]))) {
+      set[key] = clone(filled(key, draft[key]));
     }
   }
   return set;
@@ -34,8 +36,8 @@ export function adopt(draft, base, server) {
     if (MERGED.includes(key)) {
       next[key] = { ...(next[key] ?? {}) };
       for (const k of Object.keys(server[key] ?? {})) if (same(base[key]?.[k], draft[key]?.[k])) next[key][k] = server[key][k];
-    } else if (same(base[key], draft[key])) {
-      next[key] = clone(server[key]);
+    } else if (same(filled(key, base[key]), filled(key, draft[key]))) {
+      if (!same(filled(key, draft[key]), server[key])) next[key] = clone(server[key]);
     }
   }
   return next;

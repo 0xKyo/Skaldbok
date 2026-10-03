@@ -291,6 +291,9 @@ json characterView(const Character& c, const ContentStore& cs, bool asGm) {
 json contentSummary(const ContentStore& cs) {
     json types = json::array(), packs = json::array(), rules = json::array();
     for (const ContentType& t : kTypes) types.push_back(typeEntry(cs, t));
+    int tinyCount = 0;                                  // the gear whose weight is "-": a category of its own, after Gear
+    for (const Entry& e : cs.entries(Kind::Gear)) tinyCount += catalogWeight(e) == 0;
+    types.push_back({{"id", "tiny"}, {"label", "Tiny items"}, {"count", tinyCount}, {"sections", json::array()}});
     types.push_back({{"id", "creatures"}, {"label", "Creatures"}, {"count", static_cast<int>(cs.monsters().size())}});
     for (const PackInfo& p : cs.packs()) {
         int shown = 0;
@@ -313,17 +316,22 @@ json contentSummary(const ContentStore& cs) {
 }
 
 bool contentList(const ContentStore& cs, const std::string& typeId, const std::string& query, json& out) {
-    const ContentType* type = nullptr;
+    // "tiny" is not a card type of its own: it is the gear that weighs nothing (the picker for the tiny items)
+    const bool weightless = typeId == "tiny";
+    static const ContentType kTiny{"tiny", Kind::Gear, "Tiny items"};
+    const ContentType* type = weightless ? &kTiny : nullptr;
     for (const ContentType& t : kTypes)
         if (typeId == t.id) type = &t;
     if (!type) return false;
     json entries = json::array();
     const std::string q = trimmed(query);
     if (q.empty()) {
-        for (const Entry& e : cs.entries(type->kind)) entries.push_back(publicCard(cs, e));
+        for (const Entry& e : cs.entries(type->kind))
+            if (!weightless || catalogWeight(e) == 0) entries.push_back(publicCard(cs, e));
     } else {
         for (const Hit& h : cs.search(q, 60, {type->kind}))
-            if (const Entry* e = cs.entry(type->kind, h.id)) entries.push_back(publicCard(cs, *e));
+            if (const Entry* e = cs.entry(type->kind, h.id))
+                if (!weightless || catalogWeight(*e) == 0) entries.push_back(publicCard(cs, *e));
     }
     out = {{"type", type->id}, {"label", type->label}, {"entries", entries}, {"intro", introView(cs, cs.introOf(type->kind))}};
     return true;
