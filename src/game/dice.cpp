@@ -1,8 +1,6 @@
 #include "game/dice.h"
 
-#include <cctype>
 #include <chrono>
-#include <cstdlib>
 #include <random>
 
 namespace gm {
@@ -13,49 +11,6 @@ std::string DiceExpr::text() const {
     if (modifier > 0) s += "+" + std::to_string(modifier);
     if (modifier < 0) s += std::to_string(modifier);
     return s;
-}
-
-std::optional<DiceExpr> parseDice(const std::string& text) {
-    size_t i = 0;
-    const size_t n = text.size();
-    auto skip = [&] { while (i < n && text[i] == ' ') ++i; };
-    auto number = [&](int& out) {
-        if (i >= n || !std::isdigit(static_cast<unsigned char>(text[i]))) return false;
-        long v = 0;
-        while (i < n && std::isdigit(static_cast<unsigned char>(text[i]))) v = v * 10 + (text[i++] - '0');
-        out = static_cast<int>(v > 1000000 ? 1000000 : v);
-        return true;
-    };
-    DiceExpr e;
-    skip();
-    int c = 1;
-    if (number(c)) e.count = c;
-    if (i >= n || (text[i] != 'd' && text[i] != 'D')) return std::nullopt;
-    ++i;
-    if (!number(e.sides) || e.sides < 1 || e.count < 1 || e.count > 100) return std::nullopt;
-    skip();
-    for (;;) {
-        if (i >= n) break;
-        const char op = text[i];
-        if (op == '+' || op == '-') {
-            ++i;
-            skip();
-            int v = 0;
-            if (!number(v)) return std::nullopt;
-            e.modifier += op == '+' ? v : -v;
-        } else if (op == '*' || op == 'x' || op == 'X' || static_cast<unsigned char>(op) == 0xC3) {
-            // '*', 'x' or the UTF-8 multiplication sign
-            i += static_cast<unsigned char>(op) == 0xC3 ? 2 : 1;
-            skip();
-            int v = 0;
-            if (!number(v)) return std::nullopt;
-            e.multiplier *= v;
-        } else {
-            return std::nullopt;
-        }
-        skip();
-    }
-    return e;
 }
 
 std::string DiceRoll::describe() const {
@@ -98,12 +53,6 @@ DiceRoll Dice::roll(const DiceExpr& e, const std::string& label) {
     }
     r.total = sum * e.multiplier + e.modifier;
     return r;
-}
-
-const char* Dice::checkOutcome(int d20, int skillLevel) {
-    if (d20 == 1) return "Dragon (critical success)";
-    if (d20 == 20) return "Demon (critical failure)";
-    return d20 <= skillLevel ? "Success" : "Failure";
 }
 
 }  // namespace gm

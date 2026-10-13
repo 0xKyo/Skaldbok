@@ -1,0 +1,29 @@
+kind: age
+category: LOC_CATEGORY_AGE
+rollable:
+  - Age
+entities:
+  - id: age_young
+    name: Young
+    fields:
+      trained_skills_profession: 6
+      trained_skills_free: 2
+      mods:
+        agility: 1
+        constitution: 1
+  - id: age_adult
+    name: Adult
+    fields:
+      trained_skills_profession: 6
+      trained_skills_free: 4
+  - id: age_old
+    name: Old
+    fields:
+      trained_skills_profession: 6
+      trained_skills_free: 6
+      mods:
+        strength: -2
+        agility: -2
+        constitution: -2
+        intelligence: 1
+        willpower: 1

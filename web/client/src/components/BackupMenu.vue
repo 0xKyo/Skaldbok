@@ -2,6 +2,7 @@
 // "Backup" in the GM header: Export saves all the GM's work in one file; Import (on another computer) puts it back, replacing what is there.
 import { ref } from 'vue';
 import { ApiError, apiBlobUrl, apiSend } from '../api.js';
+import { t } from '../i18n.js';
 
 const props = defineProps({
   token: { type: String, required: true },
@@ -32,9 +33,9 @@ async function exportBackup() {
     link.click();
     link.remove();
     setTimeout(() => URL.revokeObjectURL(url), 10000);
-    say('Backup saved to your downloads.');
+    say(t('Backup saved to your downloads.'));
   } catch (e) {
-    say(e instanceof ApiError ? e.message : 'The backup could not be made.', true);
+    say(e instanceof ApiError ? e.message : t('The backup could not be made.'), true);
   } finally {
     busy.value = false;
   }
@@ -62,7 +63,7 @@ async function chosen(event) {
     pending.value = { text, files: Object.keys(doc.files).length, created: String(doc.created ?? '').slice(0, 10), name: file.name };
     say('');
   } catch {
-    say('That is not a Skaldbok backup.', true);
+    say(t('That is not a Skaldbok backup.'), true);
   }
 }
 
@@ -72,10 +73,10 @@ async function importBackup() {
   try {
     await apiSend('POST', '/gm/backup/import', props.token, JSON.parse(text));
     pending.value = null;
-    say('Backup restored.');
+    say(t('Backup restored.'));
     props.reload();
   } catch (e) {
-    say(e instanceof ApiError ? e.message : 'The backup could not be restored.', true);
+    say(e instanceof ApiError ? e.message : t('The backup could not be restored.'), true);
   } finally {
     busy.value = false;
   }
@@ -84,18 +85,18 @@ async function importBackup() {
 
 <template>
   <span class="backup">
-    <button type="button" class="backup-btn" data-test="backup-toggle" :aria-expanded="open" title="Move your work to another computer" @click="open = !open">Backup</button>
+    <button type="button" class="backup-btn" data-test="backup-toggle" :aria-expanded="open" :title="t('Move your work to another computer')" @click="open = !open">{{ t('Backup') }}</button>
     <div v-if="open" class="backup-panel" data-test="backup-panel">
-      <button type="button" class="btn" data-test="backup-export" :disabled="busy" @click="exportBackup">Export backup</button>
-      <button type="button" class="btn" data-test="backup-import" :disabled="busy" @click="fileInput.click()">Import backup…</button>
+      <button type="button" class="btn" data-test="backup-export" :disabled="busy" @click="exportBackup">{{ t('Export backup') }}</button>
+      <button type="button" class="btn" data-test="backup-import" :disabled="busy" @click="fileInput.click()">{{ t('Import backup…') }}</button>
       <input ref="fileInput" type="file" accept=".json,application/json" hidden data-test="backup-file" @change="chosen" />
-      <p class="muted small">Export saves characters, chat, campaigns, sessions, boards, notes and homebrew in one file. Import it on the other computer.</p>
+      <p class="muted small">{{ t('Export saves characters, chat, campaigns, sessions, boards, notes and homebrew in one file. Import it on the other computer.') }}</p>
       <div v-if="pending" class="backup-confirm" data-test="backup-confirm">
         <p>
-          Replace everything here with “{{ pending.name }}”<span v-if="pending.created"> ({{ pending.created }})</span>, {{ pending.files }} files? What is here now is deleted.
+          {{ t('Replace everything here with “{name}”', { name: pending.name }) }}<span v-if="pending.created"> ({{ pending.created }})</span>, {{ t('{n} files? What is here now is deleted.', { n: pending.files }) }}
         </p>
-        <button type="button" class="btn danger" data-test="backup-yes" :disabled="busy" @click="importBackup">Yes, replace</button>
-        <button type="button" class="btn" data-test="backup-no" @click="pending = null">Cancel</button>
+        <button type="button" class="btn danger" data-test="backup-yes" :disabled="busy" @click="importBackup">{{ t('Yes, replace') }}</button>
+        <button type="button" class="btn" data-test="backup-no" @click="pending = null">{{ t('Cancel') }}</button>
       </div>
       <p v-if="message" :class="failed ? 'error' : 'ok'" data-test="backup-message">{{ message }}</p>
     </div>

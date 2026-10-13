@@ -1,180 +1,192 @@
 kin:
-  - id: human
-    name: Human
-    description: "Humans are the last-born. The other kin have songs and legends about times before the dawn of humanity. Today the humans have spread across much of the known world. Many are peasants living in little villages clustered around castles and palaces. Others are warriors sworn to protect the peasants and their vulnerable settlements, markets, and trade caravans from the dangers of the world. Still more are adventurers: fearless humans who venture into the unknown in search of glory, gold, and knowledge."
+  - id: kin_human
+    name: LOC_KIN_HUMAN
+    description: LOC_KIN_HUMAN_DESC
     movement: 10
     innate_abilities:
-      - Adaptive
+      - ability_adaptive
     rollable:
       - "Human: First Name"
     entities:
-      - name: Joruna
+      - name: LOC_KIN_HUMAN_ENTITIES_JORUNA_NAME
         kind: first-name
-      - name: Tym
+      - name: LOC_KIN_HUMAN_ENTITIES_TYM_NAME
         kind: first-name
-      - name: Halvelda
+      - name: LOC_KIN_HUMAN_ENTITIES_HALVELDA_NAME
         kind: first-name
-      - name: Garmander
+      - name: LOC_KIN_HUMAN_ENTITIES_GARMANDER_NAME
         kind: first-name
-      - name: Verolun
+      - name: LOC_KIN_HUMAN_ENTITIES_VEROLUN_NAME
         kind: first-name
-      - name: Lothar
+      - name: LOC_KIN_HUMAN_ENTITIES_LOTHAR_NAME
         kind: first-name
-  - id: halfling
-    name: Halfling
-    description: Halflings are short humanoids often found in hilly farmlands where they live in earthen dwellings with well-stocked larders. They are modest and amiable by nature, with a natural affinity for hearth and home. Halflings are neither warlike nor ambitious, but highly drawn to epic tales and beautiful songs from days long gone. From time to time, this desire can lead them to leave the safety of their homes in search of grand adventures. Because of their vulnerability and fear of “the tall ones,” they are good at staying hidden and quickly getting out of critical situations.
+  - id: kin_halfling
+    name: LOC_KIN_HALFLING
+    description: LOC_KIN_HALFLING_DESC
     movement: 8
     innate_abilities:
-      - Hard to Catch
+      - ability_hardToCatch
     rollable:
       - "Halfling: First Name"
     entities:
-      - name: Snappy
+      - name: LOC_KIN_HALFLING_ENTITIES_SNAPPY_NAME
         kind: first-name
-      - name: Brine
+      - name: LOC_KIN_HALFLING_ENTITIES_BRINE_NAME
         kind: first-name
-      - name: Cottar
+      - name: LOC_KIN_HALFLING_ENTITIES_COTTAR_NAME
         kind: first-name
-      - name: Bumble
+      - name: LOC_KIN_HALFLING_ENTITIES_BUMBLE_NAME
         kind: first-name
-      - name: Perrywick
+      - name: LOC_KIN_HALFLING_ENTITIES_PERRYWICK_NAME
         kind: first-name
-      - name: Theoline
+      - name: LOC_KIN_HALFLING_ENTITIES_THEOLINE_NAME
         kind: first-name
-  - id: dwarf
-    name: Dwarf
-    description: Dwarves are the oldest of the elder folk, at least according to their own chroniclers. They are an immensely proud and traditional people whose culture is steeped in ancient customs and grandiose ballads of heroic ancestors. Dwarves feel a strong connection with the bedrock and the roots of the world. They are skilled blacksmiths and artisans, admired for their ability to craft wondrous items of precious metal, as well as of iron and stone. Dwarves are also known as fierce warriors armed with axes, war hammers, and other heavy melee weapons forged in their underground smithies.
+  - id: kin_dwarf
+    name: LOC_KIN_DWARF
+    description: LOC_KIN_DWARF_DESC
     movement: 8
     innate_abilities:
-      - Unforgiving
+      - ability_unforgiving
     rollable:
       - "Dwarf: First Name"
     entities:
-      - name: Tinderrock
+      - name: LOC_KIN_DWARF_ENTITIES_TINDERROCK_NAME
         kind: first-name
-      - name: Halwyld
+      - name: LOC_KIN_DWARF_ENTITIES_HALWYLD_NAME
         kind: first-name
-      - name: Tymolana
+      - name: LOC_KIN_DWARF_ENTITIES_TYMOLANA_NAME
         kind: first-name
-      - name: Traut
+      - name: LOC_KIN_DWARF_ENTITIES_TRAUT_NAME
         kind: first-name
-      - name: Urd
+      - name: LOC_KIN_DWARF_ENTITIES_URD_NAME
         kind: first-name
-      - name: Fermer
+      - name: LOC_KIN_DWARF_ENTITIES_FERMER_NAME
         kind: first-name
-  - id: elf
-    name: Elf
-    description: Elves are an ancient kin that for eons have watched over the forests of the world. They are guided by the stars which they regard as divine beings capable of peering into the deepest mysteries. Elven culture is meditatively introverted and sometimes difficult for outsiders to understand. However, it is clear that they are driven by other, more metaphysical concerns than the lust for gold and glory often found in dwarves and humans. Nonetheless, their kin includes many powerful warriors, widely respected and praised by the bards for their skill with both sword and bow.
+  - id: kin_elf
+    name: LOC_KIN_ELF
+    description: LOC_KIN_ELF_DESC
     movement: 10
     innate_abilities:
-      - Inner Peace
+      - ability_innerPeace
     rollable:
       - "Elf: First Name"
     entities:
-      - name: Arasin
+      - name: LOC_KIN_ELF_ENTITIES_ARASIN_NAME
         kind: first-name
-      - name: Illyriana
+      - name: LOC_KIN_ELF_ENTITIES_ILLYRIANA_NAME
         kind: first-name
-      - name: Galvander
+      - name: LOC_KIN_ELF_ENTITIES_GALVANDER_NAME
         kind: first-name
-      - name: Tyrindelia
+      - name: LOC_KIN_ELF_ENTITIES_TYRINDELIA_NAME
         kind: first-name
-      - name: Erwilnor
+      - name: LOC_KIN_ELF_ENTITIES_ERWILNOR_NAME
         kind: first-name
-      - name: Andremone
+      - name: LOC_KIN_ELF_ENTITIES_ANDREMONE_NAME
         kind: first-name
-  - id: mallard
-    name: Mallard
-    description: The origin of the mallards is shrouded in mystery. Some scholars claim that they came from a mighty island realm that was swallowed by the sea thousands of years ago; others believe them to be the result of a failed magical experiment. Whatever the truth may be, these feathered humanoids are a common sight in the world. They have a knack for trade, and their agitated quacking is often an integral part of the soundscape around marketplaces and trade caravans. However, some mallards seek their fortunes as brigands, pirates, or mercenaries. Despite their diminutive size, they are fierce in battle and feared by many for their murderous rage.
+  - id: kin_mallard
+    name: LOC_KIN_MALLARD
+    description: LOC_KIN_MALLARD_DESC
     movement: 8
     innate_abilities:
-      - Ill-Tempered
-      - Webbed Feet
+      - ability_illTempered
+      - ability_webbedFeet
     rollable:
       - "Mallard: First Name"
     entities:
-      - name: Qwucksum
+      - name: LOC_KIN_MALLARD_ENTITIES_QWUCKSUM_NAME
         kind: first-name
-      - name: Splats
+      - name: LOC_KIN_MALLARD_ENTITIES_SPLATS_NAME
         kind: first-name
-      - name: Moggee
+      - name: LOC_KIN_MALLARD_ENTITIES_MOGGEE_NAME
         kind: first-name
-      - name: Groddy
+      - name: LOC_KIN_MALLARD_ENTITIES_GRODDY_NAME
         kind: first-name
-      - name: Blisandina
+      - name: LOC_KIN_MALLARD_ENTITIES_BLISANDINA_NAME
         kind: first-name
-      - name: Hackleswell
+      - name: LOC_KIN_MALLARD_ENTITIES_HACKLESWELL_NAME
         kind: first-name
-  - id: wolfkin
-    name: Wolfkin
-    description: Wolfkin are the untamed fury of the wilds. They may be highly intelligent creatures, and like the elves, they have an unfailing tendency to sink into thought, pondering the mysteries of the universe. But simmering under the surface are ancient hunting instincts and an unquenchable anger over past wrongs committed against wolfkin, wolves, and the wilderness in general. As hunters and pathfinders they are second to none, but wolfkin can also be found as heavily armed mercenaries, or mystics and healers in human settlements.
+  - id: kin_wolfkin
+    name: LOC_KIN_WOLFKIN
+    description: LOC_KIN_WOLFKIN_DESC
     movement: 12
     innate_abilities:
-      - Hunting Instincts
+      - ability_huntingInstincts
     rollable:
       - "Wolfkin: First Name"
     entities:
-      - name: Wyld
+      - name: LOC_KIN_WOLFKIN_ENTITIES_WYLD_NAME
         kind: first-name
-      - name: Wolfshadow
+      - name: LOC_KIN_WOLFKIN_ENTITIES_WOLFSHADOW_NAME
         kind: first-name
-      - name: Lunariem
+      - name: LOC_KIN_WOLFKIN_ENTITIES_LUNARIEM_NAME
         kind: first-name
-      - name: Obdurian
+      - name: LOC_KIN_WOLFKIN_ENTITIES_OBDURIAN_NAME
         kind: first-name
-      - name: Frostbite
+      - name: LOC_KIN_WOLFKIN_ENTITIES_FROSTBITE_NAME
         kind: first-name
-      - name: Wuldenhall
+      - name: LOC_KIN_WOLFKIN_ENTITIES_WULDENHALL_NAME
         kind: first-name
 
 rollable:
   - Kin
 entities:
-  - name: Human
+  - id: kin_human
+    name: LOC_KIN_HUMAN
     kind: kin
-    category: Kin
-  - name: Halfling
+    category: LOC_CATEGORY_KIN
+  - id: kin_halfling
+    name: LOC_KIN_HALFLING
     kind: kin
-    category: Kin
-  - name: Dwarf
+    category: LOC_CATEGORY_KIN
+  - id: kin_dwarf
+    name: LOC_KIN_DWARF
     kind: kin
-    category: Kin
-  - name: Elf
+    category: LOC_CATEGORY_KIN
+  - id: kin_elf
+    name: LOC_KIN_ELF
     kind: kin
-    category: Kin
-  - name: Mallard
+    category: LOC_CATEGORY_KIN
+  - id: kin_mallard
+    name: LOC_KIN_MALLARD
     kind: kin
-    category: Kin
-  - name: Wolfkin
+    category: LOC_CATEGORY_KIN
+  - id: kin_wolfkin
+    name: LOC_KIN_WOLFKIN
     kind: kin
-    category: Kin
-  - name: Human
+    category: LOC_CATEGORY_KIN
+  - id: kin_human_2
+    name: LOC_KIN_HUMAN_2
     kind: kin
-    category: Movement
+    category: LOC_CATEGORY_MOVEMENT
     fields:
-      MOVEMENT: "10"
-  - name: Halfling
+      LOC_KIN_HUMAN_2__FIELDS_MOVEMENT: "10"
+  - id: kin_halfling_2
+    name: LOC_KIN_HALFLING_2
     kind: kin
-    category: Movement
+    category: LOC_CATEGORY_MOVEMENT
     fields:
-      MOVEMENT: "8"
-  - name: Dwarf
+      LOC_KIN_HALFLING_2__FIELDS_MOVEMENT: "8"
+  - id: kin_dwarf_2
+    name: LOC_KIN_DWARF_2
     kind: kin
-    category: Movement
+    category: LOC_CATEGORY_MOVEMENT
     fields:
-      MOVEMENT: "8"
-  - name: Elf
+      LOC_KIN_DWARF_2__FIELDS_MOVEMENT: "8"
+  - id: kin_elf_2
+    name: LOC_KIN_ELF_2
     kind: kin
-    category: Movement
+    category: LOC_CATEGORY_MOVEMENT
     fields:
-      MOVEMENT: "10"
-  - name: Mallard
+      LOC_KIN_ELF_2__FIELDS_MOVEMENT: "10"
+  - id: kin_mallard_2
+    name: LOC_KIN_MALLARD_2
     kind: kin
-    category: Movement
+    category: LOC_CATEGORY_MOVEMENT
     fields:
-      MOVEMENT: "8"
-  - name: Wolfkin
+      LOC_KIN_MALLARD_2__FIELDS_MOVEMENT: "8"
+  - id: kin_wolfkin_2
+    name: LOC_KIN_WOLFKIN_2
     kind: kin
-    category: Movement
+    category: LOC_CATEGORY_MOVEMENT
     fields:
-      MOVEMENT: "12"
+      LOC_KIN_WOLFKIN_2__FIELDS_MOVEMENT: "12"

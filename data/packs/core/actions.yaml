@@ -1,143 +1,148 @@
 intro:
-  body: On your turn in the round, you can move and perform one action. You simply explain how you want to move and what action you want to perform. If necessary, you also roll dice to see whether you succeed. You decide whether to move before you act or vice versa. You can even use part of your movement, perform your action, and then finish the movement. You must perform your action and move on your turn – you cannot save any of them for later (but see Waiting on the previous page).
+  body: LOC_ACTIONS_INTRO_BODY
   sections:
-    - name: Reactions
-      body: |
-        Some actions are not performed on your turn, but on the opponent’s. These are called reactions and include things like [[parrying|parry]] or [[dodging|dodge]] attacks. This uses up your own turn in the round, which means that you cannot perform a reaction if you have already had your turn. Flip your [[initiative card|initiative]] after performing a reaction.
-    - name: Terrain
-      body: |
-        The terrain where the fighting takes place can affect your movement and actions. Maps usually show what type of terrain is found in different areas.
-        {{table: Terrain}}
+    - name: LOC_ACTIONS_INTRO_SECTIONS_REACTIONS_NAME
+      body: LOC_ACTIONS_INTRO_SECTIONS_REACTIONS_BODY
+    - name: LOC_ACTIONS_INTRO_SECTIONS_TERRAIN_NAME
+      body: LOC_ACTIONS_INTRO_SECTIONS_TERRAIN_BODY
 source: rulebook
 groups:
-  - id: actions
-    name: Actions
-    intro: |
-        An action in combat can be many different things, but the most common ones are summarized below.
-  - id: free-actions
-    name: Free Actions
-    intro: |
-        Minor actions such as drawing a weapon kept at hand, dropping to the ground, or shouting a few words are all {{key: free actions | free action}}. Free actions do not count as your action in the round but you can only perform one of each type per round, and only on your own turn. For example, you can drop down or get up on your turn, but not both.
-  - id: movement
-    name: Movement
-    table: Movement Actions
-    intro: |
-        * When performing a reaction, you also lose your movement in the round. Several reactions, such as dodging or parrying, give you a certain movement as part of the action.
-        * Under normal circumstances, you can move as many meters as your Movement rate.
-        * Moving away from an enemy within 2 meters requires an EVADE roll; on failure the enemy gets a {{key: free attack}}.
-  - id: melee-combat
-    name: Melee Combat
-    table: Melee Combat Actions
+  - id: actionGroup_actions
+    name: LOC_ACTION_GROUP_ACTIONS
+    intro: LOC_ACTION_GROUP_ACTIONS_INTRO
+  - id: actionGroup_freeActions
+    name: LOC_ACTION_GROUP_FREE_ACTIONS
+    intro: LOC_ACTION_GROUP_FREE_ACTIONS_INTRO
+  - id: actionGroup_movement
+    name: LOC_ACTION_GROUP_MOVEMENT
+    table: LOC_ACTION_GROUP_MOVEMENT_TABLE
+    intro: LOC_ACTION_GROUP_MOVEMENT_INTRO
+  - id: actionGroup_meleeCombat
+    name: LOC_ACTION_GROUP_MELEE_COMBAT
+    table: LOC_ACTION_GROUP_MELEE_COMBAT_TABLE
 actions:
-  - name: Dash
-    group: actions
-    description: This action doubles your movement rate in the round.
-  - name: Melee Attack
-    group: actions
-    description: These can be performed against an enemy within 2 meters (4 meters for long weapons).
-  - name: Ranged Attack
-    group: actions
-    description: Attacks with a ranged weapon can be made against targets within the weapon’s range.
-  - name: Sneak Attack
-    group: actions
-    description: |
-      * When you sneak up on someone undetected and perform an attack, it is called a sneak attack. It can be done with both ranged and melee weapons, but never during active combat (except with the Backstabbing [[heroic ability]]). First you make a SNEAKING roll.
-      * Moving close enough to attack in melee combat (within 2 meters for most weapons) gives you a [[bane]]. If you fail, the enemy notices you – draw initiative. If you succeed your attack counts as surprising, which means that you can choose any initiative card you want. You also get a [[boon]] on the attack, and the target can neither dodge nor parry. Using a subtle weapon increases the damage by one die (for example 2D8 instead of D8). Sneak attacks are always performed individually, by one attacker against one target.
-  - name: Ambush
-    group: actions
-    description: "* A special kind of sneak attack is an ambush – lying in wait for an enemy and attacking as it passes by. In this case, each victim makes an AWARENESS roll to spot the ambush, with a bane if the attackers are well prepared. All those who fail get the bottom cards (counting from #10 and up), randomly drawn."
-  - name: Parry
-    group: actions
-    description: Both melee and ranged attacks can be parried, but the latter requires a shield. Parrying is a reaction that takes place outside your turn and replaces your normal turn in the round.
+  - id: action_dash
+    name: LOC_ACTION_DASH
+    group: actionGroup_actions
+    description: LOC_ACTION_DASH_DESC
+  - id: action_meleeAttack
+    name: LOC_ACTION_MELEE_ATTACK
+    group: actionGroup_actions
+    description: LOC_ACTION_MELEE_ATTACK_DESC
+  - id: action_rangedAttack
+    name: LOC_ACTION_RANGED_ATTACK
+    group: actionGroup_actions
+    description: LOC_ACTION_RANGED_ATTACK_DESC
+  - id: action_sneakAttack
+    name: LOC_ACTION_SNEAK_ATTACK
+    group: actionGroup_actions
+    description: LOC_ACTION_SNEAK_ATTACK_DESC
+  - id: action_ambush
+    name: LOC_ACTION_AMBUSH
+    group: actionGroup_actions
+    description: LOC_ACTION_AMBUSH_DESC
+  - id: action_parry
+    name: LOC_ACTION_PARRY
+    group: actionGroup_actions
+    description: LOC_ACTION_PARRY_DESC
     fields:
-      Parrying: "When hit by an attack in close combat, you can choose to {{key: parry}} the attack with a drawn weapon or shield. Note that you cannot draw a weapon to parry, as free actions can only be performed on your own turn. You must declare that you are going to parry before the attacker rolls for damage. You cannot parry unarmed. It is also impossible to both parry and dodge the same attack. You can parry while prone. When parrying, you roll against your [[skill level]] for the weapon."
-      "Parrying: Reaction": Parrying is a reaction, as it breaks the [[initiative]] order. It replaces your regular turn, and you must immediately flip your initiative card. This means that you cannot parry if you have already had your turn in the round (but see the [[heroic ability]] Defensive).
-      Durability: If your parry succeeds, the enemy’s attack hits your weapon or shield, and you suffer no damage. However, if the damage exceeds your weapon’s durability, the weapon is damaged and cannot be used until it is repaired with a CRAFTING roll.
-      Shield: If you have a shield drawn, you can parry with it instead of your weapon. There is no skill for shields – instead you can use any STR-based melee skill (i.e. any of them except KNIVES and STAVES) to parry with a shield.
-      Piercing Damage: Piercing attacks can never damage a parrying weapon or shield.
-      "Parrying: Monsters": As a rule, [[monster attacks|monster attack]] cannot be parried, unless otherwise specified.
-      Rolling a Dragon when Parrying: If you roll a dragon when parrying, you immediately perform a counterattack on your opponent – an automatic hit with your weapon that cannot be dodged or parried. This does not apply if the attacker rolled a dragon as well – in that case you need a dragon just to parry, and do not get a counterattack.
-      Parry Movement: When successfully parrying an attack, you can move both yourself and the enemy 2 meters (one square) in any direction. These movements follow the usual rules, but do not count toward anyone’s movement in the round and trigger no free attacks from anyone.
-  - name: Dodge
-    group: actions
-    description: Dodging a melee or ranged attack is also a reaction that takes place outside your turn and replaces your normal turn in the round.
-  - name: Pick Up Item
-    group: actions
-    description: Pick up an item from the ground within 2 meters, or from your Inventory.
-  - name: Equip/Unequip Armor/Helmet
-    group: actions
-    description: Suits of armor and helmets protect you from damage, but also restrict your movement.
-  - name: First Aid
-    group: actions
-    description: The HEALING skill is used to save the life of someone who has had their HP reduced to zero and is at risk of dying.
-  - name: Rally
-    group: actions
-    description: You can PERSUADE another player character at zero HP to rally and keep fighting.
-  - name: Break Down Door
-    group: actions
-    description: Doors can take a certain amount of damage before they break down.
-  - name: Pick Lock
-    group: actions
-    description: Picking a lock requires a SLEIGHT OF HAND roll. Doing so without lockpicks gives you a bane.
-  - name: Use Item
-    group: actions
-    description: Use a potion or some other item within 2 meters.
-  - name: Activate Ability
-    group: actions
-    description: Use an innate or heroic ability.
-  - name: Cast Spell
-    group: actions
-    description: In most cases, casting a spell counts as an action. This includes magic tricks. Some spells are reactions and do not require an action, while others are more time-consuming. For more on magic, see chapter 5.
-  - name: Helping
-    group: actions
-    description: Helping another character gives them a boon to a roll in the same round.
-  - name: Round Rest
-    group: actions
-    description: You rest and recover D6 WP. This can only be done once per shift.
-  - name: Draw Weapon
-    group: free-actions
-    description: Draw, exchange, or put away a weapon kept at hand.
-  - name: Change Position
-    group: free-actions
-    description: Throw yourself to the ground or get up.
-  - name: Drop Item
-    group: free-actions
-    description: Drop an item on the ground.
-  - name: Shout
-    group: free-actions
-    description: Say or shout a few words.
-  - name: Stand/Crouch
-    group: free-actions
-    description: |
-      You can drop to the ground or get up as part of your movement.
-      These are free actions and do not affect your movement per se, but can only be done on your turn.
-  - name: Leaping
-    group: movement
-    description: |
-      As part of your movement, you can make a horizontal leap as long as half your movement rate with a successful ACROBATICS roll.
-      If the distance is a quarter of your movement rate or less, you don’t need to roll to leap it..
-  - name: Door
-    group: movement
-    description: |
-      Passing through a closed but unlocked door costs half your movement in the round. 
-      If you cannot move any further, you remain standing by the now open door. A locked door must either be picked open or broken down..
-  - name: Enemies
-    group: movement
-    description: |
-      You cannot move past a standing enemy who wants to stop you.
-      A humanoid creature of human size can block an area of roughly 2x2 meters. Monsters can block larger areas.
-      To move past an enemy who is blocking the way, you must first bring it to the ground or reduce its [[HP]] to zero.
-      Friendly individuals can be passed without any problem.
-  - name: Free Attack
-    group: movement
-    description: |
-      If you are standing within 2 meters of an enemy and then voluntarily move away from that enemy, you must make an EVADE roll.
-      The roll does not count as an action, but if it fails, the enemy immediately gets to perform an additional melee attack against you – a {{key: free attack}}. The free attack does not count as an action and can neither be parried nor dodged. A monster that gets a free attack performs a [[monster attack]] which also may affect other characters. Note that a free attack is triggered even if you start your movement at a distance but pass by an enemy. Moving around an enemy does not trigger a free attack, as long as you stay within 2 meters. Also note that involuntary movement never triggers a free attack.
-  - name: Damage
-    group: melee-combat
-    description: |
-      If the attack hits, your weapon determines which dice you should roll to see how much damage you inflict on the enemy. The damage can be increased by your damage bonus and a [[dragon roll|dragon]] and decreased by armor.
-  - name: Damage Bonus
-    group: melee-combat
-    description: |
-      Your damage bonus is determined by your score in the [[attribute]] on which your weapon skill is based – AGL or STR.
+      LOC_LABEL_PARRYING: LOC_ACTION_PARRY_FIELDS_PARRYING
+      "LOC_LABEL_PARRYING_REACTION": LOC_ACTION_PARRY_FIELDS_PARRYING_REACTION
+      LOC_LABEL_DURABILITY: LOC_ACTION_PARRY_FIELDS_DURABILITY
+      LOC_LABEL_SHIELD: LOC_ACTION_PARRY_FIELDS_SHIELD
+      LOC_LABEL_PIERCING_DAMAGE: LOC_ACTION_PARRY_FIELDS_PIERCING_DAMAGE
+      "LOC_LABEL_PARRYING_MONSTERS": LOC_ACTION_PARRY_FIELDS_PARRYING_MONSTERS
+      LOC_LABEL_ROLLING_A_DRAGON_WHEN_PARRYING: LOC_ACTION_PARRY_FIELDS_ROLLING_A_DRAGON_WHEN_PARRYING
+      LOC_LABEL_PARRY_MOVEMENT: LOC_ACTION_PARRY_FIELDS_PARRY_MOVEMENT
+  - id: action_dodge
+    name: LOC_ACTION_DODGE
+    group: actionGroup_actions
+    description: LOC_ACTION_DODGE_DESC
+  - id: action_pickUpItem
+    name: LOC_ACTION_PICK_UP_ITEM
+    group: actionGroup_actions
+    description: LOC_ACTION_PICK_UP_ITEM_DESC
+  - id: action_equipUnequipArmorHelmet
+    name: LOC_ACTION_EQUIP_UNEQUIP_ARMOR_HELMET
+    group: actionGroup_actions
+    description: LOC_ACTION_EQUIP_UNEQUIP_ARMOR_HELMET_DESC
+  - id: action_firstAid
+    name: LOC_ACTION_FIRST_AID
+    group: actionGroup_actions
+    description: LOC_ACTION_FIRST_AID_DESC
+  - id: action_rally
+    name: LOC_ACTION_RALLY
+    group: actionGroup_actions
+    description: LOC_ACTION_RALLY_DESC
+  - id: action_breakDownDoor
+    name: LOC_ACTION_BREAK_DOWN_DOOR
+    group: actionGroup_actions
+    description: LOC_ACTION_BREAK_DOWN_DOOR_DESC
+  - id: action_pickLock
+    name: LOC_ACTION_PICK_LOCK
+    group: actionGroup_actions
+    description: LOC_ACTION_PICK_LOCK_DESC
+  - id: action_useItem
+    name: LOC_ACTION_USE_ITEM
+    group: actionGroup_actions
+    description: LOC_ACTION_USE_ITEM_DESC
+  - id: action_activateAbility
+    name: LOC_ACTION_ACTIVATE_ABILITY
+    group: actionGroup_actions
+    description: LOC_ACTION_ACTIVATE_ABILITY_DESC
+  - id: action_castSpell
+    name: LOC_ACTION_CAST_SPELL
+    group: actionGroup_actions
+    description: LOC_ACTION_CAST_SPELL_DESC
+  - id: action_helping
+    name: LOC_ACTION_HELPING
+    group: actionGroup_actions
+    description: LOC_ACTION_HELPING_DESC
+  - id: action_roundRest
+    name: LOC_ACTION_ROUND_REST
+    group: actionGroup_actions
+    description: LOC_ACTION_ROUND_REST_DESC
+  - id: action_drawWeapon
+    name: LOC_ACTION_DRAW_WEAPON
+    group: actionGroup_freeActions
+    description: LOC_ACTION_DRAW_WEAPON_DESC
+  - id: action_changePosition
+    name: LOC_ACTION_CHANGE_POSITION
+    group: actionGroup_freeActions
+    description: LOC_ACTION_CHANGE_POSITION_DESC
+  - id: action_dropItem
+    name: LOC_ACTION_DROP_ITEM
+    group: actionGroup_freeActions
+    description: LOC_ACTION_DROP_ITEM_DESC
+  - id: action_shout
+    name: LOC_ACTION_SHOUT
+    group: actionGroup_freeActions
+    description: LOC_ACTION_SHOUT_DESC
+  - id: action_standCrouch
+    name: LOC_ACTION_STAND_CROUCH
+    group: actionGroup_freeActions
+    description: LOC_ACTION_STAND_CROUCH_DESC
+  - id: action_leaping
+    name: LOC_ACTION_LEAPING
+    group: actionGroup_movement
+    description: LOC_ACTION_LEAPING_DESC
+  - id: action_door
+    name: LOC_ACTION_DOOR
+    group: actionGroup_movement
+    description: LOC_ACTION_DOOR_DESC
+  - id: action_enemies
+    name: LOC_ACTION_ENEMIES
+    group: actionGroup_movement
+    description: LOC_ACTION_ENEMIES_DESC
+  - id: action_freeAttack
+    name: LOC_ACTION_FREE_ATTACK
+    group: actionGroup_movement
+    description: LOC_ACTION_FREE_ATTACK_DESC
+  - id: action_damage
+    name: LOC_ACTION_DAMAGE
+    group: actionGroup_meleeCombat
+    description: LOC_ACTION_DAMAGE_DESC
+  - id: action_damageBonus
+    name: LOC_ACTION_DAMAGE_BONUS
+    group: actionGroup_meleeCombat
+    description: LOC_ACTION_DAMAGE_BONUS_DESC

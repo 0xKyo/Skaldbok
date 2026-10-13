@@ -23,11 +23,12 @@ Character sample() {
     c.player = "Sebastián";
     c.kin = {"core/kin/human", "Human"};
     c.profession = {"core/profession/fighter", "Fighter"};
+    const char* ids[6] = {kStrength, kConstitution, kAgility, kIntelligence, kWillpower, kCharisma};
     const int a[6] = {15, 13, 12, 9, 10, 11};
-    std::copy(a, a + 6, c.attr);
+    for (int i = 0; i < 6; ++i) c.attr.set(ids[i], a[i]);
     c.hp = 13;
     c.wp = 10;
-    c.skills = {{{"core/skill/axes", "Axes"}, "STR", 12, true, false}};
+    c.skills = {{{"core/skill/axes", "Axes"}, "strength", 12, true, false}};
     c.abilities = {{"core/ability/veteran", "Veteran"}};
     c.inventory = {{"Torch", "", 1, ""}, {"Rope", "", 1, ""}};
     c.silver = 3;
@@ -55,10 +56,13 @@ int main() {
 
     // ----------------------------------------------------------------------------------------- sets
     json doc = toDoc(sample());
-    sheet::Applied a = sheet::applySet(doc, parse(R"({"hp": 7, "attributes": {"STR": 16}, "coins": {"gold": 2}})"), true);
-    check(a.ok && doc["hp"] == 7 && doc["attributes"]["STR"] == 16 && doc["attributes"]["CON"] == 13 && doc["coins"]["gold"] == 2 && doc["coins"]["silver"] == 3,
+    sheet::Applied a = sheet::applySet(doc, parse(R"({"hp": 7, "attributes": {"strength": 16}, "coins": {"gold": 2}})"), true);
+    check(a.ok && doc["hp"] == 7 && doc["attributes"]["strength"] == 16 && doc["attributes"]["constitution"] == 13 && doc["coins"]["gold"] == 2 && doc["coins"]["silver"] == 3,
           "a set changes fields, and attributes and coins merge key by key");
     check(a.keys.size() == 3, "it says which fields changed");
+    check(sheet::applySet(doc, parse(R"({"attributes": {"AGL": 14}, "skills": [{"name": "Axes", "attribute": "STR"}]})"), true).ok && doc["attributes"]["agility"] == 14 &&
+              !doc["attributes"].contains("AGL") && doc["skills"][0]["attribute"] == "strength",
+          "a page that still names the attributes by their old codes is understood");
     check(sheet::applySet(doc, parse(R"({"hp": 7})"), true).keys.empty(), "setting what is already there changes nothing");
     check(sheet::applySet(doc, parse(R"({"inventory": [{"name": "Rope", "count": 3}]})"), true).ok && doc["inventory"].size() == 1, "a list replaces the whole list");
 
@@ -68,9 +72,12 @@ int main() {
     }
     for (const char* bad : {R"({"hp": "ten"})", R"({"hp": 7.5})", R"({"attributes": {"LUCK": 3}})", R"({"attributes": {"STR": "big"}})", R"({"age": "ancient"})",
                             R"({"conditions": ["Sleepy"]})", R"({"inventory": [{"count": 2}]})", R"({"inventory": [{"name": "x", "count": 0}]})", R"({"skills": [{"level": 3}]})",
-                            R"({"skills": "all"})", R"({"coins": {"platinum": 1}})", R"({"coins": {"gold": -1}})", R"({"notes": 5})", R"({"nonsense": 1})", R"([1])"}) {
+                            R"({"skills": "all"})", R"({"coins": {"platinum": 1}})", R"({"death_successes": 4})", R"({"round_rest": "yes"})", R"({"stretch_rest": 1})", R"({"death_failures": -1})", R"({"coins": {"gold": -1}})", R"({"notes": 5})", R"({"nonsense": 1})", R"([1])"}) {
         check(!sheet::applySet(doc, parse(bad), true).ok, std::string("wrong types and sizes are refused: ") + bad);
     }
+    check(sheet::applySet(doc, parse(R"({"death_successes": 2, "death_failures": 3})"), true).ok && doc["death_successes"] == 2 && doc["death_failures"] == 3, "the death rolls are a player's to write, 0 to 3 each");
+    doc.erase("death_successes");
+    doc.erase("death_failures");
     const json before = doc;
     check(!sheet::applySet(doc, parse(R"({"hp": 1, "attributes": {"STR": "big"}})"), true).ok && doc == before, "a refused set changes nothing at all, not even its good parts");
     json huge = json::array();
@@ -86,24 +93,24 @@ int main() {
     const Character c0 = sample();
     Character c1 = c0;
     c1.hp = 9;
-    c1.attr[0] = 16;
+    c1.attr.set(kStrength, 16);
     c1.notes = "Owes the innkeeper.";
     c1.reviews["encumbrance"] = {"approved", "9/8", "2026-01-01T00:00:00Z"};
     const json d = sheet::diff(toDoc(c0), toDoc(c1));
-    check(d.size() == 4 && d["hp"] == 9 && d["attributes"].size() == 1 && d["attributes"]["STR"] == 16 && d["reviews"]["encumbrance"]["status"] == "approved", "a diff holds only what changed, key by key inside attributes");
+    check(d.size() == 4 && d["hp"] == 9 && d["attributes"].size() == 1 && d["attributes"]["strength"] == 16 && d["reviews"]["encumbrance"]["status"] == "approved", "a diff holds only what changed, key by key inside attributes");
     json applied = toDoc(c0);
     sheet::merge(applied, d);
-    check(applied["hp"] == 9 && applied["attributes"]["STR"] == 16 && applied["notes"] == "Owes the innkeeper." && applied["reviews"].size() == 1, "merging a diff makes the same change");
+    check(applied["hp"] == 9 && applied["attributes"]["strength"] == 16 && applied["notes"] == "Owes the innkeeper." && applied["reviews"].size() == 1, "merging a diff makes the same change");
     json removed = applied;
     sheet::merge(removed, parse(R"({"reviews": {"encumbrance": null}})"));
     check(!removed.contains("reviews"), "a null inside reviews removes that ruling, and an empty list of rulings disappears");
     check(sheet::diff(toDoc(c0), toDoc(c0)).empty(), "nothing changed, nothing in the diff (dates and revisions do not count)");
 
     // ----------------------------------------------------------------------------------- describing
-    json was = parse(R"({"hp": 10, "attributes": {"STR": 15}, "conditions": ["Angry"], "inventory": [{"name": "Torch"}], "coins": {"gold": 0}})");
-    json now = parse(R"({"hp": 7, "attributes": {"STR": 16}, "conditions": ["Scared"], "inventory": [{"name": "Torch"}, {"name": "Rope", "count": 2}], "coins": {"gold": 3}})");
+    json was = parse(R"({"hp": 10, "attributes": {"strength": 15}, "conditions": ["Angry"], "inventory": [{"name": "Torch"}], "coins": {"gold": 0}})");
+    json now = parse(R"({"hp": 7, "attributes": {"strength": 16}, "conditions": ["Scared"], "inventory": [{"name": "Torch"}, {"name": "Rope", "count": 2}], "coins": {"gold": 3}})");
     const std::string said = sheet::describe(was, now);
-    check(said.find("HP 10 → 7") != std::string::npos && said.find("STR 15 → 16") != std::string::npos && said.find("+Scared") != std::string::npos && said.find("-Angry") != std::string::npos &&
+    check(said.find("HP 10 → 7") != std::string::npos && said.find("Strength 15 → 16") != std::string::npos && said.find("+Scared") != std::string::npos && said.find("-Angry") != std::string::npos &&
               said.find("+Rope ×2") != std::string::npos && said.find("Gold 0 → 3") != std::string::npos,
           "a change is described in words: " + said);
     const std::string skills = sheet::describe(parse(R"({"skills": [{"name": "Axes", "level": 12, "trained": true, "marked": false}]})"),
@@ -114,14 +121,14 @@ int main() {
     Character rules = sample();
     check(sheet::rulesIssues(rules).empty() && sheet::openIssues(rules).empty(), "a normal sheet has nothing to flag");
     rules.hp = 20;
-    rules.attr[3] = 19;
-    rules.attr[4] = 2;
+    rules.attr.set(kIntelligence, 19);
+    rules.attr.set(kWillpower, 2);
     rules.skills[0].level = 20;
     rules.hpBonus = 3;
     for (int i = 0; i < 10; ++i) rules.inventory.push_back({"Stone " + std::to_string(i), "", 1, ""});
     std::set<std::string> keys;
     for (const sheet::Issue& i : sheet::rulesIssues(rules)) keys.insert(i.key);
-    check(keys == std::set<std::string>{"hp", "wp", "hpmax", "attr:INT", "attr:WIL", "skill:Axes", "encumbrance"}, "every kind of rule break is found (a WIL of 2 also leaves WP above its maximum)");
+    check(keys == std::set<std::string>{"hp", "wp", "hpmax", "attr:intelligence", "attr:willpower", "skill:Axes", "encumbrance"}, "every kind of rule break is found (a WIL of 2 also leaves WP above its maximum)");
     rules.abilities.push_back({"core/ability/robust", "Robust"});
     const std::vector<sheet::Issue> withRobust = sheet::rulesIssues(rules);
     check(!withRobust.empty() && std::none_of(withRobust.begin(), withRobust.end(), [](const sheet::Issue& i) { return i.key == "hpmax"; }), "the ability that allows it makes it normal");
@@ -136,7 +143,15 @@ int main() {
     check(sheet::openIssues(judged).size() == 1 && sheet::openIssues(judged)[0].status == "pending" && sheet::openIssues(judged)[0].value != carried, "a worse case asks again: the ruling was for exactly what was judged");
     sheet::prune(judged);
     check(judged.reviews.empty(), "a ruling that no longer matches is forgotten");
-    check(!sheet::review(judged, "attr:STR", true), "there is nothing to rule on where the rules are not broken");
+    check(!sheet::review(judged, "attr:strength", true), "there is nothing to rule on where the rules are not broken");
+    {
+        const sheet::AttributeName english = [](const std::string& id) { return id == "willpower" ? std::string("Willpower") : id; };
+        bool named = false;
+        for (const sheet::Issue& i : sheet::rulesIssues(rules, english)) named |= i.key == "attr:willpower" && i.message == "Willpower 2 is outside the 3 to 18 of the rules";
+        bool capitalised = false;
+        for (const sheet::Issue& i : sheet::rulesIssues(rules)) capitalised |= i.key == "attr:intelligence" && i.message.starts_with("Intelligence 19 ");
+        check(named && capitalised, "an issue names the attribute the way it is told to, or by its id with a capital letter");
+    }
 
     // ------------------------------------------------------------------------------- the file itself
     ChangeLog log;
@@ -208,11 +223,11 @@ int main() {
     sheet::EditResult web = sheet::editFile(dir + "/" + id + ".yaml", id, parse(R"({"hp": 4, "coins": {"gold": 9}})"), true, &log);   // the web server, meanwhile
     Character mine = *app.find(id);                                   // the app's copy is stale: it has not looked yet
     mine.notes = "Met the captain.";
-    mine.attr[2] = 14;
+    mine.attr.set(kAgility, 14);
     check(app.save(mine), "the app saves an edit made on a stale copy");
     Character now2;
     Character::fromJson(fs::readFile(dir + "/" + id + ".yaml").value_or(""), now2, nullptr);
-    check(now2.hp == 4 && now2.gold == 9 && now2.notes == "Met the captain." && now2.attr[2] == 14 && now2.revision == 3 && web.ok,
+    check(now2.hp == 4 && now2.gold == 9 && now2.notes == "Met the captain." && now2.attr.get(kAgility) == 14 && now2.revision == 3 && web.ok,
           "the file holds both people's changes: the player's HP and coins, the GM's notes and attribute");
     check(mine.hp == 4 && app.find(id)->hp == 4, "and the app's copy now shows them too");
 

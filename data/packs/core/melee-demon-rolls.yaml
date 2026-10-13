@@ -1,16 +1,22 @@
 kind: effect
-category: Demon Roll in Melee
+category: LOC_CATEGORY_DEMON_ROLL_IN_MELEE
 rollable:
   - Demon Roll in Melee
 entities:
-  - name: You drop your weapon at your feet
-    description: Picking it up is an action.
-  - name: You expose yourself to the enemy, who gets a free attack that cannot be dodged or parried.
-  - name: Your weapon cuts so deep into an object that it gets stuck
-    description: Pulling it free requires a STR roll (counts as an action)
-  - name: You accidentally toss your weapon D3+3 meters
-    description: To pick it up you must move and then perform an action.
-  - name: You slam your weapon into something hard and damage it
-    description: Any use of the weapon gets a bane until it is repaired by an artisan.
-  - name: You hit yourself by mistake
-    description: Roll for damage as usual, but without any damage bonus.
+  - id: meleeDemonRolls_youDropYourWeaponAtYourFeet
+    name: LOC_MELEE_DEMON_ROLLS_YOU_DROP_YOUR_WEAPON_AT_YOUR_FEET
+    description: LOC_MELEE_DEMON_ROLLS_YOU_DROP_YOUR_WEAPON_AT_YOUR_FEET_DESC
+  - id: meleeDemonRolls_youExposeYourselfToTheEnemyWhoGetsAFreeAttackThatCannotBeDodgedOrParried
+    name: LOC_MELEE_DEMON_ROLLS_YOU_EXPOSE_YOURSELF_TO_THE_ENEMY_WHO_GETS_A_FREE_ATTACK
+  - id: meleeDemonRolls_yourWeaponCutsSoDeepIntoAnObjectThatItGetsStuck
+    name: LOC_MELEE_DEMON_ROLLS_YOUR_WEAPON_CUTS_SO_DEEP_INTO_AN_OBJECT_THAT_IT_GETS_STU
+    description: LOC_MELEE_DEMON_ROLLS_YOUR_WEAPON_CUTS_SO_DEEP_INTO_AN_OBJECT_THAT_IT_GETS_STU_DESC
+  - id: meleeDemonRolls_youAccidentallyTossYourWeaponD3_3Meters
+    name: LOC_MELEE_DEMON_ROLLS_YOU_ACCIDENTALLY_TOSS_YOUR_WEAPON_D3_3_METERS
+    description: LOC_MELEE_DEMON_ROLLS_YOU_ACCIDENTALLY_TOSS_YOUR_WEAPON_D3_3_METERS_DESC
+  - id: meleeDemonRolls_youSlamYourWeaponIntoSomethingHardAndDamageIt
+    name: LOC_MELEE_DEMON_ROLLS_YOU_SLAM_YOUR_WEAPON_INTO_SOMETHING_HARD_AND_DAMAGE_IT
+    description: LOC_MELEE_DEMON_ROLLS_YOU_SLAM_YOUR_WEAPON_INTO_SOMETHING_HARD_AND_DAMAGE_IT_DESC
+  - id: meleeDemonRolls_youHitYourselfByMistake
+    name: LOC_MELEE_DEMON_ROLLS_YOU_HIT_YOURSELF_BY_MISTAKE
+    description: LOC_MELEE_DEMON_ROLLS_YOU_HIT_YOURSELF_BY_MISTAKE_DESC

@@ -35,7 +35,6 @@ public:
     int active = -1;            // index into `combatants`, -1 = combat has not started
 
     int add(Combatant c);                       // returns the new index
-    int indexOfUid(int uid) const;              // -1 if it is gone
     void remove(int index);
     void clear();
     void changeHp(int index, int delta);        // never below 0 nor above max

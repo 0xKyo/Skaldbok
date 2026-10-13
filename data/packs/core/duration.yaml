@@ -1,13 +1,19 @@
 kind: duration
 entities:
-  - name: Instant
-    description: The effect occurs instantly and has no lasting effect.
-  - name: Round
-    description: The effect lasts until your turn in the next round.
-  - name: Stretch
-    description: The effect lasts for one stretch of time.
-  - name: Shift
-    description: The effect lasts until the end of the current shift.
-  - name: Permanent
-  - name: Concentration
-    description: The effect ceases if you perform another action, take damage, or fail a WIL roll for resisting fear. If you are interrupted by a sudden disturbance, such as a sound, you must make a WIL roll (not an action) to maintain your concentration.
+  - id: duration_instant
+    name: LOC_DURATION_INSTANT
+    description: LOC_DURATION_INSTANT_DESC
+  - id: duration_round
+    name: LOC_DURATION_ROUND
+    description: LOC_DURATION_ROUND_DESC
+  - id: duration_stretch
+    name: LOC_DURATION_STRETCH
+    description: LOC_DURATION_STRETCH_DESC
+  - id: duration_shift
+    name: LOC_DURATION_SHIFT
+    description: LOC_DURATION_SHIFT_DESC
+  - id: duration_permanent
+    name: LOC_DURATION_PERMANENT
+  - id: duration_concentration
+    name: LOC_DURATION_CONCENTRATION
+    description: LOC_DURATION_CONCENTRATION_DESC

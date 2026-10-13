@@ -1,7 +1,8 @@
 <script setup>
 // The search bar, then index + panel side by side (stacked on narrow screens). Same pieces the GM sidebar uses.
-// The search is one for the whole Reference: with "Only in <category>" checked it filters the open category, otherwise it lists matches from everywhere.
+// The search is one for the whole Reference: it always lists the matches from every category, each with the category it is in.
 import { computed, inject, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { t } from '../i18n.js';
 import { createGlobalSearch } from '../lib/globalSearch.js';
 import ReferenceIndex from './ReferenceIndex.vue';
 import ReferencePanel from './ReferencePanel.vue';
@@ -27,8 +28,7 @@ if (nav) {
 
 // ---- the search ----
 const text = computed(() => (props.state.query ?? '').trim());
-const only = computed(() => props.state.only !== false);
-const everywhere = computed(() => !!text.value && !(only.value && props.state.current));     // the results take the place of the page
+const everywhere = computed(() => !!text.value);                  // the results take the place of the page
 const results = ref([]);
 const searching = ref(false);
 const engine = createGlobalSearch(() => props.token, props.gmPrefix);
@@ -53,26 +53,23 @@ watch([text, everywhere], () => {
 });
 onBeforeUnmount(() => clearTimeout(timer));
 
-// a result opens its page and keeps the search on that page, so the rest of what matched is still in the list
+// a result opens its page, and the search is done
 function open(r) {
-  props.state.only = true;
+  props.state.query = '';
   props.state.goTo(r.mode === 'rules' ? { key: r.type, entry: r.key } : { key: r.key, type: r.type });
 }
 </script>
 
 <template>
-  <section class="ref-view" :class="{ 'is-open': !!state.current, searching: everywhere }" aria-label="Rules">
+  <section class="ref-view" :class="{ 'is-open': !!state.current, searching: everywhere }" :aria-label="t('Rules')">
     <div class="ref-search">
-      <input v-model="state.query" type="search" placeholder="Search…" aria-label="Search" class="ref-search-box" data-test="ref-search" />
-      <label v-if="state.current" class="ref-only" data-test="ref-only-label">
-        <input v-model="state.only" type="checkbox" data-test="ref-only" /> Only in {{ state.current.label }}
-      </label>
+      <input v-model="state.query" type="search" :placeholder="t('Search…')" :aria-label="t('Search')" class="ref-search-box" data-test="ref-search" />
     </div>
     <ReferenceIndex class="ref-view-index" :state="state" />
-    <button v-if="state.current" type="button" class="ref-back link" data-test="reference-back" @click="state.current = null">← All categories</button>
+    <button v-if="state.current" type="button" class="ref-back link" data-test="reference-back" @click="state.current = null">{{ t('← All categories') }}</button>
     <div v-if="everywhere" class="ref-results panel" data-test="ref-results">
-      <p v-if="searching" class="muted small">Searching…</p>
-      <p v-else-if="!results.length" class="muted small" data-test="ref-none">Nothing found for “{{ text }}”.</p>
+      <p v-if="searching" class="muted small">{{ t('Searching…') }}</p>
+      <p v-else-if="!results.length" class="muted small" data-test="ref-none">{{ t('Nothing found for “{text}”.', { text }) }}</p>
       <ul v-else class="ref-hits">
         <li v-for="(r, i) in results" :key="i">
           <button type="button" class="ref-hit" data-test="ref-hit" @click="open(r)">
@@ -92,7 +89,6 @@ function open(r) {
 .ref-search { grid-column: 1 / -1; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
 .ref-search-box { flex: 1 1 260px; min-width: 0; background: #fbf6e6; border: 1px solid var(--line); color: var(--ink); border-radius: 8px; padding: 10px 12px; font: inherit; }
 .ref-search-box:focus-visible { outline: 2px solid var(--green); }
-.ref-only { display: inline-flex; align-items: center; gap: 6px; font-size: 0.85rem; color: var(--muted); cursor: pointer; white-space: nowrap; }
 @media (min-width: 720px) {
   .ref-view { grid-template-columns: 190px minmax(0, 1fr); }
 }

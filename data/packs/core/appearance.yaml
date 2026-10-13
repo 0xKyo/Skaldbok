@@ -1,24 +1,45 @@
 kind: appearance
+category: LOC_CATEGORY_APPEARANCE
 rollable:
   - Appearance
 entities:
-  - name: Ugly scar across your cheek
-  - name: Strange headgear
-  - name: Abnormally pale and pasty
-  - name: A constant smile on your lips
-  - name: Icy, penetrating gaze
-  - name: A bit of extra weight around the middle
-  - name: Thin and wiry
-  - name: Abnormal amounts of body hair (depending on kin)
-  - name: Balding (depending on kin)
-  - name: Prominent tattoo
-  - name: Foul body odor
-  - name: Glorious hairstyle
-  - name: Limp
-  - name: Filthy
-  - name: Honest blue eyes
-  - name: Silver tooth
-  - name: Heavily perfumed
-  - name: Different-colored eyes
-  - name: Hissing voice
-  - name: Weathered face
+  - id: appearance_uglyScarAcrossYourCheek
+    name: LOC_APPEARANCE_UGLY_SCAR_ACROSS_YOUR_CHEEK
+  - id: appearance_strangeHeadgear
+    name: LOC_APPEARANCE_STRANGE_HEADGEAR
+  - id: appearance_abnormallyPaleAndPasty
+    name: LOC_APPEARANCE_ABNORMALLY_PALE_AND_PASTY
+  - id: appearance_aConstantSmileOnYourLips
+    name: LOC_APPEARANCE_A_CONSTANT_SMILE_ON_YOUR_LIPS
+  - id: appearance_icyPenetratingGaze
+    name: LOC_APPEARANCE_ICY_PENETRATING_GAZE
+  - id: appearance_aBitOfExtraWeightAroundTheMiddle
+    name: LOC_APPEARANCE_A_BIT_OF_EXTRA_WEIGHT_AROUND_THE_MIDDLE
+  - id: appearance_thinAndWiry
+    name: LOC_APPEARANCE_THIN_AND_WIRY
+  - id: appearance_abnormalAmountsOfBodyHairDependingOnKin
+    name: LOC_APPEARANCE_ABNORMAL_AMOUNTS_OF_BODY_HAIR_DEPENDING_ON_KIN
+  - id: appearance_baldingDependingOnKin
+    name: LOC_APPEARANCE_BALDING_DEPENDING_ON_KIN
+  - id: appearance_prominentTattoo
+    name: LOC_APPEARANCE_PROMINENT_TATTOO
+  - id: appearance_foulBodyOdor
+    name: LOC_APPEARANCE_FOUL_BODY_ODOR
+  - id: appearance_gloriousHairstyle
+    name: LOC_APPEARANCE_GLORIOUS_HAIRSTYLE
+  - id: appearance_limp
+    name: LOC_APPEARANCE_LIMP
+  - id: appearance_filthy
+    name: LOC_APPEARANCE_FILTHY
+  - id: appearance_honestBlueEyes
+    name: LOC_APPEARANCE_HONEST_BLUE_EYES
+  - id: appearance_silverTooth
+    name: LOC_APPEARANCE_SILVER_TOOTH
+  - id: appearance_heavilyPerfumed
+    name: LOC_APPEARANCE_HEAVILY_PERFUMED
+  - id: appearance_differentColoredEyes
+    name: LOC_APPEARANCE_DIFFERENT_COLORED_EYES
+  - id: appearance_hissingVoice
+    name: LOC_APPEARANCE_HISSING_VOICE
+  - id: appearance_weatheredFace
+    name: LOC_APPEARANCE_WEATHERED_FACE

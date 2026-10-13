@@ -3,6 +3,7 @@
 // they made on the left and the form on the right; a new creature can start from any creature of the books (a copy to change).
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { ApiError, apiGet, apiSend } from '../api.js';
+import { locale, t } from '../i18n.js';
 import { pictureForBoard } from '../lib/pictures.js';
 import MessageImage from './MessageImage.vue';
 
@@ -11,12 +12,12 @@ const props = defineProps({
 });
 
 const STAT_LABELS = ['Ferocity', 'Size', 'Movement', 'Armor', 'HP'];
-const KINDS = [{ id: 'monster', label: 'Monster' }, { id: 'npc', label: 'NPC' }, { id: 'animal', label: 'Animal' }];
+const KINDS = computed(() => [{ id: 'monster', label: t('Monster') }, { id: 'npc', label: t('NPC') }, { id: 'animal', label: t('Animal') }]);
 const DICE = ['D4', 'D6', 'D8', 'D10', 'D12', 'D20'];
 
 const blank = () => ({
   name: '', kind: 'monster', category: '', image: '', quote: '', description: '', attack_dice: 'D6',
-  statblocks: [{ variant: '', fields: STAT_LABELS.map((label) => ({ label, value: '' })) }],
+  statblocks: [{ variant: '', fields: STAT_LABELS.map((label) => ({ label: t(label), value: '' })) }],     // (the creature's own words: in the page's language)
   attacks: [], abilities: [], adventure_seed: '', random_encounter: '',
 });
 
@@ -44,12 +45,12 @@ async function load() {
     creatures.value = (await apiGet('/gm/homebrew/creatures', props.token)).creatures ?? [];
     loadError.value = '';
   } catch (e) {
-    loadError.value = e instanceof ApiError ? e.message : 'Could not load your creatures.';
+    loadError.value = e instanceof ApiError ? e.message : t('Could not load your creatures.');
   }
 }
 // the categories the books use (Undead, Trolls, Demons…), to choose from: the field is a combobox, so a new one can still be written
 const bookCategories = ref([]);
-const categories = computed(() => [...new Set([...bookCategories.value, ...creatures.value.map((c) => c.category).filter(Boolean)])].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' })));
+const categories = computed(() => [...new Set([...bookCategories.value, ...creatures.value.map((c) => c.category).filter(Boolean)])].sort((a, b) => a.localeCompare(b, locale(), { sensitivity: 'base' })));
 async function loadCategories() {
   try {
     const all = (await apiGet('/gm/creatures', props.token)).creatures ?? [];
@@ -150,10 +151,10 @@ async function upload(event) {
     localPreview.value = URL.createObjectURL(file);
     form.value.image = kept.path;
     failed.value = false;
-    status.value = 'Picture added: save the creature to keep it.';
+    status.value = t('Picture added: save the creature to keep it.');
   } catch (e) {
     failed.value = true;
-    status.value = e instanceof ApiError ? e.message : e.message || 'Could not add the picture.';
+    status.value = e instanceof ApiError ? e.message : e.message || t('Could not add the picture.');
   }
 }
 function removePicture() {
@@ -178,11 +179,11 @@ async function save() {
       : await apiSend('POST', '/gm/homebrew/creatures', props.token, payload);
     editingId.value = saved.id;
     editingKey.value = saved.key ?? editingKey.value;
-    status.value = 'Saved. It is in the Rules now, under Creatures.';
+    status.value = t('Saved. It is in the Rules now, under Creatures.');
     await load();
   } catch (e) {
     failed.value = true;
-    status.value = e instanceof ApiError ? e.message : 'Could not save the creature.';
+    status.value = e instanceof ApiError ? e.message : t('Could not save the creature.');
   } finally {
     busy.value = false;
   }
@@ -196,7 +197,7 @@ async function remove() {
     await load();
   } catch (e) {
     failed.value = true;
-    status.value = e instanceof ApiError ? e.message : 'Could not delete the creature.';
+    status.value = e instanceof ApiError ? e.message : t('Could not delete the creature.');
     confirmingDelete.value = false;
   }
 }
@@ -219,13 +220,13 @@ async function copyFrom(item) {
   try {
     const d = await apiGet(`/gm/creatures/${encodeURIComponent(item.key)}`, props.token);
     form.value = fromDetail(d);
-    form.value.name = `${d.name} (copy)`;
+    form.value.name = `${d.name} ${t('(copy)')}`;
     editingId.value = '';
     copying.value = false;
-    status.value = `A copy of ${d.name}: change what you want and save it.`;
+    status.value = t('A copy of {name}: change what you want and save it.', { name: d.name });
     failed.value = false;
   } catch {
-    status.value = 'Could not open that creature.';
+    status.value = t('Could not open that creature.');
     failed.value = true;
   }
 }
@@ -240,15 +241,15 @@ const removeAt = (list, i) => list.splice(i, 1);
     <p v-if="loadError" class="error">{{ loadError }}</p>
 
     <div class="layout" :class="{ 'form-open': formOpen }">
-      <aside class="list" aria-label="Your creatures">
-        <h2>Your creatures</h2>
+      <aside class="list" :aria-label="t('Your creatures')">
+        <h2>{{ t('Your creatures') }}</h2>
         <div class="list-actions">
-          <button type="button" class="pill" data-test="new-creature" @click="openNew">+ New creature</button>
-          <button type="button" class="pill" data-test="copy-creature" :aria-expanded="copying" @click="copying = !copying">Start from a creature…</button>
+          <button type="button" class="pill" data-test="new-creature" @click="openNew">{{ t('+ New creature') }}</button>
+          <button type="button" class="pill" data-test="copy-creature" :aria-expanded="copying" @click="copying = !copying">{{ t('Start from a creature…') }}</button>
         </div>
 
         <div v-if="copying" class="copy panel" data-test="copy-panel">
-          <input v-model="copyQuery" type="search" placeholder="Search the creatures…" aria-label="Search the creatures" data-test="copy-search" />
+          <input v-model="copyQuery" type="search" :placeholder="t('Search the creatures…')" :aria-label="t('Search the creatures')" data-test="copy-search" />
           <ul>
             <li v-for="r in copyResults" :key="r.key">
               <button type="button" data-test="copy-result" @click="copyFrom(r)"><b>{{ r.name }}</b> <span class="muted">{{ r.sub }}</span></button>
@@ -256,89 +257,89 @@ const removeAt = (list, i) => list.splice(i, 1);
           </ul>
         </div>
 
-        <p v-if="!creatures.length" class="muted">Nothing yet. Make one, or start from a creature of the books.</p>
+        <p v-if="!creatures.length" class="muted">{{ t('Nothing yet. Make one, or start from a creature of the books.') }}</p>
         <button v-for="c in creatures" :key="c.id" type="button" class="row" :class="{ active: editingId === c.id }" data-test="creature-row" @click="openCreature(c)">
-          <span class="row-name">{{ c.name }}</span><span class="muted">{{ c.category || c.kind }}</span>
+          <span class="row-name">{{ c.name }}</span><span class="muted">{{ c.category || KINDS.find((k) => k.id === c.kind)?.label || c.kind }}</span>
         </button>
       </aside>
 
       <form v-if="formOpen" class="form panel" data-test="creature-form" @submit.prevent="save">
-        <button type="button" class="back link" data-test="form-back" @click="close">← Back</button>
-        <h2>{{ editingId ? 'Edit creature' : 'New creature' }}</h2>
+        <button type="button" class="back link" data-test="form-back" @click="close">← {{ t('Back') }}</button>
+        <h2>{{ editingId ? t('Edit creature') : t('New creature') }}</h2>
 
         <div class="grid2">
-          <label>Name<input v-model="form.name" maxlength="80" required data-test="f-name" /></label>
-          <label>Type
+          <label>{{ t('Name') }}<input v-model="form.name" maxlength="80" required data-test="f-name" /></label>
+          <label>{{ t('Type') }}
             <select v-model="form.kind" data-test="f-kind"><option v-for="k in KINDS" :key="k.id" :value="k.id">{{ k.label }}</option></select>
           </label>
-          <label>Category<input v-model="form.category" maxlength="60" list="creature-categories" placeholder="Choose or write: Undead, Trolls…" autocomplete="off" data-test="f-category" /></label>
+          <label>{{ t('Category') }}<input v-model="form.category" maxlength="60" list="creature-categories" :placeholder="t('Choose or write: Undead, Trolls…')" autocomplete="off" data-test="f-category" /></label>
           <datalist id="creature-categories"><option v-for="c in categories" :key="c" :value="c" /></datalist>
-          <label>Attack die
+          <label>{{ t('Attack die') }}
             <select v-model="form.attack_dice" data-test="f-dice"><option v-for="d in DICE" :key="d" :value="d">{{ d }}</option></select>
           </label>
         </div>
         <div class="picture" data-test="creature-picture">
-          <span class="plabel">Picture</span>
+          <span class="plabel">{{ t('Picture') }}</span>
           <img v-if="localPreview" :src="localPreview" alt="" class="creature-pic" data-test="picture-preview" />
           <MessageImage v-else-if="pictureSrc" :key="pictureSrc + form.image" class="creature-pic" :token="token" :path="pictureSrc" :alt="form.name" />
           <div class="pbtns">
-            <button type="button" class="btn" data-test="picture-add" @click="fileInput.click()">{{ form.image ? 'Change picture' : 'Upload picture' }}</button>
-            <button v-if="form.image" type="button" class="btn" data-test="picture-remove" @click="removePicture">Remove picture</button>
+            <button type="button" class="btn" data-test="picture-add" @click="fileInput.click()">{{ form.image ? t('Change picture') : t('Upload picture') }}</button>
+            <button v-if="form.image" type="button" class="btn" data-test="picture-remove" @click="removePicture">{{ t('Remove picture') }}</button>
           </div>
           <input ref="fileInput" type="file" accept="image/png,image/jpeg,image/webp" hidden data-test="picture-file" @change="upload" />
         </div>
-        <label>Quote<textarea v-model="form.quote" rows="2" maxlength="600"></textarea></label>
-        <label>Description<textarea v-model="form.description" rows="5" maxlength="4000" data-test="f-description"></textarea></label>
+        <label>{{ t('Quote') }}<textarea v-model="form.quote" rows="2" maxlength="600"></textarea></label>
+        <label>{{ t('Description') }}<textarea v-model="form.description" rows="5" maxlength="4000" data-test="f-description"></textarea></label>
 
-        <h3>Stat blocks</h3>
+        <h3>{{ t('Stat blocks') }}</h3>
         <div v-for="(b, bi) in form.statblocks" :key="bi" class="block" data-test="stat-block">
           <div class="block-head">
-            <input v-model="b.variant" maxlength="40" placeholder="Variant (Scout, Warrior… optional)" aria-label="Variant" />
-            <button v-if="form.statblocks.length > 1" type="button" class="x" :aria-label="`Remove stat block ${bi + 1}`" @click="removeAt(form.statblocks, bi)">×</button>
+            <input v-model="b.variant" maxlength="40" :placeholder="t('Variant (Scout, Warrior… optional)')" :aria-label="t('Variant')" />
+            <button v-if="form.statblocks.length > 1" type="button" class="x" :aria-label="t('Remove stat block {n}', { n: bi + 1 })" @click="removeAt(form.statblocks, bi)">×</button>
           </div>
           <div v-for="(f, fi) in b.fields" :key="fi" class="pair" data-test="stat-field">
-            <input v-model="f.label" maxlength="40" placeholder="Label" aria-label="Stat label" />
-            <input v-model="f.value" maxlength="200" placeholder="Value" aria-label="Stat value" />
-            <button type="button" class="x" aria-label="Remove field" @click="removeAt(b.fields, fi)">×</button>
+            <input v-model="f.label" maxlength="40" :placeholder="t('Label')" :aria-label="t('Stat label')" />
+            <input v-model="f.value" maxlength="200" :placeholder="t('Value')" :aria-label="t('Stat value')" />
+            <button type="button" class="x" :aria-label="t('Remove field')" @click="removeAt(b.fields, fi)">×</button>
           </div>
-          <button type="button" class="pill small" data-test="add-field" @click="b.fields.push({ label: '', value: '' })">+ Field</button>
+          <button type="button" class="pill small" data-test="add-field" @click="b.fields.push({ label: '', value: '' })">{{ t('+ Field') }}</button>
         </div>
-        <button type="button" class="pill small" data-test="add-block" @click="addBlock">+ Stat block</button>
+        <button type="button" class="pill small" data-test="add-block" @click="addBlock">{{ t('+ Stat block') }}</button>
 
-        <h3>Attacks</h3>
+        <h3>{{ t('Attacks') }}</h3>
         <div v-for="(a, ai) in form.attacks" :key="ai" class="attack" data-test="attack-row">
-          <input v-model="a.roll" maxlength="20" placeholder="Roll (1-2)" aria-label="Attack roll" class="roll" />
-          <input v-model="a.name" maxlength="80" placeholder="Attack" aria-label="Attack name" />
-          <textarea v-model="a.text" rows="2" maxlength="1000" placeholder="What it does" aria-label="Attack text"></textarea>
-          <button type="button" class="x" :aria-label="`Remove attack ${ai + 1}`" @click="removeAt(form.attacks, ai)">×</button>
+          <input v-model="a.roll" maxlength="20" :placeholder="t('Roll (1-2)')" :aria-label="t('Attack roll')" class="roll" />
+          <input v-model="a.name" maxlength="80" :placeholder="t('Attack')" :aria-label="t('Attack name')" />
+          <textarea v-model="a.text" rows="2" maxlength="1000" :placeholder="t('What it does')" :aria-label="t('Attack text')"></textarea>
+          <button type="button" class="x" :aria-label="t('Remove attack {n}', { n: ai + 1 })" @click="removeAt(form.attacks, ai)">×</button>
         </div>
-        <button type="button" class="pill small" data-test="add-attack" @click="form.attacks.push({ roll: '', name: '', text: '' })">+ Attack</button>
+        <button type="button" class="pill small" data-test="add-attack" @click="form.attacks.push({ roll: '', name: '', text: '' })">{{ t('+ Attack') }}</button>
 
-        <h3>Abilities</h3>
+        <h3>{{ t('Abilities') }}</h3>
         <div v-for="(a, ai) in form.abilities" :key="ai" class="attack" data-test="ability-row">
-          <input v-model="a.name" maxlength="80" placeholder="Ability" aria-label="Ability name" />
-          <textarea v-model="a.text" rows="2" maxlength="1000" placeholder="What it does" aria-label="Ability text"></textarea>
-          <button type="button" class="x" :aria-label="`Remove ability ${ai + 1}`" @click="removeAt(form.abilities, ai)">×</button>
+          <input v-model="a.name" maxlength="80" :placeholder="t('Ability')" :aria-label="t('Ability name')" />
+          <textarea v-model="a.text" rows="2" maxlength="1000" :placeholder="t('What it does')" :aria-label="t('Ability text')"></textarea>
+          <button type="button" class="x" :aria-label="t('Remove ability {n}', { n: ai + 1 })" @click="removeAt(form.abilities, ai)">×</button>
         </div>
-        <button type="button" class="pill small" data-test="add-ability" @click="form.abilities.push({ name: '', text: '' })">+ Ability</button>
+        <button type="button" class="pill small" data-test="add-ability" @click="form.abilities.push({ name: '', text: '' })">{{ t('+ Ability') }}</button>
 
-        <label>Adventure seed<textarea v-model="form.adventure_seed" rows="2" maxlength="1000"></textarea></label>
-        <label>Random encounter<textarea v-model="form.random_encounter" rows="2" maxlength="1000"></textarea></label>
+        <label>{{ t('Adventure seed') }}<textarea v-model="form.adventure_seed" rows="2" maxlength="1000"></textarea></label>
+        <label>{{ t('Random encounter') }}<textarea v-model="form.random_encounter" rows="2" maxlength="1000"></textarea></label>
 
         <div class="actions">
-          <button type="submit" class="pill primary" :disabled="!form.name.trim() || busy" data-test="save-creature">Save</button>
-          <button type="button" class="pill" @click="close">Close</button>
+          <button type="submit" class="pill primary" :disabled="!form.name.trim() || busy" data-test="save-creature">{{ t('Save') }}</button>
+          <button type="button" class="pill" @click="close">{{ t('Close') }}</button>
           <template v-if="editingId">
-            <button v-if="!confirmingDelete" type="button" class="pill danger" data-test="delete-creature" @click="confirmingDelete = true">Delete</button>
-            <span v-else class="confirm" data-test="delete-confirm">Delete «{{ form.name }}»?
-              <button type="button" class="pill danger sure" data-test="delete-yes" @click="remove">Delete</button>
-              <button type="button" class="pill" @click="confirmingDelete = false">Cancel</button>
+            <button v-if="!confirmingDelete" type="button" class="pill danger" data-test="delete-creature" @click="confirmingDelete = true">{{ t('Delete') }}</button>
+            <span v-else class="confirm" data-test="delete-confirm">{{ t('Delete «{name}»?', { name: form.name }) }}
+              <button type="button" class="pill danger sure" data-test="delete-yes" @click="remove">{{ t('Delete') }}</button>
+              <button type="button" class="pill" @click="confirmingDelete = false">{{ t('Cancel') }}</button>
             </span>
           </template>
           <span v-if="status" class="status" :class="{ error: failed }" data-test="status">{{ status }}</span>
         </div>
       </form>
-      <p v-else class="muted hint">Pick one of your creatures, or make a new one.</p>
+      <p v-else class="muted hint">{{ t('Pick one of your creatures, or make a new one.') }}</p>
     </div>
   </section>
 </template>

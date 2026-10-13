@@ -1,0 +1,8 @@
+# Spanish of manifest.yaml: the Spanish title and PDF of the adventure (the pack id is kept). The page numbering stays the English one: the
+# data cites pages of the English PDF, and the Spanish book prints the same numbers on the same contents.
+name: "Dragonbane: El Valle Brumoso"
+description: "La aventura del Valle Brumoso, sacada del PDF: sus capítulos, lugares, PNJs, monstruos, recuadros, mapas y tablas."
+sources:
+  - title: "Aventura de Dragonbane: El Valle Brumoso"
+    short: Aventura
+    file: References/es/AdventureMistyVale.pdf

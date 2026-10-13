@@ -2,6 +2,7 @@
 // Random NPC: one pick from each list of the rulebook's "Creating NPCs" (data/system/npcs.yaml); each result can be re-rolled alone.
 import { onMounted, ref } from 'vue';
 import { apiGet } from '../api.js';
+import { t } from '../i18n.js';
 
 const props = defineProps({
   token: { type: String, required: true },
@@ -12,7 +13,7 @@ const lists = ref([]);   // [{key, dice, values[]}]
 const npc = ref(null);   // {key: value}
 const error = ref('');
 
-const label = (key) => key.charAt(0).toUpperCase() + key.slice(1);
+const label = (key) => t(key.charAt(0).toUpperCase() + key.slice(1));
 
 function pick(list, except = null) {
   const pool = list.values.length > 1 ? list.values.filter((v) => v !== except) : list.values;
@@ -30,9 +31,9 @@ function reroll(list) {
 onMounted(async () => {
   try {
     lists.value = (await apiGet(`${props.gmPrefix}/npcs`, props.token)).lists ?? [];
-    if (!lists.value.length) error.value = 'The NPC lists (data/system/npcs.yaml) are not loaded.';
+    if (!lists.value.length) error.value = t('The NPC lists (data/system/npcs.yaml) are not loaded.');
   } catch (e) {
-    error.value = e.message ?? 'Could not load the NPC lists.';
+    error.value = e.message ?? t('Could not load the NPC lists.');
   }
 });
 </script>
@@ -40,13 +41,13 @@ onMounted(async () => {
 <template>
   <div class="npc-creator">
     <p v-if="error" class="error">{{ error }}</p>
-    <button v-else class="create-btn" data-test="npc-create" @click="create">Create Random NPC</button>
+    <button v-else class="create-btn" data-test="npc-create" @click="create">{{ t('Create Random NPC') }}</button>
 
     <div v-if="npc" class="npc-card panel" data-test="npc">
       <div v-for="l in lists" :key="l.key" class="npc-row">
         <span class="npc-key">{{ label(l.key) }}</span>
         <span class="npc-val" data-test="npc-value">{{ npc[l.key] }}</span>
-        <button class="reroll" :aria-label="`Re-roll ${l.key}`" @click="reroll(l)">Re-roll</button>
+        <button class="reroll" :aria-label="t('Re-roll {what}', { what: label(l.key) })" @click="reroll(l)">{{ t('Re-roll') }}</button>
       </div>
     </div>
   </div>

@@ -10,10 +10,12 @@
 
 #include "parsing/fsutil.h"
 #include "parsing/fts.h"
+#include "parsing/i18n.h"
 #include "game/creation.h"
 #include "game/sheet_edit.h"
 #include "game/settings.h"
 #include "web/web_views.h"
+#include "web/web_names.h"
 #include "web/web_creation.h"
 #include "web/web_adventures.h"
 #include "web/web_adventure_editor.h"
@@ -34,7 +36,8 @@ WebResponse jsonResponse(int status, const json& body) {
     return r;
 }
 
-WebResponse errorResponse(int status, const std::string& message) { return jsonResponse(status, {{"error", message}}); }
+// (every message is written in English; it goes out in the language of the request)
+WebResponse errorResponse(int status, const std::string& message) { return jsonResponse(status, {{"error", i18n::tr(message)}}); }
 
 // What a store function answered (anything under 300 is fine): its own text as the error, or the body that was asked for.
 template <class Result>
@@ -135,6 +138,7 @@ WebApp::WebApp(WebConfig config, Clock clock)
         return;
     }
     packs_ = std::make_unique<PackManager>(config_.dataDir + "/packs/core", config_.prefsDir + "/packs");
+    i18n::loadCatalogs(config_.dataDir);
     chat_.setPrefDir(config_.prefsDir + "/");
     changes_.setPrefDir(config_.prefsDir + "/");
     refresh(clock_());
@@ -147,11 +151,25 @@ WebApp::~WebApp() = default;
 void WebApp::reloadContentIfChanged() {
     Settings settings;
     settings.open(config_.prefsDir + "/settings.yaml");
+    language_ = settings.language;
     const std::vector<PackSpec> specs = packs_->specs(settings.disabledPacks());
     const std::string sig = packSignature(specs);
     if (sig == contentSignature_) return;
     contentSignature_ = sig;
+    specs_ = specs;
     content_.load(specs);                                // Core and the enabled packs, exactly as the GM app sees them
+    localized_.clear();                                  // their translations are read again when they are next asked for
+}
+
+const ContentStore& WebApp::shown() {
+    const std::string& lang = i18n::current();
+    if (lang == i18n::kDefault) return content_;
+    auto& store = localized_[lang];
+    if (!store) {
+        store = std::make_unique<ContentStore>();
+        store->load(specs_, lang, &content_);
+    }
+    return *store;
 }
 
 // Items that weigh nothing live in the tiny items, not in the inventory: moves the ones that are not there yet and saves the file.
@@ -221,6 +239,11 @@ void WebApp::failed(const std::string& ip, long long now) {
 
 WebResponse WebApp::handle(const WebRequest& request) {
     std::lock_guard<std::mutex> lock(mutex_);
+    // the language of the answer: the one the page says it speaks, else the GM's
+    std::string lang = language_;
+    if (const auto h = request.headers.find("x-skaldbok-lang"); h != request.headers.end() && !h->second.empty()) lang = h->second;
+    else if (const auto q = request.query.find("lang"); q != request.query.end() && !q->second.empty()) lang = q->second;
+    const i18n::Scope speaking(lang);
     if (!ok()) return errorResponse(503, "The GM's data is not available.");
     WebResponse r = route(request, clock_());
     r.headers["X-Content-Type-Options"] = "nosniff";
@@ -244,7 +267,12 @@ WebResponse WebApp::route(const WebRequest& request, long long now) {
 
 WebResponse WebApp::api(const WebRequest& request, long long now) {
     const std::string sub = request.path.size() > 4 ? request.path.substr(4) : std::string();
-    if (sub == "/health") return jsonResponse(200, {{"ok", true}});
+    if (sub == "/health") {                              // (no token needed) the GM's language too: a page nobody chose a language for speaks it
+        reloadContentIfChanged();
+        json languages = json::array();
+        for (const std::string& l : i18n::languages()) languages.push_back({{"id", l}, {"name", i18n::nativeName(l)}});
+        return jsonResponse(200, {{"ok", true}, {"language", language_}, {"languages", languages}});
+    }
 
     // ---- everything below needs a personal token ------------------------------------------------------------
     const std::string ip = request.ip.empty() ? "unknown" : request.ip;
@@ -270,7 +298,7 @@ WebResponse WebApp::api(const WebRequest& request, long long now) {
     if (!reading && !writing) return errorResponse(405, "That is not allowed.");
     if (writing && tooManyWrites(id, now)) return errorResponse(429, "Too many changes at once. Wait a moment.");
 
-    if (sub == "/me") return request.method == "PATCH" ? editSheet(request, id, now, true) : jsonResponse(200, characterView(*me, content_));
+    if (sub == "/me") return request.method == "PATCH" ? editSheet(request, id, now, true) : jsonResponse(200, characterView(*me, content_, shown()));
     if (sub == "/chat") return request.method == "POST" ? postChat(request, id) : jsonResponse(200, chatView(chat_.thread(id)));
     if (sub == "/chat/read") {
         json body;
@@ -321,12 +349,13 @@ WebResponse WebApp::postChat(const WebRequest& request, const std::string& chara
 WebResponse WebApp::editSheet(const WebRequest& request, const std::string& characterId, long long now, bool asPlayer) {
     json body;
     if (!jsonParse(request.body, body, nullptr) || !body.is_object() || !body.contains("set")) return errorResponse(400, "Send {\"set\": {...}} with the fields to change.");
-    const sheet::EditResult r = sheet::editFile(config_.prefsDir + "/characters/" + characterId + ".yaml", characterId, body["set"], asPlayer, &changes_);
+    const ShownNames names{content_, shown()};          // a page in another language sends the names as it shows them: the file keeps them in English
+    const sheet::EditResult r = sheet::editFile(config_.prefsDir + "/characters/" + characterId + ".yaml", characterId, names.keepSet(body["set"]), asPlayer, &changes_);
     if (!r.ok) return errorResponse(r.status, r.error);
     refreshedAt_ = -1;                                   // the next look must see the file we just wrote
     refresh(now);
     const Character* fresh = characters_.find(characterId);
-    return jsonResponse(200, characterView(fresh ? *fresh : r.character, content_, !asPlayer));
+    return jsonResponse(200, characterView(fresh ? *fresh : r.character, content_, shown(), !asPlayer));
 }
 
 // Somebody typing quickly is fine; a script hammering the server is not.
@@ -360,29 +389,30 @@ std::optional<WebResponse> WebApp::referenceApi(const std::string& sub, const We
         if (auto it = request.query.find("q"); it != request.query.end()) q = it->second.substr(0, 100);
         return q;
     };
-    if (sub == "/content") return jsonResponse(200, contentSummary(content_));
+    const ContentStore& cs = shown();                   // the Reference is read in the page's language
+    if (sub == "/content") return jsonResponse(200, contentSummary(cs));
     if (sub.starts_with("/content/")) {
         json out;
-        if (!contentList(content_, sub.substr(9), queryText(), out)) return errorResponse(404, "Unknown content type.");
+        if (!contentList(cs, sub.substr(9), queryText(), out)) return errorResponse(404, "Unknown content type.");
         return jsonResponse(200, out);
     }
     if (sub.starts_with("/rules/")) {
         json out;
-        if (!rulesChapter(content_, sub.substr(7), out)) return errorResponse(404, "Unknown rules chapter.");
+        if (!rulesChapter(cs, sub.substr(7), out)) return errorResponse(404, "Unknown rules chapter.");
         return jsonResponse(200, out);
     }
-    if (sub == "/npcs") return jsonResponse(200, npcLists(content_));
-    if (sub == "/creatures") return jsonResponse(200, monsterList(content_, queryText()));
+    if (sub == "/npcs") return jsonResponse(200, npcLists(cs));
+    if (sub == "/creatures") return jsonResponse(200, monsterList(cs, queryText()));
     if (sub.size() > 14 && sub.starts_with("/creatures/") && sub.ends_with("/image")) {
         const std::string key = sub.substr(11, sub.size() - 11 - 6);
-        for (const Monster& m : content_.monsters())
+        for (const Monster& m : cs.monsters())
             if (m.key == key && !m.image.empty()) return pictureResponse(m.image);     // the path comes from the loaded content
         return errorResponse(404, "No such picture");
     }
     if (sub.starts_with("/creatures/")) {
         const std::string key = sub.substr(11);
-        for (const Monster& m : content_.monsters())
-            if (m.key == key) return jsonResponse(200, monsterDetail(content_, m, prefix));
+        for (const Monster& m : cs.monsters())
+            if (m.key == key) return jsonResponse(200, monsterDetail(cs, m, prefix));
         return errorResponse(404, "Creature not found.");
     }
     return std::nullopt;
@@ -396,12 +426,16 @@ WebResponse WebApp::gmApi(const WebRequest& request, long long now) {
     if (sub == "/gm/me") return jsonResponse(200, {{"ok", true}, {"gmLink", access_.gmLink()}});
 
     // ---- the character creator: what each step offers, and a check of the choices so far ----
-    if (sub == "/gm/creation" && reading) return jsonResponse(200, creationCatalog(content_));
-    if (sub == "/gm/creation/random" && request.method == "POST") return jsonResponse(200, creationToJson(randomCreation(content_, dice_)));
+    if (sub == "/gm/creation" && reading) return jsonResponse(200, creationCatalog(content_, shown()));
+    if (sub == "/gm/creation/random" && request.method == "POST") {
+        Creation c = randomCreation(content_, dice_);
+        localizeCreation(c, content_, shown());
+        return jsonResponse(200, creationToJson(c));
+    }
     if (sub == "/gm/creation/preview" && request.method == "POST") {
         json body;
         if (!bodyObject(request, body)) return errorResponse(400, "Send a JSON object.");
-        return jsonResponse(200, creationPreview(creationFromJson(body, content_), content_, dice_));
+        return jsonResponse(200, creationPreview(creationFromJson(body, content_), content_, shown(), dice_));
     }
 
     // ---- a backup of all the GM's work, to move it to another computer (export: a download; import: replaces what is here) ----
@@ -458,7 +492,12 @@ WebResponse WebApp::gmApi(const WebRequest& request, long long now) {
             json body;
             if (!jsonParse(request.body, body, nullptr)) return errorResponse(400, "Send the campaign as JSON.");
             const BoardResult saved = campaignSave(config_.prefsDir, id, body);
-            return saved.status >= 300 ? errorResponse(saved.status, saved.error) : jsonResponse(200, campaignList(config_.prefsDir));
+            if (saved.status >= 300) return errorResponse(saved.status, saved.error);
+            if (const json* players = jsonFind(saved.body, "restReset"); players && players->is_array())      // a new shift: the rests of its characters are ticked off again
+                for (const json& who : *players)
+                    if (who.is_string() && fs::safeId(who.get<std::string>()))
+                        sheet::editFile(config_.prefsDir + "/characters/" + who.get<std::string>() + ".yaml", who.get<std::string>(), {{"round_rest", false}, {"stretch_rest", false}}, false, nullptr);
+            return jsonResponse(200, campaignList(config_.prefsDir));
         }
         if (request.method != "DELETE") return errorResponse(405, "That is not allowed.");
         const BoardResult gone = campaignDelete(config_.prefsDir, id);
@@ -515,7 +554,7 @@ WebResponse WebApp::gmApi(const WebRequest& request, long long now) {
         return pictureResponse(adventureImagePath(config_.dataDir, config_.prefsDir, id, asked == request.query.end() ? std::string() : asked->second));
     }
     if (sub.starts_with("/gm/adventures/") && reading) {
-        const json adventure = adventureDetail(config_.dataDir, config_.prefsDir, sub.substr(15), content_);
+        const json adventure = adventureDetail(config_.dataDir, config_.prefsDir, sub.substr(15), shown());
         return adventure.is_null() ? errorResponse(404, "There is no such adventure.") : jsonResponse(200, adventure);
     }
 
@@ -685,7 +724,7 @@ WebResponse WebApp::gmApi(const WebRequest& request, long long now) {
         if (reading) {
             json list = json::array();
             for (const auto& [id, item] : characters_.items)
-                list.push_back(characterSummary(item.doc, content_, access_.linkFor(id)));
+                list.push_back(characterSummary(item.doc, content_, shown(), access_.linkFor(id)));
             return jsonResponse(200, {{"characters", list}});
         }
         if (request.method == "POST") {
@@ -695,7 +734,10 @@ WebResponse WebApp::gmApi(const WebRequest& request, long long now) {
             if (const json* wizard = jsonFind(body, "creation"); wizard && wizard->is_object()) {     // the creator's choices: built by the book's rules
                 const Creation choices = creationFromJson(*wizard, content_);
                 const std::vector<std::string> problems = validateCreation(choices, content_);
-                if (!problems.empty()) return errorResponse(400, problems.front());
+                if (!problems.empty()) {
+                    const ShownNames names{content_, shown()};
+                    return jsonResponse(400, {{"error", i18n::tr(i18n::current(), problems.front(), [&](const std::string& n) { return names.showAny(n); })}});
+                }
                 c = buildCharacter(choices, content_, dice_);
             } else {
                 c.name = jsonStr(body, "name");
@@ -706,7 +748,7 @@ WebResponse WebApp::gmApi(const WebRequest& request, long long now) {
             if (!fs::writeFile(path, c.toJson())) return errorResponse(500, "Could not create character.");
             refreshedAt_ = -1;
             refresh(now);
-            return jsonResponse(201, characterSummary(c, content_, access_.linkFor(c.id)));
+            return jsonResponse(201, characterSummary(c, content_, shown(), access_.linkFor(c.id)));
         }
     }
 
@@ -719,7 +761,7 @@ WebResponse WebApp::gmApi(const WebRequest& request, long long now) {
         if (reading && slash == std::string::npos) {
             const Character* c = characters_.find(cid);
             if (!c) return errorResponse(404, "No such character.");
-            return jsonResponse(200, characterView(*c, content_, true));
+            return jsonResponse(200, characterView(*c, content_, shown(), true));
         }
         if (request.method == "PATCH" && slash == std::string::npos) {
             if (!characters_.find(cid)) return errorResponse(404, "No such character.");

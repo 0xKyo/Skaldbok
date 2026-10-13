@@ -30,30 +30,11 @@ const names = (w) => w.findAll('.rules-row-name').map((n) => n.text());
 
 afterEach(() => vi.unstubAllGlobals());
 
-describe('RulesView search in a rules chapter', () => {
-  it('filters the chapter by title, text and table contents when the Reference asks for a search', async () => {
-    const w = await mountIt();
-    expect(names(w)).toEqual(['Actions', 'Free Actions', 'Movement']);
-    await w.setProps({ query: 'shout' });
-    expect(names(w)).toEqual(['Free Actions']);
-    await w.setProps({ query: 'meters' });
-    expect(names(w)).toEqual(['Movement']);
-    await w.setProps({ query: '' });
-    expect(names(w)).toHaveLength(3);
-  });
-
+describe('RulesView text of a rules chapter', () => {
   it("shows the chapter's own text as the intro above the list, not as an entry", async () => {
     const w = await mountIt();
     expect(w.get('.inline-intro').text()).toContain('On your turn you can move and act.');
     expect(names(w)).not.toContain('On your turn you can move and act.');
-  });
-
-  it('keeps a valid entry selected and says so when nothing matches', async () => {
-    const w = await mountIt();
-    await w.setProps({ query: 'shout' });
-    expect(w.get('.rules-detail-name').text()).toBe('Free Actions');
-    await w.setProps({ query: 'zzzz' });
-    expect(w.text()).toContain('Nothing found');
   });
 });
 

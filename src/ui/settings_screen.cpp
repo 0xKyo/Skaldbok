@@ -16,6 +16,7 @@
 #include <imgui.h>
 
 #include "parsing/fsutil.h"
+#include "parsing/i18n.h"
 #include "parsing/jsonutil.h"
 #include "ui/ui_common.h"
 
@@ -23,6 +24,7 @@ namespace gm {
 namespace {
 
 using namespace ui;
+using i18n::tr;
 
 #ifdef _WIN32
 constexpr const char* kServerName = "skaldbok_web.exe";
@@ -52,7 +54,7 @@ void SettingsScreen::update() {
         SDL_DestroyProcess(proc_);
         proc_ = nullptr;
         readStatus();
-        message_ = status_.error.empty() ? "The web server stopped." : status_.error;
+        message_ = status_.error.empty() ? tr("The web server stopped.") : tr(status_.error);
     } else if (SDL_GetTicks() >= nextRead_) {
         readStatus();
         nextRead_ = SDL_GetTicks() + (status_.running ? 1000 : 300);
@@ -64,67 +66,84 @@ void SettingsScreen::draw() {
     WebSettings& w = host_.settings().web;
     ImGui::BeginChild("##settings", ImVec2(0, 0));
 
-    // ---- general settings: the content packs -----------------------------------------------------------
-    bigText("General Settings", 1.6f, kAccent);
-    bigText("Content packs", 1.15f, kGold);
+    // ---- general settings: the language and the content packs ---------------------------------------------
+    bigText(tr("General Settings").c_str(), 1.6f, kAccent);
+    {
+        // the GM's language: this window's, and the web pages' until a player picks another one in their browser
+        std::string& lang = host_.settings().language;
+        ImGui::SetNextItemWidth(U(180));
+        if (ImGui::BeginCombo((tr("Language") + "###language").c_str(), i18n::nativeName(lang).c_str())) {
+            for (const std::string& l : i18n::languages())
+                if (ImGui::Selectable(i18n::nativeName(l).c_str(), l == lang) && l != lang) {
+                    lang = l;
+                    i18n::setCurrent(l);
+                    host_.settings().save();               // the web server reads it on its next look at the settings
+                }
+            ImGui::EndCombo();
+        }
+        ImGui::SameLine();
+        ImGui::TextColored(kGrey, "%s", tr("Also the players' pages, unless a player picks another.").c_str());
+    }
+    ImGui::Spacing();
+    bigText(tr("Content packs").c_str(), 1.15f, kGold);
     packs_.draw();
     ImGui::Spacing();
     ImGui::Separator();
     ImGui::Spacing();
 
     // ---- the web server ----------------------------------------------------------------------------------
-    bigText("Web server for players", 1.6f, kAccent);
-    ImGui::TextWrapped("Each player opens their own link in a browser (a phone is fine) and sees their character and the rules. "
-                       "You open the GM page with the button below. The page updates by itself when anything changes. The server is off until you start it below.");
+    bigText(tr("Web server for players").c_str(), 1.6f, kAccent);
+    ImGui::TextWrapped("%s", tr("Each player opens their own link in a browser (a phone is fine) and sees their character and the rules. "
+                                "You open the GM page with the button below. The page updates by itself when anything changes. The server is off until you start it below.").c_str());
 
     // ---- state ---------------------------------------------------------------------------------------------
     ImGui::Spacing();
     const bool running = proc_ && status_.running;
     if (running) {
-        ImGui::TextColored(kAccent, "Running");
+        ImGui::TextColored(kAccent, "%s", tr("Running").c_str());
         ImGui::SameLine();
-        ImGui::TextColored(kGrey, "on this computer at %s", status_.localUrl.c_str());
-        ImGui::TextColored(kGold, "Players on your network:");
+        ImGui::TextColored(kGrey, "%s", tr("on this computer at " + status_.localUrl).c_str());
+        ImGui::TextColored(kGold, "%s", tr("Players on your network:").c_str());
         ImGui::SameLine();
         ImGui::TextUnformatted(status_.url.c_str());
     } else if (proc_) {
-        ImGui::TextColored(kGold, "Starting…");
+        ImGui::TextColored(kGold, "%s", tr("Starting…").c_str());
     } else {
-        ImGui::TextColored(message_.empty() ? kGrey : kRed, "%s", message_.empty() ? "Stopped" : message_.c_str());
+        ImGui::TextColored(message_.empty() ? kGrey : kRed, "%s", message_.empty() ? tr("Stopped").c_str() : message_.c_str());
     }
 
     if (!proc_) {
-        if (ImGui::Button("Start server")) start();
+        if (ImGui::Button((tr("Start server") + "###start").c_str())) start();
     } else {
-        if (ImGui::Button("Stop")) {
+        if (ImGui::Button((tr("Stop") + "###stop").c_str())) {
             stop();
-            message_ = "Stopped";
+            message_ = tr("Stopped");
         }
         ImGui::SameLine();
-        if (ImGui::Button("Restart")) {
+        if (ImGui::Button((tr("Restart") + "###restart").c_str())) {
             stop();
             start();
         }
     }
     if (running) {
         ImGui::SameLine();
-        if (ImGui::Button("Open in this browser")) SDL_OpenURL(status_.localUrl.c_str());
+        if (ImGui::Button((tr("Open in this browser") + "###open").c_str())) SDL_OpenURL(status_.localUrl.c_str());
         ImGui::SameLine();
         ImGui::BeginDisabled(status_.gmLink.empty());
-        if (ImGui::Button("Open as GM")) SDL_OpenURL(status_.gmLink.c_str());     // the link carries the GM token
+        if (ImGui::Button((tr("Open as GM") + "###opengm").c_str())) SDL_OpenURL(status_.gmLink.c_str());     // the link carries the GM token
         ImGui::EndDisabled();
     }
 
     // ---- options -----------------------------------------------------------------------------------------------
     ImGui::Spacing();
     ImGui::Separator();
-    if (ImGui::Checkbox("Launch server when opening", &w.launchOnOpen)) host_.settings().save();
+    if (ImGui::Checkbox((tr("Launch server when opening") + "###launch").c_str(), &w.launchOnOpen)) host_.settings().save();
     ImGui::SetNextItemWidth(U(90));
-    ImGui::InputText("Port", port_, sizeof port_, ImGuiInputTextFlags_CharsDecimal);
+    ImGui::InputText((tr("Port") + "###port").c_str(), port_, sizeof port_, ImGuiInputTextFlags_CharsDecimal);
     ImGui::SetNextItemWidth(U(360));
-    ImGui::InputTextWithHint("Address players use", "automatic: this computer's address on the network", publicUrl_, sizeof publicUrl_);
+    ImGui::InputTextWithHint((tr("Address players use") + "###address").c_str(), tr("automatic: this computer's address on the network").c_str(), publicUrl_, sizeof publicUrl_);
     ImGui::SameLine();
-    if (ImGui::Button("Apply")) {
+    if (ImGui::Button((tr("Apply") + "###apply").c_str())) {
         w.port = std::clamp(std::atoi(port_), 1, 65535);
         w.publicUrl = publicUrl_;
         std::snprintf(port_, sizeof port_, "%d", w.port);
@@ -134,11 +153,11 @@ void SettingsScreen::draw() {
             start();
         }
     }
-    ImGui::TextColored(kGrey, "For players outside your home network, put the https address of a tunnel here (see docs/WEB.md).");
+    ImGui::TextColored(kGrey, "%s", tr("For players outside your home network, put the https address of a tunnel here (see docs/WEB.md).").c_str());
 
     ImGui::Spacing();
-    ImGui::TextWrapped("The first time, Windows may ask whether to let \"skaldbok_web\" use the network: allow it on private networks so "
-                       "phones on your Wi-Fi can connect. The players' links, and the rest, are on the web page (Open as GM).");
+    ImGui::TextWrapped("%s", tr("The first time, Windows may ask whether to let \"skaldbok_web\" use the network: allow it on private networks so "
+                                "phones on your Wi-Fi can connect. The players' links, and the rest, are on the web page (Open as GM).").c_str());
     ImGui::EndChild();
 }
 
@@ -162,7 +181,7 @@ void SettingsScreen::start() {
     const std::string exe = dir + kServerName;
     SDL_PathInfo info;
     if (!SDL_GetPathInfo(exe.c_str(), &info)) {
-        message_ = std::string("The web server program (") + kServerName + ") was not found next to the app.";
+        message_ = tr(std::string("The web server program (") + kServerName + ") was not found next to the app.");
         return;
     }
     const std::string prefs = fs::withoutTrailingSlash(host_.paths().prefDir);
@@ -192,7 +211,7 @@ void SettingsScreen::start() {
     SDL_DestroyProperties(props);
     status_ = Status{};
     message_.clear();
-    if (!proc_) message_ = std::string("Could not start the web server: ") + SDL_GetError();
+    if (!proc_) message_ = tr(std::string("Could not start the web server: ") + SDL_GetError());
     watchUntil_ = SDL_GetTicks() + 15000;                        // keep the screen refreshing until the server says it is up
     nextRead_ = 0;
 }

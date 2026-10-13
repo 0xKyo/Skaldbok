@@ -91,7 +91,7 @@ th { text-align: left; color: var(--brown); font-weight: 600; font-size: 0.8rem;
 td { padding: 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
 td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 
-/* clickable entry link: replaces EntryCard accordion in view mode */
+/* a clickable entry of the sheet: an ability, a spell */
 .entry-link { display: flex; justify-content: space-between; align-items: baseline; gap: 6px; width: 100%;
   padding: 7px 0; border: 0; border-bottom: 1px solid var(--line); background: none; font: inherit;
   color: var(--ink); cursor: pointer; text-align: left; }
@@ -100,15 +100,6 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .entry-link-name { font-weight: 600; }
 .entry-link-sub { font-size: 0.8rem; color: var(--muted); flex-shrink: 0; }
 
-/* an entry of the rules: a spell, an ability... */
-details.entry { border: 1px solid var(--line); border-radius: 8px; background: var(--parchment); margin-bottom: 8px; }
-details.entry summary { padding: 10px 12px; cursor: pointer; list-style: none; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
-details.entry summary::-webkit-details-marker { display: none; }
-details.entry summary::before { content: '◆'; color: var(--green); font-size: 0.7rem; }
-details.entry[open] summary::before { color: var(--red); }
-details.entry .name { font-weight: 700; }
-details.entry .sub { color: var(--muted); font-size: 0.85rem; }
-details.entry .body { padding: 0 12px 12px; }
 .fields { display: grid; grid-template-columns: max-content 1fr; gap: 2px 12px; margin: 4px 0 10px; }
 .fields dt { color: var(--brown); font-weight: 600; }
 .fields dd { margin: 0; }
@@ -141,13 +132,17 @@ input[type='search']:focus-visible { outline: 2px solid var(--green); }
 .message { margin-bottom: 12px; }
 .message-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }
 .message-text { margin: 0 0 0.4em; overflow-wrap: anywhere; }
+/* a text laid out in blocks (TextBlocks, IntroBlocks) */
 .rule-list { margin: 0 0 0.7em; padding-left: 1.3rem; }
 .rule-list li { margin: 0 0 0.3em; line-height: 1.5; }
+.block-p { margin: 0 0 0.6em; }
+.intro-p { font-size: 0.88rem; color: var(--ink); margin: 0 0 0.5em; line-height: 1.5; }
+.intro-section-name { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--brown); margin: 0.6em 0 0.2em; }
 .message-image { display: block; max-width: 100%; max-height: 70vh; border-radius: 8px; margin-bottom: 10px; }
 
 /* ---- the character sheet (page 1 of the printed sheet: the green one) ------------------------------------- */
 .sheet { display: grid; gap: 14px; grid-template-columns: minmax(0, 1fr);
-  grid-template-areas: 'tools' 'issues' 'name' 'attrs' 'points' 'subtabs' 'ident' 'appear' 'skills' 'abil' 'inv' 'coins' 'armor' 'helmet' 'weapons' 'memento' 'tiny' 'about';
+  grid-template-areas: 'tools' 'issues' 'name' 'attrs' 'derived' 'points' 'rest' 'subtabs' 'ident' 'appear' 'skills' 'abil' 'inv' 'coins' 'armor' 'helmet' 'weapons' 'memento' 'tiny' 'about';
 }
 .a-subtabs { grid-area: subtabs; margin: 0; }
 /* under 900px the sheet is tabs, one at a time: stats, skills, abilities, gear, details; the name stays on top */
@@ -157,8 +152,8 @@ input[type='search']:focus-visible { outline: 2px solid var(--green); }
   .sheet .a-subtabs { order: -1; flex-wrap: nowrap; gap: 4px; overflow-x: auto; padding: 0 0 2px; }
   .sheet .a-subtabs button { flex: 1 1 auto; padding: 6px 8px; font-size: 0.85rem; white-space: nowrap; }
   .sheet .a-ident, .sheet .a-appear { order: 1; } .sheet .a-about { order: 2; }
-  .sheet .a-abil { grid-template-columns: minmax(0, 1fr) max-content; justify-content: stretch; }          /* the abilities column fills the width: the banners stretch, the values sit at the right */
-  .sheet:not([data-tab='stats']) :is(.a-attrs, .a-points) { display: none; }
+  .sheet :is(.a-abil, .a-derived) { grid-template-columns: minmax(0, 1fr) max-content; justify-content: stretch; }          /* the abilities column fills the width: the banners stretch, the values sit at the right */
+  .sheet:not([data-tab='stats']) :is(.a-attrs, .a-derived, .a-points, .a-rest) { display: none; }
   .sheet:not([data-tab='details']) :is(.a-ident, .a-appear, .a-about) { display: none; }
   .sheet:not([data-tab='abilities']) .a-abil { display: none; }
   .sheet:not([data-tab='skills']) .a-skills { display: none; }
@@ -167,12 +162,16 @@ input[type='search']:focus-visible { outline: 2px solid var(--green); }
 @media (min-width: 900px) { .a-subtabs { display: none; } }
 .sheet > * { min-width: 0; }
 .a-tools { grid-area: tools; } .a-issues { grid-area: issues; } .a-name { grid-area: name; } .a-ident { grid-area: ident; } .a-appear { grid-area: appear; } .a-attrs { grid-area: attrs; }
-.a-abil { grid-area: abil; } .a-skills { grid-area: skills; } .a-inv { grid-area: inv; }
+.a-abil { grid-area: abil; } .a-derived { grid-area: derived; align-self: center; } .a-skills { grid-area: skills; } .a-inv { grid-area: inv; }
 .a-coins { grid-area: coins; } .a-memento { grid-area: memento; } .a-tiny { grid-area: tiny; } .a-armor { grid-area: armor; }
 .a-helmet { grid-area: helmet; } .a-weapons { grid-area: weapons; } .a-about { grid-area: about; }
+.a-rest { grid-area: rest; display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: center; justify-content: space-around; padding: 6px 12px; }          /* on a phone: the whole width */
+.rest-check { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; cursor: pointer; }
+.rest-check input:disabled { cursor: default; }
 .a-points { grid-area: points; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .a-hp { grid-column: 1; } .a-wp { grid-column: 2; }
 @media (max-width: 479px) { .a-points { grid-template-columns: 1fr; } .a-hp, .a-wp { grid-column: 1; } }          /* on a phone HP and WP take a row each: their circles have room */
+@media (min-width: 900px) { .a-rest { width: fit-content; max-width: 100%; justify-content: flex-start; flex-direction: column; align-items: flex-start; align-self: center; gap: 6px; } }          /* on a computer: as big as its words, in the column of the damage bonuses, under them */
 .a-hp, .a-wp { display: flex; }                                  /* the two cards are as tall as the taller one */
 .a-hp > .points, .a-wp > .points { flex: 1; min-width: 0; }
 
@@ -190,8 +189,8 @@ input[type='search']:focus-visible { outline: 2px solid var(--green); }
       'tools  tools   tools   tools'
       'issues issues  issues  issues'
       'ident  name    name    appear'
-      'attrs  attrs   attrs   attrs'
-      'points points  points  points'
+      'attrs  attrs   attrs   derived'
+      'points points  points  rest'
       'abil   skills  skills  inv'
       'abil   skills  skills  coins'
       'abil   skills  skills  armor'
@@ -217,10 +216,10 @@ input[type='search']:focus-visible { outline: 2px solid var(--green); }
 
 .block { display: grid; gap: 5px; align-content: start; }
 .field-row { display: grid; grid-template-columns: max-content max-content; gap: 5px; align-items: stretch; }
-/* the banners of the abilities column (damage bonuses, movement, abilities & spells) are as wide as the widest one, so they line up */
-.a-abil { grid-template-columns: max-content max-content; justify-content: start; column-gap: 5px; }
-.a-abil > .field-row { display: contents; }
-.a-abil .banner { width: auto; }
+/* the banners of the abilities column (abilities & spells) and of the damage bonuses and movement are as wide as the widest one, so they line up */
+.a-abil, .a-derived { grid-template-columns: max-content max-content; justify-content: start; column-gap: 5px; }
+.a-abil > .field-row, .a-derived > .field-row { display: contents; }
+.a-abil .banner, .a-derived .banner { width: auto; }
 .a-abil > :not(.field-row):not(.banner) { grid-column: 1 / -1; }
 .field { display: flex; align-items: center; justify-content: center; min-height: 1.7rem; padding: 2px 6px; border: 1px solid var(--line); border-radius: 6px;
   background: linear-gradient(var(--parchment), #e2d3a8); font-family: var(--display); font-weight: 800; font-size: 1rem; color: var(--ink); }
@@ -283,9 +282,9 @@ input[type='search']:focus-visible { outline: 2px solid var(--green); }
   font-family: var(--display); font-weight: 900; font-size: 1.5rem; }
 .points .now small { font-size: 0.75rem; font-weight: 600; color: var(--muted); }
 .pips { display: flex; flex-wrap: wrap; gap: 5px; }
-.pip { width: 1.05rem; height: 1.05rem; border-radius: 50%; border: 2px solid #fff; background: #fff; }
+/* the circles fill as points are lost: cream, like the box of the number */
+.pip { width: 1.05rem; height: 1.05rem; border-radius: 50%; border: 2px solid #fbf5e2; background: #fbf5e2; }
 .pip.gone { background: transparent; border-color: rgba(255, 255, 255, 0.55); }
-.points.hp .pip.low:not(.gone) { background: #ffe1a3; }
 
 /* the skills parchment */
 .parchment { padding: 12px 18px 14px; border: 1px solid #b7a26f; border-radius: 12px; background: linear-gradient(#efe4c0, #e4d4a6); box-shadow: 0 2px 0 rgba(0, 0, 0, 0.12), inset 0 0 26px rgba(150, 110, 50, 0.16); }

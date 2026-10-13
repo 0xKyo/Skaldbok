@@ -3,6 +3,7 @@
 // form on the right. The server decides what each field is (text, a choice, a list, columns...), so every data file of Core is covered by this.
 import { computed, ref, watch } from 'vue';
 import { ApiError, apiGet, apiSend } from '../api.js';
+import { t } from '../i18n.js';
 
 const props = defineProps({
   token: { type: String, required: true },
@@ -59,13 +60,13 @@ const composeRequirement = (r) => {
 
 // range: "Touch", "Personal", "10 meters (sphere)" <-> a kind, a number and a shape
 const parseRange = (text) => {
-  const t = String(text ?? '').trim();
-  if (!t) return { kind: '', meters: '', shape: '', other: '' };
-  if (/^touch$/i.test(t)) return { kind: 'Touch', meters: '', shape: '', other: '' };
-  if (/^personal$/i.test(t)) return { kind: 'Personal', meters: '', shape: '', other: '' };
-  const m = t.match(/^(\d+)\s*meters?(?:\s*\((sphere|cone)\))?$/i);
+  const s = String(text ?? '').trim();
+  if (!s) return { kind: '', meters: '', shape: '', other: '' };
+  if (/^touch$/i.test(s)) return { kind: 'Touch', meters: '', shape: '', other: '' };
+  if (/^personal$/i.test(s)) return { kind: 'Personal', meters: '', shape: '', other: '' };
+  const m = s.match(/^(\d+)\s*meters?(?:\s*\((sphere|cone)\))?$/i);
   if (m) return { kind: 'Meters', meters: m[1], shape: (m[2] ?? '').toLowerCase(), other: '' };
-  return { kind: 'Other', meters: '', shape: '', other: t };
+  return { kind: 'Other', meters: '', shape: '', other: s };
 };
 const composeRange = (r) => {
   if (r.kind === 'Meters') return r.meters ? `${r.meters} meters${r.shape ? ` (${r.shape})` : ''}` : '';
@@ -121,7 +122,7 @@ async function load() {
     loadError.value = '';
   } catch (e) {
     entries.value = [];
-    loadError.value = e instanceof ApiError ? e.message : 'Could not load your entries.';
+    loadError.value = e instanceof ApiError ? e.message : t('Could not load your entries.');
   }
   if (props.restore) {                                     // back from making a name for a field: the form as it was, with the new name in
     form.value = props.restore.form;
@@ -183,7 +184,7 @@ const close = () => { openIndex.value = null; viewOnly.value = false; houseRule.
 // from an entry of another pack: change it as a house rule (it replaces that card) or take a copy (a new one of your own)
 function startOwn(asRule) {
   houseRule.value = asRule ? { pack: props.pack, name: origin.value.name } : null;
-  if (!asRule) form.value.name = `${form.value.name} (copy)`;
+  if (!asRule) form.value.name = `${form.value.name} ${t('(copy)')}`;
   viewOnly.value = false;
   openIndex.value = -1;
   status.value = '';
@@ -207,15 +208,15 @@ async function save() {
     if (foreign.value) {                                   // made from an entry of another pack: it is in the GM's own pack now, and the list says so
       openIndex.value = null;
       houseRule.value = null;
-      status.value = wasRule ? 'Saved as a house rule in your pack. It replaces the original now.' : 'Saved in your pack.';
+      status.value = wasRule ? t('Saved as a house rule in your pack. It replaces the original now.') : t('Saved in your pack.');
       return;
     }
     openIndex.value = index;
-    status.value = 'Saved. It is in the Rules now.';
+    status.value = t('Saved. It is in the Rules now.');
     if (props.startNew) emit('made', payload.name);
   } catch (e) {
     failed.value = true;
-    status.value = e instanceof ApiError ? e.message : 'Could not save it.';
+    status.value = e instanceof ApiError ? e.message : t('Could not save it.');
   } finally {
     busy.value = false;
   }
@@ -228,7 +229,7 @@ async function remove() {
     await load();
   } catch (e) {
     failed.value = true;
-    status.value = e instanceof ApiError ? e.message : 'Could not delete it.';
+    status.value = e instanceof ApiError ? e.message : t('Could not delete it.');
     confirmingDelete.value = false;
   }
 }
@@ -240,48 +241,48 @@ const removeAt = (list, i) => list.splice(i, 1);
 
 <template>
   <div class="layout" :class="{ 'form-open': formOpen }" data-test="entries">
-    <aside class="list" :aria-label="foreign ? `${packName}: ${section.label}` : `Your ${section.label}`">
+    <aside class="list" :aria-label="foreign ? `${packName}: ${section.label}` : t('Your {what}', { what: section.label })">
       <p v-if="loadError" class="error">{{ loadError }}</p>
       <div class="list-actions">
-        <button v-if="!foreign" type="button" class="pill" data-test="new-entry" @click="openNew">+ New</button>
-        <span v-else class="lock muted" data-test="read-only">🔒 {{ packName }}: read only. Open one to house-rule it.</span>
+        <button v-if="!foreign" type="button" class="pill" data-test="new-entry" @click="openNew">{{ t('+ New') }}</button>
+        <span v-else class="lock muted" data-test="read-only">🔒 {{ t('{pack}: read only. Open one to house-rule it.', { pack: packName }) }}</span>
       </div>
       <p v-if="status && !formOpen" class="status" data-test="list-status">{{ status }}</p>
-      <p v-if="!entries.length" class="muted">Nothing {{ foreign ? 'in this pack' : 'yet' }} in {{ section.label }}.</p>
+      <p v-if="!entries.length" class="muted">{{ foreign ? t('Nothing in this pack in {what}.', { what: section.label }) : t('Nothing yet in {what}.', { what: section.label }) }}</p>
       <button v-for="e in entries" :key="e.index" type="button" class="row" :class="{ active: openIndex === e.index }" data-test="entry-row" @click="openEntry(e)">
         <span class="row-name">{{ e.name }}</span>
-        <span v-if="e.houseRuled" class="mark" data-test="house-ruled">house-ruled</span>
-        <span v-else-if="e.replaces" class="mark" data-test="house-rule-mark">house rule</span>
+        <span v-if="e.houseRuled" class="mark" data-test="house-ruled">{{ t('house-ruled') }}</span>
+        <span v-else-if="e.replaces" class="mark" data-test="house-rule-mark">{{ t('house rule') }}</span>
       </button>
     </aside>
 
     <form v-if="formOpen" class="form panel" data-test="entry-form" @submit.prevent="save">
-      <button type="button" class="back link" @click="close">← Back</button>
-      <h2>{{ viewOnly ? packName : houseRule ? 'House rule' : openIndex >= 0 ? 'Edit' : 'New' }} · {{ section.label }}</h2>
-      <p v-if="viewOnly" class="note" data-test="view-note">🔒 This is in {{ packName }} and cannot be changed here.
-        <template v-if="origin?.houseRuled">You already have a house rule for it: it is in your pack.</template></p>
-      <p v-else-if="houseRule" class="note house" data-test="house-note">House rule: what you save here <b>replaces</b> «{{ houseRule.name }}» of {{ packName }} in the Rules, for everybody, and is marked as changed by your pack. The original is not touched.</p>
-      <p v-else-if="current?.replaces" class="note house" data-test="replaces-note">House rule: this replaces <code>{{ current.replaces }}</code>.</p>
+      <button type="button" class="back link" @click="close">← {{ t('Back') }}</button>
+      <h2>{{ viewOnly ? packName : houseRule ? t('House rule') : openIndex >= 0 ? t('Edit') : t('New') }} · {{ section.label }}</h2>
+      <p v-if="viewOnly" class="note" data-test="view-note">🔒 {{ t('This is in {pack} and cannot be changed here.', { pack: packName }) }}
+        <template v-if="origin?.houseRuled">{{ t('You already have a house rule for it: it is in your pack.') }}</template></p>
+      <p v-else-if="houseRule" class="note house" data-test="house-note">{{ t('House rule: what you save here replaces «{name}» of {pack} in the Rules, for everybody, and is marked as changed by your pack. The original is not touched.', { name: houseRule.name, pack: packName }) }}</p>
+      <p v-else-if="current?.replaces" class="note house" data-test="replaces-note">{{ t('House rule: this replaces') }} <code>{{ current.replaces }}</code>.</p>
       <fieldset class="plain" :disabled="viewOnly">
 
       <template v-for="field in section.fields.filter(shown)" :key="field.key">
         <fieldset v-if="field.widget === 'requirement'" class="group" :data-test="`f-${field.key}`">
           <legend>{{ field.label }}</legend>
-          <label class="check"><input v-model="form[field.key].word" type="checkbox" data-test="req-word" /> Word</label>
-          <label class="check"><input v-model="form[field.key].gesture" type="checkbox" data-test="req-gesture" /> Gesture</label>
-          <label class="check"><input v-model="form[field.key].material" type="checkbox" data-test="req-material" /> Material</label>
-          <label v-if="form[field.key].material">Material: what is needed
-            <input v-model="form[field.key].detail" maxlength="100" placeholder="water, a holy symbol…" data-test="req-detail" />
+          <label class="check"><input v-model="form[field.key].word" type="checkbox" data-test="req-word" /> {{ t('Word') }}</label>
+          <label class="check"><input v-model="form[field.key].gesture" type="checkbox" data-test="req-gesture" /> {{ t('Gesture') }}</label>
+          <label class="check"><input v-model="form[field.key].material" type="checkbox" data-test="req-material" /> {{ t('Material') }}</label>
+          <label v-if="form[field.key].material">{{ t('Material: what is needed') }}
+            <input v-model="form[field.key].detail" maxlength="100" :placeholder="t('water, a holy symbol…')" data-test="req-detail" />
           </label>
         </fieldset>
         <fieldset v-else-if="field.widget === 'range'" class="group" :data-test="`f-${field.key}`">
           <legend>{{ field.label }}</legend>
-          <select v-model="form[field.key].kind" data-test="range-kind"><option v-for="k in ['', 'Touch', 'Personal', 'Meters', 'Other']" :key="k" :value="k">{{ k || '—' }}</option></select>
+          <select v-model="form[field.key].kind" data-test="range-kind"><option v-for="k in ['', 'Touch', 'Personal', 'Meters', 'Other']" :key="k" :value="k">{{ k ? t(k) : '—' }}</option></select>
           <template v-if="form[field.key].kind === 'Meters'">
-            <input v-model="form[field.key].meters" inputmode="numeric" placeholder="How many meters" aria-label="Meters" data-test="range-meters" />
-            <select v-model="form[field.key].shape" aria-label="Area" data-test="range-shape"><option v-for="s in ['', 'sphere', 'cone']" :key="s" :value="s">{{ s || 'a single target' }}</option></select>
+            <input v-model="form[field.key].meters" inputmode="numeric" :placeholder="t('How many meters')" :aria-label="t('Meters')" data-test="range-meters" />
+            <select v-model="form[field.key].shape" :aria-label="t('Area')" data-test="range-shape"><option v-for="s in ['', 'sphere', 'cone']" :key="s" :value="s">{{ s ? t(s) : t('a single target') }}</option></select>
           </template>
-          <input v-if="form[field.key].kind === 'Other'" v-model="form[field.key].other" maxlength="100" placeholder="Describe it" aria-label="Range" data-test="range-other" />
+          <input v-if="form[field.key].kind === 'Other'" v-model="form[field.key].other" maxlength="100" :placeholder="t('Describe it')" :aria-label="t('Range')" data-test="range-other" />
         </fieldset>
         <label v-else-if="field.type === 'text' || field.type === 'number'">{{ field.label }}
           <input v-model="form[field.key]" :inputmode="field.type === 'number' ? 'numeric' : undefined" maxlength="200" :required="field.key === 'name'" :data-test="`f-${field.key}`" />
@@ -290,7 +291,7 @@ const removeAt = (list, i) => list.splice(i, 1);
           <textarea v-model="form[field.key]" rows="5" maxlength="4000" :data-test="`f-${field.key}`"></textarea>
         </label>
         <label v-else-if="field.type === 'select'">{{ field.label }}
-          <select v-model="form[field.key]" :data-test="`f-${field.key}`"><option v-for="o in optionsOf(field)" :key="o" :value="o">{{ o || '—' }}</option></select>
+          <select v-model="form[field.key]" :data-test="`f-${field.key}`"><option v-for="o in optionsOf(field)" :key="o" :value="o">{{ o ? (field.optionLabels?.[o] ?? o) : '—' }}</option></select>
         </label>
         <label v-else-if="field.type === 'bool'" class="check">
           <input v-model="form[field.key]" type="checkbox" :data-test="`f-${field.key}`" /> {{ field.label }}
@@ -298,58 +299,58 @@ const removeAt = (list, i) => list.splice(i, 1);
         <div v-else-if="isPick(field)" class="group" :data-test="`f-${field.key}`">
           <h3>{{ field.label }}</h3>
           <ul class="picked">
-            <li v-for="(n, i) in form[field.key]" :key="n" data-test="picked">{{ n }} <button type="button" class="x" :aria-label="`Remove ${n}`" @click="removeAt(form[field.key], i)">×</button></li>
+            <li v-for="(n, i) in form[field.key]" :key="n" data-test="picked">{{ n }} <button type="button" class="x" :aria-label="t('Remove {name}', { name: n })" @click="removeAt(form[field.key], i)">×</button></li>
           </ul>
           <div class="pair">
-            <select aria-label="Add" data-test="pick-add" @change="addPick(field, $event.target.value); $event.target.value = ''">
-              <option value="">Add…</option>
+            <select :aria-label="t('Add')" data-test="pick-add" @change="addPick(field, $event.target.value); $event.target.value = ''">
+              <option value="">{{ t('Add…') }}</option>
               <option v-for="n in pickable(field)" :key="n" :value="n">{{ n }}</option>
             </select>
-            <button type="button" class="pill small" data-test="pick-new" @click="requestNew(field)">+ New…</button>
+            <button type="button" class="pill small" data-test="pick-new" @click="requestNew(field)">{{ t('+ New…') }}</button>
           </div>
         </div>
-        <label v-else-if="field.type === 'list'">{{ field.label }} <span class="muted">(one per line)</span>
+        <label v-else-if="field.type === 'list'">{{ field.label }} <span class="muted">{{ t('(one per line)') }}</span>
           <textarea v-model="form[field.key]" rows="3" :data-test="`f-${field.key}`"></textarea>
         </label>
         <div v-else-if="field.type === 'pairs'" class="group" :data-test="`f-${field.key}`">
           <h3>{{ field.label }}</h3>
           <div v-for="(p, i) in form[field.key]" :key="i" class="pair" data-test="pair-row">
-            <input v-model="p.label" maxlength="40" placeholder="Label" aria-label="Label" />
-            <input v-model="p.value" maxlength="1000" placeholder="Value" aria-label="Value" />
-            <button type="button" class="x" aria-label="Remove" @click="removeAt(form[field.key], i)">×</button>
+            <input v-model="p.label" maxlength="40" :placeholder="t('Label')" :aria-label="t('Label')" />
+            <input v-model="p.value" maxlength="1000" :placeholder="t('Value')" :aria-label="t('Value')" />
+            <button type="button" class="x" :aria-label="t('Remove')" @click="removeAt(form[field.key], i)">×</button>
           </div>
-          <button type="button" class="pill small" data-test="add-pair" @click="addPair(form[field.key])">+ Column</button>
+          <button type="button" class="pill small" data-test="add-pair" @click="addPair(form[field.key])">{{ t('+ Column') }}</button>
         </div>
         <div v-else-if="field.type === 'rows'" class="group" :data-test="`f-${field.key}`">
           <h3>{{ field.label }}</h3>
           <div v-for="(r, i) in form[field.key]" :key="i" class="pair" data-test="row-row">
             <input v-for="c in field.cols" :key="c.key" v-model="r[c.key]" :placeholder="c.label" :aria-label="c.label" />
-            <button type="button" class="x" aria-label="Remove" @click="removeAt(form[field.key], i)">×</button>
+            <button type="button" class="x" :aria-label="t('Remove')" @click="removeAt(form[field.key], i)">×</button>
           </div>
-          <button type="button" class="pill small" data-test="add-row" @click="addRow(field)">+ Row</button>
+          <button type="button" class="pill small" data-test="add-row" @click="addRow(field)">{{ t('+ Row') }}</button>
         </div>
       </template>
       </fieldset>
 
       <div v-if="viewOnly" class="actions">
-        <button v-if="canReplace && !origin?.houseRuled" type="button" class="pill primary" data-test="house-rule-it" @click="startOwn(true)">House rule it</button>
-        <button type="button" class="pill" data-test="copy-it" @click="startOwn(false)">Copy to my pack</button>
-        <button type="button" class="pill" @click="close">Close</button>
+        <button v-if="canReplace && !origin?.houseRuled" type="button" class="pill primary" data-test="house-rule-it" @click="startOwn(true)">{{ t('House rule it') }}</button>
+        <button type="button" class="pill" data-test="copy-it" @click="startOwn(false)">{{ t('Copy to my pack') }}</button>
+        <button type="button" class="pill" @click="close">{{ t('Close') }}</button>
       </div>
       <div v-else class="actions">
-        <button type="submit" class="pill primary" :disabled="!String(form.name ?? '').trim() || busy" data-test="save-entry">Save</button>
-        <button type="button" class="pill" @click="close">Close</button>
+        <button type="submit" class="pill primary" :disabled="!String(form.name ?? '').trim() || busy" data-test="save-entry">{{ t('Save') }}</button>
+        <button type="button" class="pill" @click="close">{{ t('Close') }}</button>
         <template v-if="openIndex >= 0 && !foreign">
-          <button v-if="!confirmingDelete" type="button" class="pill danger" data-test="delete-entry" @click="confirmingDelete = true">Delete</button>
-          <span v-else class="confirm" data-test="delete-confirm">Delete «{{ form.name }}»?
-            <button type="button" class="pill danger sure" data-test="delete-yes" @click="remove">Delete</button>
-            <button type="button" class="pill" @click="confirmingDelete = false">Cancel</button>
+          <button v-if="!confirmingDelete" type="button" class="pill danger" data-test="delete-entry" @click="confirmingDelete = true">{{ t('Delete') }}</button>
+          <span v-else class="confirm" data-test="delete-confirm">{{ t('Delete «{name}»?', { name: form.name }) }}
+            <button type="button" class="pill danger sure" data-test="delete-yes" @click="remove">{{ t('Delete') }}</button>
+            <button type="button" class="pill" @click="confirmingDelete = false">{{ t('Cancel') }}</button>
           </span>
         </template>
         <span v-if="status" class="status" :class="{ error: failed }" data-test="status">{{ status }}</span>
       </div>
     </form>
-    <p v-else class="muted hint">Pick one, or make a new one.</p>
+    <p v-else class="muted hint">{{ t('Pick one, or make a new one.') }}</p>
   </div>
 </template>
 

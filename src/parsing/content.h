@@ -11,7 +11,9 @@
 #include <string>
 #include <vector>
 
+#include "game/attributes.h"
 #include "game/model.h"
+#include "parsing/i18n.h"
 
 struct sqlite3;
 
@@ -60,6 +62,9 @@ struct PackSpec {
 // name of its folder.
 bool readManifest(const std::string& dir, PackInfo& out);
 
+// The reference in a "{{include: Ref}}" line (a line that is only that), empty if the line is not one.
+std::string includeMarkerRef(const std::string& line);
+
 // What a card's key is made of: its "id" or name, lower case, every run of other characters one "-" ("Frog People" -> "frog-people").
 // A card's key is "<pack>/<kind>/<slug>" (the same slug twice in a pack: "-2", "-3"...).
 std::string slugOf(const std::string& s);
@@ -107,8 +112,31 @@ public:
     ContentStore(const ContentStore&) = delete;
     ContentStore& operator=(const ContentStore&) = delete;
 
-    // (Re)reads every pack. Never fails as a whole: a broken pack is reported in packs() and skipped.
-    void load(const std::vector<PackSpec>& specs);
+    // (Re)reads every pack. Never fails as a whole: a broken pack is reported in packs() and skipped. In a language other than English
+    // (i18n.h) every pack's translations are laid over its files: the same entries with the same keys, their texts in that language.
+    // `english`, the same packs read in English, lets a translated text still link to a keyword by its English word.
+    void load(const std::vector<PackSpec>& specs, const std::string& lang = "en", const ContentStore* english = nullptr);
+    const std::string& language() const { return lang_; }
+
+    // The words of the content, by key: data files write `name: LOC_SKILL_BUSHCRAFT` and the text is in i18n/<lang>.csv (i18n.h). In the
+    // language of the content, else in English, else the key itself (so a missing text shows what to write). A text may name an
+    // attribute in braces, "{agility} 1–6", and gets its short form ("AGL", "AGI").
+    std::string text(const std::string& key) const;
+    std::string englishText(const std::string& key) const;       // the same in English: what links and saved files know it by
+    // The attributes of the game system and its numeric tables (game/attributes.h): what Core and the packs say, in load order.
+    const AttributeSet& attributes() const { return attributes_; }
+    // The ages a character can have (age.yaml, in load order), and one by id: an unknown age is the adult, a content with no ages has one made of the book's adult.
+    const std::vector<AgeDef>& ages() const { return ages_; }
+    const AgeDef& age(const std::string& id) const;
+    // What an age does to the attributes, in words ("AGL and CON +1", "STR, AGL and CON −2, INT and WIL +1"); empty when it changes nothing.
+    std::string ageEffect(const AgeDef& a) const;
+    // The one line that sums an age up: its effect and its trained skills ("no change; 6+4 trained skills").
+    std::string ageSummary(const AgeDef& a) const;
+    std::string attributeName(const std::string& id) const;      // "Strength", "Fuerza"
+    std::string attributeAbbr(const std::string& id) const;      // "STR", "FUE"
+    std::string attributeDescription(const std::string& id) const;
+    // A lookup's value for a score, shown the way the table shows it ("+D4", "–2", "—").
+    std::string lookupShown(const std::string& lookupId, int score) const;
 
     const std::vector<PackInfo>& packs() const { return packs_; }
     const PackInfo* pack(const std::string& id) const;
@@ -132,6 +160,8 @@ public:
     const std::vector<Entry>& entries(Kind k) const;
     const Entry* entry(Kind k, int id) const;
     const Entry* findByName(Kind k, const std::string& name) const;         // case-insensitive, first match
+    // The card a "{{include: Ref}}" line names: its full key, its id ("ability_adaptive"), or its name (any kind). Null if there is none.
+    const Entry* resolveCard(const std::string& ref) const;
     // What a link in a text points to: a full "see" reference (seeTarget) or a keyword, tried as a category ("spells", "Spells"), then
     // the name of an entry of any kind, then the title of a rule, then the title of a section of an intro ("Pushing Your Roll", or
     // "skills/Pushing Your Roll" to say whose). Type::None if it is none of those.
@@ -145,9 +175,6 @@ public:
 
     const std::vector<Monster>& monsters() const { return monsters_; }
     const Monster* monster(int id) const;
-    std::vector<ListItem> listMonsters() const;
-    std::vector<ListItem> creatureVersions(const std::string& name, int exceptId) const;
-    std::vector<ListItem> creaturesOnPrintedPage(int sourceId, int printedPage) const;
 
     // every table of every pack (the books' tables live in Core, inside their sections)
     const std::vector<DataTable>& packTables() const { return tables_; }
@@ -179,6 +206,9 @@ private:
     void placeTables();
     void checkRuleLinks();
 
+    std::string lang_ = "en";
+    AttributeSet attributes_;
+    i18n::Texts texts_, textsEn_;                     // the localization files read (i18n/<lang>.csv, i18n/en.csv), every pack's laid over the last
     std::vector<PackInfo> packs_;
     std::vector<SourceInfo> sources_;
     std::vector<Entry> entries_[kKindCount];
@@ -187,13 +217,20 @@ private:
     std::vector<Monster> monsters_;
     std::vector<DataTable> tables_;
     std::vector<NpcList> npcLists_;
+    std::vector<AgeDef> ages_;
     int actionsChapter_ = 0;                          // the "Actions" chapter (a rule) built from the packs' actions.yaml, 0 if there is none
     std::map<std::string, int> actionTables_;         // action group id -> id of the table that lists its actions
     std::vector<RuleNode> rules_;
     std::map<std::string, int> byKey_[kKindCount];
+    std::map<std::string, std::string> idKeys_;                                // a card's "id" -> its key
+    std::map<std::string, std::pair<std::string, std::string>> idNames_;      // a card's "id" -> its name as shown and in English (what a reference by id becomes)
     std::map<std::string, int> ruleByKey_;
     std::map<int, std::vector<int>> tablesOfRule_;
     mutable sqlite3* index_ = nullptr;
 };
+
+// The same entry or creature in another reading of the same packs (another language), found by its key; null if it is not there.
+const Entry* sameEntry(const ContentStore& in, const Entry& e);
+const Monster* sameMonster(const ContentStore& in, const Monster& m);
 
 }  // namespace gm

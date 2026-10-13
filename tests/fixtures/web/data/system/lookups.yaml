@@ -1,0 +1,43 @@
+# Tables that turn a score into a number: the rules read them (a skill's base chance, a character's movement, the damage bonus) and the
+# rulebook shows them as tables. A row covers the scores from..to (leave one out for no limit) and gives `value`; a score no row
+# covers gets `default`. Titles, headers and the text of each row's range are keys, found in i18n/<lang>.csv; a row without a
+# `label` is shown as "from–to". `attributes` says which attributes the table is for (none: any). `format` is how a value is shown:
+# number (3), signed (+2, –4) or bonus (+D4, and — when there is none).
+format: 1
+lookups:
+  - id: base-chance
+    title: LOC_LOOKUP_BASE_CHANCE
+    range: LOC_LOOKUP_BASE_CHANCE_RANGE
+    values: LOC_LOOKUP_BASE_CHANCE_VALUE
+    format: number
+    rows:
+      - {to: 5, value: 3, label: LOC_LOOKUP_BASE_CHANCE_ROW_1}
+      - {from: 6, to: 8, value: 4, label: LOC_LOOKUP_BASE_CHANCE_ROW_2}
+      - {from: 9, to: 12, value: 5, label: LOC_LOOKUP_BASE_CHANCE_ROW_3}
+      - {from: 13, to: 15, value: 6, label: LOC_LOOKUP_BASE_CHANCE_ROW_4}
+      - {from: 16, value: 7, label: LOC_LOOKUP_BASE_CHANCE_ROW_5}
+
+  - id: movement-modifier
+    title: LOC_LOOKUP_MOVEMENT_MODIFIER
+    range: LOC_LOOKUP_MOVEMENT_MODIFIER_RANGE
+    values: LOC_LOOKUP_MOVEMENT_MODIFIER_VALUE
+    format: signed
+    attributes: [agility]
+    default: 0
+    rows:
+      - {to: 6, value: -4, label: LOC_LOOKUP_MOVEMENT_MODIFIER_ROW_1}
+      - {from: 7, to: 9, value: -2, label: LOC_LOOKUP_MOVEMENT_MODIFIER_ROW_2}
+      - {from: 13, to: 15, value: 2, label: LOC_LOOKUP_MOVEMENT_MODIFIER_ROW_3}
+      - {from: 16, value: 4, label: LOC_LOOKUP_MOVEMENT_MODIFIER_ROW_4}
+
+  - id: damage-bonus
+    title: LOC_LOOKUP_DAMAGE_BONUS
+    range: LOC_LOOKUP_DAMAGE_BONUS_RANGE
+    values: LOC_LOOKUP_DAMAGE_BONUS_VALUE
+    format: bonus
+    attributes: [strength, agility]
+    default: ""
+    rows:
+      - {to: 12, value: "", label: LOC_LOOKUP_DAMAGE_BONUS_ROW_1}
+      - {from: 13, to: 16, value: D4, label: LOC_LOOKUP_DAMAGE_BONUS_ROW_2}
+      - {from: 17, value: D6, label: LOC_LOOKUP_DAMAGE_BONUS_ROW_3}

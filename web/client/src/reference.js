@@ -4,10 +4,11 @@
 //  - GROUPS folds other content types into one entry (Gear holds Weapons and Armor).
 import { computed, reactive, ref } from 'vue';
 import { apiGet } from './api.js';
+import { locale, t } from './i18n.js';
 
 const sameLabel = (a, b) => a.trim().toLowerCase() === b.trim().toLowerCase();
 
-// host content type -> [{id of a content type, tab label}]; the host's own tab comes first
+// host content type -> [{id of a content type, tab label}]; the host's own tab comes first (the labels are put in the page's language)
 const GROUPS = {
   gear: { first: 'General', others: [{ id: 'weapons', label: 'Weapons' }, { id: 'armor', label: 'Armor' }] },
 };
@@ -16,46 +17,45 @@ export function useReference(token, gmPrefix = '') {
   const contentTypes = ref([]); // [{id, label, count}]
   const rulesChapters = ref([]); // [{key, title, introOnly?}]
   const query = ref(''); // what the search bar asks for
-  const only = ref(true); // true: it filters the open category; false: it looks everywhere
   const current = ref(null); // {mode, type, label, tabs[], tab (index), entryKey}
 
   const items = computed(() => {
     const typeById = new Map(contentTypes.value.map((t) => [t.id, t]));
     const absorbed = new Set();
     const merged = new Set();
-    const list = contentTypes.value.map((t) => {
-      const group = GROUPS[t.id];
+    const list = contentTypes.value.map((type) => {
+      const group = GROUPS[type.id];
       // the general text of a type is an intro-only chapter with the type's id as key ("Magic" for spells), or a chapter titled like it
-      const ch = rulesChapters.value.find((r) => r.introOnly && r.key === t.id) ?? rulesChapters.value.find((r) => sameLabel(r.title, t.label));
+      const ch = rulesChapters.value.find((r) => r.introOnly && r.key === type.id) ?? rulesChapters.value.find((r) => sameLabel(r.title, type.label));
       let tabs = [];
-      let count = t.count;
+      let count = type.count;
       if (group) {
         const parts = group.others.filter((o) => typeById.has(o.id));
         if (parts.length) {
           tabs = [
-            { label: group.first, mode: 'tables', type: t.id, count: t.count },
-            ...parts.map((o) => ({ label: o.label, mode: 'tables', type: o.id, count: typeById.get(o.id).count })),
+            { label: t(group.first), mode: 'tables', type: type.id, count: type.count },
+            ...parts.map((o) => ({ label: t(o.label), mode: 'tables', type: o.id, count: typeById.get(o.id).count })),
           ];
           parts.forEach((o) => absorbed.add(o.id));
           count = tabs.reduce((n, x) => n + x.count, 0);
           if (ch) {                                       // the general text of the page is one more tab, not a block above the list
             merged.add(ch.key);
-            tabs.push({ label: 'General Info', mode: 'rules', type: ch.key });
+            tabs.push({ label: t('General Info'), mode: 'rules', type: ch.key });
           }
         }
       } else if (ch) {
         merged.add(ch.key);
         tabs = [
-          { label: ch.title === t.label ? `All ${t.label.toLowerCase()}` : t.label, mode: 'tables', type: t.id, count: t.count },
-          { label: 'General Info', mode: 'rules', type: ch.key },
+          { label: ch.title === type.label ? t('All {what}', { what: type.label.toLowerCase() }) : type.label, mode: 'tables', type: type.id, count: type.count },
+          { label: t('General Info'), mode: 'rules', type: ch.key },
         ];
       }
-      return { mode: 'tables', type: t.id, label: !group && ch ? ch.title : t.label, count, tabs };
+      return { mode: 'tables', type: type.id, label: !group && ch ? ch.title : type.label, count, tabs };
     }).filter((i) => !absorbed.has(i.type));
     for (const r of rulesChapters.value) {
       if (!merged.has(r.key)) list.push({ mode: 'rules', type: r.key, label: r.title, count: null, tabs: [] });
     }
-    return list.sort((a, b) => a.label.localeCompare(b.label));
+    return list.sort((a, b) => a.label.localeCompare(b.label, locale()));
   });
 
   // Must stay referentially stable across re-renders: RulesView reloads whenever jumpTo changes identity
@@ -97,7 +97,11 @@ export function useReference(token, gmPrefix = '') {
       if (found) select(found.item, target?.entry || null, found.tab);
       return;
     }
-    const typeId = target?.type || key;
+    // a full key of a card ("core/ability/adaptive"): the page of its kind, open on it
+    const kindPage = { skill: 'skills', ability: 'abilities', spell: 'spells', kin: 'kin', profession: 'professions', weapon: 'weapons', armor: 'armor', gear: 'gear' };
+    const parts = key.split('/');
+    const typeId = target?.type || (parts.length === 3 && kindPage[parts[1]]) || key;
+    if (typeId !== key && !target?.type) target = { ...target, type: typeId };
     const found = hostOf('tables', typeId);
     if (found) {
       select(found.item, target?.type ? key : null, found.tab);
@@ -112,5 +116,5 @@ export function useReference(token, gmPrefix = '') {
     }
   }
 
-  return reactive({ contentTypes, rulesChapters, query, only, current, items, jump, load, select, goTo, seen });
+  return reactive({ contentTypes, rulesChapters, query, current, items, jump, load, select, goTo, seen });
 }

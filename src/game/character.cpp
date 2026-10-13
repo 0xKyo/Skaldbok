@@ -12,32 +12,61 @@
 #include "parsing/fsutil.h"
 #include "game/sheet_edit.h"
 #include "parsing/fts.h"
+#include "parsing/i18n.h"
 #include "parsing/jsonutil.h"
 
 namespace gm {
 
-const char* const kAttrShort[kAttrCount] = {"STR", "CON", "AGL", "INT", "WIL", "CHA"};
-const char* const kAttrLong[kAttrCount] = {"Strength", "Constitution", "Agility", "Intelligence", "Willpower", "Charisma"};
+std::string legacyAttributeId(const std::string& code) {
+    static const std::pair<const char*, const char*> codes[] = {{"STR", kStrength}, {"CON", kConstitution}, {"AGL", kAgility},
+                                                                {"INT", kIntelligence}, {"WIL", kWillpower}, {"CHA", kCharisma}};
+    for (const auto& [old, id] : codes)
+        if (code == old) return id;
+    return code;
+}
 
-int attrIndex(const std::string& s) {
-    for (int i = 0; i < kAttrCount; ++i)
-        if (s == kAttrShort[i]) return i;
-    return -1;
+int Scores::get(const std::string& id, int otherwise) const {
+    for (const auto& [k, v] : items_)
+        if (k == id) return v;
+    return otherwise;
+}
+
+void Scores::set(const std::string& id, int score) {
+    for (auto& [k, v] : items_)
+        if (k == id) {
+            v = score;
+            return;
+        }
+    items_.emplace_back(id, score);
+}
+
+bool Scores::has(const std::string& id) const {
+    return std::ranges::any_of(items_, [&](const auto& item) { return item.first == id; });
 }
 
 std::string Character::displayName() const {
-    std::string out = name.empty() ? "(unnamed)" : name;
+    std::string out = name.empty() ? i18n::tr("(unnamed)") : name;
     if (!nickname.empty()) out += " \"" + nickname + "\"";
     return out;
 }
 
-std::string Character::summary() const {
+// (its words in the current language, i18n.h; the names are the sheet's own)
+std::string Character::summary(const AttributeSet& rules, const std::function<std::string(const std::string&)>& abbr, const std::string& ageName) const {
+    using i18n::tr;
     std::string s = displayName() + "\n";
-    s += kin.name + " " + profession.name + ", " + std::string(ageRule(age).label) + (player.empty() ? "" : "  (player: " + player + ")") + "\n\n";
-    for (int i = 0; i < kAttrCount; ++i) s += std::string(kAttrShort[i]) + " " + std::to_string(attr[i]) + (i + 1 < kAttrCount ? "   " : "\n");
-    s += "HP " + std::to_string(hp) + "/" + std::to_string(maxHp(*this)) + "   WP " + std::to_string(wp) + "/" + std::to_string(maxWp(*this));
-    const std::string dbStr = damageBonus(attr[0]), dbAgl = damageBonus(attr[2]);
-    s += "   Damage bonus STR " + (dbStr.empty() ? std::string("-") : dbStr) + " / AGL " + (dbAgl.empty() ? std::string("-") : dbAgl) + "\n";
+    s += kin.name + " " + profession.name + ", " + ageName + (player.empty() ? "" : "  (" + tr("player") + ": " + player + ")") + "\n\n";
+    for (size_t i = 0; i < rules.attributes().size(); ++i) {
+        const std::string& id = rules.attributes()[i].id;
+        s += abbr(id) + " " + std::to_string(attr.get(id)) + (i + 1 < rules.attributes().size() ? "   " : "\n");
+    }
+    s += tr("HP") + " " + std::to_string(hp) + "/" + std::to_string(maxHp(*this)) + "   " + tr("WP") + " " + std::to_string(wp) + "/" + std::to_string(maxWp(*this));
+    s += "   " + tr("Damage bonus");
+    const Lookup* bonus = rules.lookup("damage-bonus");
+    for (size_t i = 0; bonus && i < bonus->attributes.size(); ++i) {
+        const std::string value = damageBonus(rules, attr.get(bonus->attributes[i]));
+        s += (i ? " / " : " ") + abbr(bonus->attributes[i]) + " " + (value.empty() ? std::string("-") : value);
+    }
+    s += "\n";
     auto join = [](const std::vector<std::string>& v) {
         std::string out;
         for (const std::string& x : v) out += (out.empty() ? "" : ", ") + x;
@@ -45,66 +74,58 @@ std::string Character::summary() const {
     };
     std::vector<std::string> trained, other;
     for (const SkillEntry& e : skills) {
-        const std::string text = e.ref.name + " " + std::to_string(skillLevel(*this, &e, e.attribute));
+        const std::string text = e.ref.name + " " + std::to_string(skillLevel(rules, *this, &e, e.attribute));
         (e.trained ? trained : other).push_back(text);
     }
-    if (!trained.empty()) s += "\nTrained skills: " + join(trained) + "\n";
-    if (!other.empty()) s += "Other skills: " + join(other) + "\n";
+    if (!trained.empty()) s += "\n" + tr("Trained skills") + ": " + join(trained) + "\n";
+    if (!other.empty()) s += tr("Other skills") + ": " + join(other) + "\n";
     std::vector<std::string> names;
     for (const Ref& r : abilities) names.push_back(r.name);
-    if (!names.empty()) s += "\nAbilities: " + join(names) + "\n";
+    if (!names.empty()) s += "\n" + tr("Abilities") + ": " + join(names) + "\n";
     names.clear();
     for (const Ref& r : spells) names.push_back(r.name);
-    if (!names.empty()) s += "Spells: " + join(names) + "\n";
+    if (!names.empty()) s += tr("Spells") + ": " + join(names) + "\n";
     names.clear();
     for (const Item& it : weapons) names.push_back(it.name);
     if (!armor.name.empty()) names.push_back(armor.name);
     if (!helmet.name.empty()) names.push_back(helmet.name);
     for (const Item& it : inventory) names.push_back(it.count > 1 ? it.name + " x" + std::to_string(it.count) : it.name);
     for (const std::string& t : tinyItems) names.push_back(t);
-    if (!names.empty()) s += "\nGear: " + join(names) + "\n";
-    if (gold || silver || copper) s += "Coins: " + std::to_string(gold) + " gold, " + std::to_string(silver) + " silver, " + std::to_string(copper) + " copper\n";
-    if (!weakness.empty()) s += "\nWeakness: " + weakness + "\n";
-    if (!memento.empty()) s += "Memento: " + memento + "\n";
-    if (!appearance.empty()) s += "Appearance: " + appearance + "\n";
+    if (!names.empty()) s += "\n" + tr("Gear") + ": " + join(names) + "\n";
+    if (gold || silver || copper)
+        s += tr("Coins") + ": " + std::to_string(gold) + " " + tr("gold") + ", " + std::to_string(silver) + " " + tr("silver") + ", " + std::to_string(copper) + " " + tr("copper") + "\n";
+    if (!weakness.empty()) s += "\n" + tr("Weakness") + ": " + weakness + "\n";
+    if (!memento.empty()) s += tr("Memento") + ": " + memento + "\n";
+    if (!appearance.empty()) s += tr("Appearance") + ": " + appearance + "\n";
     return s;
 }
 
 // ------------------------------------------------------------------------------------------ rules
 
-int baseChance(int a) {
-    if (a <= 5) return 3;
-    if (a <= 8) return 4;
-    if (a <= 12) return 5;
-    if (a <= 15) return 6;
-    return 7;
-}
+int baseChance(const AttributeSet& rules, int score) { return rules.number("base-chance", score); }
 
-int movementModifier(int agl) {
-    if (agl <= 6) return -4;
-    if (agl <= 9) return -2;
-    if (agl <= 12) return 0;
-    if (agl <= 15) return 2;
-    return 4;
-}
+int movementModifier(const AttributeSet& rules, int agility) { return rules.number("movement-modifier", agility); }
 
-std::string damageBonus(int v) {
-    if (v <= 12) return "";
-    if (v <= 16) return "D4";
-    return "D6";
+std::string damageBonus(const AttributeSet& rules, int score) { return rules.value("damage-bonus", score); }
+
+// A backpack weighs nothing, so it is a tiny item and lives in the tiny items, not in the inventory (see moveTinyItems): it counts in either.
+static bool holdsBackpack(const Character& c) {
+    const auto lower = [](const std::string& s) {
+        std::string n;
+        for (char ch : s) n += static_cast<char>(std::tolower(static_cast<unsigned char>(ch)));
+        return n;
+    };
+    for (const Item& it : c.inventory)
+        if (lower(it.name) == "backpack" || it.key.ends_with("/gear/backpack")) return true;
+    for (const std::string& tiny : c.tinyItems) {                                  // "Backpack", or "Backpack x2" (a second one adds nothing)
+        const std::string n = lower(tiny);
+        if (n == "backpack" || n.starts_with("backpack x")) return true;
+    }
+    return false;
 }
 
 int encumbranceLimit(const Character& c) {
-    int limit = (c.attr[0] + 1) / 2;
-    for (const Item& it : c.inventory) {
-        std::string n;
-        for (char ch : it.name) n += static_cast<char>(std::tolower(static_cast<unsigned char>(ch)));
-        if (n == "backpack") {
-            limit += 2;                        // one backpack at a time
-            break;
-        }
-    }
-    return limit;
+    return (c.attr.get(kStrength) + 1) / 2 + (holdsBackpack(c) ? 2 : 0);          // one backpack at a time
 }
 
 double itemWeight(const Item& it) {
@@ -133,29 +154,22 @@ int carriedItems(const Character& c) {
     return n;
 }
 
-int maxHp(const Character& c) { return std::max(1, c.attr[1] + c.hpBonus); }
-int maxWp(const Character& c) { return std::max(1, c.attr[4] + c.wpBonus); }
+int maxHp(const Character& c) { return std::max(1, c.attr.get(kConstitution) + c.hpBonus); }
+int maxWp(const Character& c) { return std::max(1, c.attr.get(kWillpower) + c.wpBonus); }
 
-const AgeRule& ageRule(const std::string& age) {
-    static const AgeRule rules[] = {
-        {"young", "Young", 8, {0, 1, 1, 0, 0, 0}, "AGL and CON +1; 6+2 trained skills"},
-        {"adult", "Adult", 10, {0, 0, 0, 0, 0, 0}, "no change; 6+4 trained skills"},
-        {"old", "Old", 12, {-2, -2, -2, 1, 1, 0}, "STR, AGL and CON -2, INT and WIL +1; 6+6 trained skills"},
-    };
-    for (const AgeRule& r : rules)
-        if (age == r.id) return r;
-    return rules[1];
+Scores applyAge(const AttributeSet& rules, const std::vector<int>& rolled, const AgeDef& r) {
+    Scores out;
+    for (size_t i = 0; i < rules.attributes().size(); ++i) {
+        const std::string& id = rules.attributes()[i].id;
+        out.set(id, std::clamp((i < rolled.size() ? rolled[i] : kDefaultScore) + r.modFor(id), 1, 18));
+    }
+    return out;
 }
 
-void applyAge(const int rolled[kAttrCount], const std::string& age, int out[kAttrCount]) {
-    const AgeRule& r = ageRule(age);
-    for (int i = 0; i < kAttrCount; ++i) out[i] = std::clamp(rolled[i] + r.attrMod[i], 1, 18);
-}
-
-int skillLevel(const Character& c, const SkillEntry* entry, const std::string& attribute) {
+int skillLevel(const AttributeSet& rules, const Character& c, const SkillEntry* entry, const std::string& attribute) {
     if (entry && entry->level > 0) return entry->level;
-    const int a = attrIndex(attribute.empty() && entry ? entry->attribute : attribute);
-    return a < 0 ? 0 : baseChance(c.attr[a]);
+    const std::string id = rules.idOf(attribute.empty() && entry ? entry->attribute : attribute);
+    return id.empty() ? 0 : baseChance(rules, c.attr.get(id));
 }
 
 // ------------------------------------------------------------------------------------------ JSON
@@ -213,10 +227,14 @@ std::string Character::toJson() const {
     j["profession"] = refJson(profession);
     j["school"] = school;
     json at = json::object();
-    for (int i = 0; i < kAttrCount; ++i) at[kAttrShort[i]] = attr[i];
+    for (const auto& [id, score] : attr.items()) at[id] = score;
     j["attributes"] = at;
     j["hp"] = hp;
     j["wp"] = wp;
+    j["round_rest"] = roundRest;
+    j["stretch_rest"] = stretchRest;
+    j["death_successes"] = deathSuccesses;
+    j["death_failures"] = deathFailures;
     j["hp_bonus"] = hpBonus;
     j["wp_bonus"] = wpBonus;
     json cond = json::array();
@@ -258,6 +276,32 @@ std::string Character::toJson() const {
     return j.dump(2) + "\n";
 }
 
+void Character::migrateJson(json& doc) {
+    if (!doc.is_object()) return;
+    // a value the codes of the old files named: both spellings may be there, and what is written with the id wins
+    if (auto at = doc.find("attributes"); at != doc.end() && at->is_object()) {
+        json fixed = json::object();
+        for (auto it = at->begin(); it != at->end(); ++it)
+            if (legacyAttributeId(it.key()) == it.key()) fixed[it.key()] = it.value();
+        for (auto it = at->begin(); it != at->end(); ++it)
+            if (const std::string id = legacyAttributeId(it.key()); id != it.key() && !fixed.contains(id)) fixed[id] = it.value();
+        *at = fixed;
+    }
+    if (auto sk = doc.find("skills"); sk != doc.end() && sk->is_array())
+        for (json& s : *sk)
+            if (s.is_object() && s.contains("attribute") && s["attribute"].is_string()) s["attribute"] = legacyAttributeId(s["attribute"].get<std::string>());
+    if (auto rv = doc.find("reviews"); rv != doc.end() && rv->is_object()) {
+        json fixed = json::object();
+        for (auto it = rv->begin(); it != rv->end(); ++it) {
+            std::string key = it.key();
+            if (key.starts_with("attr:")) key = "attr:" + legacyAttributeId(key.substr(5));
+            fixed[key] = it.value();
+        }
+        *rv = fixed;
+    }
+    if (doc.contains("format") && doc["format"].is_number() && doc["format"].get<int>() < kCharacterFormat) doc["format"] = kCharacterFormat;
+}
+
 bool Character::fromJson(const std::string& text, Character& out, std::string* error) {
     json j;
     if (!jsonParse(text, j, error)) return false;
@@ -265,8 +309,9 @@ bool Character::fromJson(const std::string& text, Character& out, std::string* e
         if (error) *error = "a character file must be a JSON object";
         return false;
     }
+    migrateJson(j);
     Character c;
-    c.format = jsonInt(j, "format", 1);
+    c.format = std::max(kCharacterFormat, jsonInt(j, "format", kCharacterFormat));
     c.revision = jsonInt(j, "revision");
     c.id = jsonStr(j, "id");
     c.name = jsonStr(j, "name");
@@ -277,10 +322,16 @@ bool Character::fromJson(const std::string& text, Character& out, std::string* e
     c.kin = refFrom(jsonFind(j, "kin"));
     c.profession = refFrom(jsonFind(j, "profession"));
     c.school = jsonStr(j, "school");
-    if (const json* at = jsonFind(j, "attributes"))
-        for (int i = 0; i < kAttrCount; ++i) c.attr[i] = std::clamp(jsonInt(*at, kAttrShort[i], 10), 1, 30);
+    if (const json* at = jsonFind(j, "attributes"); at && at->is_object())
+        for (auto it = at->begin(); it != at->end(); ++it) c.attr.set(it.key(), std::clamp(jsonInt(*at, it.key().c_str(), kDefaultScore), 1, 30));
+    for (const char* id : {kStrength, kConstitution, kAgility, kIntelligence, kWillpower, kCharisma})   // a file that names none of them: all average
+        if (!c.attr.has(id) && !jsonFind(j, "attributes")) c.attr.set(id, kDefaultScore);
     c.hpBonus = jsonInt(j, "hp_bonus");
     c.wpBonus = jsonInt(j, "wp_bonus");
+    c.roundRest = jsonBool(j, "round_rest");
+    c.stretchRest = jsonBool(j, "stretch_rest");
+    c.deathSuccesses = std::clamp(jsonInt(j, "death_successes"), 0, 3);
+    c.deathFailures = std::clamp(jsonInt(j, "death_failures"), 0, 3);
     c.hp = std::clamp(jsonInt(j, "hp", maxHp(c)), 0, 99);
     c.wp = std::clamp(jsonInt(j, "wp", maxWp(c)), 0, 99);
     for (const std::string& n : jsonStrings(j, "conditions"))
@@ -339,6 +390,7 @@ bool CharacterStore::commit(Character& item, const Character* memory) {
         jsonParse(item.toJson(), edited, nullptr);
         if (const auto disk = jsonLoad(path)) {
             json doc = *disk;
+            Character::migrateJson(doc);                                // a file written before attributes had ids is brought up to date first
             sheet::merge(doc, sheet::diff(base, edited));
             doc["revision"] = jsonInt(doc, "revision") + 1;
             doc["updated_at"] = item.updatedAt;

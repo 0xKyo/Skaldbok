@@ -1,101 +1,40 @@
-format: 1
-entities:
-  - name: Strength
-    kind: attribute
-    category: Attributes
-    fields:
-      ABBREVIATION: STR
-      DESCRIPTION: Raw muscle power.
-  - name: Constitution
-    kind: attribute
-    category: Attributes
-    fields:
-      ABBREVIATION: CON
-      DESCRIPTION: Physical fitness and resilience.
-  - name: Agility
-    kind: attribute
-    category: Attributes
-    fields:
-      ABBREVIATION: AGL
-      DESCRIPTION: Body control, speed, and fine motor skills.
-  - name: Intelligence
-    kind: attribute
-    category: Attributes
-    fields:
-      ABBREVIATION: INT
-      DESCRIPTION: Mental acuity, intellect, and reasoning skills.
-  - name: Willpower
-    kind: attribute
-    category: Attributes
-    fields:
-      ABBREVIATION: WIL
-      DESCRIPTION: Self-discipline and focus.
-  - name: Charisma
-    kind: attribute
-    category: Attributes
-    fields:
-      ABBREVIATION: CHA
-      DESCRIPTION: Force of personality and empathy.
-  - name: AGL 1–6
-    kind: attribute-/-range
-    category: Movement modifier
-    legacy_key: "#32"
-    fields:
-      MODIFIER: –4
-  - name: AGL 7–9
-    kind: attribute-/-range
-    category: Movement modifier
-    fields:
-      MODIFIER: –2
-  - name: AGL 13–15
-    kind: attribute-/-range
-    category: Movement modifier
-    fields:
-      MODIFIER: "+2"
-  - name: AGL 16–18
-    kind: attribute-/-range
-    category: Movement modifier
-    fields:
-      MODIFIER: "+4"
-  - name: ≤12
-    kind: str/agl
-    category: Damage Bonus
-    legacy_key: "#33"
-    fields:
-      DAMAGE BONUS: —
-  - name: 13–16
-    kind: str/agl
-    category: Damage Bonus
-    fields:
-      DAMAGE BONUS: "+D4"
-  - name: 17+
-    kind: str/agl
-    category: Damage Bonus
-    fields:
-      DAMAGE BONUS: "+D6"
-  - name: 1–5
-    kind: attribute
-    category: Base Chance
-    legacy_key: "#34"
-    fields:
-      BASE CHANCE: "3"
-  - name: 6–8
-    kind: attribute
-    category: Base Chance
-    fields:
-      BASE CHANCE: "4"
-  - name: 9–12
-    kind: attribute
-    category: Base Chance
-    fields:
-      BASE CHANCE: "5"
-  - name: 13–15
-    kind: attribute
-    category: Base Chance
-    fields:
-      BASE CHANCE: "6"
-  - name: 16–18
-    kind: attribute
-    category: Base Chance
-    fields:
-      BASE CHANCE: "7"
+# The attributes of the game system. Only ids and keys live here: the words (name, short form, description) are in i18n/<lang>.csv under
+# the keys written below. Characters, skills and professions refer to an attribute by its id. `aliases` are the codes older files used;
+# they are still understood when read, and never written.
+format: 2
+attributes:
+  - id: strength
+    name: LOC_ATTRIBUTE_STRENGTH
+    abbr: LOC_ATTRIBUTE_STRENGTH_ABBR
+    description: LOC_ATTRIBUTE_STRENGTH_DESC
+    aliases: [STR]
+  - id: constitution
+    name: LOC_ATTRIBUTE_CONSTITUTION
+    abbr: LOC_ATTRIBUTE_CONSTITUTION_ABBR
+    description: LOC_ATTRIBUTE_CONSTITUTION_DESC
+    aliases: [CON]
+  - id: agility
+    name: LOC_ATTRIBUTE_AGILITY
+    abbr: LOC_ATTRIBUTE_AGILITY_ABBR
+    description: LOC_ATTRIBUTE_AGILITY_DESC
+    aliases: [AGL]
+  - id: intelligence
+    name: LOC_ATTRIBUTE_INTELLIGENCE
+    abbr: LOC_ATTRIBUTE_INTELLIGENCE_ABBR
+    description: LOC_ATTRIBUTE_INTELLIGENCE_DESC
+    aliases: [INT]
+  - id: willpower
+    name: LOC_ATTRIBUTE_WILLPOWER
+    abbr: LOC_ATTRIBUTE_WILLPOWER_ABBR
+    description: LOC_ATTRIBUTE_WILLPOWER_DESC
+    aliases: [WIL]
+  - id: charisma
+    name: LOC_ATTRIBUTE_CHARISMA
+    abbr: LOC_ATTRIBUTE_CHARISMA_ABBR
+    description: LOC_ATTRIBUTE_CHARISMA_DESC
+    aliases: [CHA]
+
+# How the attributes are listed in the rules ("{{table: Attributes}}"): the title and the three column headers, as keys.
+table:
+  title: LOC_TABLE_ATTRIBUTES
+  columns: [LOC_TABLE_ATTRIBUTES_NAME, LOC_TABLE_ATTRIBUTES_ABBR, LOC_TABLE_ATTRIBUTES_DESC]

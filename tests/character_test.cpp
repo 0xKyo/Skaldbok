@@ -46,25 +46,42 @@ int main(int argc, char** argv) {
                   PackSpec{test::sourceDir() + "/docs/examples/frostmarch-tales", false, true}});
     Dice dice;
 
-    // -------------------------------------------------------------------------------- the numbers
-    check(baseChance(1) == 3 && baseChance(5) == 3 && baseChance(6) == 4 && baseChance(8) == 4 && baseChance(9) == 5 && baseChance(12) == 5 &&
-              baseChance(13) == 6 && baseChance(15) == 6 && baseChance(16) == 7 && baseChance(18) == 7,
+    // -------------------------------------------------------------------------------- the attributes and their tables
+    const AttributeSet& rules = content.attributes();
+    const auto abbr = [&](const std::string& id) { return content.attributeAbbr(id); };
+    check(rules.attributes().size() == 6 && rules.attributes()[0].id == "strength" && rules.attributes()[5].id == "charisma", "the six attributes come from data/system/attributes.yaml, by id");
+    check(rules.idOf("STR") == "strength" && rules.idOf("str") == "strength" && rules.idOf("strength") == "strength" && rules.idOf("Willpower") == "willpower" && rules.idOf("luck").empty() &&
+              rules.indexOf("AGL") == 2 && rules.indexOf("nothing") < 0,
+          "an attribute is found by its id or by an old code, any case");
+    check(content.attributeName("strength") == "Strength" && content.attributeAbbr("strength") == "STR" && content.attributeDescription("strength") == "Raw muscle power." &&
+              content.attributeAbbr("luck") == "luck",
+          "an attribute's words come from the localization file; one with none shows its id");
+    check(legacyAttributeId("STR") == "strength" && legacyAttributeId("CHA") == "charisma" && legacyAttributeId("strength") == "strength" && legacyAttributeId("X") == "X", "the codes of the old files");
+    check(baseChance(rules, 1) == 3 && baseChance(rules, 5) == 3 && baseChance(rules, 6) == 4 && baseChance(rules, 8) == 4 && baseChance(rules, 9) == 5 && baseChance(rules, 12) == 5 &&
+              baseChance(rules, 13) == 6 && baseChance(rules, 15) == 6 && baseChance(rules, 16) == 7 && baseChance(rules, 18) == 7 && baseChance(rules, 25) == 7,
           "base chance table (p.29)");
-    check(movementModifier(6) == -4 && movementModifier(7) == -2 && movementModifier(9) == -2 && movementModifier(10) == 0 &&
-              movementModifier(12) == 0 && movementModifier(13) == 2 && movementModifier(16) == 4,
+    check(movementModifier(rules, 6) == -4 && movementModifier(rules, 7) == -2 && movementModifier(rules, 9) == -2 && movementModifier(rules, 10) == 0 &&
+              movementModifier(rules, 12) == 0 && movementModifier(rules, 13) == 2 && movementModifier(rules, 16) == 4,
           "movement modifier by AGL");
-    check(damageBonus(12).empty() && damageBonus(13) == "D4" && damageBonus(16) == "D4" && damageBonus(17) == "D6" && damageBonus(18) == "D6",
+    check(damageBonus(rules, 12).empty() && damageBonus(rules, 13) == "D4" && damageBonus(rules, 16) == "D4" && damageBonus(rules, 17) == "D6" && damageBonus(rules, 18) == "D6",
           "damage bonus: none up to 12, D4 13-16, D6 17+");
-    check(ageRule("young").trainedSkills == 8 && ageRule("adult").trainedSkills == 10 && ageRule("old").trainedSkills == 12 &&
-              std::string(ageRule("nonsense").id) == "adult",
-          "age: 8 / 10 / 12 trained skills, unknown = adult");
-    int rolled[6] = {18, 10, 17, 9, 3, 12}, out[6];
-    applyAge(rolled, "young", out);
-    check(out[0] == 18 && out[1] == 11 && out[2] == 18 && out[3] == 9, "young: AGL and CON +1, never above 18");
-    applyAge(rolled, "old", out);
-    check(out[0] == 16 && out[1] == 8 && out[2] == 15 && out[3] == 10 && out[4] == 4 && out[5] == 12, "old: STR AGL CON -2, INT WIL +1");
-    applyAge(rolled, "adult", out);
-    check(std::equal(out, out + 6, rolled), "adult: no change");
+    check(content.lookupShown("movement-modifier", 5) == "\xE2\x80\x93" "4" && content.lookupShown("movement-modifier", 14) == "+2" && content.lookupShown("damage-bonus", 10) == "\xE2\x80\x94" &&
+              content.lookupShown("damage-bonus", 14) == "+D4" && content.lookupShown("base-chance", 10) == "5",
+          "the tables show their values the way the book does: –4, +2, —, +D4, 5");
+    check(content.age("young").trainedSkills() == 8 && content.age("adult").trainedSkills() == 10 && content.age("old").trainedSkills() == 12 && content.age("young").professionSkills == 6 &&
+              content.age("nonsense").id == "adult" && content.ages().size() == 3,
+          "age: 6 + 2 / 4 / 6 trained skills, read from age.yaml, unknown = adult");
+    check(content.ageEffect(content.age("young")) == "AGL and CON +1" && content.ageEffect(content.age("adult")).empty() &&
+              content.ageEffect(content.age("old")) == "STR, AGL and CON \xE2\x88\x92" "2, INT and WIL +1" && content.ageSummary(content.age("adult")) == "no change; 6+4 trained skills",
+          "what an age does is put into words from its rules");
+    const std::vector<int> rolled = {18, 10, 17, 9, 3, 12};
+    Scores out = applyAge(rules, rolled, content.age("young"));
+    check(out.get(kStrength) == 18 && out.get(kConstitution) == 11 && out.get(kAgility) == 18 && out.get(kIntelligence) == 9, "young: AGL and CON +1, never above 18");
+    out = applyAge(rules, rolled, content.age("old"));
+    check(out.get(kStrength) == 16 && out.get(kConstitution) == 8 && out.get(kAgility) == 15 && out.get(kIntelligence) == 10 && out.get(kWillpower) == 4 && out.get(kCharisma) == 12,
+          "old: STR AGL CON -2, INT WIL +1");
+    out = applyAge(rules, rolled, content.age("adult"));
+    check(out.items().size() == 6 && out.get(kStrength) == 18 && out.get(kWillpower) == 3 && out.get(kCharisma) == 12, "adult: no change");
     bool inRange = true;
     for (int i = 0; i < 3000; ++i) {
         const int a = rollAttribute(dice);
@@ -72,13 +89,20 @@ int main(int argc, char** argv) {
     }
     check(inRange, "4D6 drop lowest stays within 3..18");
     Character sheet;
-    sheet.attr[0] = 13;
-    sheet.attr[1] = 11;
-    sheet.attr[4] = 9;
+    sheet.attr.set(kStrength, 13);
+    sheet.attr.set(kConstitution, 11);
+    sheet.attr.set(kWillpower, 9);
     check(encumbranceLimit(sheet) == 7 && maxHp(sheet) == 11 && maxWp(sheet) == 9, "encumbrance is half STR rounded up; HP = CON, WP = WIL");
     sheet.inventory.push_back({"Backpack", "", 1, ""});
     sheet.hpBonus = 2;
     check(encumbranceLimit(sheet) == 9 && maxHp(sheet) == 13, "a backpack adds 2; Robust-type bonuses add to HP");
+    sheet.inventory.clear();
+    check(encumbranceLimit(sheet) == 7, "without the backpack it is half STR again");
+    sheet.tinyItems.push_back("Backpack");
+    check(encumbranceLimit(sheet) == 9, "a backpack among the tiny items (it weighs nothing) still adds 2");
+    sheet.inventory.push_back({"Backpack", "core/gear/backpack", 1, ""});
+    check(encumbranceLimit(sheet) == 9, "two backpacks add 2 only: one at a time");
+    sheet.tinyItems.clear();
 
     // ------------------------------------------------------------------------------- gear
     auto pick = [&](const char* n) { return matchGear(content, n); };
@@ -119,8 +143,13 @@ int main(int argc, char** argv) {
     cr.kinKey = content.findByName(Kind::Kin, "Human")->key;
     cr.professionKey = fighter->key;
     cr.age = "adult";
-    int assign[6] = {14, 12, 10, 9, 8, 13};
-    std::copy(assign, assign + 6, cr.rolled);
+    const std::vector<int> assign = {14, 12, 10, 9, 8, 13};
+    cr.rolled = assign;
+    const auto scoresAre = [&](const Scores& s, const std::vector<int>& expected) {
+        for (size_t i = 0; i < expected.size(); ++i)
+            if (s.get(rules.attributes()[i].id) != expected[i]) return false;
+        return true;
+    };
     check(problemMentions(validateCreation(cr, content), "trained skills from the profession"), "missing profession skills are reported");
     cr.professionSkills = {"Axes", "Bows", "Brawling", "Crossbows", "Evade", "Swords"};
     cr.freeSkills = {"Awareness", "Healing", "Riding"};
@@ -137,9 +166,9 @@ int main(int argc, char** argv) {
 
     Character c = buildCharacter(cr, content, dice);
     check(c.name == "Brenna" && c.displayName() == "Brenna \"Grimjaw\"" && c.kin.name == "Human" && c.profession.name == "Fighter", "name, kin, profession");
-    check(std::equal(c.attr, c.attr + 6, assign) && c.hp == 12 && c.wp == 8, "adult: attributes as rolled, HP = CON 12, WP = WIL 8");
+    check(scoresAre(c.attr, assign) && c.hp == 12 && c.wp == 8, "adult: attributes as rolled, HP = CON 12, WP = WIL 8");
     check(c.skills.size() == 10, "10 trained skills for an adult");
-    check(skill(c, "Axes") && skill(c, "Axes")->level == 12 && skill(c, "Axes")->attribute == "STR", "Axes (STR 14): base chance 6, trained = 12");
+    check(skill(c, "Axes") && skill(c, "Axes")->level == 12 && skill(c, "Axes")->attribute == "strength", "Axes (STR 14): base chance 6, trained = 12, stored by the attribute's id");
     check(skill(c, "Evade") && skill(c, "Evade")->level == 10, "Evade (AGL 10): base chance 5, trained = 10");
     check(skill(c, "Awareness") && skill(c, "Awareness")->level == 10 && skill(c, "Healing")->level == 10, "own skills are trained too");
     check(hasAbility(c, "Adaptive") && hasAbility(c, "Veteran") && c.abilities.size() == 2, "innate ability of the kin + heroic ability of the profession");
@@ -153,8 +182,9 @@ int main(int argc, char** argv) {
         if (it.name == "Food rations") rations = it.count;
     }
     check(torch && rations >= 1 && rations <= 6 && c.silver >= 1 && c.silver <= 6, "torch, D6 rations and D6 silver end up in the inventory");
-    check(skillLevel(c, nullptr, "STR") == 6 && skillLevel(c, skill(c, "Axes"), "STR") == 12, "untrained skill = base chance; trained = its level");
-    check(c.hp == maxHp(c) && damageBonus(c.attr[0]) == "D4" && movementModifier(c.attr[2]) == 0, "derived: STR 14 gives D4 damage bonus, AGL 10 no movement change");
+    check(skillLevel(rules, c, nullptr, "strength") == 6 && skillLevel(rules, c, skill(c, "Axes"), "strength") == 12 && skillLevel(rules, c, nullptr, "STR") == 6,
+          "untrained skill = base chance; trained = its level (an old code still finds the attribute)");
+    check(c.hp == maxHp(c) && damageBonus(rules, c.attr.get(kStrength)) == "D4" && movementModifier(rules, c.attr.get(kAgility)) == 0, "derived: STR 14 gives D4 damage bonus, AGL 10 no movement change");
 
     // young and old change attributes and skill counts
     Creation young = cr;
@@ -162,13 +192,13 @@ int main(int argc, char** argv) {
     young.freeSkills = {"Awareness", "Healing"};
     check(validateCreation(young, content).empty(), "a young character needs only 2 skills of their own");
     Character yc = buildCharacter(young, content, dice);
-    check(yc.attr[1] == 13 && yc.attr[2] == 11 && yc.skills.size() == 8, "young: CON+1, AGL+1, 8 trained skills");
+    check(yc.attr.get(kConstitution) == 13 && yc.attr.get(kAgility) == 11 && yc.skills.size() == 8, "young: CON+1, AGL+1, 8 trained skills");
     Creation elder = cr;
     elder.age = "old";
     elder.freeSkills = {"Awareness", "Healing", "Riding", "Swimming", "Sneaking", "Bushcraft"};
     check(validateCreation(elder, content).empty(), "an old character picks 6 skills of their own");
     Character oc = buildCharacter(elder, content, dice);
-    check(oc.attr[0] == 12 && oc.attr[1] == 10 && oc.attr[2] == 8 && oc.attr[3] == 10 && oc.attr[4] == 9 && oc.skills.size() == 12,
+    check(oc.attr.get(kStrength) == 12 && oc.attr.get(kConstitution) == 10 && oc.attr.get(kAgility) == 8 && oc.attr.get(kIntelligence) == 10 && oc.attr.get(kWillpower) == 9 && oc.skills.size() == 12,
           "old: STR/CON/AGL -2, INT/WIL +1, 12 trained skills");
 
     // things the rules forbid
@@ -194,8 +224,7 @@ int main(int argc, char** argv) {
     mg.kinKey = content.findByName(Kind::Kin, "Elf")->key;
     mg.professionKey = mageP->key;
     mg.age = "adult";
-    int mageAttr[6] = {8, 10, 12, 14, 13, 9};
-    std::copy(mageAttr, mageAttr + 6, mg.rolled);
+    mg.rolled = {8, 10, 12, 14, 13, 9};
     mg.name = "Elowen";
     check(problemMentions(validateCreation(mg, content), "school"), "a mage must pick a school");
     mg.school = "Animism";
@@ -216,8 +245,8 @@ int main(int argc, char** argv) {
     }
     check(validateCreation(mg, content).empty(), "a complete mage is valid without a heroic ability");
     Character mc = buildCharacter(mg, content, dice);
-    check(mc.spells.size() == 6 && mc.school == "Animism" && hasSkill(mc, "Animism") && skill(mc, "Animism")->attribute == "INT" &&
-              skill(mc, "Animism")->level == 2 * baseChance(14),
+    check(mc.spells.size() == 6 && mc.school == "Animism" && hasSkill(mc, "Animism") && skill(mc, "Animism")->attribute == "intelligence" &&
+              skill(mc, "Animism")->level == 2 * baseChance(rules, 14),
           "mage: 6 spells, the school is a trained INT skill at twice its base chance");
     check(hasAbility(mc, "Inner Peace") && mc.abilities.size() == 1, "the elf has Inner Peace and no heroic ability");
     Creation noTricks = mg;
@@ -229,7 +258,7 @@ int main(int argc, char** argv) {
     Creation hb;
     hb.kinKey = content.findByName(Kind::Kin, "Frostborn")->key;
     hb.professionKey = skald->key;
-    std::copy(assign, assign + 6, hb.rolled);
+    hb.rolled = assign;
     hb.professionSkills = {"Performance", "Persuasion", "Myths & Legends", "Languages", "Swords", "Ice Lore"};
     hb.freeSkills = {"Awareness", "Evade", "Healing", "Riding"};
     hb.heroicAbility = "Icebreaker";
@@ -241,7 +270,7 @@ int main(int argc, char** argv) {
           "homebrew skills can be picked, headings cannot");
     Character hc = buildCharacter(hb, content, dice);
     check(hasAbility(hc, "Winter's Hide") && hasAbility(hc, "Icebreaker") && hc.abilities[1].key == "frostmarch/ability/icebreaker", "homebrew abilities are stored with their pack's key");
-    check(hc.kin.key == "frostmarch/kin/frostborn" && skill(hc, "Ice Lore") && skill(hc, "Ice Lore")->level == 2 * baseChance(9), "homebrew kin and skill keys");
+    check(hc.kin.key == "frostmarch/kin/frostborn" && skill(hc, "Ice Lore") && skill(hc, "Ice Lore")->level == 2 * baseChance(rules, 9), "homebrew kin and skill keys");
 
     // random characters, made by the book's own rolls, must always satisfy the rules
     {
@@ -256,11 +285,11 @@ int main(int argc, char** argv) {
                 continue;
             }
             Character rc = buildCharacter(r, content, dice);
-            wrongSkills += static_cast<int>(rc.skills.size()) != ageRule(rc.age).trainedSkills;
-            wrongHp += rc.hp != rc.attr[1] || rc.wp != rc.attr[4];
+            wrongSkills += static_cast<int>(rc.skills.size()) != content.age(rc.age).trainedSkills();
+            wrongHp += rc.hp != rc.attr.get(kConstitution) || rc.wp != rc.attr.get(kWillpower);
             noName += rc.name.empty();
             mages += !rc.spells.empty();
-            for (int a = 0; a < 6; ++a) wrongHp += rc.attr[a] < 1 || rc.attr[a] > 18;
+            for (const auto& [id, score] : rc.attr.items()) wrongHp += score < 1 || score > 18;
         }
         check(invalid == 0, "500 random characters are all valid" + (firstProblem.empty() ? std::string() : ": " + firstProblem));
         check(wrongSkills == 0 && wrongHp == 0 && noName == 0 && mages > 0, "random characters: right number of skills, HP = CON, WP = WIL, attributes 1..18, some mages");
@@ -274,10 +303,13 @@ int main(int argc, char** argv) {
     round.notes = "line one\nline \"two\" with ü and \\ backslash";
     round.tinyItems = {"a bone whistle"};
     round.memento = "A bone whistle";
+    round.deathSuccesses = 2;
+    round.deathFailures = 1;
     Character back;
     check(Character::fromJson(round.toJson(), back, nullptr), "character JSON parses");
+    check(back.deathSuccesses == 2 && back.deathFailures == 1, "the death rolls are saved and read back");
     check(back.name == round.name && back.player == round.player && back.age == round.age && back.kin.key == round.kin.key &&
-              std::equal(back.attr, back.attr + 6, round.attr) && back.skills.size() == round.skills.size() && back.conditions == round.conditions &&
+              back.attr == round.attr && back.skills.size() == round.skills.size() && back.conditions == round.conditions &&
               back.notes == round.notes && back.weapons.size() == round.weapons.size() && back.armor.name == round.armor.name &&
               back.abilities.size() == round.abilities.size() && back.tinyItems == round.tinyItems &&
               back.silver == round.silver && back.inventory.size() == round.inventory.size(),
@@ -286,10 +318,24 @@ int main(int argc, char** argv) {
           "skills keep key, level and trained flag");
     Character lenient;
     check(Character::fromJson("{\"name\":\"Min\",\"attributes\":{\"STR\":\"15\"},\"age\":\"ancient\",\"skills\":[{\"name\":\"Axes\"}]}", lenient, nullptr) &&
-              lenient.attr[0] == 15 && lenient.age == "adult" && lenient.skills.size() == 1 && lenient.hp == 10,
-          "a hand-written minimal character is accepted");
+              lenient.attr.get(kStrength) == 15 && lenient.age == "adult" && lenient.skills.size() == 1 && lenient.hp == 10,
+          "a hand-written minimal character is accepted (and its old attribute code, STR, is understood)");
+    {
+        // a file of format 1 (the attributes named by their codes) is read, and written back with ids as format 2
+        Character old;
+        check(Character::fromJson("{\"format\":1,\"name\":\"Old\",\"attributes\":{\"STR\":14,\"CON\":12,\"AGL\":10,\"INT\":9,\"WIL\":8,\"CHA\":13},"
+                                  "\"skills\":[{\"name\":\"Axes\",\"attribute\":\"STR\",\"level\":12,\"trained\":true}],\"reviews\":{\"attr:STR\":{\"status\":\"approved\",\"value\":\"19\",\"at\":\"x\"}}}",
+                                  old, nullptr) &&
+                  old.format == 2 && old.attr.get(kStrength) == 14 && old.attr.get(kCharisma) == 13 && old.skills[0].attribute == "strength" && old.reviews.count("attr:strength") == 1,
+              "a format 1 file is read: codes become ids in the attributes, the skills and the rulings");
+        const std::string written = old.toJson();
+        check(written.contains("\"strength\": 14") && written.contains("\"format\": 2") && !written.contains("\"STR\""), "and it is written with ids, as format 2");
+        json doc = json::parse("{\"format\":1,\"attributes\":{\"STR\":14,\"strength\":15},\"skills\":[{\"name\":\"Axes\",\"attribute\":\"AGL\"}]}");
+        Character::migrateJson(doc);
+        check(doc["format"] == 2 && doc["attributes"]["strength"] == 15 && !doc["attributes"].contains("STR") && doc["skills"][0]["attribute"] == "agility", "migrating keeps the value written with the id when both are there");
+    }
     check(!Character::fromJson("[1,2]", lenient, &err) && !Character::fromJson("{ broken", lenient, &err), "garbage is refused");
-    const std::string text = c.summary();
+    const std::string text = c.summary(rules, abbr, "Adult");
     check(text.find("Brenna \"Grimjaw\"") == 0 && text.contains("Human Fighter, Adult") && text.contains("Axes 12") &&
               text.contains("Veteran") && text.contains("Morningstar") && text.contains("HP 12/12"),
           "the plain-text summary lists identity, stats, skills, abilities and gear");

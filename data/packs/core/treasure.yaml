@@ -3,163 +3,203 @@ rollable:
   - Treasure Table 1
   - Treasure Table 2
 entities:
-  - name: Copper Coins
-    category: Treasure Table 1
+  - id: treasure_copperCoins
+    name: LOC_TREASURE_COPPER_COINS
+    category: LOC_CATEGORY_TREASURE_TABLE_1
     fields:
-      VALUE: D6 copper coins
-  - name: Copper Coins
-    category: Treasure Table 1
+      LOC_LABEL_VALUE: LOC_VALUE_D6_COPPER_COINS
+  - id: treasure_copperCoins_2
+    name: LOC_TREASURE_COPPER_COINS_2
+    category: LOC_CATEGORY_TREASURE_TABLE_1
     fields:
-      VALUE: 2D6 copper coins
-  - name: Copper Coins
-    category: Treasure Table 1
+      LOC_LABEL_VALUE: LOC_VALUE_2D6_COPPER_COINS
+  - id: treasure_copperCoins_3
+    name: LOC_TREASURE_COPPER_COINS_3
+    category: LOC_CATEGORY_TREASURE_TABLE_1
     fields:
-      VALUE: 4D6 copper coins
-  - name: Copper Coins
-    category: Treasure Table 1
+      LOC_LABEL_VALUE: LOC_VALUE_4D6_COPPER_COINS
+  - id: treasure_copperCoins_4
+    name: LOC_TREASURE_COPPER_COINS_4
+    category: LOC_CATEGORY_TREASURE_TABLE_1
     fields:
-      VALUE: 2D6 × 10 copper coins
-  - name: Copper Coins
-    category: Treasure Table 1
+      LOC_LABEL_VALUE: LOC_VALUE_2D6_10_COPPER_COINS
+  - id: treasure_copperCoins_5
+    name: LOC_TREASURE_COPPER_COINS_5
+    category: LOC_CATEGORY_TREASURE_TABLE_1
     fields:
-      VALUE: 4D6 × 10 copper coins
-  - name: Silver Coins
-    category: Treasure Table 1
+      LOC_LABEL_VALUE: LOC_VALUE_4D6_10_COPPER_COINS
+  - id: treasure_silverCoins
+    name: LOC_TREASURE_SILVER_COINS
+    category: LOC_CATEGORY_TREASURE_TABLE_1
     fields:
-      VALUE: D6 silver coins
-  - name: Silver Coins
-    category: Treasure Table 1
+      LOC_LABEL_VALUE: LOC_VALUE_D6_SILVER_COINS
+  - id: treasure_silverCoins_2
+    name: LOC_TREASURE_SILVER_COINS_2
+    category: LOC_CATEGORY_TREASURE_TABLE_1
     fields:
-      VALUE: 3D6 silver coins
-  - name: Silver Coins
-    category: Treasure Table 1
+      LOC_LABEL_VALUE: LOC_VALUE_3D6_SILVER_COINS
+  - id: treasure_silverCoins_3
+    name: LOC_TREASURE_SILVER_COINS_3
+    category: LOC_CATEGORY_TREASURE_TABLE_1
     fields:
-      VALUE: D6 × 5 silver coins
-  - name: Silver Coins
-    category: Treasure Table 1
+      LOC_LABEL_VALUE: LOC_VALUE_D6_5_SILVER_COINS
+  - id: treasure_silverCoins_4
+    name: LOC_TREASURE_SILVER_COINS_4
+    category: LOC_CATEGORY_TREASURE_TABLE_1
     fields:
-      VALUE: D6 × 10 silver coins
-  - name: Silver Coins
-    category: Treasure Table 1
+      LOC_LABEL_VALUE: LOC_VALUE_D6_10_SILVER_COINS
+  - id: treasure_silverCoins_5
+    name: LOC_TREASURE_SILVER_COINS_5
+    category: LOC_CATEGORY_TREASURE_TABLE_1
     fields:
-      VALUE: 2D6 × 10 silver coins
-  - name: Silver Coins
-    category: Treasure Table 1
+      LOC_LABEL_VALUE: LOC_VALUE_2D6_10_SILVER_COINS
+  - id: treasure_silverCoins_6
+    name: LOC_TREASURE_SILVER_COINS_6
+    category: LOC_CATEGORY_TREASURE_TABLE_1
     fields:
-      VALUE: 3D6 × 10 silver coins
-  - name: Gold Coins
-    category: Treasure Table 1
+      LOC_LABEL_VALUE: LOC_VALUE_3D6_10_SILVER_COINS
+  - id: treasure_goldCoins
+    name: LOC_TREASURE_GOLD_COINS
+    category: LOC_CATEGORY_TREASURE_TABLE_1
     fields:
-      VALUE: D6 gold coins
-  - name: Gold Coins
-    category: Treasure Table 1
+      LOC_LABEL_VALUE: LOC_VALUE_D6_GOLD_COINS
+  - id: treasure_goldCoins_2
+    name: LOC_TREASURE_GOLD_COINS_2
+    category: LOC_CATEGORY_TREASURE_TABLE_1
     fields:
-      VALUE: 2D6 gold coins
-  - name: Gold Coins
-    category: Treasure Table 1
+      LOC_LABEL_VALUE: LOC_VALUE_2D6_GOLD_COINS
+  - id: treasure_goldCoins_3
+    name: LOC_TREASURE_GOLD_COINS_3
+    category: LOC_CATEGORY_TREASURE_TABLE_1
     fields:
-      VALUE: 4D6 gold coins
-  - name: Gold Coins
-    category: Treasure Table 1
+      LOC_LABEL_VALUE: LOC_VALUE_4D6_GOLD_COINS
+  - id: treasure_goldCoins_4
+    name: LOC_TREASURE_GOLD_COINS_4
+    category: LOC_CATEGORY_TREASURE_TABLE_1
     fields:
-      VALUE: D6 × 10 gold coins
-  - name: Gold Coins
-    category: Treasure Table 1
+      LOC_LABEL_VALUE: LOC_VALUE_D6_10_GOLD_COINS
+  - id: treasure_goldCoins_5
+    name: LOC_TREASURE_GOLD_COINS_5
+    category: LOC_CATEGORY_TREASURE_TABLE_1
     fields:
-      VALUE: 2D6 × 10 gold coins
-  - name: Chalice
-    category: Treasure Table 1
+      LOC_LABEL_VALUE: LOC_VALUE_2D6_10_GOLD_COINS
+  - id: treasure_chalice
+    name: LOC_TREASURE_CHALICE
+    category: LOC_CATEGORY_TREASURE_TABLE_1
     fields:
-      VALUE: 2D6 × 5 gold coins
-  - name: Silver Bracelet
-    category: Treasure Table 1
+      LOC_LABEL_VALUE: LOC_VALUE_2D6_5_GOLD_COINS
+  - id: treasure_silverBracelet
+    name: LOC_TREASURE_SILVER_BRACELET
+    category: LOC_CATEGORY_TREASURE_TABLE_1
     fields:
-      VALUE: 2D6 × 10 silver coins
-  - name: Gold Bracelet
-    category: Treasure Table 1
+      LOC_LABEL_VALUE: LOC_VALUE_2D6_10_SILVER_COINS
+  - id: treasure_goldBracelet
+    name: LOC_TREASURE_GOLD_BRACELET
+    category: LOC_CATEGORY_TREASURE_TABLE_1
     fields:
-      VALUE: 2D6 × 10 gold coins
-  - name: Silver Necklace
-    category: Treasure Table 1
+      LOC_LABEL_VALUE: LOC_VALUE_2D6_10_GOLD_COINS
+  - id: treasure_silverNecklace
+    name: LOC_TREASURE_SILVER_NECKLACE
+    category: LOC_CATEGORY_TREASURE_TABLE_1
     fields:
-      VALUE: 2D6 × 5 silver coins
-  - name: Gold Necklace
-    category: Treasure Table 2
+      LOC_LABEL_VALUE: LOC_VALUE_2D6_5_SILVER_COINS
+  - id: treasure_goldNecklace
+    name: LOC_TREASURE_GOLD_NECKLACE
+    category: LOC_CATEGORY_TREASURE_TABLE_2
     fields:
-      VALUE/OBJECT/EFFECT: 2D6 gold coins
-  - name: Silver Ring
-    category: Treasure Table 2
+      LOC_LABEL_VALUE_OBJECT_EFFECT: LOC_VALUE_2D6_GOLD_COINS
+  - id: treasure_silverRing
+    name: LOC_TREASURE_SILVER_RING
+    category: LOC_CATEGORY_TREASURE_TABLE_2
     fields:
-      VALUE/OBJECT/EFFECT: 2D6 silver coins
-  - name: Gold Ring
-    category: Treasure Table 2
+      LOC_LABEL_VALUE_OBJECT_EFFECT: LOC_VALUE_2D6_SILVER_COINS
+  - id: treasure_goldRing
+    name: LOC_TREASURE_GOLD_RING
+    category: LOC_CATEGORY_TREASURE_TABLE_2
     fields:
-      VALUE/OBJECT/EFFECT: 4D6 gold coins
-  - name: Silver Brooch
-    category: Treasure Table 2
+      LOC_LABEL_VALUE_OBJECT_EFFECT: LOC_VALUE_4D6_GOLD_COINS
+  - id: treasure_silverBrooch
+    name: LOC_TREASURE_SILVER_BROOCH
+    category: LOC_CATEGORY_TREASURE_TABLE_2
     fields:
-      VALUE/OBJECT/EFFECT: 2D6 × 5 silver coins
-  - name: Gold Amulet
-    category: Treasure Table 2
+      LOC_LABEL_VALUE_OBJECT_EFFECT: LOC_VALUE_2D6_5_SILVER_COINS
+  - id: treasure_goldAmulet
+    name: LOC_TREASURE_GOLD_AMULET
+    category: LOC_CATEGORY_TREASURE_TABLE_2
     fields:
-      VALUE/OBJECT/EFFECT: 2D6 × 5 gold coins
-  - name: Gemstone
-    category: Treasure Table 2
+      LOC_LABEL_VALUE_OBJECT_EFFECT: LOC_VALUE_2D6_5_GOLD_COINS
+  - id: treasure_gemstone
+    name: LOC_TREASURE_GEMSTONE
+    category: LOC_CATEGORY_TREASURE_TABLE_2
     fields:
-      VALUE/OBJECT/EFFECT: "Roll D6. 1: glass (worth 2 copper), 2: crystal (worth 10 silver), 3: emerald (worth 10 gold), 4: sapphire (worth 15 gold), 5: ruby (worth 25 gold), 6: diamond (worth 100 gold)"
-  - name: Clothing
-    category: Treasure Table 2
+      LOC_LABEL_VALUE_OBJECT_EFFECT: LOC_TREASURE_GEMSTONE_FIELDS_VALUE_OBJECT_EFFECT
+  - id: treasure_clothing
+    name: LOC_TREASURE_CLOTHING
+    category: LOC_CATEGORY_TREASURE_TABLE_2
     fields:
-      VALUE/OBJECT/EFFECT: "Roll D3. 1: boots, 2: cloak, 3: fur."
-  - name: Melee Weapon
-    category: Treasure Table 2
+      LOC_LABEL_VALUE_OBJECT_EFFECT: LOC_VALUE_ROLL_D3_1_BOOTS_2_CLOAK_3_FUR
+  - id: treasure_meleeWeapon
+    name: LOC_TREASURE_MELEE_WEAPON
+    category: LOC_CATEGORY_TREASURE_TABLE_2
     fields:
-      VALUE/OBJECT/EFFECT: "Roll D6. 1: dagger, 2: short sword, 3: short spear, 4: broadsword, 5: long spear, 6: longsword."
-  - name: Melee Weapon
-    category: Treasure Table 2
+      LOC_LABEL_VALUE_OBJECT_EFFECT: LOC_TREASURE_MELEE_WEAPON_FIELDS_VALUE_OBJECT_EFFECT
+  - id: treasure_meleeWeapon_2
+    name: LOC_TREASURE_MELEE_WEAPON_2
+    category: LOC_CATEGORY_TREASURE_TABLE_2
     fields:
-      VALUE/OBJECT/EFFECT: "Roll D6. 1: handaxe, 2: scimitar, 3: morningstar, 4: parrying dagger, 5: light warhammer, 6: flail."
-  - name: Ranged Weapon
-    category: Treasure Table 2
+      LOC_LABEL_VALUE_OBJECT_EFFECT: LOC_TREASURE_MELEE_WEAPON_2_FIELDS_VALUE_OBJECT_EFFECT
+  - id: treasure_rangedWeapon
+    name: LOC_TREASURE_RANGED_WEAPON
+    category: LOC_CATEGORY_TREASURE_TABLE_2
     fields:
-      VALUE/OBJECT/EFFECT: "Roll D6. 1: sling, 2: short bow, 3: longbow, 4: light crossbow, 5: heavy crossbow, 6: hand crossbow."
-  - name: Mastercrafted Weapon
-    category: Treasure Table 2
+      LOC_LABEL_VALUE_OBJECT_EFFECT: LOC_TREASURE_RANGED_WEAPON_FIELDS_VALUE_OBJECT_EFFECT
+  - id: treasure_mastercraftedWeapon
+    name: LOC_TREASURE_MASTERCRAFTED_WEAPON
+    category: LOC_CATEGORY_TREASURE_TABLE_2
     fields:
-      VALUE/OBJECT/EFFECT: "Roll D6. 1: dagger, 2: short sword, 3: battleaxe, 4: broadsword, 5: heavy warhammer, 6: longsword."
-  - name: Armor/Shield
-    category: Treasure Table 2
+      LOC_LABEL_VALUE_OBJECT_EFFECT: LOC_TREASURE_MASTERCRAFTED_WEAPON_FIELDS_VALUE_OBJECT_EFFECT
+  - id: treasure_armorShield
+    name: LOC_TREASURE_ARMOR_SHIELD
+    category: LOC_CATEGORY_TREASURE_TABLE_2
     fields:
-      VALUE/OBJECT/EFFECT: "Roll D6. 1: small shield, 2: large shield, 3: open helmet, 4: great helm, 5: studded leather, 6: chainmail."
-  - name: Poison Dagger
-    category: Treasure Table 2
+      LOC_LABEL_VALUE_OBJECT_EFFECT: LOC_TREASURE_ARMOR_SHIELD_FIELDS_VALUE_OBJECT_EFFECT
+  - id: treasure_poisonDagger
+    name: LOC_TREASURE_POISON_DAGGER
+    category: LOC_CATEGORY_TREASURE_TABLE_2
     fields:
-      VALUE/OBJECT/EFFECT: "Roll for EVADE. If you fail, you cut yourself and suffer a Potency 12 poison. Roll D3 for the type. 1: lethal, 2: paralyzing, 3: sleeping."
-  - name: Rusty Nail
-    category: Treasure Table 2
+      LOC_LABEL_VALUE_OBJECT_EFFECT: LOC_TREASURE_POISON_DAGGER_FIELDS_VALUE_OBJECT_EFFECT
+  - id: treasure_rustyNail
+    name: LOC_TREASURE_RUSTY_NAIL
+    category: LOC_CATEGORY_TREASURE_TABLE_2
     fields:
-      VALUE/OBJECT/EFFECT: Roll for EVADE. If you fail, you suffer D6 damage. Armor has no effect.
-  - name: Grimoire
-    category: Treasure Table 2
+      LOC_LABEL_VALUE_OBJECT_EFFECT: LOC_TREASURE_RUSTY_NAIL_FIELDS_VALUE_OBJECT_EFFECT
+  - id: treasure_grimoire
+    name: LOC_TREASURE_GRIMOIRE
+    category: LOC_CATEGORY_TREASURE_TABLE_2
     fields:
-      VALUE/OBJECT/EFFECT: "Roll D4 for the school. 1: animism, 2: elementalism, 3: mentalism, 4: general magic. Roll D4−1 for the spell rank (0 means magic tricks) and D4 for the number. The GM chooses or randomized the exact spells."
-  - name: Bottle
-    category: Treasure Table 2
+      LOC_LABEL_VALUE_OBJECT_EFFECT: LOC_TREASURE_GRIMOIRE_FIELDS_VALUE_OBJECT_EFFECT
+  - id: treasure_bottle
+    name: LOC_TREASURE_BOTTLE
+    category: LOC_CATEGORY_TREASURE_TABLE_2
     fields:
-      VALUE/OBJECT/EFFECT: "A HEALING roll reveals the contents. On a failure, the GM rolls in secret. Roll D6. 1: lethal poison (Potency 12), 2: sleeping poison (Potency 14), 3: booze, 4: herbal concoction, 5: healing potion (2D6 HP), 6: healing potion (3D6 HP)."
-  - name: Book
-    category: Treasure Table 2
+      LOC_LABEL_VALUE_OBJECT_EFFECT: LOC_TREASURE_BOTTLE_FIELDS_VALUE_OBJECT_EFFECT
+  - id: treasure_book
+    name: LOC_TREASURE_BOOK
+    category: LOC_CATEGORY_TREASURE_TABLE_2
     fields:
-      VALUE/OBJECT/EFFECT: "Roll D6 for the title: 1: Eat or Be Eaten – Plants of the Forest, 2: Grammar of the Dragon Tongue, 3: Ancient Heroes and Villains, 4: Handbook of the Master Carpenter, 5: Beasts of the Cave – An Encyclopedia, 6: Blood, Phlegm and Bile – Master Your Bodily Fluids."
-  - name: Instrument
-    category: Treasure Table 2
+      LOC_LABEL_VALUE_OBJECT_EFFECT: LOC_TREASURE_BOOK_FIELDS_VALUE_OBJECT_EFFECT
+  - id: treasure_instrument
+    name: LOC_TREASURE_INSTRUMENT
+    category: LOC_CATEGORY_TREASURE_TABLE_2
     fields:
-      VALUE/OBJECT/EFFECT: "Roll D6. 1: horn, 2: flute, 3: harp, 4: lyre, 5: bagpipe, 6: drum."
-  - name: Trade Goods
-    category: Treasure Table 2
+      LOC_LABEL_VALUE_OBJECT_EFFECT: LOC_TREASURE_INSTRUMENT_FIELDS_VALUE_OBJECT_EFFECT
+  - id: treasure_tradeGoods
+    name: LOC_TREASURE_TRADE_GOODS
+    category: LOC_CATEGORY_TREASURE_TABLE_2
     fields:
-      VALUE/OBJECT/EFFECT: "Roll D6. 1: magnifying glass, 2: spyglass, 3: perfume, 4: chess set, 5: playing cards, 6: marbles"
-  - name: Rat
-    category: Treasure Table 2
+      LOC_LABEL_VALUE_OBJECT_EFFECT: LOC_TREASURE_TRADE_GOODS_FIELDS_VALUE_OBJECT_EFFECT
+  - id: treasure_rat
+    name: LOC_TREASURE_RAT
+    category: LOC_CATEGORY_TREASURE_TABLE_2
     fields:
-      VALUE/OBJECT/EFFECT: Roll for EVADE. If you fail, you suffer D4 damage. Armor has no effect.
+      LOC_LABEL_VALUE_OBJECT_EFFECT: LOC_TREASURE_RAT_FIELDS_VALUE_OBJECT_EFFECT

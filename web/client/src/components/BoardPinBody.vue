@@ -2,8 +2,10 @@
 // What a pinned thing shows on the board, by what it is: a rule or a card (text, fields, tables), a table, a creature (its stat block) or a page
 // of an adventure. It is a copy of what was on screen when it was pinned, so the board does not depend on opening anything again.
 import { computed } from 'vue';
+import { t } from '../i18n.js';
 import DataTable from './DataTable.vue';
 import RuleText from './RuleText.vue';
+import TextBlocks from './TextBlocks.vue';
 import { textBlocks, unplacedTables } from '../lib/ruletables.js';
 
 const props = defineProps({
@@ -13,7 +15,7 @@ const props = defineProps({
 const data = computed(() => props.pin.data ?? {});
 const sections = computed(() => data.value.sections ?? []);
 const tables = computed(() => data.value.tables ?? []);
-const blocks = (text) => textBlocks(text ?? '', tables.value);
+const blocks = (text) => textBlocks(text ?? '');          // (the intro of a creature: paragraphs and lists only)
 const loose = computed(() => unplacedTables([data.value.body, ...sections.value.map((s) => s.body)], tables.value));
 </script>
 
@@ -32,7 +34,7 @@ const loose = computed(() => unplacedTables([data.value.body, ...sections.value.
         <table class="fields-table"><tbody><tr v-for="f in block.fields" :key="f.label"><th>{{ f.label }}</th><td>{{ f.value }}</td></tr></tbody></table>
       </div>
       <table v-if="data.attacks?.length" class="attacks-table">
-        <thead><tr><th>Roll</th><th>Attack</th><th>Effect</th></tr></thead>
+        <thead><tr><th>{{ t('Roll') }}</th><th>{{ t('Attack') }}</th><th>{{ t('Effect') }}</th></tr></thead>
         <tbody><tr v-for="(a, ai) in data.attacks" :key="ai"><td>{{ a.rollText || `${a.rollMin}–${a.rollMax}` }}</td><td>{{ a.name }}</td><td>{{ a.text }}</td></tr></tbody>
       </table>
       <p v-for="a in data.abilities ?? []" :key="a.name" class="ability"><b>{{ a.name }}.</b> {{ a.text }}</p>
@@ -41,22 +43,14 @@ const loose = computed(() => unplacedTables([data.value.body, ...sections.value.
 
     <template v-else>
       <dl v-if="data.fields?.length" class="fields">
-        <template v-for="f in data.fields" :key="f.label"><dt>{{ f.label }}</dt><dd>{{ f.value }}</dd></template>
+        <template v-for="f in data.fields" :key="f.label"><dt>{{ f.label }}</dt><dd><RuleText :text="f.value" /></dd></template>
       </dl>
-      <template v-for="(b, i) in blocks(data.body)" :key="`b${i}`">
-        <DataTable v-if="b.table" :table="b.table" :pinnable="false" />
-        <ul v-else-if="b.list" class="bullets"><li v-for="(it, k) in b.list" :key="k"><RuleText :text="it" /></li></ul>
-        <p v-else><RuleText :text="b.text" /></p>
-      </template>
-      <template v-for="(s, si) in sections" :key="`s${si}`">
+      <TextBlocks :text="data.body" :tables="tables" :includes="data.includes" :pinnable="false" />
+      <template v-for="(s, si) in sections" :key="si">
         <h4 class="sec">{{ s.title }}</h4>
-        <template v-for="(b, pi) in blocks(s.body)" :key="pi">
-          <DataTable v-if="b.table" :table="b.table" :pinnable="false" />
-          <ul v-else-if="b.list" class="bullets"><li v-for="(it, k) in b.list" :key="k"><RuleText :text="it" /></li></ul>
-          <p v-else><RuleText :text="b.text" /></p>
-        </template>
+        <TextBlocks :text="s.body" :tables="tables" :pinnable="false" />
       </template>
-      <DataTable v-for="t in loose" :key="t.title" :table="t" :pinnable="false" />
+      <DataTable v-for="tb in loose" :key="tb.title" :table="tb" :pinnable="false" />
       <p v-if="data.creatures?.length" class="creatures"><span v-for="c in data.creatures" :key="c" class="chip">{{ c }}</span></p>
     </template>
   </div>

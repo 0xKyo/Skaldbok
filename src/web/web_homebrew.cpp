@@ -6,10 +6,12 @@
 
 #include <SDL3/SDL.h>
 
+#include "game/character.h"
 #include "parsing/content.h"
 #include "game/messages.h"
 #include "parsing/fsutil.h"
 #include "parsing/fts.h"
+#include "parsing/i18n.h"
 
 namespace gm {
 namespace {
@@ -383,6 +385,7 @@ struct HbField {
     bool optionsUpper = false;                     // the names of optionsFrom are written in capitals (a spell is named so in another spell's prerequisite)
     std::string widget;                            // text: how the page asks for it (requirement: Word / Gesture / Material; range: Touch, meters...)
     std::string showKey, showValue;                // only shown while the field `showKey` has the value `showValue`
+    bool attributeIds = false;                     // select: the choices are the attributes of the game system (their ids; the page shows their names)
 };
 
 struct Section {
@@ -411,6 +414,12 @@ HbField prerequisiteChoice() {
     HbField f = {"prerequisite", "Prerequisite", "select", {"", "Any School of Magic", "Animism", "Elementalism", "Mentalism"}, {}};
     f.optionsFrom = "spells";
     f.optionsUpper = true;
+    return f;
+}
+// An attribute of the game system: an id ("strength"), or none. The choices are filled in from data/system/attributes.yaml.
+HbField attributeChoice(const char* key, const char* label) {
+    HbField f = {key, label, "select", {""}, {}};
+    f.attributeIds = true;
     return f;
 }
 HbField durationChoice() {
@@ -443,7 +452,6 @@ std::string titleOf(const std::string& stem) {
 
 const std::vector<Section>& dataSections() {
     static const std::vector<Section> all = [] {
-        const std::vector<std::string> attributes = {"STR", "CON", "AGL", "INT", "WIL", "CHA"};
         const HbField supply = select1("supply", "Supply", {"", "Common", "Uncommon", "Rare"});
         std::vector<Section> s;
         s.push_back({"abilities", "Abilities", "abilities", "abilities", false,
@@ -451,10 +459,10 @@ const std::vector<Section>& dataSections() {
         s.push_back({"spells", "Spells", "spells", "spells", false,
                      {text1("name", "Name"), select1("school", "School", {"", "Animism", "Elementalism", "Mentalism", "General"}), {"trick", "Trick", "bool", {}, {}}, text1("rank", "Rank"), widget1("requirement", "Requirement", "requirement"),
                       prerequisiteChoice(), widget1("range", "Range", "range"), durationChoice(), select1("casting_time", "Casting time", {"", "Action", "Reaction", "Shift", "Stretch"}), long1("description", "Description")}});
-        s.push_back({"skills", "Skills", "skills", "skills", false, {text1("name", "Name"), select1("attribute", "Attribute", attributes), select1("category", "Category (empty: a core skill)", {"", "weapon", "magic"}), long1("description", "Description")}});
+        s.push_back({"skills", "Skills", "skills", "skills", false, {text1("name", "Name"), attributeChoice("attribute", "Attribute"), select1("category", "Category (empty: a core skill)", {"", "weapon", "magic"}), long1("description", "Description")}});
         s.push_back({"kin", "Kin", "kin", "kin", false, {text1("name", "Name"), number1("movement", "Movement"), pickList("innate_abilities", "Innate abilities", "abilities"), long1("description", "Description")}});
         s.push_back({"professions", "Professions", "professions", "professions", false,
-                     {text1("name", "Name"), select1("key_attribute", "Key attribute", attributes), pickList("skills", "Skills", "skills"), pickList("heroic_abilities", "Heroic abilities", "abilities"), long1("description", "Description")}});
+                     {text1("name", "Name"), attributeChoice("key_attribute", "Key attribute"), pickList("skills", "Skills", "skills"), pickList("heroic_abilities", "Heroic abilities", "abilities"), long1("description", "Description")}});
         s.push_back({"weapons", "Weapons", "equipment", "weapons", false,
                      {text1("name", "Name"), select1("kind", "Kind", {"melee", "ranged"}), select1("grip", "Grip", {"", "1H", "2H"}), text1("str_req", "STR requirement"), text1("range", "Range"), text1("damage", "Damage"),
                       text1("durability", "Durability"), text1("cost", "Cost"), supply, text1("weight", "Weight"), text1("features", "Features"), list1("damage_types", "Damage types")}});
@@ -472,7 +480,7 @@ const std::vector<Section>& dataSections() {
 
 // The files that are lists of table entries (a name, a description, columns): each one has its own section.
 const std::vector<std::string>& entityFiles() {
-    static const std::vector<std::string> files = {"age", "appearance", "damage-types", "duration", "fear", "hunting", "improvised-weapons", "injuries", "magic", "melee-demon-rolls",
+    static const std::vector<std::string> files = {"appearance", "damage-types", "duration", "fear", "hunting", "improvised-weapons", "injuries", "magic", "melee-demon-rolls",
                                                    "memento", "mishaps", "ranged-demon-rolls", "terrain", "treasure", "weakness"};
     return files;
 }
@@ -486,8 +494,42 @@ json coreHeader(const std::string& coreDir, const std::string& stem) {
     return header;
 }
 
+// The attributes of the game system as Core's data/system/attributes.yaml lists them: the id of each, and the key of its name.
+std::vector<std::pair<std::string, std::string>> systemAttributes(const std::string& coreDir) {
+    std::vector<std::pair<std::string, std::string>> out;
+    if (const auto root = jsonLoad(systemDirOf(coreDir) + "/attributes.yaml"); root && root->is_object())
+        if (const json* list = jsonFind(*root, "attributes"); list && list->is_array())
+            for (const json& a : *list) {
+                const std::string id = jsonStr(a, "id");
+                std::string fallback = "LOC_ATTRIBUTE_";                                   // the key an attribute without a written one has
+                for (char c : id) fallback += c == '-' ? '_' : static_cast<char>(std::toupper(static_cast<unsigned char>(c)));
+                if (!id.empty()) out.emplace_back(id, jsonStr(a, "name", fallback));
+            }
+    return out;
+}
+
+// What the page calls each attribute, in the language of the request: id -> name (from i18n/<lang>.csv, else English, else the id).
+json attributeLabels(const std::string& coreDir) {
+    i18n::Texts en, shown;
+    const std::string system = systemDirOf(coreDir);
+    i18n::loadTexts(system, i18n::kDefault, en);
+    i18n::loadTexts(system, i18n::current(), shown);
+    json labels = json::object();
+    for (const auto& [id, key] : systemAttributes(coreDir)) {
+        const auto it = shown.find(key);
+        const auto fallback = en.find(key);
+        labels[id] = it != shown.end() ? it->second : fallback != en.end() ? fallback->second : id;
+    }
+    return labels;
+}
+
 std::vector<Section> allSections(const std::string& coreDir) {
     std::vector<Section> all = dataSections();
+    const auto attributes = systemAttributes(coreDir);
+    for (Section& s : all)
+        for (HbField& f : s.fields)
+            if (f.attributeIds)
+                for (const auto& a : attributes) f.options.push_back(a.first);
     for (const std::string& stem : entityFiles()) {
         Section s{stem, titleOf(stem), stem, "entities", true, {text1("name", "Name")}};
         std::vector<std::string> categories;
@@ -509,9 +551,16 @@ const Section* findSection(const std::vector<Section>& all, const std::string& i
     return nullptr;
 }
 
+// (the labels go out in the language of the request; the options are values of the data, so they stay as they are, with how each is shown)
 json fieldJson(const HbField& f) {
-    json o = {{"key", f.key}, {"label", f.label}, {"type", f.type}};
-    if (!f.options.empty()) o["options"] = f.options;
+    json o = {{"key", f.key}, {"label", i18n::tr(f.label)}, {"type", f.type}};
+    if (!f.options.empty()) {
+        o["options"] = f.options;
+        json labels = json::object();
+        for (const std::string& opt : f.options)
+            if (!opt.empty() && i18n::tr(opt) != opt) labels[opt] = i18n::tr(opt);
+        if (!labels.empty()) o["optionLabels"] = labels;
+    }
     if (!f.optionsFrom.empty()) o["optionsFrom"] = f.optionsFrom;
     if (f.optionsUpper) o["optionsUpper"] = true;
     if (!f.widget.empty()) o["widget"] = f.widget;
@@ -538,6 +587,7 @@ bool checkValue(const HbField& f, const json& in, json& out, std::string& error)
         } else {
             s = trimmed(v->get<std::string>());
         }
+        if (f.attributeIds) s = legacyAttributeId(s);                       // a page (or a pack) that still writes "STR"
         if (s.size() > (f.type == "long" ? 4000u : 200u)) {
             error = what + " is too long";
             return false;
@@ -656,6 +706,11 @@ json homebrewSchema(const std::string& prefsDir, const std::string& coreDir) {
         json fields = json::array();
         for (const HbField& f : s.fields) {
             json o = fieldJson(f);
+            if (f.attributeIds) {                                                            // the attributes of the game system, by id, shown by name
+                o["options"] = json::array({""});
+                for (const auto& a : systemAttributes(coreDir)) o["options"].push_back(a.first);
+                o["optionLabels"] = attributeLabels(coreDir);
+            }
             if (!f.optionsFile.empty()) {                                                // the choices Core has, and the ones the GM added
                 std::vector<std::string> names = {""};
                 for (const std::string& dir : {coreDir, customPackDir(prefsDir)})
@@ -667,7 +722,7 @@ json homebrewSchema(const std::string& prefsDir, const std::string& coreDir) {
             }
             fields.push_back(std::move(o));
         }
-        sections.push_back({{"id", s.id}, {"label", s.label}, {"fields", fields}});
+        sections.push_back({{"id", s.id}, {"label", i18n::tr(s.label)}, {"fields", fields}});
     }
     return {{"pack", {{"id", baseName(customPackDir(prefsDir))}, {"name", homebrewPackName(prefsDir)}}}, {"sections", sections}};
 }
@@ -680,6 +735,8 @@ json homebrewEntries(const std::string& packDir, const std::string& coreDir, con
     int index = 0;
     for (json e : entriesOf(readFile(packDir, *s, coreDir), *s)) {
         if (e.is_object()) e["index"] = index;
+        for (const char* key : {"attribute", "key_attribute"})                     // an entry written with the old codes shows its attribute by id
+            if (e.is_object() && e.contains(key) && e[key].is_string()) e[key] = legacyAttributeId(e[key].get<std::string>());
         out.push_back(std::move(e));
         ++index;
     }

@@ -4,6 +4,7 @@
 // text and, below, everything inside it (the NPCs, sidebars, tables...) in the order of the book.
 import { computed, inject, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { ApiError, apiGet, apiSend } from '../api.js';
+import { t } from '../i18n.js';
 import DataTable from './DataTable.vue';
 import AdventurePicture from './AdventurePicture.vue';
 import LinkedText from './LinkedText.vue';
@@ -34,7 +35,7 @@ onMounted(async () => {
     const wanted = pendingNav?.adventure && adventures.value.some((a) => a.id === pendingNav.adventure) ? pendingNav.adventure : adventures.value[0]?.id;
     if (wanted) chosen.value = wanted;
   } catch (e) {
-    loadError.value = e instanceof ApiError ? e.message : 'Could not load the adventures.';
+    loadError.value = e instanceof ApiError ? e.message : t('Could not load the adventures.');
   }
 });
 
@@ -57,7 +58,7 @@ watch(chosen, async (id) => {
       await putBackPage(step);
     }
   } catch (e) {
-    loadError.value = e instanceof ApiError ? e.message : 'Could not open that adventure.';
+    loadError.value = e instanceof ApiError ? e.message : t('Could not open that adventure.');
   } finally {
     loading.value = false;
   }
@@ -142,7 +143,7 @@ const creaturesOf = (n) => (n.creatures ?? []).map((k) => ({ key: k, name: adven
 const tableOf = (n) => (n.table ? adventure.value?.tables?.[n.table] ?? null : null);
 // the pictures of a node (maps, portraits, illustrations), in the order the pack gives them
 const picturesOf = (n) => n?.images ?? [];
-const kindLabel = (n) => KIND_LABEL[n.kind] ?? n.kind;
+const kindLabel = (n) => (KIND_LABEL[n.kind] === undefined ? n.kind : KIND_LABEL[n.kind] && t(KIND_LABEL[n.kind]));
 
 // every word the adventure says leads to a page (a node's `keywords`), longest first so "Crypt of Um-Durman" wins over "Um-Durman"
 const matcher = computed(() => {
@@ -237,14 +238,14 @@ async function flushNote() {
   clearTimeout(noteTimer);
   if (!noteNode || !chosen.value || (notes.value[noteNode] ?? '') === noteText.value) return;
   const node = noteNode, text = noteText.value;
-  noteStatus.value = 'Saving…';
+  noteStatus.value = t('Saving…');
   try {
     await apiSend('PUT', `/gm/adventures/${encodeURIComponent(chosen.value)}/notes`, props.token, { node, text });
     notes.value = { ...notes.value, [node]: text };
     if (!text.trim()) delete notes.value[node];
-    noteStatus.value = node === noteNode ? 'Saved' : '';
+    noteStatus.value = node === noteNode ? t('Saved') : '';
   } catch (e) {
-    noteStatus.value = e instanceof ApiError ? e.message : 'Could not save the note.';
+    noteStatus.value = e instanceof ApiError ? e.message : t('Could not save the note.');
   }
 }
 
@@ -371,41 +372,41 @@ if (nav) {
   <section class="adventures" data-test="adventures">
     <p v-if="loadError" class="error" data-test="load-error">{{ loadError }}</p>
 
-    <p v-if="!adventures.length && !loadError" class="muted" data-test="none">There is no adventure loaded. An adventure is a pack with an <code>adventure.yaml</code>.</p>
+    <p v-if="!adventures.length && !loadError" class="muted" data-test="none">{{ t('There is no adventure loaded. An adventure is a pack with an') }} <code>adventure.yaml</code>.</p>
 
-    <label v-if="adventures.length" class="picker">Adventure
-      <select v-model="chosen" aria-label="Adventure" data-test="adventure-pick">
+    <label v-if="adventures.length" class="picker">{{ t('Adventure') }}
+      <select v-model="chosen" :aria-label="t('Adventure')" data-test="adventure-pick">
         <option v-for="a in adventures" :key="a.id" :value="a.id">{{ a.name }}</option>
       </select>
     </label>
 
-    <p v-if="loading" class="muted">Opening…</p>
+    <p v-if="loading" class="muted">{{ t('Opening…') }}</p>
 
-    <nav v-if="adventure" class="views" aria-label="What to read">
-      <button type="button" class="vtab" :class="{ active: view === 'story' }" data-test="tab-story" @click="view = 'story'">Story</button>
-      <button type="button" class="vtab" :class="{ active: view === 'npcs' }" data-test="tab-npcs" @click="view = 'npcs'">NPCs ({{ npcs.length }})</button>
+    <nav v-if="adventure" class="views" :aria-label="t('What to read')">
+      <button type="button" class="vtab" :class="{ active: view === 'story' }" data-test="tab-story" @click="view = 'story'">{{ t('Story') }}</button>
+      <button type="button" class="vtab" :class="{ active: view === 'npcs' }" data-test="tab-npcs" @click="view = 'npcs'">{{ t('NPCs ({n})', { n: npcs.length }) }}</button>
     </nav>
 
     <div v-if="adventure && view === 'npcs'" class="layout" :class="{ 'content-open': npcOpen }" data-test="npcs">
-      <aside class="outline panel" aria-label="NPCs">
-        <input v-model="npcQuery" type="search" class="npc-search" placeholder="Search the NPCs…" aria-label="Search the NPCs" data-test="npc-search" />
-        <label class="check"><input v-model="withMonsters" type="checkbox" data-test="npc-monsters" /> Monsters too</label>
-        <p v-if="!npcGroups.length" class="muted">No NPC matches.</p>
+      <aside class="outline panel" :aria-label="t('NPCs')">
+        <input v-model="npcQuery" type="search" class="npc-search" :placeholder="t('Search the NPCs…')" :aria-label="t('Search the NPCs')" data-test="npc-search" />
+        <label class="check"><input v-model="withMonsters" type="checkbox" data-test="npc-monsters" /> {{ t('Monsters too') }}</label>
+        <p v-if="!npcGroups.length" class="muted">{{ t('No NPC matches.') }}</p>
         <template v-for="g in npcGroups" :key="g.chapter.id">
           <h3 class="ngroup">{{ g.chapter.title }}</h3>
           <button v-for="r in g.rows" :key="r.node.id" type="button" class="nrow" :class="{ active: npcId === r.node.id }" data-test="npc-row" @click="pickNpc(r, true)">
-            <span class="nname">{{ r.node.title }}<span v-if="notes[r.node.id]" class="has-note" title="You have notes on it" data-test="has-note"> ✎</span></span><span v-if="r.place" class="nplace">{{ r.place }}</span>
+            <span class="nname">{{ r.node.title }}<span v-if="notes[r.node.id]" class="has-note" :title="t('You have notes on it')" data-test="has-note"> ✎</span></span><span v-if="r.place" class="nplace">{{ r.place }}</span>
           </button>
         </template>
       </aside>
 
       <article v-if="npcSelected" class="page panel" data-test="npc-page">
-        <button type="button" class="back link" data-test="npc-back" @click="npcOpen = false">← NPCs</button>
-        <button v-if="jumps.length" type="button" class="link jump-back" data-test="jump-back" @click="goBack">↩ Back</button>
-        <h2>{{ npcSelected.node.title }} <span class="chip">{{ kindLabel(npcSelected.node) }}</span> <span v-if="npcSelected.node.page" class="muted pg">p.{{ npcSelected.node.page }}</span> <PinButton :snapshot="pinNpc" small /></h2>
+        <button type="button" class="back link" data-test="npc-back" @click="npcOpen = false">← {{ t('NPCs') }}</button>
+        <button v-if="jumps.length" type="button" class="link jump-back" data-test="jump-back" @click="goBack">↩ {{ t('Back') }}</button>
+        <h2>{{ npcSelected.node.title }} <span class="chip">{{ kindLabel(npcSelected.node) }}</span> <span v-if="npcSelected.node.page" class="muted pg">{{ t('p.') }}{{ npcSelected.node.page }}</span> <PinButton :snapshot="pinNpc" small /></h2>
         <AdventurePicture v-for="file in picturesOf(npcSelected.node)" :key="file" :token="token" :adventure="chosen" :file="file" :alt="npcSelected.node.title" />
         <p class="trail muted" data-test="npc-place">{{ npcSelected.chapter.title }}<template v-if="npcSelected.place"> › {{ npcSelected.place }}</template>
-          <a v-if="npcSelected.home" href="#" class="story-link" data-test="npc-story" @click.prevent="showInStory(npcSelected)">Open in the story</a></p>
+          <a v-if="npcSelected.home" href="#" class="story-link" data-test="npc-story" @click.prevent="showInStory(npcSelected)">{{ t('Open in the story') }}</a></p>
         <template v-for="(b, i) in blocks(npcSelected.node.body)" :key="i">
           <p v-if="b.p"><LinkedText :text="b.p" :matcher="matcher" :owner="npcSelected.node.id" @go="goTo" /></p>
           <ul v-else class="bullets"><li v-for="(it, j) in b.list" :key="j"><b v-if="it.label">{{ it.label }}.</b> <LinkedText :text="it.text" :matcher="matcher" :owner="npcSelected.node.id" @go="goTo" /></li></ul>
@@ -419,25 +420,25 @@ if (nav) {
               <table class="fields-table"><tbody><tr v-for="f in block.fields" :key="f.label"><th>{{ f.label }}</th><td>{{ f.value }}</td></tr></tbody></table>
             </div>
             <table v-if="creatureDetail[key].attacks.length" class="attacks-table">
-              <thead><tr><th>Roll</th><th>Attack</th><th>Effect</th></tr></thead>
+              <thead><tr><th>{{ t('Roll') }}</th><th>{{ t('Attack') }}</th><th>{{ t('Effect') }}</th></tr></thead>
               <tbody><tr v-for="(a, ai) in creatureDetail[key].attacks" :key="ai"><td>{{ a.rollText || `${a.rollMin}–${a.rollMax}` }}</td><td>{{ a.name }}</td><td>{{ a.text }}</td></tr></tbody>
             </table>
             <div v-for="a in creatureDetail[key].abilities" :key="a.name" class="ability"><b>{{ a.name }}.</b> {{ a.text }}</div>
           </template>
         </section>
         <section class="notes" data-test="notes">
-          <h3>Notes</h3>
-          <textarea v-model="noteText" rows="6" maxlength="20000" placeholder="Your notes on this NPC: what the players learned, what you changed, what comes next…" aria-label="Notes" data-test="note" @input="editNote" @blur="flushNote"></textarea>
+          <h3>{{ t('Notes') }}</h3>
+          <textarea v-model="noteText" rows="6" maxlength="20000" :placeholder="t('Your notes on this NPC: what the players learned, what you changed, what comes next…')" :aria-label="t('Notes')" data-test="note" @input="editNote" @blur="flushNote"></textarea>
           <p v-if="noteStatus" class="muted note-status" data-test="note-status">{{ noteStatus }}</p>
         </section>
       </article>
-      <p v-else class="muted hint">Pick an NPC.</p>
+      <p v-else class="muted hint">{{ t('Pick an NPC.') }}</p>
     </div>
 
     <div v-if="adventure && view === 'story'" class="layout" :class="{ 'content-open': contentOpen }">
-      <nav class="outline panel" aria-label="Outline" data-test="outline">
+      <nav class="outline panel" :aria-label="t('Outline')" data-test="outline">
         <div v-for="r in rows" :key="r.node.id" class="orow" :style="{ paddingLeft: `${r.depth * 14}px` }">
-          <button v-if="r.kids" type="button" class="twist" :aria-label="expanded.has(r.node.id) ? 'Collapse' : 'Expand'" :aria-expanded="expanded.has(r.node.id)" @click="toggle(r.node)">{{ expanded.has(r.node.id) ? '▾' : '▸' }}</button>
+          <button v-if="r.kids" type="button" class="twist" :aria-label="expanded.has(r.node.id) ? t('Collapse') : t('Expand')" :aria-expanded="expanded.has(r.node.id)" @click="toggle(r.node)">{{ expanded.has(r.node.id) ? '▾' : '▸' }}</button>
           <span v-else class="twist"></span>
           <button type="button" class="olabel" :class="{ active: selectedId === r.node.id, chapter: r.node.kind === 'chapter' }" data-test="outline-item" @click="pick(r.node, true)">
             <span v-if="r.node.number" class="num">{{ r.node.number }}.</span>{{ r.node.title }}
@@ -446,12 +447,12 @@ if (nav) {
       </nav>
 
       <article v-if="selected" class="page panel" data-test="page">
-        <button type="button" class="back link" data-test="back" @click="contentOpen = false">← Outline</button>
-        <button v-if="jumps.length" type="button" class="link jump-back" data-test="jump-back" @click="goBack">↩ Back</button>
+        <button type="button" class="back link" data-test="back" @click="contentOpen = false">← {{ t('Outline') }}</button>
+        <button v-if="jumps.length" type="button" class="link jump-back" data-test="jump-back" @click="goBack">↩ {{ t('Back') }}</button>
         <p v-if="trail.length > 1" class="trail muted" data-test="trail">
-          <template v-for="(t, i) in trail.slice(0, -1)" :key="t.id"><a href="#" @click.prevent="pick(t)">{{ t.title }}</a><span v-if="i < trail.length - 2"> › </span></template>
+          <template v-for="(step, i) in trail.slice(0, -1)" :key="step.id"><a href="#" @click.prevent="pick(step)">{{ step.title }}</a><span v-if="i < trail.length - 2"> › </span></template>
         </p>
-        <h2>{{ selected.number ? `${selected.number}. ` : '' }}{{ selected.title }} <span v-if="kindLabel(selected)" class="chip">{{ kindLabel(selected) }}</span> <span v-if="selected.page" class="muted pg">p.{{ selected.page }}</span> <PinButton :snapshot="pinPage" small /></h2>
+        <h2>{{ selected.number ? `${selected.number}. ` : '' }}{{ selected.title }} <span v-if="kindLabel(selected)" class="chip">{{ kindLabel(selected) }}</span> <span v-if="selected.page" class="muted pg">{{ t('p.') }}{{ selected.page }}</span> <PinButton :snapshot="pinPage" small /></h2>
 
         <AdventurePicture v-for="file in picturesOf(selected)" :key="file" :token="token" :adventure="chosen" :file="file" :alt="selected.title" />
         <template v-for="(b, i) in blocks(selected.body)" :key="i">

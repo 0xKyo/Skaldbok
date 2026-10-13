@@ -1,0 +1,5 @@
+kind: size
+hidden: true
+entities:
+  - id: size_tiny
+    name: LOC_SIZE_TINY

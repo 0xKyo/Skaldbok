@@ -3,7 +3,9 @@
 // review). It only collects choices; what is valid and the sheet that comes out are the server's (POST /gm/characters {creation}).
 import { computed, onMounted, reactive, ref, watch } from 'vue';
 import { ApiError, apiGet, apiSend } from '../api.js';
+import { t } from '../i18n.js';
 import ChoiceLayout from './ChoiceLayout.vue';
+import NumberField from './NumberField.vue';
 
 const props = defineProps({
   token: { type: String, required: true },
@@ -11,7 +13,10 @@ const props = defineProps({
 });
 const emit = defineEmits(['created', 'cancel']);
 
-const STEPS = ['Kin', 'Profession', 'Age', 'Attributes', 'Skills', 'Ability & magic', 'Gear', 'Name & details', 'Review'];
+const STEPS = computed(() => [t('Kin'), t('Profession'), t('Age'), t('Attributes'), t('Skills'), t('Ability & magic'), t('Gear'), t('Name & details'), t('Review')]);
+const LAST = 8;
+// The catalog names skills, abilities and schools in English (what goes back to the server); this is how each is shown.
+const L = (name) => catalog.value?.labels?.[name] ?? name;
 
 const catalog = ref(null);
 const content = reactive({ kin: [], professions: [], abilities: [], weapons: [], armor: [], gear: [] });      // the Reference's own cards, shown beside each list of options
@@ -49,7 +54,7 @@ onMounted(async () => {
       chooseProfession(catalog.value.professions[0]?.key ?? '');
     }
   } catch (e) {
-    loadError.value = e instanceof ApiError ? e.message : 'Could not load the creator.';
+    loadError.value = e instanceof ApiError ? e.message : t('Could not load the creator.');
   }
 });
 
@@ -68,7 +73,7 @@ const finalAttrs = computed(() => cr.rolled.map((v, i) => Math.min(18, Math.max(
 const chanceOf = (score) => catalog.value?.baseChance[score] ?? 0;
 const levelOf = (skill) => {
   const a = catalog.value?.skillAttributes[skill];
-  const i = catalog.value?.attributes.findIndex((x) => x.short === a) ?? -1;
+  const i = catalog.value?.attributes.findIndex((x) => x.id === a) ?? -1;
   return i < 0 ? 0 : Math.min(18, 2 * chanceOf(finalAttrs.value[i]));
 };
 const freeChoices = computed(() => catalog.value?.selectableSkills ?? []);
@@ -84,18 +89,18 @@ const gearSets = computed(() => prof.value?.gearSets ?? []);
 const kinRows = computed(() => catalog.value.kins.map((k) => ({ key: k.key, title: k.title, sub: k.source })));
 const professionRows = computed(() => catalog.value.professions.map((p) => ({ key: p.key, title: p.title, sub: p.source })));
 const ageRows = computed(() => catalog.value.ages.map((a) => ({ key: a.id, title: a.label })));
-const heroicRows = computed(() => heroicList.value.map((h) => ({ key: h.name, title: h.name })));
-const gearRows = computed(() => [...gearSets.value.map((g, i) => ({ key: String(i), title: `Set ${i + 1}` })), { key: 'custom', title: 'Custom' }]);
+const heroicRows = computed(() => heroicList.value.map((h) => ({ key: h.name, title: h.label ?? h.name })));
+const gearRows = computed(() => [...gearSets.value.map((g, i) => ({ key: String(i), title: t('Set {n}', { n: i + 1 }) })), { key: 'custom', title: t('Custom') }]);
 const gearChoice = computed(() => (cr.gearCustom ? 'custom' : cr.gearSet >= 0 ? String(cr.gearSet) : ''));
 const ageDetail = computed(() => {
   const a = ageInfo.value;
   if (!a) return null;
-  const mods = catalog.value.attributes.map((x, i) => (a.attrMod[i] ? `${x.short} ${a.attrMod[i] > 0 ? '+' : ''}${a.attrMod[i]}` : '')).filter(Boolean).join(', ');
-  return { name: a.label, body: a.summary, fields: [{ label: 'Trained skills', value: String(a.trainedSkills) }, { label: 'Attributes', value: mods || 'no change' }] };
+  const mods = catalog.value.attributes.map((x, i) => (a.attrMod[i] ? `${x.label ?? x.id} ${a.attrMod[i] > 0 ? '+' : ''}${a.attrMod[i]}` : '')).filter(Boolean).join(', ');
+  return { name: a.label, body: a.summary, fields: [{ label: t('Trained skills'), value: String(a.trainedSkills) }, { label: t('Attributes'), value: mods || t('no change') }] };
 });
 const gearDetail = computed(() => {
-  if (cr.gearCustom) return { name: 'Custom', body: 'Choose whatever you want to carry, from the weapons, armor and gear of the rules. What it all costs is added up below.' };
-  return cr.gearSet >= 0 ? { name: `Set ${cr.gearSet + 1}`, body: gearSets.value[cr.gearSet].text } : null;
+  if (cr.gearCustom) return { name: t('Custom'), body: t('Choose whatever you want to carry, from the weapons, armor and gear of the rules. What it all costs is added up below.') };
+  return cr.gearSet >= 0 ? { name: t('Set {n}', { n: cr.gearSet + 1 }), body: gearSets.value[cr.gearSet].text } : null;
 });
 
 // ---- custom gear: any weapon, armor or gear of the rules, with what it costs added up ----
@@ -103,14 +108,14 @@ const customQuery = ref('');
 const customKind = ref('all');
 const COPPER = { gold: 100, silver: 10, copper: 1 };
 function costOf(entry) {                                                    // in copper; null when the price is not a plain amount
-  const text = entry.fields?.find((f) => f.label === 'Cost')?.value ?? '';
+  const text = entry.cost ?? entry.fields?.find((f) => f.label === 'Cost')?.value ?? '';      // (the price in English: "10 silver")
   const m = /^(\d+)\s*(gold|silver|copper)$/i.exec(text.trim());
   return m ? Number(m[1]) * COPPER[m[2].toLowerCase()] : null;
 }
 const priceText = (copper) => {
   if (copper === null) return '—';
   const parts = [[Math.floor(copper / 100), 'gold'], [Math.floor((copper % 100) / 10), 'silver'], [copper % 10, 'copper']].filter(([n]) => n > 0);
-  return parts.length ? parts.map(([n, u]) => `${n} ${u}`).join(', ') : '0';
+  return parts.length ? parts.map(([n, u]) => t(`{n} ${u}`, { n })).join(', ') : '0';
 };
 const catalogItems = computed(() => [['weapons', content.weapons], ['armor', content.armor], ['gear', content.gear]]
   .flatMap(([kind, list]) => list.map((e) => ({ key: e.key, name: e.name, kind, sub: e.subtitle ?? '', copper: costOf(e) }))));
@@ -138,9 +143,9 @@ function setCustomCount(key, count) {
 function detailOf(list, card, name) {
   if (card) return list.find((e) => e.key === card.key) ?? { name: card.title, body: card.body ?? '', fields: card.fields ?? [] };
   if (!name) return null;
-  const found = list.find((e) => (e.name ?? '').toLowerCase() === name.toLowerCase());
+  const found = list.find((e) => (e.canon ?? e.name ?? '').toLowerCase() === name.toLowerCase());     // (the card's English name: what the catalog uses)
   const known = catalog.value.heroicAbilities.find((h) => h.name === name);
-  return found ?? (known ? { name, body: known.body, fields: known.fields } : { name, body: '' });
+  return found ?? (known ? { name: known.label ?? name, body: known.body, fields: known.fields } : { name: L(name), body: '' });
 }
 const allAttrsSet = computed(() => cr.rolled.every((v) => v >= 3 && v <= 18));
 const anyScoreBad = computed(() => cr.rolled.some(scoreBad));
@@ -189,37 +194,35 @@ function setAge(id) {
 
 const byName = (list, key, name) => list.find((x) => x[key].toLowerCase() === String(name).toLowerCase());
 
+// (the book's tables name the kin and professions in English: their "canon")
 function rollKin() {
   const faces = catalog.value.tables.kin;
-  const found = faces.length ? byName(catalog.value.kins, 'title', pick(faces)) : null;
+  const found = faces.length ? byName(catalog.value.kins, 'canon', pick(faces)) : null;
   const k = found ?? pick(catalog.value.kins);
   chooseKin(k.key);
-  note.value = `Rolled: ${k.title}`;
+  note.value = t('Rolled: {what}', { what: k.title });
 }
 
 function rollProfession() {
   const faces = catalog.value.tables.profession;
-  const found = faces.length ? byName(catalog.value.professions, 'title', pick(faces)) : null;
+  const found = faces.length ? byName(catalog.value.professions, 'canon', pick(faces)) : null;
   const p = found ?? pick(catalog.value.professions);
   chooseProfession(p.key);
-  note.value = `Rolled: ${p.title}`;
+  note.value = t('Rolled: {what}', { what: p.title });
 }
 
 function rollAge() {
   const r = d(6);
   setAge(r <= 3 ? 'young' : r <= 5 ? 'adult' : 'old');
-  note.value = `Rolled ${r}: ${ageInfo.value.label}`;
+  note.value = t('Rolled {n}: {what}', { n: r, what: ageInfo.value.label });
 }
 
-// what is typed is kept as typed: the limits are only checked to move on, and shown in red meanwhile
-function setScore(i, raw) {
-  cr.rolled[i] = Math.min(99, Math.max(0, Number.parseInt(raw, 10) || 0));
-}
+// a score is checked once it is written (the box is left): the limits stop the creator from going on, and show in red meanwhile
 const scoreBad = (v) => v > 0 && (v < 3 || v > 18);
 
 function rollAll() {
   cr.rolled = cr.rolled.map(() => rollAttribute());
-  note.value = 'Rolled six attributes';
+  note.value = t('Rolled six attributes');
 }
 
 function swapScores() {
@@ -270,7 +273,7 @@ function chooseGearSet(i) {
 function rollGearSet() {
   const r = d(6);
   chooseGearSet(r <= 2 ? 0 : r <= 4 ? 1 : 2);
-  note.value = `Rolled ${r}: set ${cr.gearSet + 1}`;
+  note.value = t('Rolled {n}: {what}', { n: r, what: t('Set {n}', { n: cr.gearSet + 1 }) });
 }
 
 function rollField(field, table) {
@@ -282,11 +285,11 @@ async function randomize() {
   busy.value = true;
   try {
     Object.assign(cr, blank(), await apiSend('POST', '/gm/creation/random', props.token, {}));
-    step.value = STEPS.length - 1;
-    furthest.value = STEPS.length - 1;
-    note.value = 'A random character. Change anything, or create it.';
+    step.value = LAST;
+    furthest.value = LAST;
+    note.value = t('A random character. Change anything, or create it.');
   } catch (e) {
-    note.value = e.message ?? 'Could not roll a character.';
+    note.value = e.message ?? t('Could not roll a character.');
   } finally {
     busy.value = false;
   }
@@ -304,7 +307,7 @@ watch([step, () => cr.profession, () => cr.school], pickDefaults, { flush: 'sync
 let timer = null;
 watch([step, () => JSON.stringify(cr)], () => {
   clearTimeout(timer);
-  if (!catalog.value || (step.value !== 3 && step.value !== STEPS.length - 1)) return;
+  if (!catalog.value || (step.value !== 3 && step.value !== LAST)) return;
   timer = setTimeout(async () => {
     try {
       preview.value = await apiSend('POST', '/gm/creation/preview', props.token, { ...cr });
@@ -319,7 +322,7 @@ async function create() {
     const made = await apiSend('POST', '/gm/characters', props.token, { creation: { ...cr } });
     emit('created', made.id);
   } catch (e) {
-    note.value = e.message ?? 'Could not create the character.';
+    note.value = e.message ?? t('Could not create the character.');
   } finally {
     busy.value = false;
   }
@@ -331,15 +334,15 @@ const short = (text, max = 110) => (text.length > max ? `${text.slice(0, max)}�
 <template>
   <div class="creator" data-test="creator">
     <p v-if="loadError" class="error" style="padding: 1rem;">{{ loadError }}</p>
-    <p v-else-if="!catalog" class="muted" style="padding: 1rem;">Loading…</p>
+    <p v-else-if="!catalog" class="muted" style="padding: 1rem;">{{ t('Loading…') }}</p>
     <p v-else-if="!catalog.kins.length || !catalog.professions.length" class="muted" style="padding: 1rem;">
-      There is no kin or profession loaded, so a character cannot be created. Check that the Core pack is in place.
+      {{ t('There is no kin or profession loaded, so a character cannot be created. Check that the Core pack is in place.') }}
     </p>
     <template v-else>
-      <h2 class="title">New character</h2>
+      <h2 class="title">{{ t('New character') }}</h2>
       <nav class="steps">
         <button
-          v-for="(name, i) in STEPS" :key="name" type="button" class="pill"
+          v-for="(name, i) in STEPS" :key="i" type="button" class="pill"
           :class="{ current: step === i, done: reached(i) && i !== step && stepDone(i) }" :disabled="!reached(i)"
           data-test="creator-step" @click="goto(i)"
         >{{ i + 1 }}. {{ name }}</button>
@@ -351,78 +354,80 @@ const short = (text, max = 110) => (text.length > max ? `${text.slice(0, max)}�
 
           <!-- 1. Kin -->
           <template v-if="step === 0">
-            <p>Choose your kin. Each has an innate ability that no other kin can learn.</p>
-            <button type="button" class="btn" @click="rollKin">Roll D12</button>
+            <p>{{ t('Choose your kin. Each has an innate ability that no other kin can learn.') }}</p>
+            <button type="button" class="btn" @click="rollKin">{{ t('Roll D12') }}</button>
             <ChoiceLayout :rows="kinRows" :model-value="cr.kin" :detail="detailOf(content.kin, kin)" @update:model-value="chooseKin" />
           </template>
 
           <!-- 2. Profession -->
           <template v-else-if="step === 1">
-            <p>Your profession decides six of your trained skills, your heroic ability and what gear you start with.</p>
-            <button type="button" class="btn" @click="rollProfession">Roll D10</button>
+            <p>{{ t('Your profession decides six of your trained skills, your heroic ability and what gear you start with.') }}</p>
+            <button type="button" class="btn" @click="rollProfession">{{ t('Roll D10') }}</button>
             <ChoiceLayout :rows="professionRows" :model-value="cr.profession" :detail="detailOf(content.professions, prof)" @update:model-value="chooseProfession">
-              <div v-if="isMage" class="schools">
-                <b class="gold">School of magic</b> <span class="muted">(becomes one of your trained skills)</span>
-                <label v-for="s in prof.schools" :key="s" class="radio"><input type="radio" name="school" :checked="cr.school === s" data-test="school" @change="chooseSchool(s)" /> {{ s }}</label>
+              <template #before>
+              <div v-if="isMage" class="schools" data-test="schools">
+                <b class="gold">{{ t('Choose your school of magic') }}</b> <span class="muted">{{ t('(becomes one of your trained skills)') }}</span>
+                <label v-for="s in prof.schools" :key="s" class="radio"><input type="radio" name="school" :checked="cr.school === s" data-test="school" @change="chooseSchool(s)" /> {{ L(s) }}</label>
               </div>
+              </template>
             </ChoiceLayout>
           </template>
 
           <!-- 3. Age -->
           <template v-else-if="step === 2">
-            <p>Older adventurers start with lower attributes but more trained skills. The modifications do not stack.</p>
-            <button type="button" class="btn" @click="rollAge">Roll D6</button>
+            <p>{{ t('Older adventurers start with lower attributes but more trained skills. The modifications do not stack.') }}</p>
+            <button type="button" class="btn" @click="rollAge">{{ t('Roll D6') }}</button>
             <ChoiceLayout :rows="ageRows" :model-value="cr.age" :detail="ageDetail" @update:model-value="setAge" />
           </template>
 
           <!-- 4. Attributes -->
           <template v-else-if="step === 3">
-            <p>Roll 4D6 and remove the worst die for each attribute, assigning each score as you roll it. When all six are set you may swap two. Then your age adjusts them (never above 18). Or enter the scores by hand if the group uses another method.</p>
-            <button type="button" class="btn" data-test="roll-all" @click="rollAll">Roll all six</button>
-            <button type="button" class="btn ghost" @click="cr.rolled = [0, 0, 0, 0, 0, 0]">Clear</button>
+            <p>{{ t('Roll 4D6 and remove the worst die for each attribute, assigning each score as you roll it. When all six are set you may swap two. Then your age adjusts them (never above 18). Or enter the scores by hand if the group uses another method.') }}</p>
+            <button type="button" class="btn" data-test="roll-all" @click="rollAll">{{ t('Roll all six') }}</button>
+            <button type="button" class="btn ghost" @click="cr.rolled = [0, 0, 0, 0, 0, 0]">{{ t('Clear') }}</button>
             <table class="attrs">
-              <thead><tr><th>Attribute</th><th>Score</th><th></th><th>With age</th><th>Base chance</th><th></th></tr></thead>
+              <thead><tr><th>{{ t('Attribute') }}</th><th>{{ t('Score') }}</th><th></th><th>{{ t('With age') }}</th><th>{{ t('Base chance') }}</th><th></th></tr></thead>
               <tbody>
-                <tr v-for="(a, i) in catalog.attributes" :key="a.short">
-                  <td><b class="gold">{{ a.short }}</b> <span class="muted">{{ a.long }}</span></td>
-                  <td><input type="number" :class="{ bad: scoreBad(cr.rolled[i]) }" :value="cr.rolled[i] || ''" :aria-label="`${a.long} score`" :aria-invalid="scoreBad(cr.rolled[i])" data-test="score" @input="setScore(i, $event.target.value)" /></td>
-                  <td><button type="button" class="btn small" @click="cr.rolled[i] = rollAttribute()">Roll 4D6</button></td>
+                <tr v-for="(a, i) in catalog.attributes" :key="a.id">
+                  <td><b class="gold">{{ a.label ?? a.id }}</b> <span class="muted">{{ a.long }}</span></td>
+                  <td><NumberField blank-zero :min="0" :max="99" :class="{ bad: scoreBad(cr.rolled[i]) }" :model-value="cr.rolled[i]" :aria-label="t('{name} score', { name: a.long })" :aria-invalid="scoreBad(cr.rolled[i])" data-test="score" @update:model-value="(v) => (cr.rolled[i] = v)" /></td>
+                  <td><button type="button" class="btn small" @click="cr.rolled[i] = rollAttribute()">{{ t('Roll 4D6') }}</button></td>
                   <td>{{ cr.rolled[i] ? finalAttrs[i] : '' }}</td>
                   <td>{{ cr.rolled[i] ? chanceOf(finalAttrs[i]) : '' }}</td>
-                  <td class="muted">{{ prof?.keyAttribute === a.short ? 'key attribute of the profession' : '' }}</td>
+                  <td class="muted">{{ prof?.keyAttribute === a.id ? t('key attribute of the profession') : '' }}</td>
                 </tr>
               </tbody>
             </table>
-            <p v-if="anyScoreBad" class="error" data-test="score-error">Scores go from 3 to 18.</p>
+            <p v-if="anyScoreBad" class="error" data-test="score-error">{{ t('Scores go from 3 to 18.') }}</p>
             <div v-if="allAttrsSet" class="swap">
-              <b class="gold">Swap two scores</b>
-              <select v-model.number="swap.a" aria-label="First attribute"><option v-for="(a, i) in catalog.attributes" :key="a.short" :value="i">{{ a.short }}</option></select>
-              <select v-model.number="swap.b" aria-label="Second attribute"><option v-for="(a, i) in catalog.attributes" :key="a.short" :value="i">{{ a.short }}</option></select>
-              <button type="button" class="btn small" @click="swapScores">Swap</button>
+              <b class="gold">{{ t('Swap two scores') }}</b>
+              <select v-model.number="swap.a" :aria-label="t('First attribute')"><option v-for="(a, i) in catalog.attributes" :key="a.id" :value="i">{{ a.label ?? a.id }}</option></select>
+              <select v-model.number="swap.b" :aria-label="t('Second attribute')"><option v-for="(a, i) in catalog.attributes" :key="a.id" :value="i">{{ a.label ?? a.id }}</option></select>
+              <button type="button" class="btn small" @click="swapScores">{{ t('Swap') }}</button>
               <p v-if="preview?.derived" class="derived" data-test="derived">
-                <b class="gold">Derived</b> HP {{ preview.derived.hp }} · WP {{ preview.derived.wp }} · Movement {{ preview.derived.movement ?? '?' }} ·
-                Damage bonus STR {{ preview.derived.damageStr || '–' }} / AGL {{ preview.derived.damageAgl || '–' }} · Encumbrance limit {{ preview.derived.encumbrance }}
+                <b class="gold">{{ t('Derived') }}</b> {{ t('HP') }} {{ preview.derived.hp }} · {{ t('WP') }} {{ preview.derived.wp }} · {{ t('Movement') }} {{ preview.derived.movement ?? '?' }} ·
+                {{ t('Damage bonus') }} <template v-for="(b, i) in preview.derived.damageBonus" :key="b.key">{{ i ? ' / ' : '' }}{{ b.short }} {{ b.value || '–' }}</template> · {{ t('Encumbrance limit') }} {{ preview.derived.encumbrance }}
               </p>
             </div>
           </template>
 
           <!-- 5. Skills -->
           <template v-else-if="step === 4">
-            <p>A trained skill starts at twice its base chance. Choose {{ need }} from your profession's list and {{ wanted }} of your own ({{ ageInfo?.label }}).</p>
-            <button type="button" class="btn" data-test="choose-for-me" @click="chooseForMe">Choose for me</button>
+            <p>{{ t("A trained skill starts at twice its base chance. Choose {need} from your profession's list and {wanted} of your own ({age}).", { need, wanted, age: ageInfo?.label }) }}</p>
+            <button type="button" class="btn" data-test="choose-for-me" @click="chooseForMe">{{ t('Choose for me') }}</button>
             <div class="cols">
               <div>
-                <b class="accent">From your profession: {{ cr.professionSkills.length }} of {{ need }}</b>
+                <b class="accent">{{ t('From your profession: {n} of {need}', { n: cr.professionSkills.length, need }) }}</b>
                 <label v-for="s in options" :key="s" class="check">
                   <input type="checkbox" :checked="cr.professionSkills.includes(s)" :disabled="(isMage && s === cr.school) || (!cr.professionSkills.includes(s) && cr.professionSkills.length >= need)" data-test="prof-skill" @change="toggleProfessionSkill(s)" />
-                  {{ s }} <span class="muted">(level {{ levelOf(s) }})</span>
+                  {{ L(s) }} <span class="muted">({{ t('level {n}', { n: levelOf(s) }) }})</span>
                 </label>
               </div>
               <div>
-                <b class="accent">Your own: {{ cr.freeSkills.length }} of {{ wanted }}</b>
+                <b class="accent">{{ t('Your own: {n} of {wanted}', { n: cr.freeSkills.length, wanted }) }}</b>
                 <label v-for="s in freeChoices" :key="s.title" class="check" :title="s.summary">
                   <input type="checkbox" :checked="cr.professionSkills.includes(s.title) || cr.freeSkills.includes(s.title)" :disabled="cr.professionSkills.includes(s.title) || (!cr.freeSkills.includes(s.title) && cr.freeSkills.length >= wanted)" data-test="free-skill" @change="toggleFreeSkill(s.title)" />
-                  {{ s.title }} <span class="muted">({{ s.attribute }}, level {{ levelOf(s.title) }})</span>
+                  {{ L(s.title) }} <span class="muted">({{ s.attributeLabel ?? s.attribute }}, {{ t('level {n}', { n: levelOf(s.title) }) }})</span>
                 </label>
               </div>
             </div>
@@ -431,67 +436,67 @@ const short = (text, max = 110) => (text.length > max ? `${text.slice(0, max)}�
           <!-- 6. Ability & magic -->
           <template v-else-if="step === 5">
             <div v-if="kin?.innate.length">
-              <b class="gold">Innate ability (from your kin)</b>
-              <ul><li v-for="a in kin.innate" :key="a.name" :title="a.summary">{{ a.name }}<span v-if="a.wpCost" class="muted"> (WP {{ a.wpCost }})</span></li></ul>
+              <b class="gold">{{ t('Innate ability (from your kin)') }}</b>
+              <ul><li v-for="a in kin.innate" :key="a.name" :title="a.summary">{{ a.label ?? a.name }}<span v-if="a.wpCost" class="muted"> ({{ t('WP') }} {{ a.wpCost }})</span></li></ul>
             </div>
             <template v-if="isMage">
-              <p>A mage gets no heroic ability at the start; the magic makes up for it. Choose {{ prof.magic.spells }} rank {{ prof.magic.rank }} spells and {{ prof.magic.tricks }} magic tricks from your school ({{ cr.school }}) or General Magic.</p>
+              <p>{{ t('A mage gets no heroic ability at the start; the magic makes up for it. Choose {spells} rank {rank} spells and {tricks} magic tricks from your school ({school}) or General Magic.', { spells: prof.magic.spells, rank: prof.magic.rank, tricks: prof.magic.tricks, school: L(cr.school) }) }}</p>
               <div v-for="tricks in [false, true]" :key="tricks">
-                <b class="accent">{{ tricks ? 'Magic tricks' : 'Spells' }}: {{ spellCount(tricks) }} of {{ tricks ? prof.magic.tricks : prof.magic.spells }}</b>
+                <b class="accent">{{ tricks ? t('Magic tricks') : t('Spells') }}: {{ t('{n} of {of}', { n: spellCount(tricks), of: tricks ? prof.magic.tricks : prof.magic.spells }) }}</b>
                 <label v-for="s in magicChoices(tricks)" :key="s.key" class="check" :title="s.summary">
                   <input type="checkbox" :checked="cr.spells.includes(s.key)" :disabled="!cr.spells.includes(s.key) && spellCount(tricks) >= (tricks ? prof.magic.tricks : prof.magic.spells)" data-test="spell" @change="toggleSpell(s.key, tricks)" />
-                  {{ s.title }} <span class="muted">({{ s.school }})</span>
+                  {{ s.title }} <span class="muted">({{ L(s.school) }})</span>
                 </label>
               </div>
             </template>
             <template v-else>
-              <p>Your profession gives you a heroic ability. Requirements do not apply to your starting ability.</p>
+              <p>{{ t('Your profession gives you a heroic ability. Requirements do not apply to your starting ability.') }}</p>
               <ChoiceLayout :rows="heroicRows" :model-value="cr.heroicAbility" :detail="detailOf(content.abilities, null, cr.heroicAbility)" @update:model-value="(v) => (cr.heroicAbility = v)" />
-              <p class="muted">Or, with the GM's permission, another heroic ability:</p>
-              <select v-model="cr.heroicAbility" aria-label="Another heroic ability">
-                <option value="">Choose…</option>
-                <option v-for="h in catalog.heroicAbilities" :key="h.name" :value="h.name">{{ h.name }}</option>
+              <p class="muted">{{ t("Or, with the GM's permission, another heroic ability:") }}</p>
+              <select v-model="cr.heroicAbility" :aria-label="t('Another heroic ability')">
+                <option value="">{{ t('Choose…') }}</option>
+                <option v-for="h in catalog.heroicAbilities" :key="h.name" :value="h.name">{{ h.label ?? h.name }}</option>
               </select>
             </template>
           </template>
 
           <!-- 7. Gear -->
           <template v-else-if="step === 6">
-            <p>Pick one of the starting sets of your profession, or roll for it. Dice in a set are rolled for you. Where a set offers a choice (A/B/C), pick one. Or choose Custom and put together whatever you want.</p>
-            <button v-if="gearSets.length" type="button" class="btn" @click="rollGearSet">Roll D6</button>
+            <p>{{ t('Pick one of the starting sets of your profession, or roll for it. Dice in a set are rolled for you. Where a set offers a choice (A/B/C), pick one. Or choose Custom and put together whatever you want.') }}</p>
+            <button v-if="gearSets.length" type="button" class="btn" @click="rollGearSet">{{ t('Roll D6') }}</button>
             <ChoiceLayout :rows="gearRows" :model-value="gearChoice" :detail="gearDetail" @update:model-value="(v) => (v === 'custom' ? chooseCustomGear() : chooseGearSet(Number(v)))">
               <div v-if="cr.gearCustom" data-test="custom-gear">
                 <div class="custom-filter">
-                  <input v-model="customQuery" type="search" placeholder="Search…" aria-label="Search gear" data-test="custom-search" />
-                  <select v-model="customKind" aria-label="Kind of gear">
-                    <option value="all">Everything</option><option value="weapons">Weapons</option><option value="armor">Armor</option><option value="gear">Gear</option>
+                  <input v-model="customQuery" type="search" :placeholder="t('Search…')" :aria-label="t('Search gear')" data-test="custom-search" />
+                  <select v-model="customKind" :aria-label="t('Kind of gear')">
+                    <option value="all">{{ t('Everything') }}</option><option value="weapons">{{ t('Weapons') }}</option><option value="armor">{{ t('Armor') }}</option><option value="gear">{{ t('Gear') }}</option>
                   </select>
                 </div>
                 <div class="custom-choices">
                   <button v-for="i in customChoices" :key="i.key" type="button" class="custom-choice" data-test="custom-add" @click="addCustom(i.key)">
                     <span>{{ i.name }} <span class="muted">{{ i.sub }}</span></span><span class="muted">{{ priceText(i.copper) }} +</span>
                   </button>
-                  <p v-if="!customChoices.length" class="muted" style="padding: 6px 10px;">Nothing found.</p>
+                  <p v-if="!customChoices.length" class="muted" style="padding: 6px 10px;">{{ t('Nothing found.') }}</p>
                 </div>
-                <b class="accent">Your gear</b>
-                <p v-if="!customList.length" class="muted">Nothing yet. Add things from the list above.</p>
+                <b class="accent">{{ t('Your gear') }}</b>
+                <p v-if="!customList.length" class="muted">{{ t('Nothing yet. Add things from the list above.') }}</p>
                 <div v-for="i in customList" :key="i.key" class="gear-row" data-test="custom-item">
                   <span class="grow">{{ i.name }}</span>
-                  <button type="button" class="btn small" :aria-label="`One less ${i.name}`" @click="setCustomCount(i.key, i.count - 1)">−</button>
+                  <button type="button" class="btn small" :aria-label="t('One less {name}', { name: i.name })" @click="setCustomCount(i.key, i.count - 1)">−</button>
                   <span class="count">{{ i.count }}</span>
-                  <button type="button" class="btn small" :aria-label="`One more ${i.name}`" @click="setCustomCount(i.key, i.count + 1)">+</button>
+                  <button type="button" class="btn small" :aria-label="t('One more {name}', { name: i.name })" @click="setCustomCount(i.key, i.count + 1)">+</button>
                   <span class="muted price">{{ priceText(i.copper === null ? null : i.copper * i.count) }}</span>
                 </div>
-                <p class="total" data-test="custom-total"><b class="gold">Total cost</b> {{ priceText(customTotal) }}<span v-if="customUnpriced" class="muted"> ({{ customUnpriced }} without a price not counted)</span></p>
+                <p class="total" data-test="custom-total"><b class="gold">{{ t('Total cost') }}</b> {{ priceText(customTotal) }}<span v-if="customUnpriced" class="muted"> {{ t('({n} without a price not counted)', { n: customUnpriced }) }}</span></p>
               </div>
               <div v-else-if="cr.gearSet >= 0">
-                <b class="accent">Your gear</b>
+                <b class="accent">{{ t('Your gear') }}</b>
                 <div v-for="(p, i) in gearSets[cr.gearSet].picks" :key="i" class="gear-row">
                   <template v-if="p.diceSides">
                     {{ cr.gear[i].rolled }} {{ p.what }} <span class="muted">(D{{ p.diceSides }})</span>
-                    <button type="button" class="btn small" @click="cr.gear[i].rolled = d(p.diceSides)">Reroll</button>
+                    <button type="button" class="btn small" @click="cr.gear[i].rolled = d(p.diceSides)">{{ t('Reroll') }}</button>
                   </template>
-                  <select v-else-if="p.options.length > 1" v-model.number="cr.gear[i].choice" :aria-label="`Choice ${i + 1}`">
+                  <select v-else-if="p.options.length > 1" v-model.number="cr.gear[i].choice" :aria-label="t('Choice {n}', { n: i + 1 })">
                     <option v-for="(o, k) in p.options" :key="o" :value="k">{{ o }}</option>
                   </select>
                   <template v-else>• {{ p.options[0] }}</template>
@@ -502,23 +507,23 @@ const short = (text, max = 110) => (text.length > max ? `${text.slice(0, max)}�
 
           <!-- 8. Name & details -->
           <template v-else-if="step === 7">
-            <label class="field"><b class="gold">Name</b><input v-model="cr.name" placeholder="Name" data-test="name" /></label>
+            <label class="field"><b class="gold">{{ t('Name') }}</b><input v-model="cr.name" :placeholder="t('Name')" data-test="name" /></label>
             <div v-if="kin?.names.length" class="chips">
-              <span class="muted">Typical {{ kin.title }} names (click one or roll D6):</span>
+              <span class="muted">{{ t('Typical {kin} names (click one or roll D6):', { kin: kin.title }) }}</span>
               <button v-for="n in kin.names" :key="n" type="button" class="btn small" @click="cr.name = n">{{ n }}</button>
-              <button type="button" class="btn small" @click="cr.name = pick(kin.names)">Roll</button>
+              <button type="button" class="btn small" @click="cr.name = pick(kin.names)">{{ t('Roll') }}</button>
             </div>
-            <label class="field"><b class="gold">Nickname</b> <span class="muted">(optional)</span><input v-model="cr.nickname" placeholder="Nickname" /></label>
+            <label class="field"><b class="gold">{{ t('Nickname') }}</b> <span class="muted">{{ t('(optional)') }}</span><input v-model="cr.nickname" :placeholder="t('Nickname')" /></label>
             <div v-if="prof?.nicknames.length" class="chips">
               <button v-for="n in prof.nicknames" :key="n" type="button" class="btn small" @click="cr.nickname = n">{{ n }}</button>
-              <button type="button" class="btn small" @click="cr.nickname = pick(prof.nicknames)">Roll</button>
+              <button type="button" class="btn small" @click="cr.nickname = pick(prof.nicknames)">{{ t('Roll') }}</button>
             </div>
-            <label class="field"><b class="gold">Player</b> <span class="muted">(optional)</span><input v-model="cr.player" placeholder="Who plays this character" /></label>
-            <template v-for="f in [['weakness', 'Weakness (optional)'], ['memento', 'Memento (optional)'], ['appearance', 'Appearance']]" :key="f[0]">
+            <label class="field"><b class="gold">{{ t('Player') }}</b> <span class="muted">{{ t('(optional)') }}</span><input v-model="cr.player" :placeholder="t('Who plays this character')" /></label>
+            <template v-for="f in [['weakness', t('Weakness (optional)')], ['memento', t('Memento (optional)')], ['appearance', t('Appearance')]]" :key="f[0]">
               <label class="field"><b class="gold">{{ f[1] }}</b><input v-model="cr[f[0]]" /></label>
               <div class="chips">
-                <button v-for="t in catalog.tables[f[0]]" :key="t.title" type="button" class="btn small" @click="rollField(f[0], t)">Roll {{ t.dice }}{{ catalog.tables[f[0]].length > 1 ? ` · ${t.title}` : '' }}</button>
-                <button type="button" class="btn small ghost" @click="cr[f[0]] = ''">Clear</button>
+                <button v-for="tb in catalog.tables[f[0]]" :key="tb.title" type="button" class="btn small" @click="rollField(f[0], tb)">{{ t('Roll') }} {{ tb.dice }}{{ catalog.tables[f[0]].length > 1 ? ` · ${tb.title}` : '' }}</button>
+                <button type="button" class="btn small ghost" @click="cr[f[0]] = ''">{{ t('Clear') }}</button>
               </div>
             </template>
           </template>
@@ -526,23 +531,23 @@ const short = (text, max = 110) => (text.length > max ? `${text.slice(0, max)}�
           <!-- 9. Review -->
           <template v-else>
             <template v-if="preview?.problems.length">
-              <p class="error">Not finished yet:</p>
+              <p class="error">{{ t('Not finished yet:') }}</p>
               <ul><li v-for="p in preview.problems" :key="p" data-test="problem">{{ p }}</li></ul>
             </template>
             <template v-else-if="preview">
-              <p class="muted">This is how the sheet will start. You can change anything on it afterwards.</p>
+              <p class="muted">{{ t('This is how the sheet will start. You can change anything on it afterwards.') }}</p>
               <pre class="summary" data-test="summary">{{ preview.summary }}</pre>
             </template>
-            <p v-else class="muted">Checking…</p>
+            <p v-else class="muted">{{ t('Checking…') }}</p>
           </template>
         </div>
 
         <footer class="foot">
-          <button type="button" class="btn" :disabled="step === 0" data-test="creator-back" @click="step -= 1">&lt; Back</button>
-          <button v-if="step < STEPS.length - 1" type="button" class="btn" :disabled="!stepDone(step)" :title="stepDone(step) ? '' : 'Finish this step first'" data-test="creator-next" @click="next">Next &gt;</button>
-          <button v-else type="button" class="btn primary" :disabled="!preview || preview.problems.length > 0 || busy" data-test="creator-create" @click="create">Create character</button>
-          <button type="button" class="btn" data-test="creator-random" :disabled="busy" @click="randomize">Random character</button>
-          <button type="button" class="btn ghost" data-test="creator-cancel" @click="emit('cancel')">Cancel</button>
+          <button type="button" class="btn" :disabled="step === 0" data-test="creator-back" @click="step -= 1">&lt; {{ t('Back') }}</button>
+          <button v-if="step < LAST" type="button" class="btn" :disabled="!stepDone(step)" :title="stepDone(step) ? '' : t('Finish this step first')" data-test="creator-next" @click="next">{{ t('Next') }} &gt;</button>
+          <button v-else type="button" class="btn primary" :disabled="!preview || preview.problems.length > 0 || busy" data-test="creator-create" @click="create">{{ t('Create character') }}</button>
+          <button type="button" class="btn" data-test="creator-random" :disabled="busy" @click="randomize">{{ t('Random character') }}</button>
+          <button type="button" class="btn ghost" data-test="creator-cancel" @click="emit('cancel')">{{ t('Cancel') }}</button>
           <span class="muted note">{{ note }}</span>
         </footer>
       </section>
@@ -586,7 +591,7 @@ const short = (text, max = 110) => (text.length > max ? `${text.slice(0, max)}�
 .derived { flex-basis: 100%; margin: 8px 0 0; }
 .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 8px; }
 .check, .radio { display: block; padding: 1px 0; }
-.schools { margin-bottom: 8px; }
+.schools { display: grid; gap: 4px; margin: 4px 0 12px; padding: 8px 12px; border: 2px solid var(--green-dark); border-radius: var(--radius); background: var(--cream); }
 .radio { display: inline-block; margin-left: 12px; }
 .custom-filter { display: flex; gap: 8px; margin: 6px 0; }
 .custom-filter input { flex: 1; font: inherit; padding: 4px 8px; border: 1px solid var(--line); border-radius: 6px; background: #fbf6e6; color: var(--ink); }

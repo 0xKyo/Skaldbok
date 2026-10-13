@@ -7,9 +7,13 @@
 
 #include "parsing/fsutil.h"
 #include "parsing/fts.h"
+#include "parsing/i18n.h"
 
 namespace gm {
 namespace {
+
+// A file of the adventure in the language of the request (its translation laid over it, i18n.h).
+std::optional<json> load(const std::string& dir, const std::string& file) { return i18n::loadLocalized(dir, file, i18n::current()); }
 
 // The folder of the adventure with that id (the user's wins), or "".
 std::string adventureDir(const std::string& dataDir, const std::string& prefsDir, const std::string& id) {
@@ -30,7 +34,7 @@ std::set<std::string> adventureIds(const std::string& dataDir, const std::string
 }
 
 std::string packName(const std::string& dir, const std::string& fallback) {
-    if (const auto m = jsonLoad(dir + "/manifest.yaml"); m && m->is_object() && !jsonStr(*m, "name").empty()) return jsonStr(*m, "name");
+    if (const auto m = load(dir, "manifest.yaml"); m && m->is_object() && !jsonStr(*m, "name").empty()) return jsonStr(*m, "name");
     return fallback;
 }
 
@@ -59,7 +63,7 @@ json adventureList(const std::string& dataDir, const std::string& prefsDir) {
     json list = json::array();
     for (const std::string& id : adventureIds(dataDir, prefsDir)) {
         const std::string dir = adventureDir(dataDir, prefsDir, id);
-        const auto root = jsonLoad(dir + "/adventure.yaml");
+        const auto root = load(dir, "adventure.yaml");
         if (!root || !root->is_object()) continue;
         const json* chapters = jsonFind(*root, "chapters");
         const std::string title = jsonStr(*root, "title", id);
@@ -72,7 +76,7 @@ json adventureList(const std::string& dataDir, const std::string& prefsDir) {
 json adventureDetail(const std::string& dataDir, const std::string& prefsDir, const std::string& id, const ContentStore& content) {
     const std::string dir = adventureDir(dataDir, prefsDir, id);
     if (dir.empty()) return nullptr;
-    const auto root = jsonLoad(dir + "/adventure.yaml");
+    const auto root = load(dir, "adventure.yaml");
     if (!root || !root->is_object()) return nullptr;
     const json* chapters = jsonFind(*root, "chapters");
     json nodes = chapters && chapters->is_array() ? *chapters : json::array();
@@ -80,16 +84,20 @@ json adventureDetail(const std::string& dataDir, const std::string& prefsDir, co
     std::set<std::string> creatureKeys, tableNames;
     collect(nodes, creatureKeys, tableNames);
 
+    // a node names its table as the English file does ("table: Random Events"); a translation renames the table, and keeps the
+    // English name as its "_key": both find it
     json tables = json::object();
-    if (const auto t = jsonLoad(dir + "/tables.yaml"); t && t->is_object())
+    if (const auto t = load(dir, "tables.yaml"); t && t->is_object())
         if (const json* list = jsonFind(*t, "tables"); list && list->is_array())
             for (const json& table : *list) {
                 const std::string name = table.is_object() ? jsonStr(table, "name") : std::string();
-                if (name.empty() || !tableNames.count(name)) continue;
+                const std::string english = table.is_object() ? jsonStr(table, "_key", name) : name;
+                const std::string asked = tableNames.count(english) ? english : name;
+                if (name.empty() || !tableNames.count(asked)) continue;
                 json out = {{"title", name}, {"dice", jsonStr(table, "dice")}, {"columns", table.contains("columns") ? table["columns"] : json::array()}, {"rows", json::array()}};
                 if (const json* rows = jsonFind(table, "rows"); rows && rows->is_array())
                     for (const json& r : *rows) out["rows"].push_back({{"roll", r.is_object() ? jsonStr(r, "roll") : std::string()}, {"cells", r.is_object() && r.contains("cells") ? r["cells"] : json::array()}});
-                tables[name] = out;
+                tables[asked] = out;
             }
 
     json creatures = json::object();
@@ -106,6 +114,9 @@ std::string adventureImagePath(const std::string& dataDir, const std::string& pr
     const bool picture = lower.ends_with(".png") || lower.ends_with(".jpg") || lower.ends_with(".jpeg") || lower.ends_with(".webp");
     if (dir.empty() || !picture || !relative.starts_with("images/") || relative.find("..") != std::string::npos || relative.find('\\') != std::string::npos || relative.find("//") != std::string::npos)
         return std::string();
+    // a map with words on it has its own picture in the translation (i18n/<lang>/images/...); the others stay as they are
+    if (const std::string& lang = i18n::current(); lang != i18n::kDefault)
+        if (const std::string translated = dir + "/i18n/" + lang + "/" + relative; fs::isFile(translated)) return translated;
     const std::string path = dir + "/" + relative;
     return fs::isFile(path) ? path : std::string();
 }

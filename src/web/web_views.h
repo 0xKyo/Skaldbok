@@ -14,11 +14,13 @@
 namespace gm {
 
 // The player's own sheet, complete, with the numbers derived.
-// `asGm`: the editable document also carries kin, profession and school, which only the GM may change.
-json characterView(const Character& c, const ContentStore& content, bool asGm = false);
+// `content` is the content in English (what the numbers are worked out with), `shown` the same in the language of the page (what its
+// names and texts are shown in; the same store for English). `asGm`: the editable document also carries kin, profession and school,
+// which only the GM may change.
+json characterView(const Character& c, const ContentStore& content, const ContentStore& shown, bool asGm = false);
 
 // Compact summary of one character for the GM's character list.
-json characterSummary(const Character& c, const ContentStore& content, const std::string& link);
+json characterSummary(const Character& c, const ContentStore& content, const ContentStore& shown, const std::string& link);
 
 // The Reference: everything under it is the same for the GM and for the players (types, rule chapters, creatures, the NPC lists).
 json contentSummary(const ContentStore& content);

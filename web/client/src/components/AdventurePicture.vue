@@ -1,8 +1,9 @@
 <script setup>
 // A picture of an adventure (a map, a portrait, an illustration): fetched with the GM's token from the pack's images folder, shown small in
 // the text and big, over the page, when it is clicked.
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { apiBlobUrl } from '../api.js';
+import { lang, t } from '../i18n.js';
 import PinButton from './PinButton.vue';
 
 const props = defineProps({
@@ -19,13 +20,19 @@ const big = ref(false);
 // where it goes in the page: images/<role>/...
 const role = computed(() => props.file.split('/')[1] ?? 'art');
 
-onMounted(async () => {
+// a map with words on it has its own picture in each language: asked again when the language of the page changes
+async function load() {
   try {
-    url.value = await apiBlobUrl(`/gm/adventures/${encodeURIComponent(props.adventure)}/image?path=${encodeURIComponent(props.file)}`, props.token);
+    const next = await apiBlobUrl(`/gm/adventures/${encodeURIComponent(props.adventure)}/image?path=${encodeURIComponent(props.file)}`, props.token);
+    if (url.value) URL.revokeObjectURL(url.value);
+    url.value = next;
+    failed.value = false;
   } catch {
-    failed.value = true;
+    failed.value = !url.value;
   }
-});
+}
+onMounted(load);
+watch(lang, load);
 onBeforeUnmount(() => {
   if (url.value) URL.revokeObjectURL(url.value);
 });
@@ -33,7 +40,7 @@ onBeforeUnmount(() => {
 const close = () => { big.value = false; };
 
 // what the 📌 button puts on the master's board: this picture
-const pinPicture = () => ({ type: 'image', key: `image:${props.adventure}:${props.file}`, title: props.alt || 'Picture', data: { adventure: props.adventure, file: props.file } });
+const pinPicture = () => ({ type: 'image', key: `image:${props.adventure}:${props.file}`, title: props.alt || t('Picture'), data: { adventure: props.adventure, file: props.file } });
 </script>
 
 <template>
@@ -41,10 +48,10 @@ const pinPicture = () => ({ type: 'image', key: `image:${props.adventure}:${prop
     <img :src="url" :alt="alt" loading="lazy" @click="big = true" />
     <PinButton class="pin-corner" :snapshot="pinPicture" small />
   </figure>
-  <p v-else-if="failed" class="muted pic-missing" data-test="picture-missing">A picture is missing.</p>
+  <p v-else-if="failed" class="muted pic-missing" data-test="picture-missing">{{ t('A picture is missing.') }}</p>
 
   <Teleport to="body">
-    <div v-if="big" class="lightbox" data-test="lightbox" role="dialog" aria-label="Picture" @click="close" @keydown.esc="close">
+    <div v-if="big" class="lightbox" data-test="lightbox" role="dialog" :aria-label="t('Picture')" @click="close" @keydown.esc="close">
       <img :src="url" :alt="alt" />
     </div>
   </Teleport>

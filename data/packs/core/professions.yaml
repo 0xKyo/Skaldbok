@@ -1,458 +1,438 @@
 professions:
-  - id: artisan
-    name: Artisan
-    description: |
-      “Now this may sound a bit pretentious, but whatever you’re making, you must be able to imagine the finished thing, and then make it real. That’s the whole of it, really. Well, tools are important too. Good tools.”
-      – Bore Tvartoff
-      With a decent hammer, a trowel, and mortar, a skilled artisan can astonish even the gods. They are proud individuals, these tamers of nature and physical matter. Whether they be builders, bricklayers, wainwrights, blacksmiths, tanners, or coopers, the artisans are driven by a solemn mission to bring order and structure out of chaos. They construct bridges, houses, and fortifications, forge weapons and tools, mold pots and jugs, make barrels, and craft leather armor from tanned animal hides. Every village needs capable artisans, and they are often greatly respected for their practical and extremely useful expertise.
-    key_attribute: STR
+  - id: profession_artisan
+    name: LOC_PROFESSION_ARTISAN
+    description: LOC_PROFESSION_ARTISAN_DESC
+    key_attribute: strength
     skills:
-      - Axes
-      - Brawling
-      - Crafting
-      - Hammers
-      - Knives
-      - Sleight of Hand
-      - Spot Hidden
-      - Swords
+      - skills_axes
+      - skills_brawling
+      - skills_crafting
+      - skills_hammers
+      - skills_knives
+      - skills_sleightOfHand
+      - skills_spotHidden
+      - skills_swords
     heroic_abilities:
-      - Master Blacksmith
-      - Master Carpenter
-      - Master Tanner
+      - ability_masterBlacksmith
+      - ability_masterCarpenter
+      - ability_masterTanner
     rollable:
       - "Artisan: Gear"
       - "Artisan: Nickname"
     entities:
-      - name: Warhammer (small), leather armor, blacksmith’s tools, torch, flint & tinder, D8 food rations, D8 silver
+      - name: LOC_PROFESSION_ARTISAN_ENTITIES_WARHAMMER_SMALL_LEATHER_ARMOR_NAME
         kind: gear
-      - name: Handaxe, leather armor, carpentry tools, torch, rope (hemp), flint & tinder, D8 food rations, D8 silver
+      - name: LOC_PROFESSION_ARTISAN_ENTITIES_HANDAXE_LEATHER_ARMOR_CARPENTR_NAME
         kind: gear
-      - name: Knife, leather armor, tanner’s tools, lantern, lamp oil, flint & tinder, D8 food rations, D8 silver
+      - name: LOC_PROFESSION_ARTISAN_ENTITIES_KNIFE_LEATHER_ARMOR_TANNER_S_T_NAME
         kind: gear
-      - name: Stonehammer
+      - name: LOC_PROFESSION_ARTISAN_ENTITIES_STONEHAMMER_NAME
         kind: nickname
-      - name: Woodcleaver
+      - name: LOC_PROFESSION_ARTISAN_ENTITIES_WOODCLEAVER_NAME
         kind: nickname
-      - name: Strongfist
+      - name: LOC_PROFESSION_ARTISAN_ENTITIES_STRONGFIST_NAME
         kind: nickname
-      - name: Barrelmaker
+      - name: LOC_PROFESSION_ARTISAN_ENTITIES_BARRELMAKER_NAME
         kind: nickname
-      - name: Bridgebuilder
+      - name: LOC_PROFESSION_ARTISAN_ENTITIES_BRIDGEBUILDER_NAME
         kind: nickname
-      - name: Ironmaster
+      - name: LOC_PROFESSION_ARTISAN_ENTITIES_IRONMASTER_NAME
         kind: nickname
-  - id: bard
-    name: Bard
-    description: |
-      “A few off-key notes, a couple of lost words, or a troll-sneeze that sprays over the audience – it doesn’t matter. To captivate an audience, all you truly need is charisma, that you shine like a mid-summer sun. Like me!”
-      – Malva Sneezeweed
-      The memory of ancient deeds and riches is kept alive by the bards. They are singers, musicians, and entertainers. Many travel between inns and marketplaces where they earn their keep through the telling of ballads and fairy tales; others perform at princely courts, reciting glorious poems of dragons and heroic kings. Many bards see themselves as chroniclers responsible for preserving contemporary deeds in the memory of future generations. They are always on the lookout for people and achievements worthy of being immortalized in epic verse, and any bard worth their salt is always working on at least a few masterpieces of song, music, or poetry.
-    key_attribute: CHA
+  - id: profession_bard
+    name: LOC_PROFESSION_BARD
+    description: LOC_PROFESSION_BARD_DESC
+    key_attribute: charisma
     skills:
-      - Acrobatics
-      - Bluffing
-      - Evade
-      - Knives
-      - Languages
-      - Myths & Legends
-      - Performance
-      - Persuasion
+      - skills_acrobatics
+      - skills_bluffing
+      - skills_evade
+      - skills_knives
+      - skills_languages
+      - skills_mythsAndLegends
+      - skills_performance
+      - skills_persuasion
     heroic_abilities:
-      - Musician
+      - ability_musician
     rollable:
       - "Bard: Gear"
       - "Bard: Nickname"
     entities:
-      - name: Lyre, knife, oil lamp, lamp oil, flint & tinder, D6 food rations, D8 silver
+      - name: LOC_PROFESSION_BARD_ENTITIES_LYRE_KNIFE_OIL_LAMP_LAMP_OIL_F_NAME
         kind: gear
-      - name: Flute, dagger, rope (hemp), torch, flint & tinder, D6 food rations, D8 silver
+      - name: LOC_PROFESSION_BARD_ENTITIES_FLUTE_DAGGER_ROPE_HEMP_TORCH_F_NAME
         kind: gear
-      - name: Horn, knife, torch, flint & tinder, D6 food rations, D8 silver
+      - name: LOC_PROFESSION_BARD_ENTITIES_HORN_KNIFE_TORCH_FLINT_TINDER_NAME
         kind: gear
-      - name: Odemaker
+      - name: LOC_PROFESSION_BARD_ENTITIES_ODEMAKER_NAME
         kind: nickname
-      - name: Talespinner
+      - name: LOC_PROFESSION_BARD_ENTITIES_TALESPINNER_NAME
         kind: nickname
-      - name: Silvervoice
+      - name: LOC_PROFESSION_BARD_ENTITIES_SILVERVOICE_NAME
         kind: nickname
-      - name: Gildenclef
+      - name: LOC_PROFESSION_BARD_ENTITIES_GILDENCLEF_NAME
         kind: nickname
-      - name: Honeytongue
+      - name: LOC_PROFESSION_BARD_ENTITIES_HONEYTONGUE_NAME
         kind: nickname
-      - name: Rhymesmith
+      - name: LOC_PROFESSION_BARD_ENTITIES_RHYMESMITH_NAME
         kind: nickname
-  - id: fighter
-    name: Fighter
-    description: |
-      “Uh, well, of course a warrior must be able to kill things. Creatures and monsters and such. Being able to avoid getting killed is also good. Then... well, there are different weapons, different techniques and... Anyway, the basis is simple: kill, and avoid dying.”
-      – Norde from Boar Ridge
-      Fighters earn their living by following the way of the sword. It may of course also be the way of the spear or crossbow, but a fighter’s specialty is always weapon proficiency and violence. But this is not to say that all fighters are driven by bloodlust. For some it is a matter of professional pride to achieve the maximum effect with minimal bloodshed; others are lazy and prefer saber-rattling to actual combat. Many fighters are troubled souls, haunted by nightmares and bad memories of a life spent in the company of death. They can therefore be surprisingly sentimental, prone to tears and compassionate embraces.
-    key_attribute: STR
+  - id: profession_fighter
+    name: LOC_PROFESSION_FIGHTER
+    description: LOC_PROFESSION_FIGHTER_DESC
+    key_attribute: strength
     skills:
-      - Axes
-      - Bows
-      - Brawling
-      - Crossbows
-      - Evade
-      - Hammers
-      - Spears
-      - Swords
+      - skills_axes
+      - skills_bows
+      - skills_brawling
+      - skills_crossbows
+      - skills_evade
+      - skills_hammers
+      - skills_spears
+      - skills_swords
     heroic_abilities:
-      - Veteran
+      - ability_veteran
     rollable:
       - "Fighter: Gear"
       - "Fighter: Nickname"
     entities:
-      - name: Broadsword/battle axe/morning star, small shield, chainmail, torch, flint & tinder, D6 food rations, D6 silver
+      - name: LOC_PROFESSION_FIGHTER_ENTITIES_BROADSWORD_BATTLE_AXE_MORNING_NAME
         kind: gear
-      - name: Short sword/handaxe/short spear, light crossbow, quiver, leather armor, torch, flint & tinder, D6 food rations, D6 silver
+      - name: LOC_PROFESSION_FIGHTER_ENTITIES_SHORT_SWORD_HANDAXE_SHORT_SPEA_NAME
         kind: gear
-      - name: Long spear, studded leather armor, open helmet, torch, flint & tinder, D6 food rations, D6 silver
+      - name: LOC_PROFESSION_FIGHTER_ENTITIES_LONG_SPEAR_STUDDED_LEATHER_ARM_NAME
         kind: gear
-      - name: Gravemaker
+      - name: LOC_PROFESSION_FIGHTER_ENTITIES_GRAVEMAKER_NAME
         kind: nickname
-      - name: Grimjaw
+      - name: LOC_PROFESSION_FIGHTER_ENTITIES_GRIMJAW_NAME
         kind: nickname
-      - name: Windthaw
+      - name: LOC_PROFESSION_FIGHTER_ENTITIES_WINDTHAW_NAME
         kind: nickname
-      - name: Coldsteel
+      - name: LOC_PROFESSION_FIGHTER_ENTITIES_COLDSTEEL_NAME
         kind: nickname
-      - name: The Fearless
+      - name: LOC_PROFESSION_FIGHTER_ENTITIES_THE_FEARLESS_NAME
         kind: nickname
-      - name: The Butcher
+      - name: LOC_PROFESSION_FIGHTER_ENTITIES_THE_BUTCHER_NAME
         kind: nickname
-  - id: hunter
-    name: Hunter
-    description: |
-      “What is not needed to become a skilled hunter? Agility, stealth? Accuracy with the bow, cunning with the snares? Knowledge of the hunting ground and prey? Sure, you can do without nice manners and fancy talk, but who cares about such nonsense?”
-      – Ciliel Nightlake
-      Snaring hares, knifing boars, and silently stalking deer in the depths of the forest with arrows on their bowstrings. Hunters live for the hunt and the catch. Killing one’s prey in a respectful manner and making use of all its parts – for food, clothes, tools, and weapons – is a sacred calling for all true hunters. Their home and destiny are in the wilds; the magnificent, untamed, and cruel. That is where they find peace of mind and gather their strength. That is where their ruthless gods dwell. Many hunters are therefore quite solitary and sometimes find it difficult to behave properly among people.
-    key_attribute: AGL
+  - id: profession_hunter
+    name: LOC_PROFESSION_HUNTER
+    description: LOC_PROFESSION_HUNTER_DESC
+    key_attribute: agility
     skills:
-      - Acrobatics
-      - Awareness
-      - Bows
-      - Bushcraft
-      - Hunting & Fishing
-      - Knives
-      - Slings
-      - Sneaking
+      - skills_acrobatics
+      - skills_awareness
+      - skills_bows
+      - skills_bushcraft
+      - skills_huntingAndFishing
+      - skills_knives
+      - skills_slings
+      - skills_sneaking
     heroic_abilities:
-      - Companion
+      - ability_companion
     rollable:
       - "Hunter: Gear"
       - "Hunter: Nickname"
     entities:
-      - name: Dagger, short bow, quiver, leather armor, sleeping pelt, torch, flint & tinder, rope (hemp), snare, D8 food rations, D6 silver
+      - name: LOC_PROFESSION_HUNTER_ENTITIES_DAGGER_SHORT_BOW_QUIVER_LEATHE_NAME
         kind: gear
-      - name: Knife, longbow, quiver, leather armor, sleeping pelt, torch, flint & tinder, rope (hemp), fishing rod, D8 food rations, D6 silver
+      - name: LOC_PROFESSION_HUNTER_ENTITIES_KNIFE_LONGBOW_QUIVER_LEATHER_A_NAME
         kind: gear
-      - name: Dagger, sling, leather armor, sleeping pelt, torch, flint & tinder, rope (hemp), snare, D8 food rations, D6 silver
+      - name: LOC_PROFESSION_HUNTER_ENTITIES_DAGGER_SLING_LEATHER_ARMOR_SLE_NAME
         kind: gear
-      - name: Forest Fox
+      - name: LOC_PROFESSION_HUNTER_ENTITIES_FOREST_FOX_NAME
         kind: nickname
-      - name: Wolfbane
+      - name: LOC_PROFESSION_HUNTER_ENTITIES_WOLFBANE_NAME
         kind: nickname
-      - name: Pathfinder
+      - name: LOC_PROFESSION_HUNTER_ENTITIES_PATHFINDER_NAME
         kind: nickname
-      - name: The Weathered
+      - name: LOC_PROFESSION_HUNTER_ENTITIES_THE_WEATHERED_NAME
         kind: nickname
-      - name: Bloodhunger
+      - name: LOC_PROFESSION_HUNTER_ENTITIES_BLOODHUNGER_NAME
         kind: nickname
-      - name: Shadowbolt
+      - name: LOC_PROFESSION_HUNTER_ENTITIES_SHADOWBOLT_NAME
         kind: nickname
-  - id: knight
-    name: Knight
-    description: |
-      “First, you must believe in something. Then you must be prepared to fight and die for this something. Finally, you need to study, train, and practice until you reach the heights of a worthy champion. After that, you are ready to… obey and serve.”
-      – Gloriel Sunstreak
-      Knights are warriors who have sworn fealty to a higher power, such as an order of knights, a liege lord, or a god. This oath of fealty lies at the heart of their worldview and existence. It always includes rules and principles the knight must obey in thought and deed. Demands for chivalry and a noble mind are often combined with an implacable hatred for anything deemed contrary to the spirit of the oath. Many knights are part of an order, but there are also lone knights who have devoted their lives to defending something specific – perhaps a person or a place – that gives their lives a higher purpose.
-    key_attribute: STR
+  - id: profession_knight
+    name: LOC_PROFESSION_KNIGHT
+    description: LOC_PROFESSION_KNIGHT_DESC
+    key_attribute: strength
     skills:
-      - Beast Lore
-      - Hammers
-      - Myths & Legends
-      - Performance
-      - Persuasion
-      - Riding
-      - Spears
-      - Swords
+      - skills_beastLore
+      - skills_hammers
+      - skills_mythsAndLegends
+      - skills_performance
+      - skills_persuasion
+      - skills_riding
+      - skills_spears
+      - skills_swords
     heroic_abilities:
-      - Guardian
+      - ability_guardian
     rollable:
       - "Knight: Gear"
       - "Knight: Nickname"
     entities:
-      - name: Broadsword/morning star, shield (small), plate armor, great helm, torch, flint & tinder, D6 food rations, D12 silver
+      - name: LOC_PROFESSION_KNIGHT_ENTITIES_BROADSWORD_MORNING_STAR_SHIELD_NAME
         kind: gear
-      - name: Flail/warhammer (small), shield (small), chainmail, open helmet, torch, flint & tinder, D6 food rations, D12 silver
+      - name: LOC_PROFESSION_KNIGHT_ENTITIES_FLAIL_WARHAMMER_SMALL_SHIELD_S_NAME
         kind: gear
-      - name: Short sword, lance, shield (small), chainmail, open helmet, combat trained horse, D6 food rations, D12 silver
+      - name: LOC_PROFESSION_KNIGHT_ENTITIES_SHORT_SWORD_LANCE_SHIELD_SMALL_NAME
         kind: gear
-      - name: Dragonheart
+      - name: LOC_PROFESSION_KNIGHT_ENTITIES_DRAGONHEART_NAME
         kind: nickname
-      - name: Goldlance
+      - name: LOC_PROFESSION_KNIGHT_ENTITIES_GOLDLANCE_NAME
         kind: nickname
-      - name: Griffinclaw
+      - name: LOC_PROFESSION_KNIGHT_ENTITIES_GRIFFINCLAW_NAME
         kind: nickname
-      - name: The Noble
+      - name: LOC_PROFESSION_KNIGHT_ENTITIES_THE_NOBLE_NAME
         kind: nickname
-      - name: Gleamhelm
+      - name: LOC_PROFESSION_KNIGHT_ENTITIES_GLEAMHELM_NAME
         kind: nickname
-      - name: Mourningcloak
+      - name: LOC_PROFESSION_KNIGHT_ENTITIES_MOURNINGCLOAK_NAME
         kind: nickname
-  - id: mage
-    name: Mage
-    description: |
-      “Forget it, just forget it – if you must ask what it takes to master the secrets of magic, you don’t have it. Or, you can possibly learn to chat with animals or peep on faraway things, but real magic, the magic of the elements... Never!”
-      – Cyril Firemane
-      Mages have learned to control the ancient forces that permeate nature and the primordial structures of the world. It is not a uniform profession, but includes a motley crew of individualists and headstrong eccentrics. There are several schools of magic with different views of what magic is and how it works. In the core game you can choose between Animism, Elementalism, and Mentalism. Animists believe that everything in the world has a spiritual presence and see magic as a power lent by nature’s spirits. Elementalists describe magic in terms of four elements that constitute the essence of all things. Mentalists say that magic comes from within, and that it can be manifested through self-control and discipline.
-    key_attribute: WIL
+  - id: profession_mage
+    name: LOC_PROFESSION_MAGE
+    description: LOC_PROFESSION_MAGE_DESC
+    key_attribute: willpower
     rollable:
       - "Mage: Gear"
       - "Mage: Nickname"
     entities:
-      - name: Staff, orbuculum, grimoire, torch, flint & tinder, D6 food rations, D8 silver
+      - name: LOC_PROFESSION_MAGE_ENTITIES_STAFF_ORBUCULUM_GRIMOIRE_TORCH_NAME
         kind: gear
-      - name: Knife, wand, grimoire, torch, flint & tinder, D6 food rations, D8 silver
+      - name: LOC_PROFESSION_MAGE_ENTITIES_KNIFE_WAND_GRIMOIRE_TORCH_FLIN_NAME
         kind: gear
-      - name: Amulet, grimoire, sleeping pelt, torch, flint & tinder, D6 food rations, D8 silver
+      - name: LOC_PROFESSION_MAGE_ENTITIES_AMULET_GRIMOIRE_SLEEPING_PELT_NAME
         kind: gear
-      - name: Rootheart
+      - name: LOC_PROFESSION_MAGE_ENTITIES_ROOTHEART_NAME
         kind: nickname
-      - name: Crookback
+      - name: LOC_PROFESSION_MAGE_ENTITIES_CROOKBACK_NAME
         kind: nickname
-      - name: Graycape
+      - name: LOC_PROFESSION_MAGE_ENTITIES_GRAYCAPE_NAME
         kind: nickname
-      - name: Stormhand
+      - name: LOC_PROFESSION_MAGE_ENTITIES_STORMHAND_NAME
         kind: nickname
-      - name: Stafflimper
+      - name: LOC_PROFESSION_MAGE_ENTITIES_STAFFLIMPER_NAME
         kind: nickname
-      - name: Shadowbringer
+      - name: LOC_PROFESSION_MAGE_ENTITIES_SHADOWBRINGER_NAME
         kind: nickname
     skills_by_school:
       Animism:
-        - Animism
-        - Beast Lore
-        - Bushcraft
-        - Evade
-        - Healing
-        - Hunting & Fishing
-        - Sneaking
-        - Staves
+        - LOC_PROFESSION_MAGE_SKILLS_BY_SCHOOL_ANIMISM_1
+        - LOC_PROFESSION_MAGE_SKILLS_BY_SCHOOL_ANIMISM_2
+        - LOC_PROFESSION_MAGE_SKILLS_BY_SCHOOL_ANIMISM_3
+        - LOC_PROFESSION_MAGE_SKILLS_BY_SCHOOL_ANIMISM_4
+        - LOC_PROFESSION_MAGE_SKILLS_BY_SCHOOL_ANIMISM_5
+        - LOC_PROFESSION_MAGE_SKILLS_BY_SCHOOL_ANIMISM_6
+        - LOC_PROFESSION_MAGE_SKILLS_BY_SCHOOL_ANIMISM_7
+        - LOC_PROFESSION_MAGE_SKILLS_BY_SCHOOL_ANIMISM_8
       Elementalism:
-        - Elementalism
-        - Awareness
-        - Evade
-        - Healing
-        - Languages
-        - Myths & Legends
-        - Spot Hidden
-        - Staves
+        - LOC_PROFESSION_MAGE_SKILLS_BY_SCHOOL_ELEMENTALISM_1
+        - LOC_PROFESSION_MAGE_SKILLS_BY_SCHOOL_ELEMENTALISM_2
+        - LOC_PROFESSION_MAGE_SKILLS_BY_SCHOOL_ELEMENTALISM_3
+        - LOC_PROFESSION_MAGE_SKILLS_BY_SCHOOL_ELEMENTALISM_4
+        - LOC_PROFESSION_MAGE_SKILLS_BY_SCHOOL_ELEMENTALISM_5
+        - LOC_PROFESSION_MAGE_SKILLS_BY_SCHOOL_ELEMENTALISM_6
+        - LOC_PROFESSION_MAGE_SKILLS_BY_SCHOOL_ELEMENTALISM_7
+        - LOC_PROFESSION_MAGE_SKILLS_BY_SCHOOL_ELEMENTALISM_8
       Mentalism:
-        - Mentalism
-        - Acrobatics
-        - Awareness
-        - Brawling
-        - Evade
-        - Healing
-        - Languages
-        - Myths & Legends
+        - LOC_PROFESSION_MAGE_SKILLS_BY_SCHOOL_MENTALISM_1
+        - LOC_PROFESSION_MAGE_SKILLS_BY_SCHOOL_MENTALISM_2
+        - LOC_PROFESSION_MAGE_SKILLS_BY_SCHOOL_MENTALISM_3
+        - LOC_PROFESSION_MAGE_SKILLS_BY_SCHOOL_MENTALISM_4
+        - LOC_PROFESSION_MAGE_SKILLS_BY_SCHOOL_MENTALISM_5
+        - LOC_PROFESSION_MAGE_SKILLS_BY_SCHOOL_MENTALISM_6
+        - LOC_PROFESSION_MAGE_SKILLS_BY_SCHOOL_MENTALISM_7
+        - LOC_PROFESSION_MAGE_SKILLS_BY_SCHOOL_MENTALISM_8
     magic:
       spells: 3
       tricks: 3
       spell_rank: 1
-  - id: mariner
-    name: Mariner
-    description: |
-      “You don’t become a sailor, you are born one. If you feel the bedrock sway where you walk, you know you belong out on the waves. Is there anything sadder than seeing a born mariner wobble around on solid ground?”
-      – Friga Seawife
-      Foaming waves and ships sailing fearlessly through dark waters are the domain and calling of the mariner. Some seafarers are forever sworn to the high seas; others stick to rivers and lakes. But all of them have one thing in common: a symbiotic relationship with the element of water – often a specific lake, river, or bay. This relationship is always complicated, based on love, respect, and mortal dread in equal measure. Otherwise, the seafaring profession is wide and varied, covering everything from coastal pirates, privateers, and surly ferrymen to whalers, explorers, and authoritative captains of maritime trade expeditions.
-    key_attribute: AGL
+  - id: profession_mariner
+    name: LOC_PROFESSION_MARINER
+    description: LOC_PROFESSION_MARINER_DESC
+    key_attribute: agility
     skills:
-      - Acrobatics
-      - Awareness
-      - Hunting & Fishing
-      - Knives
-      - Languages
-      - Seamanship
-      - Swimming
-      - Swords
+      - skills_acrobatics
+      - skills_awareness
+      - skills_huntingAndFishing
+      - skills_knives
+      - skills_languages
+      - skills_seamanship
+      - skills_swimming
+      - skills_swords
     heroic_abilities:
-      - Sea Legs
+      - ability_seaLegs
     rollable:
       - "Mariner: Gear"
       - "Mariner: Nickname"
     entities:
-      - name: Dagger, short bow, quiver, rope (hemp), grappling hook, sleeping pelt, torch, flint & tinder, D8 food rations, D10 silver
+      - name: LOC_PROFESSION_MARINER_ENTITIES_DAGGER_SHORT_BOW_QUIVER_ROPE_H_NAME
         kind: gear
-      - name: Scimitar, leather armor, rope (hemp), grappling hook, torch, flint & tinder, D8 food rations, D10 silver
+      - name: LOC_PROFESSION_MARINER_ENTITIES_SCIMITAR_LEATHER_ARMOR_ROPE_HE_NAME
         kind: gear
-      - name: Trident, spyglass, rope (hemp), grappling hook, torch, flint & tinder, D8 food rations, D10 silver
+      - name: LOC_PROFESSION_MARINER_ENTITIES_TRIDENT_SPYGLASS_ROPE_HEMP_GRA_NAME
         kind: gear
-      - name: Whitewater
+      - name: LOC_PROFESSION_MARINER_ENTITIES_WHITEWATER_NAME
         kind: nickname
-      - name: Waverider
+      - name: LOC_PROFESSION_MARINER_ENTITIES_WAVERIDER_NAME
         kind: nickname
-      - name: Foamborn
+      - name: LOC_PROFESSION_MARINER_ENTITIES_FOAMBORN_NAME
         kind: nickname
-      - name: Saltsplash
+      - name: LOC_PROFESSION_MARINER_ENTITIES_SALTSPLASH_NAME
         kind: nickname
-      - name: Seadog
+      - name: LOC_PROFESSION_MARINER_ENTITIES_SEADOG_NAME
         kind: nickname
-      - name: Stormfarer
+      - name: LOC_PROFESSION_MARINER_ENTITIES_STORMFARER_NAME
         kind: nickname
-  - id: merchant
-    name: Merchant
-    description: |
-      “Yes, many believe that tradecraft is about selling this and that, but its factual fundament is spelled ‘the principle of growth’ – turning what you have into more. If you have understood this, not much else is needed to succeed as a merchant.”
-      – Buldil Hale
-      Buying cheap and selling dear is the golden rule of merchants. No commodity is too commonplace, no deal too small or insignificant. Inside every piece of copper is a future gold coin, and inside every creature – living or undead – is a customer with needs and dreams of luxury. The only thing more important than the customer’s wishes is the sweet clatter of gold and silver pouring into the coffers. Some merchants run permanent shops in towns, villages, and other settlements. Others travel with trade caravans and adventuring companies in constant search of exotic luxury goods, new customers, and marketable artifacts.
-    key_attribute: CHA
+  - id: profession_merchant
+    name: LOC_PROFESSION_MERCHANT
+    description: LOC_PROFESSION_MERCHANT_DESC
+    key_attribute: charisma
     skills:
-      - Awareness
-      - Bartering
-      - Bluffing
-      - Evade
-      - Knives
-      - Persuasion
-      - Sleight of Hand
-      - Spot Hidden
+      - skills_awareness
+      - skills_bartering
+      - skills_bluffing
+      - skills_evade
+      - skills_knives
+      - skills_persuasion
+      - skills_sleightOfHand
+      - skills_spotHidden
     heroic_abilities:
-      - Treasure Hunter
+      - ability_treasureHunter
     rollable:
       - "Merchant: Gear"
       - "Merchant: Nickname"
     entities:
-      - name: Dagger, sleeping pelt, torch, flint & tinder, rope (hemp), donkey, D6 food rations, D12 silver
+      - name: LOC_PROFESSION_MERCHANT_ENTITIES_DAGGER_SLEEPING_PELT_TORCH_FLI_NAME
         kind: gear
-      - name: Knife, sleeping pelt, lantern, lamp oil, flint & tinder, field kitchen, donkey, cart, D6 food rations, D12 silver
+      - name: LOC_PROFESSION_MERCHANT_ENTITIES_KNIFE_SLEEPING_PELT_LANTERN_LA_NAME
         kind: gear
-      - name: Dagger, sleeping pelt, large tent, oil lamp, lamp oil, flint & tinder, backpack, D6 food rations, D12 silver
+      - name: LOC_PROFESSION_MERCHANT_ENTITIES_DAGGER_SLEEPING_PELT_LARGE_TEN_NAME
         kind: gear
-      - name: Silvergrin
+      - name: LOC_PROFESSION_MERCHANT_ENTITIES_SILVERGRIN_NAME
         kind: nickname
-      - name: Goldtooth
+      - name: LOC_PROFESSION_MERCHANT_ENTITIES_GOLDTOOTH_NAME
         kind: nickname
-      - name: Silktongue
+      - name: LOC_PROFESSION_MERCHANT_ENTITIES_SILKTONGUE_NAME
         kind: nickname
-      - name: The Lisping and Truthful
+      - name: LOC_PROFESSION_MERCHANT_ENTITIES_THE_LISPING_AND_TRUTHFUL_NAME
         kind: nickname
-      - name: Lardbelly
+      - name: LOC_PROFESSION_MERCHANT_ENTITIES_LARDBELLY_NAME
         kind: nickname
-      - name: Skinflint
+      - name: LOC_PROFESSION_MERCHANT_ENTITIES_SKINFLINT_NAME
         kind: nickname
-  - id: scholar
-    name: Scholar
-    description: |
-      “You can talk about education, genius, and matter-of-factness all you want, but the scholar is never better than their sources. If you want to become learned, it’s not enough to sit and brood in some dusty tower room – you have to go out, into the world, to where the sources nest!”
-      – Quasimo Dearfeather
-      Scholarly individuals gather knowledge about nature and the shrouded history of the world. They seek the truth in order to understand the unseen forces and deep structures that hold the universe together as a single entity. Some are specialists with specific areas of expertise, such as monsters, plants, or dead languages. Others pride themselves in avoiding limitations and dedicating themselves to an all-encompassing, non-discriminatory pursuit of knowledge where the mating calls of dragons, the foaming of beer, and the inner workings of minerals are all covered by the same academic system. Scholars are often well-versed in myths, legends, and folklore, and have learned to decipher ancient languages and forgotten scripts.
-    key_attribute: INT
+  - id: profession_scholar
+    name: LOC_PROFESSION_SCHOLAR
+    description: LOC_PROFESSION_SCHOLAR_DESC
+    key_attribute: intelligence
     skills:
-      - Awareness
-      - Beast Lore
-      - Bushcraft
-      - Evade
-      - Healing
-      - Languages
-      - Myths & Legends
-      - Spot Hidden
+      - skills_awareness
+      - skills_beastLore
+      - skills_bushcraft
+      - skills_evade
+      - skills_healing
+      - skills_languages
+      - skills_mythsAndLegends
+      - skills_spotHidden
     heroic_abilities:
-      - Intuition
+      - ability_intuition
     rollable:
       - "Scholar: Gear"
       - "Scholar: Nickname"
     entities:
-      - name: Staff, notebook, quill, sleeping pelt, torch, flint & tinder, D6 food rations, D10 silver
+      - name: LOC_PROFESSION_SCHOLAR_ENTITIES_STAFF_NOTEBOOK_QUILL_SLEEPING_NAME
         kind: gear
-      - name: Knife, book (any subject), sleeping pelt, oil lamp, lamp oil, flint & tinder, D6 food rations, D10 silver
+      - name: LOC_PROFESSION_SCHOLAR_ENTITIES_KNIFE_BOOK_ANY_SUBJECT_SLEEPIN_NAME
         kind: gear
-      - name: Short sword, bandages, sleeping poison (one dose), sleeping pelt, lantern, lamp oil, flint & tinder, D6 food rations, D10 silver
+      - name: LOC_PROFESSION_SCHOLAR_ENTITIES_SHORT_SWORD_BANDAGES_SLEEPING_NAME
         kind: gear
-      - name: Clearmind
+      - name: LOC_PROFESSION_SCHOLAR_ENTITIES_CLEARMIND_NAME
         kind: nickname
-      - name: Dustlung
+      - name: LOC_PROFESSION_SCHOLAR_ENTITIES_DUSTLUNG_NAME
         kind: nickname
-      - name: Farsight
+      - name: LOC_PROFESSION_SCHOLAR_ENTITIES_FARSIGHT_NAME
         kind: nickname
-      - name: The Lettered
+      - name: LOC_PROFESSION_SCHOLAR_ENTITIES_THE_LETTERED_NAME
         kind: nickname
-      - name: The All-Knowing
+      - name: LOC_PROFESSION_SCHOLAR_ENTITIES_THE_ALL_KNOWING_NAME
         kind: nickname
-      - name: The Plump and Learned
+      - name: LOC_PROFESSION_SCHOLAR_ENTITIES_THE_PLUMP_AND_LEARNED_NAME
         kind: nickname
-  - id: thief
-    name: Thief
-    description: |
-      “I’d say that there are many kinds of thieves – burglars, pickpockets, charlatans, highwaymen, pirates, and so on. The only thing we have in common is probably a particular view of ownership. I mean, this ‘yours-and-mine’-thing…”
-      – Viola Raveneye
-      Thieves see themselves as professional experts specialized in the acquisition of other people’s property. It is a proud and surprisingly principled profession. They like to refer to solemn principles of honor and honesty among thieves – something that is often hard to take seriously for theft victims and other outsiders. Many thieves organize themselves into guilds; others take pride in working independently and walk alone through the night and the shadows. Some are discreet specialists whose only method is guile, but the thief profession also includes brutal brigands who do not hesitate to use weapons to achieve their ends.
-    key_attribute: AGL
+  - id: profession_thief
+    name: LOC_PROFESSION_THIEF
+    description: LOC_PROFESSION_THIEF_DESC
+    key_attribute: agility
     skills:
-      - Acrobatics
-      - Awareness
-      - Bluffing
-      - Evade
-      - Knives
-      - Sleight of Hand
-      - Sneaking
-      - Spot Hidden
+      - skills_acrobatics
+      - skills_awareness
+      - skills_bluffing
+      - skills_evade
+      - skills_knives
+      - skills_sleightOfHand
+      - skills_sneaking
+      - skills_spotHidden
     heroic_abilities:
-      - Backstabbing
+      - ability_backstabbing
     rollable:
       - "Thief: Gear"
       - "Thief: Nickname"
     entities:
-      - name: Dagger, sling, rope (hemp), grappling hook, torch, flint & tinder, D6 food rations, D10 silver
+      - name: LOC_PROFESSION_THIEF_ENTITIES_DAGGER_SLING_ROPE_HEMP_GRAPPLI_NAME
         kind: gear
-      - name: Knife, lockpicks (simple), torch, flint & tinder, D6 food rations, D10 silver
+      - name: LOC_PROFESSION_THIEF_ENTITIES_KNIFE_LOCKPICKS_SIMPLE_TORCH_F_NAME
         kind: gear
-      - name: Two daggers, marbles, rope (hemp), torch, flint & tinder, D6 food rations, D10 silver
+      - name: LOC_PROFESSION_THIEF_ENTITIES_TWO_DAGGERS_MARBLES_ROPE_HEMP_NAME
         kind: gear
-      - name: Halffinger
+      - name: LOC_PROFESSION_THIEF_ENTITIES_HALFFINGER_NAME
         kind: nickname
-      - name: Blackrat
+      - name: LOC_PROFESSION_THIEF_ENTITIES_BLACKRAT_NAME
         kind: nickname
-      - name: Redeye
+      - name: LOC_PROFESSION_THIEF_ENTITIES_REDEYE_NAME
         kind: nickname
-      - name: Quickfoot
+      - name: LOC_PROFESSION_THIEF_ENTITIES_QUICKFOOT_NAME
         kind: nickname
-      - name: Doubletongue
+      - name: LOC_PROFESSION_THIEF_ENTITIES_DOUBLETONGUE_NAME
         kind: nickname
-      - name: Nightstabber
+      - name: LOC_PROFESSION_THIEF_ENTITIES_NIGHTSTABBER_NAME
         kind: nickname
 
 rollable:
   - Profession
 entities:
-  - name: Artisan
+  - id: professions_artisan
+    name: LOC_PROFESSIONS_ARTISAN
     kind: profession
-    category: Profession
-  - name: Bard
+    category: LOC_CATEGORY_PROFESSION
+  - id: professions_bard
+    name: LOC_PROFESSIONS_BARD
     kind: profession
-    category: Profession
-  - name: Fighter
+    category: LOC_CATEGORY_PROFESSION
+  - id: professions_fighter
+    name: LOC_PROFESSIONS_FIGHTER
     kind: profession
-    category: Profession
-  - name: Hunter
+    category: LOC_CATEGORY_PROFESSION
+  - id: professions_hunter
+    name: LOC_PROFESSIONS_HUNTER
     kind: profession
-    category: Profession
-  - name: Knight
+    category: LOC_CATEGORY_PROFESSION
+  - id: professions_knight
+    name: LOC_PROFESSIONS_KNIGHT
     kind: profession
-    category: Profession
-  - name: Mage
+    category: LOC_CATEGORY_PROFESSION
+  - id: professions_mage
+    name: LOC_PROFESSIONS_MAGE
     kind: profession
-    category: Profession
-  - name: Mariner
+    category: LOC_CATEGORY_PROFESSION
+  - id: professions_mariner
+    name: LOC_PROFESSIONS_MARINER
     kind: profession
-    category: Profession
-  - name: Merchant
+    category: LOC_CATEGORY_PROFESSION
+  - id: professions_merchant
+    name: LOC_PROFESSIONS_MERCHANT
     kind: profession
-    category: Profession
-  - name: Scholar
+    category: LOC_CATEGORY_PROFESSION
+  - id: professions_scholar
+    name: LOC_PROFESSIONS_SCHOLAR
     kind: profession
-    category: Profession
-  - name: Thief
+    category: LOC_CATEGORY_PROFESSION
+  - id: professions_thief
+    name: LOC_PROFESSIONS_THIEF
     kind: profession
-    category: Profession
+    category: LOC_CATEGORY_PROFESSION

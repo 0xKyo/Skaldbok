@@ -5,18 +5,43 @@
 // sheet still reads correctly if the pack it came from is later removed. A future web app can read the same files.
 #pragma once
 
+#include <functional>
 #include <map>
 #include <string>
+#include <utility>
 #include <vector>
 
+#include "game/attributes.h"
+#include "game/model.h"
 #include "parsing/jsondir.h"
 
 namespace gm {
 
-constexpr int kAttrCount = 6;
-extern const char* const kAttrShort[kAttrCount];   // STR CON AGL INT WIL CHA
-extern const char* const kAttrLong[kAttrCount];    // Strength ...
-int attrIndex(const std::string& shortName);       // -1 if it is not one of the six
+// The attributes the rules of this game system are written for (data/system/attributes.yaml lists the attributes; a rule that needs a
+// particular one names it by id). Everything the program stores about an attribute uses its id.
+inline constexpr const char* kStrength = "strength";
+inline constexpr const char* kConstitution = "constitution";
+inline constexpr const char* kAgility = "agility";
+inline constexpr const char* kIntelligence = "intelligence";
+inline constexpr const char* kWillpower = "willpower";
+inline constexpr const char* kCharisma = "charisma";
+constexpr int kDefaultScore = 10;                       // what an attribute a sheet does not give is worth
+
+// Files written before attributes had ids (character format 1) used the codes: "STR" -> "strength". Anything else is returned as it is.
+std::string legacyAttributeId(const std::string& code);
+
+// Attribute id -> score, in the order they were given.
+class Scores {
+public:
+    int get(const std::string& id, int otherwise = kDefaultScore) const;
+    void set(const std::string& id, int score);
+    bool has(const std::string& id) const;
+    const std::vector<std::pair<std::string, int>>& items() const { return items_; }
+    bool operator==(const Scores& o) const { return items_ == o.items_; }
+
+private:
+    std::vector<std::pair<std::string, int>> items_;
+};
 
 struct Ref {
     std::string key;                 // "<pack>/<kind>/<id>", empty if the thing was typed in by hand
@@ -34,7 +59,7 @@ struct Item {
 
 struct SkillEntry {
     Ref ref;
-    std::string attribute;           // STR..CHA, kept so the sheet works without the skill's pack
+    std::string attribute;           // the id of its attribute ("strength"), kept so the sheet works without the skill's pack
     int level = 0;                   // 0 = the base chance of its attribute
     bool trained = false;
     bool marked = false;             // advancement mark
@@ -47,16 +72,20 @@ struct Review {
     std::string at;
 };
 
+constexpr int kCharacterFormat = 2;      // 2: attributes and skills name their attribute by id (1 used the codes STR, CON...)
+
 struct Character {
-    int format = 1;
+    int format = kCharacterFormat;
     int revision = 0;                // +1 on every save, by whichever program saves: readers can tell that something changed
     std::string id;                  // file name without .json
     std::string name, nickname, player;
     std::string age = "adult";       // young | adult | old
     Ref kin, profession;
     std::string school;              // a mage's school of magic
-    int attr[kAttrCount] = {10, 10, 10, 10, 10, 10};
+    Scores attr;                     // by attribute id; one a sheet does not give counts as 10
     int hp = 10, wp = 10;            // current values
+    bool roundRest = false, stretchRest = false;   // the rests taken this shift: the Master clears them when the next shift begins
+    int deathSuccesses = 0, deathFailures = 0;   // the death rolls at 0 HP: three of either ends it (see the sheet)
     int hpBonus = 0, wpBonus = 0;    // heroic abilities such as Robust and Focused raise the maximums
     unsigned conditions = 0;         // bit i = the i-th condition of the book (Exhausted, Angry, ...)
     std::vector<SkillEntry> skills;
@@ -69,43 +98,40 @@ struct Character {
     int gold = 0, silver = 0, copper = 0;
     std::string weakness, memento, appearance, notes;
     bool locked = false;                         // the GM switched the player's editing off
-    std::map<std::string, Review> reviews;       // by issue key ("encumbrance", "attr:STR"...)
+    std::map<std::string, Review> reviews;       // by issue key ("encumbrance", "attr:strength"...)
     std::string createdAt, updatedAt;            // ISO 8601, UTC
 
     std::string displayName() const;             // "Aria "Silvervoice""
-    std::string summary() const;                 // the sheet as plain text (the creator's preview)
+    // The sheet as plain text (the creator's preview): the attributes' short forms come from `names` (id -> "STR"/"FUE"), the damage
+    // bonus and the base chance from the attributes' tables.
+    std::string summary(const AttributeSet& rules, const std::function<std::string(const std::string&)>& abbr, const std::string& ageName) const;
     std::string toJson() const;                  // pretty-printed, what is written to disk
     static bool fromJson(const std::string& text, Character& out, std::string* error);
+    // Brings a character file (or a set of changes meant for one) written before attributes had ids up to date: the codes in `attributes`,
+    // in each skill's `attribute` and in `reviews` become ids. A whole file also becomes format 2.
+    static void migrateJson(json& doc);
 };
 
 // ------------------------------------------------------------------------------------------ rules
 // Numbers from the Dragonbane Rulebook, chapter 2 (pages 28-29 of the printed book).
 
-int baseChance(int attribute);                        // skill base chance: 1-5:3, 6-8:4, 9-12:5, 13-15:6, 16-18:7
-int movementModifier(int agl);                        // AGL 1-6:-4, 7-9:-2, 10-12:0, 13-15:+2, 16-18:+4
-std::string damageBonus(int strOrAgl);                // "" up to 12, "D4" 13-16, "D6" 17+
-int encumbranceLimit(const Character& c);             // half STR rounded up, +2 with a backpack
+// The three that read a table of the attributes (data/system/lookups.yaml: "base-chance", "movement-modifier", "damage-bonus").
+int baseChance(const AttributeSet& rules, int score);           // a skill's base chance: 1-5:3, 6-8:4, 9-12:5, 13-15:6, 16+:7
+int movementModifier(const AttributeSet& rules, int agility);   // 1-6:-4, 7-9:-2, 10-12:0, 13-15:+2, 16+:+4
+std::string damageBonus(const AttributeSet& rules, int score);  // "" up to 12, "D4" 13-16, "D6" 17+ (strength or agility)
+int encumbranceLimit(const Character& c);             // half STR rounded up, +2 with a backpack (in the inventory or among the tiny items)
 double itemWeight(const Item& it);                    // what one of them weighs: its own weight, else 1 (food rations 1/4)
 double weightFromText(const std::string& text);       // a catalog "Weight" ("1", "1/4", "—" = 0); negative if it says nothing usable
 int carriedItems(const Character& c);                 // encumbrance of the inventory: each row weighs its weight x count, rounded up
 int maxHp(const Character& c);                        // CON (+ bonus)
 int maxWp(const Character& c);                        // WIL (+ bonus)
 
-struct AgeRule {
-    const char* id;                  // young | adult | old
-    const char* label;
-    int trainedSkills;               // 8 / 10 / 12 (six of them from the profession)
-    int attrMod[kAttrCount];         // added to the rolled attributes (never above 18)
-    const char* summary;
-};
-const AgeRule& ageRule(const std::string& age);       // unknown text = adult
-constexpr int kProfessionSkills = 6;                   // trained skills that must come from the profession
 
-// Rolled attributes + age adjustment, each clamped to 1..18.
-void applyAge(const int rolled[kAttrCount], const std::string& age, int out[kAttrCount]);
+// Rolled attributes (one score per attribute of `rules`, in its order) + age adjustment, each clamped to 1..18.
+Scores applyAge(const AttributeSet& rules, const std::vector<int>& rolled, const AgeDef& age);
 
 // Effective level of a skill: the recorded level, or the base chance of its attribute.
-int skillLevel(const Character& c, const SkillEntry* entry, const std::string& attribute);
+int skillLevel(const AttributeSet& rules, const Character& c, const SkillEntry* entry, const std::string& attribute);
 
 // ---------------------------------------------------------------------------------------- files
 

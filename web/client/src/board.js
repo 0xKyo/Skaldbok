@@ -5,6 +5,7 @@
 // The Screen lives above the tabs (GmView provides it) so that a "Pin" button anywhere in the app can add to it.
 import { ref, watch } from 'vue';
 import { ApiError, apiGet, apiSend } from './api.js';
+import { t } from './i18n.js';
 
 export const NOTE_COLORS = ['yellow', 'green', 'blue', 'pink', 'white'];
 const SAVE_DELAY_MS = 800;
@@ -50,19 +51,19 @@ export function useBoard(token, source = null) {
       loadError.value = '';
       loaded.value = true;
     } catch (e) {
-      loadError.value = e instanceof ApiError ? e.message : 'Could not open the board.';
+      loadError.value = e instanceof ApiError ? e.message : t('Could not open the board.');
     }
   }
 
   async function save() {
     clearTimeout(saveTimer);
     if (!loaded.value || readOnly.value) return;
-    status.value = 'Saving…';
+    status.value = t('Saving…');
     try {
       await from.write({ items: items.value, arrows: arrows.value, view: view.value });
-      status.value = 'Saved';
+      status.value = t('Saved');
     } catch (e) {
-      status.value = e instanceof ApiError ? e.message : 'Could not save the board.';
+      status.value = e instanceof ApiError ? e.message : t('Could not save the board.');
     }
   }
 
@@ -97,11 +98,11 @@ export function useBoard(token, source = null) {
   // Something can only be added to a board that was read (or it would overwrite what it could not read) and that is open
   function canAdd() {
     if (!loaded.value) {
-      say('The board is not available right now.');
+      say(t('The board is not available right now.'));
       return false;
     }
     if (readOnly.value) {
-      say('That session is closed: open it to change it.');
+      say(t('That session is closed: open it to change it.'));
       return false;
     }
     return true;
@@ -118,13 +119,13 @@ export function useBoard(token, source = null) {
     const same = have((i) => i.kind === 'image' && i.imageKey === key);
     if (same) {
       bringToFront(same.id);
-      say(`“${title || 'That picture'}” is already on the board.`);
+      say(t('“{title}” is already on the board.', { title: title || t('That picture') }));
       return same.id;
     }
     const at = spot(w, h);
     const item = { id: newId('i'), kind: 'image', x: at.x, y: at.y, w, h, z: topZ() + 1, image, imageKey: key, title };
     items.value.push(item);
-    say(`Pinned “${title || 'a picture'}” to the board.`);
+    say(t('Pinned “{title}” to the board.', { title: title || t('a picture') }));
     return item.id;
   }
 
@@ -143,7 +144,7 @@ export function useBoard(token, source = null) {
     const at = spot(w, h);
     const item = { id: newId('p'), kind: 'pin', x: at.x, y: at.y, w, h, z: topZ() + 1, pin: { type, key, title, data } };
     items.value.push(item);
-    say(`Pinned “${title}” to the board.`);
+    say(t('Pinned “{title}” to the board.', { title }));
     return item.id;
   }
 

@@ -1,44 +1,65 @@
 kind: weakness
+category: LOC_CATEGORY_WEAKNESS
 rollable:
   - Weakness
 entities:
-  - name: Gullible
-    description: I believe everything that others tell me.
-  - name: Greedy
-    description: I want a bigger share of all treasure.
-  - name: Thin-skinned
-    description: I never tolerate a provocation.
-  - name: Foolhardy
-    description: I always go first into danger.
-  - name: Fainthearted
-    description: I always stay at the back of the group.
-  - name: Monster Slayer
-    description: All monsters are evil and must be slain.
-  - name: Intolerant
-    description: Nightkin such as orcs and goblins are evil and need to be fought.
-  - name: Slothful
-    description: I take every chance to rest.
-  - name: Gluttonous
-    description: I take every chance I get to eat something tasty.
-  - name: Kleptomaniac
-    description: I can’t stop myself from stealing valuables.
-  - name: Vain
-    description: I’ll help anyone who gives me praise or compliments.
-  - name: Reckless
-    description: I always take big risks without thought of the consequences.
-  - name: Fearful of Magic
-    description: Magic is an evil force and mages cannot be trusted.
-  - name: Craving Knowledge
-    description: The hunt for knowledge is more important than my friends.
-  - name: Child of the Wild
-    description: I never sleep indoors.
-  - name: Boastful
-    description: I always exaggerate my accomplishments.
-  - name: Violent
-    description: I resort to violence to overcome every obstacle.
-  - name: Overbearing
-    description: I always tell others what to do.
-  - name: Pessimist
-    description: I always think things will turn out for the worst.
-  - name: Haughty
-    description: I look down on everyone I meet.
+  - id: weakness_gullible
+    name: LOC_WEAKNESS_GULLIBLE
+    description: LOC_WEAKNESS_GULLIBLE_DESC
+  - id: weakness_greedy
+    name: LOC_WEAKNESS_GREEDY
+    description: LOC_WEAKNESS_GREEDY_DESC
+  - id: weakness_thinSkinned
+    name: LOC_WEAKNESS_THIN_SKINNED
+    description: LOC_WEAKNESS_THIN_SKINNED_DESC
+  - id: weakness_foolhardy
+    name: LOC_WEAKNESS_FOOLHARDY
+    description: LOC_WEAKNESS_FOOLHARDY_DESC
+  - id: weakness_fainthearted
+    name: LOC_WEAKNESS_FAINTHEARTED
+    description: LOC_WEAKNESS_FAINTHEARTED_DESC
+  - id: weakness_monsterSlayer
+    name: LOC_WEAKNESS_MONSTER_SLAYER
+    description: LOC_WEAKNESS_MONSTER_SLAYER_DESC
+  - id: weakness_intolerant
+    name: LOC_WEAKNESS_INTOLERANT
+    description: LOC_WEAKNESS_INTOLERANT_DESC
+  - id: weakness_slothful
+    name: LOC_WEAKNESS_SLOTHFUL
+    description: LOC_WEAKNESS_SLOTHFUL_DESC
+  - id: weakness_gluttonous
+    name: LOC_WEAKNESS_GLUTTONOUS
+    description: LOC_WEAKNESS_GLUTTONOUS_DESC
+  - id: weakness_kleptomaniac
+    name: LOC_WEAKNESS_KLEPTOMANIAC
+    description: LOC_WEAKNESS_KLEPTOMANIAC_DESC
+  - id: weakness_vain
+    name: LOC_WEAKNESS_VAIN
+    description: LOC_WEAKNESS_VAIN_DESC
+  - id: weakness_reckless
+    name: LOC_WEAKNESS_RECKLESS
+    description: LOC_WEAKNESS_RECKLESS_DESC
+  - id: weakness_fearfulOfMagic
+    name: LOC_WEAKNESS_FEARFUL_OF_MAGIC
+    description: LOC_WEAKNESS_FEARFUL_OF_MAGIC_DESC
+  - id: weakness_cravingKnowledge
+    name: LOC_WEAKNESS_CRAVING_KNOWLEDGE
+    description: LOC_WEAKNESS_CRAVING_KNOWLEDGE_DESC
+  - id: weakness_childOfTheWild
+    name: LOC_WEAKNESS_CHILD_OF_THE_WILD
+    description: LOC_WEAKNESS_CHILD_OF_THE_WILD_DESC
+  - id: weakness_boastful
+    name: LOC_WEAKNESS_BOASTFUL
+    description: LOC_WEAKNESS_BOASTFUL_DESC
+  - id: weakness_violent
+    name: LOC_WEAKNESS_VIOLENT
+    description: LOC_WEAKNESS_VIOLENT_DESC
+  - id: weakness_overbearing
+    name: LOC_WEAKNESS_OVERBEARING
+    description: LOC_WEAKNESS_OVERBEARING_DESC
+  - id: weakness_pessimist
+    name: LOC_WEAKNESS_PESSIMIST
+    description: LOC_WEAKNESS_PESSIMIST_DESC
+  - id: weakness_haughty
+    name: LOC_WEAKNESS_HAUGHTY
+    description: LOC_WEAKNESS_HAUGHTY_DESC

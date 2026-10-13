@@ -162,7 +162,7 @@ std::vector<std::string> professionSkillOptions(const Entry& profession, const s
 std::vector<const Entry*> selectableSkills(const ContentStore& content) {
     std::vector<const Entry*> out;
     for (const Entry& e : content.entries(Kind::Skill))
-        if (attrIndex(e.prop("attribute")) >= 0 && e.prop("category") != "magic") out.push_back(&e);   // schools come with the mage profession
+        if (content.attributes().indexOf(e.prop("attribute")) >= 0 && e.prop("category") != "magic") out.push_back(&e);   // schools come with the mage profession
     return out;
 }
 
@@ -188,8 +188,9 @@ std::vector<std::string> validateCreation(const Creation& c, const ContentStore&
     const Entry* prof = content.entry(Kind::Profession, content.idByKey(Kind::Profession, c.professionKey));
     if (!kin) problems.push_back("Choose a kin.");
     if (!prof) problems.push_back("Choose a profession.");
-    for (int i = 0; i < kAttrCount; ++i)
-        if (c.rolled[i] < 3 || c.rolled[i] > 18) {
+    const size_t attributeCount = content.attributes().attributes().size();
+    for (size_t i = 0; i < attributeCount; ++i)
+        if (i >= c.rolled.size() || c.rolled[i] < 3 || c.rolled[i] > 18) {
             problems.push_back("Give every attribute a score from 3 to 18.");
             break;
         }
@@ -201,7 +202,7 @@ std::vector<std::string> validateCreation(const Creation& c, const ContentStore&
         if (!std::ranges::contains(schools, c.school)) problems.push_back("Choose a school of magic.");
     }
     const std::vector<std::string> options = professionSkillOptions(*prof, c.school);
-    const size_t needProf = std::min<size_t>(kProfessionSkills, options.size());
+    const size_t needProf = std::min<size_t>(static_cast<size_t>(content.age(c.age).professionSkills), options.size());
     std::set<std::string> seen;
     bool badProfSkill = false;
     for (const std::string& s : c.professionSkills) {
@@ -213,11 +214,11 @@ std::vector<std::string> validateCreation(const Creation& c, const ContentStore&
     if (magic && !c.school.empty() &&
         !std::ranges::contains(c.professionSkills, c.school))
         problems.push_back("The school of magic must be one of the trained skills.");
-    const int freeWanted = ageRule(c.age).trainedSkills - static_cast<int>(needProf);
+    const int freeWanted = content.age(c.age).trainedSkills() - static_cast<int>(needProf);
     bool badFree = false;
     for (const std::string& s : c.freeSkills) {
         const Entry* e = content.findByName(Kind::Skill, s);
-        badFree |= !e || attrIndex(e->prop("attribute")) < 0 || e->prop("category") == "magic" || seen.count(lowerCopy(s));
+        badFree |= !e || content.attributes().indexOf(e->prop("attribute")) < 0 || e->prop("category") == "magic" || seen.count(lowerCopy(s));
         seen.insert(lowerCopy(s));
     }
     if (static_cast<int>(c.freeSkills.size()) != freeWanted || badFree)
@@ -270,12 +271,14 @@ Creation randomCreation(const ContentStore& content, Dice& dice) {
     if (!schools.empty()) c.school = schools[pickOf(schools.size())];
 
     // six 4D6 scores; the best goes to the profession's key attribute, the others to random attributes
+    const int attributeCount = static_cast<int>(content.attributes().attributes().size());
     std::vector<int> scores;
-    for (int i = 0; i < kAttrCount; ++i) scores.push_back(rollAttribute(dice));
+    for (int i = 0; i < attributeCount; ++i) scores.push_back(rollAttribute(dice));
     std::ranges::sort(scores, std::greater<int>());
     std::vector<int> slots;
-    const int key = std::max(0, attrIndex(prof.prop("key_attribute")));
-    for (int i = 0; i < kAttrCount; ++i)
+    const int key = std::max(0, content.attributes().indexOf(prof.prop("key_attribute")));
+    c.rolled.assign(static_cast<size_t>(attributeCount), 0);
+    for (int i = 0; i < attributeCount; ++i)
         if (i != key) slots.push_back(i);
     for (size_t i = slots.size(); i > 1; --i) std::swap(slots[i - 1], slots[pickOf(i)]);
     c.rolled[key] = scores[0];
@@ -286,7 +289,7 @@ Creation randomCreation(const ContentStore& content, Dice& dice) {
         c.professionSkills.push_back(c.school);
         std::erase(options, c.school);
     }
-    const size_t need = std::min<size_t>(kProfessionSkills, professionSkillOptions(prof, c.school).size());
+    const size_t need = std::min<size_t>(static_cast<size_t>(content.age(c.age).professionSkills), professionSkillOptions(prof, c.school).size());
     while (c.professionSkills.size() < need && !options.empty()) {
         const size_t i = pickOf(options.size());
         c.professionSkills.push_back(options[i]);
@@ -296,7 +299,7 @@ Creation randomCreation(const ContentStore& content, Dice& dice) {
     std::erase_if(free, [&](const Entry* e) {
                                   return std::ranges::contains(c.professionSkills, e->title);
                               });
-    const size_t wanted = static_cast<size_t>(std::max(0, ageRule(c.age).trainedSkills - static_cast<int>(need)));
+    const size_t wanted = static_cast<size_t>(std::max(0, content.age(c.age).trainedSkills() - static_cast<int>(need)));
     while (c.freeSkills.size() < wanted && !free.empty()) {
         const size_t i = pickOf(free.size());
         c.freeSkills.push_back(free[i]->title);
@@ -338,6 +341,7 @@ Creation randomCreation(const ContentStore& content, Dice& dice) {
 // ---------------------------------------------------------------------------------------- building
 
 double catalogWeight(const Entry& e) {
+    if (const auto it = e.props.find("weight"); it != e.props.end()) return weightFromText(it->second);     // the card's own "weight"
     for (const Field& f : e.fields)
         if (f.label == "Weight") return weightFromText(f.value);
     return -1;
@@ -378,11 +382,11 @@ Character buildCharacter(const Creation& cr, const ContentStore& content, Dice& 
     c.name = trimmed(cr.name);
     c.nickname = trimmed(cr.nickname);
     c.player = trimmed(cr.player);
-    c.age = ageRule(cr.age).id;
+    c.age = content.age(cr.age).id;
     c.kin = refOf(kin, "");
     c.profession = refOf(prof, "");
     c.school = cr.school;
-    applyAge(cr.rolled, c.age, c.attr);
+    c.attr = applyAge(content.attributes(), cr.rolled, content.age(c.age));
     c.hp = maxHp(c);
     c.wp = maxWp(c);
     c.weakness = cr.weakness;
@@ -396,7 +400,9 @@ Character buildCharacter(const Creation& cr, const ContentStore& content, Dice& 
         e.ref = refOf(s, name);
         e.attribute = s ? s->prop("attribute") : std::string();
         e.trained = true;
-        e.level = std::min(18, 2 * baseChance(c.attr[std::max(0, attrIndex(e.attribute))]));
+        std::string attributeId = content.attributes().idOf(e.attribute);
+        if (attributeId.empty() && !content.attributes().empty()) attributeId = content.attributes().attributes().front().id;   // (an unknown one counts as the first, as before)
+        e.level = std::min(18, 2 * baseChance(content.attributes(), c.attr.get(attributeId)));
         c.skills.push_back(std::move(e));
     };
     for (const std::string& s : cr.professionSkills) addSkill(s);

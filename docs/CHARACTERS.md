@@ -11,8 +11,16 @@ jugadores los lea (y escriba) tal cual.
 * Lo que un personaje toma del contenido del juego (raza, profesión, habilidades, aptitudes, hechizos, equipo) se guarda como
   **referencia**: la clave estable de la entrada (`core/kin/human`, `frostmarch/spell/rime-ward`) **y** su nombre en el
   momento de guardar. Con la clave se encuentra la entrada completa; con el nombre la ficha se lee aunque el pack ya no esté.
+* **El archivo está siempre en inglés**, aunque la ficha se vea y se edite en español: los nombres guardados (raza, profesión,
+  habilidades, hechizos, equipo, estados) son los ingleses, y la app o la página los muestran traducidos al leerlos (por la clave, o
+  por el nombre inglés). Lo que escribe la persona (nombre del personaje, notas, apariencia) se guarda tal como lo escribió. Así el
+  mismo personaje se abre igual en cualquier idioma; ver HOMEBREW.md › Traducciones.
 
-## Formato (`format: 1`)
+## Formato (`format: 2`)
+
+Los atributos se guardan por **id** (`strength`, `constitution`, `agility`, `intelligence`, `willpower`, `charisma`), no por código (`STR`...):
+`attributes`, `skills[].attribute` y las claves de `reviews` (`attr:strength`). Los archivos `format: 1` (códigos) se migran solos al leerlos y
+al editarlos; la web también acepta los códigos viejos de clientes antiguos. Abajo se muestra el bloque tal como era (con códigos): léase `STR` = `strength`, etc.
 
 Los archivos se guardan en YAML. El bloque de abajo usa la sintaxis JSON (que también es YAML válido) para mostrar la estructura; la app escribe YAML real.
 
@@ -27,6 +35,8 @@ Los archivos se guardan en YAML. El bloque de abajo usa la sintaxis JSON (que ta
   "school": "",                                     // escuela de magia de un mago
   "attributes": { "STR": 15, "CON": 13, "AGL": 12, "INT": 9, "WIL": 10, "CHA": 11 },
   "hp": 10, "wp": 10,                               // valores ACTUALES
+  "death_successes": 0, "death_failures": 0,          // tiradas de muerte (0 a 3); solo cuentan con 0 PV
+  "round_rest": false, "stretch_rest": false,         // descansos tomados en este tramo largo; el Máster los limpia al pasar al siguiente
   "hp_bonus": 0, "wp_bonus": 0,                     // p. ej. las aptitudes Robust / Focused
   "conditions": ["Scared"],                         // Exhausted Angry Sickly Scared Dazed Disheartened
   "skills": [
@@ -67,7 +77,7 @@ Del Rulebook, capítulo 2. Están implementados en `src/game/character.cpp` y pr
 | PV máximos / PW máximos | CON / WIL (+ `hp_bonus` / `wp_bonus`) |
 | Movimiento | el de la raza (`movement` del pack) + modificador de AGL: 1–6 → −4, 7–9 → −2, 10–12 → 0, 13–15 → +2, 16–18 → +4 |
 | Bonificación de daño (FUE y AGL, por separado) | hasta 12: ninguna, 13–16: +D4, 17 o más: +D6 |
-| Límite de carga | mitad de FUE redondeada hacia arriba (+2 con mochila). Cada objeto pesa 1, o lo que diga su `weight` (0 no pesa; la ración de campo pesa 1/4; un objeto sacado de las reglas trae el «Weight» de su tarjeta). Cada fila pesa peso × cantidad, redondeado hacia arriba |
+| Límite de carga | mitad de FUE redondeada hacia arriba (+2 con mochila: la mochila no pesa, así que es un objeto diminuto, y suma tanto en el inventario como entre los objetos diminutos; solo cuenta una). Cada objeto pesa 1, o lo que diga su `weight` (0 no pesa; la ración de campo pesa 1/4; un objeto sacado de las reglas trae el «Weight» de su tarjeta). Cada fila pesa peso × cantidad, redondeado hacia arriba |
 
 ## Creación
 

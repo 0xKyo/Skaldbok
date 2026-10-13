@@ -1,5 +1,9 @@
 kind: damage-type
+category: LOC_CATEGORY_DAMAGE_TYPES
 entities:
-  - name: Slashing
-  - name: Piercing
-  - name: Bludgeoning
+  - id: damageTypes_slashing
+    name: LOC_DAMAGE_TYPES_SLASHING
+  - id: damageTypes_piercing
+    name: LOC_DAMAGE_TYPES_PIERCING
+  - id: damageTypes_bludgeoning
+    name: LOC_DAMAGE_TYPES_BLUDGEONING

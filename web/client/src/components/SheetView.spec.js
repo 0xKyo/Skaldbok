@@ -5,6 +5,12 @@ import me from '../test/fixtures/me.json';
 
 const clone = () => structuredClone(me);
 // meReadonly: strip the editable doc so the sheet renders in display mode (simulates a viewer without a token)
+// a number is typed, and handed over when the box is left
+const typeNumber = async (field, text) => {
+  field.element.value = text;
+  await field.trigger('input');
+  await field.trigger('change');
+};
 const meReadonly = () => { const m = clone(); delete m.doc; return m; };
 
 describe('SheetView', () => {
@@ -23,18 +29,18 @@ describe('SheetView', () => {
     expect(w.findAll('[data-test=attribute]').map((a) => a.text())).toEqual(['15', '13', '12', '9', '10', '11']);
     expect(w.text()).toContain('base chance 6');
     expect(w.get('[data-test=movement]').text()).toBe('10');
-    expect(w.get('[data-test=damage-str]').text()).toBe('+D4');
-    expect(w.get('[data-test=damage-agl]').text()).toBe('–');
+    expect(w.get('[data-test=damage-strength]').text()).toBe('+D4');
+    expect(w.get('[data-test=damage-agility]').text()).toBe('–');
     expect(w.get('[data-test=carrying]').text()).toBe('3/8');
     expect(w.findAll('[data-test=meter-value]').map((m) => m.text())).toEqual(['10 / 13', '10 / 10']);
   });
 
-  it('draws hit points as circles that go empty as they are lost', () => {
+  it('draws hit points as circles that fill as they are lost: all empty when whole', () => {
     const w = mount(SheetView, { props: { me: meReadonly() } });
     const hp = w.get('.points.hp');
     expect(hp.findAll('.pip')).toHaveLength(13);
-    expect(hp.findAll('.pip.gone')).toHaveLength(3);
-    expect(w.get('.points.wp').findAll('.pip.gone')).toHaveLength(0);
+    expect(hp.findAll('.pip:not(.gone)')).toHaveLength(3);
+    expect(w.get('.points.wp').findAll('.pip:not(.gone)')).toHaveLength(0);
   });
 
   it('lists every skill in the printed order', () => {
@@ -152,7 +158,7 @@ describe('SheetView editing', () => {
   it('saves a change a moment after it is made, and sends only the field that changed', async () => {
     const server = fakeServer();
     const w = mountEditable();
-    await w.findAll('.pip.tap')[6].trigger('click'); // the seventh circle: HP becomes 7
+    await w.findAll('.pip.tap')[5].trigger('click'); // the sixth circle is marked: 6 points lost, HP becomes 7
     expect(server.patches).toHaveLength(0); // (it waits a moment, in case the player keeps going)
     await settle();
     expect(server.patches).toEqual([{ hp: 7 }]);
@@ -163,11 +169,11 @@ describe('SheetView editing', () => {
   it('sends a burst of changes as one, key by key inside attributes and coins', async () => {
     const server = fakeServer();
     const w = mountEditable();
-    await w.findAll('[data-test=attribute-input]')[0].setValue('16');
-    await w.get('[data-test=silver-input]').setValue('9');
+    await typeNumber(w.findAll('[data-test=attribute-input]')[0], '16');
+    await typeNumber(w.get('[data-test=silver-input]'), '9');
     await w.get('textarea[aria-label=Notes]').setValue('Owes the innkeeper.');
     await settle();
-    expect(server.patches).toEqual([{ attributes: { STR: 16 }, coins: { silver: 9 }, notes: 'Owes the innkeeper.' }]);
+    expect(server.patches).toEqual([{ attributes: { strength: 16 }, coins: { silver: 9 }, notes: 'Owes the innkeeper.' }]);
   });
 
   it('adds, changes and removes items, and toggles conditions and advancement marks', async () => {
@@ -189,7 +195,7 @@ describe('SheetView editing', () => {
   it('changes a skill level', async () => {
     const server = fakeServer();
     const w = mountEditable();
-    await w.findAll('.skill').find((r) => r.text().includes('Acrobatics')).get('[data-test=skill-input]').setValue('14');
+    await typeNumber(w.findAll('.skill').find((r) => r.text().includes('Acrobatics')).get('[data-test=skill-input]'), '14');
     await settle();
     expect(server.patches[0].skills.find((s) => s.name === 'Acrobatics').level).toBe(14);
   });
@@ -210,7 +216,7 @@ describe('SheetView editing', () => {
     const data = clone();
     data.issues = [
       { key: 'encumbrance', message: 'Carrying 11 items, the limit is 8', status: 'pending' },
-      { key: 'attr:STR', message: 'Strength 19 is outside the 3 to 18 of the rules', status: 'rejected' },
+      { key: 'attr:strength', message: 'Strength 19 is outside the 3 to 18 of the rules', status: 'rejected' },
     ];
     const w = mount(SheetView, { props: { me: data, token: 't' } });
     const boxes = w.findAll('[data-test=issue]');
@@ -231,13 +237,79 @@ describe('SheetView editing', () => {
     await w.findAll('.pip.tap')[3].trigger('click');
     await settle();
     expect(w.get('[data-test=save-error]').text()).toContain('whole number');
-    expect(w.findAll('.points.hp .pip:not(.gone)')).toHaveLength(me.hp.current);
+    expect(w.findAll('.points.hp .pip:not(.gone)')).toHaveLength(me.hp.max - me.hp.current);
+  });
+
+  const dying = () => {
+    const m = clone();
+    m.hp.current = 0;
+    m.doc.hp = 0;
+    return m;
+  };
+
+  it('at 0 hit points the bar gives way to the death rolls: three successes bring it back, three failures are death', async () => {
+    const server = fakeServer();
+    const w = mount(SheetView, { props: { me: dying(), token: 'good-token' } });
+    expect(w.find('[data-test=death-rolls]').exists()).toBe(true);
+    expect(w.find('.points.hp .now').exists()).toBe(false);
+    const successes = () => w.findAll('[data-test=death-successes] .pip:not(.gone)').length;
+    const failures = () => w.findAll('[data-test=death-failures] .pip:not(.gone)').length;
+    await w.findAll('[data-test=death-successes] .pip.tap')[0].trigger('click');
+    await w.findAll('[data-test=death-failures] .pip.tap')[1].trigger('click');
+    expect([successes(), failures()]).toEqual([1, 2]);
+    await w.findAll('[data-test=death-failures] .pip.tap')[1].trigger('click');          // tapping the last marked box clears it
+    expect(failures()).toBe(1);
+    await w.findAll('[data-test=death-successes] .pip.tap')[2].trigger('click');
+    expect(w.find('[data-test=death-rolls]').exists()).toBe(false);                      // three successes: the bar is back, still at 0
+    expect(w.find('.points.hp').exists()).toBe(true);
+    await settle();
+    expect(server.patches.at(-1)).toMatchObject({ death_successes: 3 });
+  });
+
+  it('three failures are death, and Undo takes the last one back; any hit points start the rolls over', async () => {
+    fakeServer();
+    const w = mount(SheetView, { props: { me: dying(), token: 'good-token' } });
+    await w.findAll('[data-test=death-failures] .pip.tap')[2].trigger('click');
+    expect(w.get('[data-test=dead]').text()).toContain('Dead');
+    await w.get('[data-test=undo-death]').trigger('click');
+    expect(w.find('[data-test=dead]').exists()).toBe(false);
+    expect(w.findAll('[data-test=death-failures] .pip:not(.gone)')).toHaveLength(2);
+    await w.findAll('[data-test=death-successes] .pip.tap')[2].trigger('click');          // stable: the bar is back
+    await w.findAll('.points.hp .pip.tap')[0].trigger('click');                            // one point lost of 13: 12 left
+    expect(w.find('[data-test=death-rolls]').exists()).toBe(false);
+    await settle();
+    expect(w.emitted('updated')?.at(-1)?.[0].doc ?? {}).toMatchObject({ hp: 12, death_successes: 0, death_failures: 0 });
+  });
+
+  it('has the Round Rest and the Stretch Rest to tick and untick, saved as they are', async () => {
+    const server = fakeServer();
+    const w = mountEditable();
+    const round = w.get('[data-test=round-rest]');
+    const stretch = w.get('[data-test=stretch-rest]');
+    expect([round.element.checked, stretch.element.checked]).toEqual([false, false]);
+    await round.setValue(true);
+    await settle();
+    expect(server.patches.at(-1)).toEqual({ round_rest: true });
+    await round.setValue(false);
+    await stretch.setValue(true);
+    await settle();
+    expect(server.patches.at(-1)).toEqual({ round_rest: false, stretch_rest: true });
+    expect(w.text()).toContain('Round Rest');
+  });
+
+  it('shows the rests taken, without letting a viewer change them', () => {
+    const m = meReadonly();
+    m.rest = { round: true, stretch: false };
+    const w = mount(SheetView, { props: { me: m } });
+    expect(w.get('[data-test=round-rest]').element.checked).toBe(true);
+    expect(w.get('[data-test=round-rest]').element.disabled).toBe(true);
+    expect(w.get('[data-test=stretch-rest]').element.checked).toBe(false);
   });
 
   it('leaves editing when the GM locks the sheet', async () => {
     fakeServer({ refuse: { status: 423, error: 'Your GM has locked your sheet.' } });
     const w = mountEditable();
-    await w.get('[data-test=gold-input]').setValue('1');
+    await typeNumber(w.get('[data-test=gold-input]'), '1');
     await settle();
     expect(w.findAll('[data-test=attribute-input]')).toHaveLength(0);
     expect(w.get('[data-test=locked]').text()).toContain('locked');
@@ -253,7 +325,7 @@ describe('SheetView editing', () => {
     await flushPromises();
     expect(w.get('[data-test=gold-input]').element.value).toBe('30');
     expect(w.get('textarea[aria-label=Notes]').element.value).toBe('from the GM');
-    await w.get('[data-test=silver-input]').setValue('12'); // the player, before the next poll
+    await typeNumber(w.get('[data-test=silver-input]'), '12'); // the player, before the next poll
     const later = clone();
     later.doc.coins.gold = 31;
     later.doc.coins.silver = 99; // the GM again, on the same field the player is editing
@@ -267,7 +339,7 @@ describe('SheetView editing', () => {
 describe('SheetView weapon damage', () => {
   it('shows the damage bonus next to a weapon\'s damage: STR for a melee weapon, AGL for a ranged one', () => {
     const m = meReadonly();
-    m.derived.damageBonus = { str: 'D4', agl: 'D6' };
+    m.derived.damageBonus = [{ key: 'strength', short: 'STR', value: 'D4' }, { key: 'agility', short: 'AGL', value: 'D6' }];
     m.equipment.weapons[0].ranged = false;
     m.equipment.weapons[1].ranged = true;
     const w = mount(SheetView, { props: { me: m } });
@@ -279,7 +351,7 @@ describe('SheetView weapon damage', () => {
 
   it('shows nothing when the character has no damage bonus of that kind', () => {
     const m = meReadonly();
-    m.derived.damageBonus = { str: '', agl: '' };
+    m.derived.damageBonus = [{ key: 'strength', short: 'STR', value: '' }, { key: 'agility', short: 'AGL', value: '' }];
     const w = mount(SheetView, { props: { me: m } });
     expect(w.find('[data-test=weapon-damage-bonus]').exists()).toBe(false);
   });

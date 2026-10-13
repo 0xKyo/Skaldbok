@@ -43,6 +43,32 @@ async function withSession(w) {
   await click(w, 'new-session');
 }
 
+describe('MasterView: the shifts of the day', () => {
+  const filled = (w) => w.findAll('[data-test=shift]').filter((c) => c.classes().includes('on')).length;
+
+  it('has four circles beside the parts once there is a campaign, that fill as the shifts pass and are kept', async () => {
+    const { w } = await mountMaster();
+    expect(w.find('[data-test=shifts]').exists()).toBe(false);
+    await withCampaign(w);
+    expect(w.findAll('[data-test=shift]')).toHaveLength(4);
+    expect(w.get('[data-test=shifts]').text()).toContain('Shifts');
+    expect(filled(w)).toBe(0);
+    await w.findAll('[data-test=shift]')[1].trigger('click');
+    await flushPromises();
+    expect(filled(w)).toBe(2);                                                  // tapping a circle fills up to it
+    await w.findAll('[data-test=shift]')[1].trigger('click');
+    await flushPromises();
+    expect(filled(w)).toBe(1);                                                  // tapping the last filled one empties it
+    expect(server.campaigns[0].shifts).toBe(1);
+    await click(w, 'shifts-reset');
+    expect(filled(w)).toBe(0);                                                  // Reset: back to 0, and the players get their rests back
+    expect(server.campaigns[0].shifts).toBe(0);
+    expect(server.resets).toBe(1);
+    await click(w, 'part-screen');
+    expect(w.find('[data-test=shifts]').exists()).toBe(true);                   // on the Screen as well
+  });
+});
+
 describe('MasterView: the parts and the campaigns', () => {
   it('has two parts: the Master Screen (a board) and the Campaigns', async () => {
     const { w } = await mountMaster();

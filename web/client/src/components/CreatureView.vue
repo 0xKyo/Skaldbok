@@ -1,21 +1,19 @@
 <script setup>
 // GM-only creature catalog: searchable list on the left, full stat block on the right.
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { apiGet } from '../api.js';
-import DataTable from './DataTable.vue';
+import { t } from '../i18n.js';
+import IntroBlocks from './IntroBlocks.vue';
 import MessageImage from './MessageImage.vue';
 import PinButton from './PinButton.vue';
-import RuleText from './RuleText.vue';
-import { textBlocks, unplacedTables } from '../lib/ruletables.js';
 
 const props = defineProps({
   token: { type: String, required: true },
-  query: { type: String, default: '' },       // what the search bar of the Reference asks for
   jumpKey: { type: String, default: null },   // a creature to open when the list is read (a result of the search)
   prefix: { type: String, default: '' },      // '/gm' when the GM is signed in, '' for a player: the creatures are the same for both
 });
 
-const TAGS = [{ id: 'npc', label: 'NPC' }, { id: 'animal', label: 'Animal' }, { id: 'monster', label: 'Monster' }];
+const TAGS = computed(() => [{ id: 'npc', label: t('NPC') }, { id: 'animal', label: t('Animal') }, { id: 'monster', label: t('Monster') }]);
 
 const list = ref([]);       // [{id, key, name, sub, kind}]
 const intro = ref(null);    // the Bestiary's general text: the General Info tab
@@ -26,7 +24,7 @@ const tags = ref([]);       // active tag filters; none = every creature
 const shown = computed(() => (tags.value.length ? list.value.filter((c) => tags.value.includes(c.kind)) : list.value));
 
 function toggleTag(id) {
-  tags.value = tags.value.includes(id) ? tags.value.filter((t) => t !== id) : [...tags.value, id];
+  tags.value = tags.value.includes(id) ? tags.value.filter((x) => x !== id) : [...tags.value, id];
 }
 const selected = ref(null); // full monster detail
 
@@ -36,17 +34,14 @@ function pinCreature() {
   if (!c) return null;
   return { type: 'creature', key: c.key, title: c.name, data: { kind: c.kind, category: c.category, blocks: c.blocks, attacks: c.attacks, abilities: c.abilities, description: c.description ?? '' } };
 }
-const query = computed(() => props.query);
 const loading = ref(false);
 const loadingDetail = ref(false);
-let searchTimer = null;
 let openedFor = null;
 
 async function search() {
   loading.value = true;
   try {
-    const q = query.value.trim();
-    const data = await apiGet(`${props.prefix}/creatures${q ? `?q=${encodeURIComponent(q)}` : ''}`, props.token);
+    const data = await apiGet(`${props.prefix}/creatures`, props.token);
     list.value = data.creatures ?? [];
     intro.value = data.intro ?? null;
     if (selected.value && !list.value.find((c) => c.id === selected.value.id)) selected.value = null;
@@ -68,47 +63,29 @@ async function pick(item) {
   }
 }
 
-watch(query, () => {
-  clearTimeout(searchTimer);
-  searchTimer = setTimeout(search, 280);
-});
-
 onMounted(search);
 </script>
 
 <template>
-  <section class="creature-page" :class="{ 'detail-open': detailOpen }" aria-label="Creatures">
+  <section class="creature-page" :class="{ 'detail-open': detailOpen }" :aria-label="t('Creatures')">
     <!-- same page as every category: tabs, search, (filter tags), then the list with the description beside it; the Bestiary text is the General Info tab -->
-    <div v-if="intro" class="subtabs" role="group" aria-label="Sections">
-      <button :aria-pressed="tab === 'list'" data-test="creature-tab" @click="tab = 'list'">Creatures</button>
-      <button :aria-pressed="tab === 'info'" data-test="creature-tab" @click="tab = 'info'">General Info</button>
+    <div v-if="intro" class="subtabs" role="group" :aria-label="t('Sections')">
+      <button :aria-pressed="tab === 'list'" data-test="creature-tab" @click="tab = 'list'">{{ t('Creatures') }}</button>
+      <button :aria-pressed="tab === 'info'" data-test="creature-tab" @click="tab = 'info'">{{ t('General Info') }}</button>
     </div>
 
-    <div v-show="showList" class="tag-row" role="group" aria-label="Creature type">
-      <button v-for="t in TAGS" :key="t.id" class="tag" :aria-pressed="tags.includes(t.id)" data-test="creature-tag" @click="toggleTag(t.id)">{{ t.label }}</button>
+    <div v-show="showList" class="tag-row" role="group" :aria-label="t('Creature type')">
+      <button v-for="tg in TAGS" :key="tg.id" class="tag" :aria-pressed="tags.includes(tg.id)" data-test="creature-tag" @click="toggleTag(tg.id)">{{ tg.label }}</button>
     </div>
 
     <div v-if="intro && !showList" class="panel c-intro">
-      <template v-for="(b, i) in textBlocks(intro.body, intro.tables)" :key="'b' + i">
-        <DataTable v-if="b.table" :table="b.table" />
-        <ul v-else-if="b.list" class="rule-list"><li v-for="(it, k) in b.list" :key="k"><RuleText :text="it" /></li></ul>
-        <p v-else class="intro-p"><RuleText :text="b.text" /></p>
-      </template>
-      <template v-for="(s, si) in intro.sections" :key="si">
-        <p class="intro-section-name">{{ s.title }}</p>
-        <template v-for="(b, pi) in textBlocks(s.body, intro.tables)" :key="pi">
-          <DataTable v-if="b.table" :table="b.table" />
-          <ul v-else-if="b.list" class="rule-list"><li v-for="(it, k) in b.list" :key="k"><RuleText :text="it" /></li></ul>
-          <p v-else class="intro-p"><RuleText :text="b.text" /></p>
-        </template>
-      </template>
-      <DataTable v-for="t in unplacedTables([intro.body, ...intro.sections.map((s) => s.body)], intro.tables)" :key="t.title" :table="t" />
+      <IntroBlocks :intro="intro" />
     </div>
 
     <div v-show="showList" class="c-layout" :class="{ 'detail-open': detailOpen }">
-      <nav class="c-list" aria-label="Creatures">
-        <p v-if="loading" class="muted small" style="padding: 8px 12px;">Loading…</p>
-        <p v-else-if="!shown.length" class="muted" style="padding: 8px 12px;">Nothing found.</p>
+      <nav class="c-list" :aria-label="t('Creatures')">
+        <p v-if="loading" class="muted small" style="padding: 8px 12px;">{{ t('Loading…') }}</p>
+        <p v-else-if="!shown.length" class="muted" style="padding: 8px 12px;">{{ t('Nothing found.') }}</p>
         <button
           v-for="c in shown"
           :key="c.id"
@@ -122,31 +99,31 @@ onMounted(search);
       </nav>
 
       <div class="creature-detail-panel panel">
-      <button v-if="detailOpen" type="button" class="c-back link" data-test="creature-back" @click="selected = null">← Back</button>
-      <div v-if="loadingDetail" class="muted" style="padding: 1.5rem;">Loading…</div>
-      <div v-else-if="!selected" class="muted placeholder">Select a creature.</div>
+      <button v-if="detailOpen" type="button" class="c-back link" data-test="creature-back" @click="selected = null">← {{ t('Back') }}</button>
+      <div v-if="loadingDetail" class="muted" style="padding: 1.5rem;">{{ t('Loading…') }}</div>
+      <div v-else-if="!selected" class="muted placeholder">{{ t('Select a creature.') }}</div>
       <div v-else class="creature-detail">
         <!-- header -->
         <div class="detail-header">
           <h2 class="detail-name">{{ selected.name }}</h2>
           <span class="detail-meta">
-            {{ selected.kind === 'npc' ? 'NPC' : selected.kind === 'animal' ? 'Animal' : 'Monster' }}
+            {{ selected.kind === 'npc' ? t('NPC') : selected.kind === 'animal' ? t('Animal') : t('Monster') }}
             <template v-if="selected.category"> · {{ selected.category }}</template>
           </span>
           <PinButton :snapshot="pinCreature" style="margin-left: 8px;" />
-          <span v-if="selected.pack" class="chip" style="margin-left: 8px;" data-test="source-chip">Source · {{ selected.pack }}</span>
+          <span v-if="selected.pack" class="chip" style="margin-left: 8px;" data-test="source-chip">{{ t('Source') }} · {{ selected.pack }}</span>
         </div>
 
         <div class="stat-row" :class="{ 'has-image': selected.image }">
           <div class="stat-col">
             <!-- stats ref note -->
             <p v-if="selected.statsRef" class="stats-ref">
-              <em>Stats: {{ selected.statsRef }}</em>
+              <em>{{ t('Stats:') }} {{ selected.statsRef }}</em>
             </p>
 
             <!-- stat blocks -->
             <div v-for="(block, bi) in selected.blocks" :key="bi" class="stat-block">
-              <h4 class="block-title">{{ block.variant || 'Stat block' }}</h4>
+              <h4 class="block-title">{{ block.variant || t('Stat block') }}</h4>
               <table class="fields-table">
                 <tbody>
                   <tr v-for="f in block.fields" :key="f.label">
@@ -162,10 +139,10 @@ onMounted(search);
 
         <!-- attacks -->
         <div v-if="selected.attacks.length" class="section">
-          <h4 class="section-title">Attacks</h4>
+          <h4 class="section-title">{{ t('Attacks') }}</h4>
           <table class="attacks-table">
             <thead>
-              <tr><th>Roll</th><th>Attack</th><th>Effect</th></tr>
+              <tr><th>{{ t('Roll') }}</th><th>{{ t('Attack') }}</th><th>{{ t('Effect') }}</th></tr>
             </thead>
             <tbody>
               <tr v-for="(a, ai) in selected.attacks" :key="ai">
@@ -179,9 +156,9 @@ onMounted(search);
 
         <!-- abilities -->
         <div v-if="selected.abilities.length" class="section">
-          <h4 class="section-title">Abilities</h4>
+          <h4 class="section-title">{{ t('Abilities') }}</h4>
           <div v-for="a in selected.abilities" :key="a.name" class="ability-row">
-            <span class="ability-name">{{ a.kind === 'pc_ability' ? 'PC: ' : '' }}{{ a.name }}</span>
+            <span class="ability-name">{{ a.kind === 'pc_ability' ? t('PC: ') : '' }}{{ a.name }}</span>
             <span class="ability-text">{{ a.text }}</span>
           </div>
         </div>
@@ -194,11 +171,11 @@ onMounted(search);
 
         <!-- extra sections -->
         <details v-if="selected.randomEncounter" class="extra-section">
-          <summary>Random encounter</summary>
+          <summary>{{ t('Random encounter') }}</summary>
           <p>{{ selected.randomEncounter }}</p>
         </details>
         <details v-if="selected.adventureSeed" class="extra-section">
-          <summary>Adventure seed</summary>
+          <summary>{{ t('Adventure seed') }}</summary>
           <p>{{ selected.adventureSeed }}</p>
         </details>
       </div>
@@ -211,8 +188,6 @@ onMounted(search);
 .creature-page { display: flex; flex-direction: column; gap: 10px; }
 
 
-.c-intro .intro-p { font-size: 0.88rem; color: var(--ink); margin: 0 0 0.5em; line-height: 1.5; }
-.c-intro .intro-section-name { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--brown); margin: 0.6em 0 0.2em; }
 
 /* list + detail side by side, like every category */
 .c-layout { display: grid; grid-template-columns: 1fr; gap: 10px; }

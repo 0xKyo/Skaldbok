@@ -23,6 +23,8 @@ public:
     const std::set<std::string>& disabledPacks() const { return disabledPacks_; }
 
     WebSettings web;
+    // The GM's language ("en", "es"): the desktop app's, and the web pages' until a player picks another in their browser.
+    std::string language = "en";
 
 private:
     std::string file_;

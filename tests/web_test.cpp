@@ -196,12 +196,12 @@ void sheetView() {
     const json me = body(get(app, "/api/me", tokenOf(app, "Brenna")));
     check(me["name"] == "Brenna" && me["nickname"] == "Grimjaw" && me["player"] == "Sebastián", "name, nickname and player");
     check(me["kin"]["name"] == "Human" && me["profession"]["name"] == "Fighter" && me["age"]["label"] == "Adult", "kin, profession, age");
-    check(me["attributes"].size() == 6 && me["attributes"][0]["key"] == "STR" && me["attributes"][0]["value"] == 15 && me["attributes"][0]["baseChance"] == 6 &&
+    check(me["attributes"].size() == 6 && me["attributes"][0]["key"] == "strength" && me["attributes"][0]["value"] == 15 && me["attributes"][0]["baseChance"] == 6 &&
               me["attributes"][2]["value"] == 12 && me["attributes"][2]["baseChance"] == 5,
           "attributes with their base chance");
     check(me["hp"]["current"] == 10 && me["hp"]["max"] == 13 && me["wp"]["max"] == 10, "HP 10/13 and WP 10/10");
     check(me["derived"]["movement"] == 10, "movement: kin 10, AGL 12 changes nothing");
-    check(me["derived"]["damageBonus"]["str"] == "D4" && me["derived"]["damageBonus"]["agl"] == "", "damage bonus D4 for STR 15, none for AGL 12");
+    check(me["derived"]["damageBonus"][0]["key"] == "strength" && me["derived"]["damageBonus"][0]["value"] == "D4" && me["derived"]["damageBonus"][1]["key"] == "agility" && me["derived"]["damageBonus"][1]["value"] == "", "damage bonus D4 for STR 15, none for AGL 12");
     check(me["derived"]["encumbrance"]["carried"] == 3 && me["derived"]["encumbrance"]["limit"] == 8, "carrying 3 of 8 (rations count one per four)");
     check(me["conditions"].size() == 6 && std::ranges::none_of(me["conditions"], [](const json& c) { return c["active"].get<bool>(); }), "six conditions, none active");
     check(me["about"]["weakness"] == "Child of the Wild. I never sleep indoors." && me["about"]["notes"] == "Owes the innkeeper 3 silver.", "weakness and notes");
@@ -211,7 +211,7 @@ void sheetView() {
     const json& skills = me["skills"];
     const json* axes = find(skills, "name", "Axes");
     const json* acro = find(skills, "name", "Acrobatics");
-    check(axes && (*axes)["level"] == 12 && (*axes)["trained"] == true && (*axes)["attribute"] == "STR" && (*axes)["category"] == "weapon", "Axes: trained at 12");
+    check(axes && (*axes)["level"] == 12 && (*axes)["trained"] == true && (*axes)["attribute"] == "strength" && (*axes)["category"] == "weapon", "Axes: trained at 12");
     check(acro && (*acro)["level"] == 5 && (*acro)["trained"] == false && (*acro)["base"] == 5, "Acrobatics: untrained, base chance 5 (AGL 12)");
     check(find(skills, "name", "Evade") && (*find(skills, "name", "Evade"))["level"] == 10, "Evade trained at 10");
     check(!find(skills, "name", "Weapon Skills") && !find(skills, "name", "Animism"), "the weapon-skill heading and the schools of magic are left out");
@@ -487,6 +487,16 @@ void chat() {
                   get(app, "/api/gm/campaigns/" + campaignId, gmTok, "10.0.0.1", "PUT", R"({"name": "  "})").status == 400 && get(app, "/api/gm/campaigns/nope", gmTok, "10.0.0.1", "PUT", "{}").status == 404 &&
                   get(app, "/api/gm/campaigns/" + campaignId, brenna, "10.0.0.1", "PUT", "{}").status != 200,
               "a campaign needs a name, characters are ids, an unknown campaign is a 404, a player cannot change one");
+        // the rests are the player's to tick; the Master moving to the next shift gives them back
+        check(get(app, "/api/me", brenna, "10.0.0.1", "PATCH", R"({"set": {"round_rest": true, "stretch_rest": true}})").status == 200 && body(get(app, "/api/me", brenna))["rest"]["round"] == true,
+              "a player ticks the Round Rest and the Stretch Rest");
+        check(get(app, "/api/me", brenna, "10.0.0.1", "PATCH", R"({"set": {"round_rest": "yes"}})").status == 400, "a rest is ticked or not");
+        check(get(app, "/api/gm/campaigns/" + campaignId, gmTok, "10.0.0.1", "PUT", R"({"shifts": 5})").status == 400 && body(get(app, "/api/me", brenna))["rest"]["round"] == true, "a day has four shifts, and a refused change gives nothing back");
+        const json shifted = body(get(app, "/api/gm/campaigns/" + campaignId, gmTok, "10.0.0.1", "PUT", R"({"shifts": 1})"));
+        check(shifted["campaigns"][0]["shifts"] == 1 && body(get(app, "/api/me", brenna))["rest"]["round"] == false && body(get(app, "/api/me", brenna))["rest"]["stretch"] == false, "the next shift clears the rests of the characters of the campaign");
+        check(get(app, "/api/me", brenna, "10.0.0.1", "PATCH", R"({"set": {"stretch_rest": true}})").status == 200 &&
+                  get(app, "/api/gm/campaigns/" + campaignId, gmTok, "10.0.0.1", "PUT", R"({"shifts": 0, "reset": true})").status == 200 && body(get(app, "/api/me", brenna))["rest"]["stretch"] == false,
+              "Reset puts the shifts at 0 and gives the rests back, even to a campaign whose shifts were already at 0 first");
         const WebResponse firstMade = get(app, "/api/gm/sessions", gmTok, "10.0.0.1", "POST", inCampaign);
         const std::string firstId = body(firstMade).value("id", "");
         check(firstMade.status == 201 && body(firstMade)["name"] == "Session 1" && body(firstMade)["ended"] == "" && !body(firstMade)["created"].get<std::string>().empty() && body(get(app, "/api/gm/sessions", gmTok))["active"] == firstId,
@@ -688,20 +698,20 @@ void editing() {
     auto patch = [&](const std::string& token, const std::string& set) { return get(app, "/api/me", token, "10.0.0.1", "PATCH", "{\"set\": " + set + "}"); };
 
     const json me = body(get(app, "/api/me", brenna));
-    check(me["doc"]["hp"] == 10 && me["doc"]["attributes"]["STR"] == 15 && me["doc"]["skills"].is_array() && me["issues"].empty() && me["locked"] == false && me["revision"].is_number(),
+    check(me["doc"]["hp"] == 10 && me["doc"]["attributes"]["strength"] == 15 && me["doc"]["skills"].is_array() && me["issues"].empty() && me["locked"] == false && me["revision"].is_number(),
           "the sheet comes with the raw fields the editor works on, its open issues, and whether it is locked");
     check(!me["doc"].contains("kin") && !me["doc"].contains("id") && !me["doc"].contains("reviews") && !me["doc"].contains("created_at"), "and not the parts a player cannot change");
 
     // a plain edit
     WebResponse r = patch(brenna, R"({"hp": 7, "attributes": {"STR": 16}, "nickname": "Grimmer"})");
     json after = body(r);
-    check(r.status == 200 && after["hp"]["current"] == 7 && after["attributes"][0]["value"] == 16 && after["nickname"] == "Grimmer" && after["revision"].get<int>() == me["revision"].get<int>() + 1 && after["derived"]["damageBonus"]["str"] == "D4",
+    check(r.status == 200 && after["hp"]["current"] == 7 && after["attributes"][0]["value"] == 16 && after["nickname"] == "Grimmer" && after["revision"].get<int>() == me["revision"].get<int>() + 1 && after["derived"]["damageBonus"][0]["value"] == "D4",
           "an edit is applied and the answer is the new sheet, derived numbers recomputed");
-    check(body(get(app, "/api/me", brenna))["hp"]["current"] == 7 && readJson(file)["hp"] == 7 && readJson(file)["attributes"]["CON"] == 13 && readJson(file)["player"] == "Sebastián", "it is in the file, and the rest of the file is untouched");
+    check(body(get(app, "/api/me", brenna))["hp"]["current"] == 7 && readJson(file)["hp"] == 7 && readJson(file)["attributes"]["constitution"] == 13 && readJson(file)["player"] == "Sebastián", "it is in the file, and the rest of the file is untouched");
     ChangeLog log;
     log.setPrefDir(e.prefs + "/");
     const auto entries = log.entries(brennaId);
-    check(entries.size() == 1 && entries[0].by == "player" && contains(entries[0].summary, "HP 10 → 7") && contains(entries[0].summary, "STR 15 → 16") && entries[0].before["hp"] == 10, "the GM's log records who changed what, and what it was");
+    check(entries.size() == 1 && entries[0].by == "player" && contains(entries[0].summary, "HP 10 → 7") && contains(entries[0].summary, "Strength 15 → 16") && entries[0].before["hp"] == 10, "the GM's log records who changed what, and what it was");
     check(body(get(app, "/api/me", garmander))["nickname"] != "Grimmer", "another player's sheet is untouched: the token picks the character, nothing else does");
 
     // everything a player may change
@@ -733,7 +743,7 @@ void editing() {
     after = body(r);
     std::set<std::string> flagged;
     for (const json& i : after["issues"]) flagged.insert(i["key"]);
-    check(r.status == 200 && flagged.count("encumbrance") && flagged.count("attr:INT") && flagged.count("hp") && after["issues"][0]["status"] == "pending" && after["equipment"]["inventory"].size() == 14,
+    check(r.status == 200 && flagged.count("encumbrance") && flagged.count("attr:intelligence") && flagged.count("hp") && after["issues"][0]["status"] == "pending" && after["equipment"]["inventory"].size() == 14,
           "carrying too much, an attribute above 18, HP above the maximum: all allowed, all flagged as pending");
 
     // the GM rules on it (the app does this through the same file)
@@ -741,7 +751,7 @@ void editing() {
     Character::fromJson(readText(file), c, nullptr);
     c.id = brennaId;
     sheet::review(c, "encumbrance", true);
-    sheet::review(c, "attr:INT", false);
+    sheet::review(c, "attr:intelligence", false);
     json ruling = json::object();
     json reviews = json::object();
     for (const auto& [k, v] : c.reviews) reviews[k] = {{"status", v.status}, {"value", v.value}, {"at", v.at}};
@@ -750,7 +760,7 @@ void editing() {
     after = body(get(app, "/api/me", brenna));
     std::map<std::string, std::string> status;
     for (const json& i : after["issues"]) status[i["key"]] = i["status"];
-    check(!status.count("encumbrance") && status["attr:INT"] == "rejected" && status["hp"] == "pending", "approved: it is normal now; rejected: it stays, marked so; the rest still waits");
+    check(!status.count("encumbrance") && status["attr:intelligence"] == "rejected" && status["hp"] == "pending", "approved: it is normal now; rejected: it stays, marked so; the rest still waits");
     r = patch(brenna, R"({"attributes": {"INT": 14}, "hp": 10})");
     after = body(r);
     check(after["issues"].empty(), "the player fixes the rest by hand, and the flags go away (the approved load stays approved while it stays the same)");
@@ -783,7 +793,7 @@ void rules() {
     std::vector<std::string> types, packs;
     for (const json& t : summary["types"]) types.push_back(t["id"]);
     for (const json& p : summary["packs"]) packs.push_back(p["id"]);
-    check(types == std::vector<std::string>{"spells", "abilities", "skills", "kin", "professions", "weapons", "armor", "gear", "creatures"}, "the types on offer: the same as the GM's, creatures included, no tables");
+    check(types == std::vector<std::string>{"spells", "abilities", "skills", "kin", "professions", "weapons", "armor", "gear", "tiny", "creatures"}, "the types on offer: the same as the GM's, the tiny items and creatures included, no tables");
     check(packs == std::vector<std::string>{"core", "frostmarch"}, "packs: Core and homebrew; the fixture's settings.yaml switches hidden-pack off");
     std::vector<std::string> names;
     const json allSpells = body(get(app, "/api/content/spells", token));      // (kept in a variable: a range over a temporary would dangle)
@@ -998,6 +1008,11 @@ void realData() {
           "the real Core pack resolves the keys the app really writes (Veteran, core source hidden)");
     check(me["derived"]["movement"] == 10 && find(me["skills"], "name", "Axes") && !me["equipment"]["weapons"].empty() && !me["equipment"]["weapons"][0]["stats"].empty(),
           "real kin movement and equipment stats");
+    json mage;
+    for (const json& p : body(get(app, "/api/gm/creation", app.access().gmToken()))["professions"])
+        if (p["canon"] == "Mage") mage = p;
+    check(mage["schools"].size() == 3 && mage["skillsBySchool"].size() == 3 && mage["skillsBySchool"]["Mentalism"][0] == "Mentalism",
+          "a mage chooses among the schools of magic (the skills of that category), each with its own skill list");
     const json spells = body(get(app, "/api/content/spells", token))["entries"];
     check(spells.size() >= 66, "the real spells are there");
     check(spells[0]["pack"] == "Dragonbane Core", "every card says the pack it comes from (the page shows it as a Source tag)");

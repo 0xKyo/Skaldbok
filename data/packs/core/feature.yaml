@@ -1,0 +1,21 @@
+kind: feature
+hidden: true
+entities:
+  - id: feature_requiresQuiver
+    name: LOC_FEATURE_REQUIRES_QUIVER
+  - id: feature_noDamageBonus
+    name: LOC_FEATURE_NO_DAMAGE_BONUS
+  - id: feature_canBeThrown
+    name: LOC_FEATURE_CAN_BE_THROWN
+  - id: feature_subtle
+    name: LOC_FEATURE_SUBTLE
+  - id: feature_toppling
+    name: LOC_FEATURE_TOPPLING
+  - id: feature_cannotParry
+    name: LOC_FEATURE_CANNOT_PARRY
+  - id: feature_long
+    name: LOC_FEATURE_LONG
+  - id: feature_requiresCombatTrainedMount
+    name: LOC_FEATURE_REQUIRES_COMBAT_TRAINED_MOUNT
+  - id: feature_reducesStrRequirement
+    name: LOC_FEATURE_REDUCES_STR_REQUIREMENT

@@ -200,10 +200,16 @@ entrada elegida; si además tienen `intro`, se muestra como una pestaña "Intro"
 ### spells.yaml — hechizos y trucos
 `school` (por defecto *General Magic*), `trick` (`true` = truco de magia), `rank`, `prerequisite`, `requirement`,
 `casting_time`, `range`, `duration`, `description`.
-Una escuela nueva (por ejemplo `Frostcraft`) aparece sola en la lista de Spells (el filtro también busca por escuela).
+`school` es la habilidad de la escuela, por id (`skills_animism`); `prerequisite` nombra lo que hay que saber antes: una habilidad o un hechizo
+por id (`spell_fireBlast`), una lista si hacen falta todos (`[spell_fireBlast, spell_whirlwind]`) o `{any: [spell_protector, spell_dispel]}`
+si basta uno. Un texto suelto (`Any School of Magic`) sigue valiendo. En la carta, cada nombre es un link.
+Una escuela nueva (por ejemplo `Frostcraft`) aparece sola en la lista de Spells (el filtro también busca por escuela). Para que también se pueda **elegir al crear un mago**, basta una habilidad `category: magic` con el nombre de la escuela: el creador ofrece las escuelas que nombra el mago (`skills_by_school`) más todas las habilidades de esa categoría; una escuela sin lista propia recibe su habilidad y las que las demás escuelas tienen en común.
 
 ### abilities.yaml — aptitudes
-`type` (`heroic` o `kin`), `kin` (para las innatas), `requirement`, `wp_cost`, `description`.
+`type` (`heroic` o `kin`), `kin` (para las innatas: el id de la raza, `kin_human`), `requirement`, `rank`, `wp_cost` (número), `description`.
+`requirement` es la habilidad que se pide, por id (`skills_knives`), con su nivel aparte en `rank: 12`; si basta una de varias, una lista
+(`[skills_axes, skills_swords]`: "Axes or Swords 12"). Para lo que no es una habilidad concreta ("Any melee weapon skill") se escribe el texto
+(una clave `LOC_…`) y se deja el `rank`. La carta muestra "Knives 12" con la habilidad como link; sin `requirement` no hay línea.
 
 ### skills.yaml — habilidades
 `attribute` (`STR CON AGL INT WIL CHA`), `category` (`core`, `weapon`, `magic` u otra), `description`.
@@ -245,13 +251,18 @@ Cualquiera de las tres listas puede faltar. Un pack escrito antes, con `weapons.
 (y puede convivir con un `equipment.yaml`). La vista no cambia: siguen siendo los tipos *weapons*, *armor* y *gear*.
 
 * Arma: `kind` (`melee`/`ranged`), `grip`, `str_req`, `range`, `damage`, `damage_types` (lista: uno o varios, por ejemplo `[Piercing, Slashing]`),
-  `durability`, `cost`, `supply`, `features`.
+  `durability`, el precio, `supply`, `features`.
+* **Lo que son reglas son datos, no textos:** el precio son números (`cost_gold`, `cost_silver`, `cost_copper`, y `cost_note` para lo que sigue: `× potency`, `/ day`),
+  `range` es un número, y `grip`, `supply` y `features` nombran por id lo que son (`grip_1h`, `supply_common`, `features: [feature_toppling, feature_canBeThrown]`, `size_tiny`):
+  esas listas viven en `grip.yaml`, `supply.yaml`, `feature.yaml` y `size.yaml`, que llevan `hidden: true` (dan nombres a las cartas pero no son una tabla para el lector).
+  Los textos de siempre (`cost: 10 silver`, `supply: Rare`, `features: Subtle`) siguen valiendo en un pack propio.
 * Armadura: `slot` (`armor` o `helmet`), `armor_rating`, `armor_bonuses` (lista de bonus condicionales: `damage_type` y `bonus`, por ejemplo
   `- damage_type: Slashing` / `bonus: 2`; puede haber varios), `banes` (lista de habilidades que reciben un bane mientras se lleva puesta,
   por ejemplo `[Evade, Sneaking]`, o `Ranged attacks`; la ficha web los aplica sola al equiparla), `cost`, `supply`, `effect`.
 * Los tipos de daño son entidades (`category: Damage Types`, en `damage-types.yaml` del Core): un pack agrega un tipo nuevo escribiendo su
-  entidad, y ya se puede usar en `damage_types` de las armas y en `armor_bonuses` de las armaduras.
-* Objeto: `category`, `cost`, `supply`, `weight`, `effect`.
+  entidad, y ya se puede usar en `damage_types` de las armas y en `armor_bonuses` de las armaduras. En el Core se nombran por id
+  (`damageTypes_slashing`); un nombre suelto (`Slashing`) también vale.
+* Objeto: `category`, `cost_*` (o `cost`), `supply`, `weight`, `effect`.
 
 Este equipo no tiene una lista propia: las armas, armaduras y objetos del libro son las tablas de la categoría **Gear**
 (en Reference, con su propio `gear.yaml`, ver más arriba); se puede igual añadir a la ficha de un personaje y buscarlo en la Reference.
@@ -273,11 +284,12 @@ creatures:
     attack_dice: D6
     statblocks:
       - fields:
-          Ferocity: "2"
-          Size: Normal
-          Movement: "10"
-          Armor: "2"
-          HP: "18"
+          monster_ferocity: 2
+          core_size: sizes_normal
+          core_movement: 10
+          core_armor: 2
+          core_hp: 18
+          Weakness: Fire
     attacks:
       - roll: 1-2
         name: Rimed Claws
@@ -292,8 +304,15 @@ creatures:
     page: 40
 ```
 * `kind`: `monster`, `npc` o `animal`. `category` agrupa la lista.
-* `statblocks`: uno o varios (por ejemplo *Scout* y *Warrior*); `fields` conserva el orden que escribas. El campo **HP**
-  se muestra tal cual en el bloque de estadísticas.
+* `statblocks`: uno o varios (por ejemplo *Scout* y *Warrior*); `fields` conserva el orden que escribas. Las claves que empiezan con `core_` (lo que toda criatura
+  tiene: `core_hp`, `core_wp`, `core_movement`, `core_armor`, `core_size`) o `monster_` (lo propio de los monstruos de este juego: `monster_ferocity`) son **reglas**:
+  un número, o el id de algo (`core_size: sizes_large`), y su etiqueta sale de la palabra de esa regla (`LOC_LABEL_HP`, en cada idioma). Cualquier otra clave es la etiqueta misma
+  con su texto (`Weakness: Fire`). Una regla que no es un número (`core_armor: Leather (1)`, `monster_ferocity: 1/head`) se escribe como texto.
+  Otras reglas con forma propia (el programa dice las palabras en cada idioma):
+  `core_skills: {skills_awareness: 10, skills_evade: 8}` ("Awareness 10, Evade 8"), `core_damage_bonus: {strength: D4}` (`{}`: "—"),
+  `monster_typical_armor: [armor_leather]` ("Leather (1)": el nivel sale de la carta), `monster_spells: [spell_fireball]`, `monster_abilities: [ability_veteran, {ability_robust: 4}]`
+  ("Robust × 4"), `monster_typical_weapons` y `monster_attack: [{name: LOC_…, skill_level: 12, damage: 2D8}]` ("Scimitar (skill level 12, damage 2D6)"; el `name` es el texto, el `damage`
+  un dado o un texto). Lo que no entra en estas formas (una lista con "Robusta × 4" en femenino, un arma suelta) sigue como `etiqueta: texto`.
 * `attacks`: la tabla de ataques de monstruo. `roll` es `"1"`, `"1-2"`…; sin `roll`, las filas se numeran en orden.
   Si `text` no empieza por el `name`, se antepone. `attack_dice` (por defecto `D6`) es el dado de esa tabla.
 * `image`: ruta **relativa a la carpeta del pack**, dentro de ella. Una ruta con `..` o absoluta se ignora con un aviso.
@@ -348,6 +367,12 @@ Una tabla de `tables.yaml` (sin regla) aparece en Rules bajo una sección propia
 del árbol. Buscar una tabla en la Reference o abrirla desde una criatura lleva a su sección. Una criatura enlaza
 su tabla con `tables: ["First Name"]`; si existe una tabla llamada `<Criatura>: First Name` (por ejemplo `Goblin: First Name`),
 enlaza a esa, y si no, a la primera con ese título.
+
+### age.yaml — las edades
+Cada edad (`age_young`, `age_adult`, `age_old`) lleva sus reglas en `fields`: `trained_skills_profession` y `trained_skills_free` (cuántas habilidades entrenadas da, de la profesión y a elección) y `mods` (atributo -> lo que suma o resta al tirado, nunca por encima de 18). Lo que se ve (la tabla de edades, el resumen del creador) se arma con eso y con el idioma; el programa usa los mismos números.
+
+### Cantidades con dado en los `fields` de una entidad
+Una cantidad que se tira se escribe como regla, no como texto: `rations_amount: 2` y `rations_dice: core_dice_D6` (en `data/system/dice.yaml`: `core_dice_D3`, `D4`, `D6`, `D8`, `D10`, `D12`, `D20`, `D100`; o `"-"` si no hay dado) son **una columna**, RATIONS, que dice "2D6". Una cantidad de 1 con dado dice solo "D3"; sin dado, el número (`rations_amount: 1` + `"-"` dice "1"). La palabra de la columna es `LOC_LABEL_RATIONS` (el nombre de la regla en mayúsculas). Sirve para cualquier `<nombre>_amount` / `<nombre>_dice`.
 
 ### Entidades — los datos no son tablas
 
@@ -473,3 +498,69 @@ habilidades entrenadas dan y cómo cambian los atributos). Sirve como referencia
   fijar los `id` desde el principio.
 * Límites: 64 MB por archivo YAML, 5 000 archivos y 512 MB por pack; solo se importan `.yaml .png .jpg .jpeg .gif .bmp .txt .md`.
   Un `.zip` con rutas que intenten salir de la carpeta (`../`) se rechaza.
+
+## Traducciones
+
+### Archivos de textos: `i18n/en.csv` y `i18n/es.csv` (la forma nueva)
+
+Los archivos de datos migrados (todo `data/system` y los packs `core` y `mistyvale`, salvo manifiestos y `strings.yaml`) no llevan palabras:
+cada entidad tiene un `id` explícito y cada texto es una **clave** `LOC_...` (`name: LOC_SKILL_BUSHCRAFT`, `description: LOC_SKILL_BUSHCRAFT_DESC`).
+Las palabras viven en `i18n/en.csv` y `i18n/es.csv` del pack (o de `data/system`), con la forma `key,text` (CSV estándar: comillas
+dobles si el texto lleva coma, comillas o saltos de línea). Para agregar un idioma basta escribir su `xx.csv`.
+
+* Los `id` son `<lo que es>_<nombre en camelCase>`: `skills_bluffing`, `ability_musician`, `spell_cookFood`, `profession_bard`, `injuries_teethKnockedOut`
+  (en un archivo de `entities` el prefijo es el nombre del archivo). Un nombre con número aparte usa `_`: `creature_skeletons_2`. La **clave** de la
+  carta (`core/skill/myths-and-legends`) sale del id sin el prefijo, con un `-` antes de cada mayúscula, y no cambia. Las listas que nombran
+  otras cosas las nombran por id (`skills: [skills_acrobatics]`, `heroic_abilities`, `innate_abilities`, `banes`, y el `group` de una acción);
+  un nombre suelto, como el de un homebrew, también se acepta. Los `id` de los capítulos de una aventura no cambian.
+* Lo que una carta nombra de otra se ve como **link** por sí solo: la habilidad innata de una raza, las habilidades y la aptitud heroica de una
+  profesión, las desventajas (`banes`) de una armadura. Para cualquier otro texto, escribe el link a mano (`[[Flexible|core/ability/adaptive]]`;
+  el destino puede ser el nombre en inglés o la clave completa de la carta, y el link abre la página de su tipo).
+* Una carta puede **incluir** a otra dentro de su texto con una línea que sea solo `{{include: ability_adaptive}}` (el id, la clave completa o
+  el nombre): se dibuja ahí como una tarjeta propia que se **abre y se cierra**, con su nombre (que lleva a ella), sus campos y su texto. Hay dos formas de nombrar a otra carta: **Include** (se muestra ahí mismo) y **Link** (`[[nombre|clave]]`: solo el nombre, que lleva a su página); la guía para elegir está en `.claude/skills/linking-entities`. La página de Razas lo hace sola con
+  cada `innate_abilities` de la raza que su texto no incluya ya; el yaml no escribe nada.
+* Una clave es `LOC_` + mayúsculas, dígitos y `_`. Un texto que falta en el idioma pedido cae al inglés y, si tampoco está, se muestra la propia clave.
+* Las claves valen en cualquier lugar de un archivo (valores y nombres de clave de un mapa). Los campos `fields` usan claves como etiqueta.
+* `{agility}` dentro de un texto se reemplaza por la abreviatura de ese atributo en el idioma activo.
+* Un `name` o `category` que es clave conserva su inglés (`_key`, `_category_key`), así las claves de entidades, los vínculos y `rollable` no cambian.
+* Un homebrew puede seguir escribiendo texto plano, o traer su propio `i18n/*.csv` con sus claves.
+* Atributos: `data/system/attributes.yaml` (ids `strength`, `agility`...; `name`, `abbr`, `description` son claves) y las tablas numéricas
+  (`base-chance`, `movement-modifier`, `damage-bonus`) en `data/system/lookups.yaml`. Los códigos viejos (`STR`...) se aceptan como `aliases`.
+
+### Superposición por idioma (la forma anterior, aún válida para packs que no migraron)
+
+Los datos se escriben en inglés: los `id`, las claves, los nombres que usan los personajes guardados y los archivos de la app están
+en inglés y no cambian con el idioma. Un pack (y `data/system`) puede traer, al lado de sus archivos, la **traducción** de cada uno:
+
+```
+mipack/
+  spells.yaml
+  creatures.yaml
+  i18n/
+    es/
+      spells.yaml        # solo lo que cambia: nombres, textos, categorías
+      creatures.yaml
+      images/maps/...    # opcional: un dibujo con palabras escritas, en ese idioma
+```
+
+Cuando se lee el contenido en ese idioma, la traducción se **superpone** al archivo inglés, que sigue siendo el que manda:
+
+* Los objetos se combinan clave por clave: lo que la traducción no dice queda como en inglés (números, `rollable`, `roll`, `page`...).
+* Una **lista de objetos** se empareja ítem por ítem: por `id` si lo tienen, o por el nombre inglés escrito como `en:`
+  (`- en: Frost` / `name: Congelar`); si no hay ninguno de los dos, por posición. Un ítem de la traducción que no encuentra pareja se ignora.
+* Una lista de valores simples y todo objeto `fields` (los atributos de una criatura) **se reemplazan enteros**: la traducción tiene que
+  traerlos completos (`fields: { Ferocidad: 2, Tamaño: Normal, ... }`).
+* Lo que se renombra conserva su inglés: un `name` traducido guarda el inglés como `_key` (de ahí sale la clave de la entrada, que no
+  cambia) y una `category` traducida lo guarda como `_category_key`. Por eso un personaje guardado en inglés se abre igual en español.
+* Los vínculos siguen apuntando al inglés y muestran el texto traducido: `[[Congelar|Frost]]`, `{{key: tirada de rescate | death roll}}`,
+  `{{table: Random Events}}` (el nombre inglés de la tabla).
+* `manifest.yaml` también se traduce: `name`, `description` y, en `sources`, el `title`, `short` y `file` de cada libro (el PDF en ese
+  idioma). La numeración de páginas es la del libro inglés.
+* Una aventura (`adventure.yaml`) se traduce igual: `title` y `chapters`, cada capítulo y sección emparejados por `id`, con su `title` y
+  su `body`. Los dibujos de la aventura que llevan palabras (mapas con nombres, cabeceras de capítulo) pueden tener su versión en
+  `i18n/<idioma>/images/...`, con la misma ruta que el inglés; los que no la tienen se muestran como están.
+* Las palabras del programa (botones, mensajes) no están en los packs: van en `data/system/i18n/<idioma>/strings.yaml`
+  (`"English text": "traducción"`) y, en la web, en `web/client/src/locales/<idioma>.js`.
+
+Idiomas disponibles: inglés (`en`) y español (`es`). Core y El Valle Brumoso traen la traducción completa de los libros en español
+(textos tal como en los libros en español; si una regla difiere, vale la inglesa).

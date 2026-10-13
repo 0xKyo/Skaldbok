@@ -1,16 +1,29 @@
 kind: age
+category: LOC_CATEGORY_AGE
 rollable:
   - Age
 entities:
-  - name: Young
+  - id: age_young
+    name: LOC_AGE_YOUNG
     fields:
-      TRAINED SKILLS: 6+2
-      ATTRIBUTES: AGL and CON +1
-  - name: Adult
+      trained_skills_profession: 6
+      trained_skills_free: 2
+      mods:
+        agility: 1
+        constitution: 1
+  - id: age_adult
+    name: LOC_AGE_ADULT
     fields:
-      TRAINED SKILLS: 6+4
-      ATTRIBUTES: —
-  - name: Old
+      trained_skills_profession: 6
+      trained_skills_free: 4
+  - id: age_old
+    name: LOC_AGE_OLD
     fields:
-      TRAINED SKILLS: 6+6
-      ATTRIBUTES: STR, AGL and CON −2, INT and WIL +1
+      trained_skills_profession: 6
+      trained_skills_free: 6
+      mods:
+        strength: -2
+        agility: -2
+        constitution: -2
+        intelligence: 1
+        willpower: 1

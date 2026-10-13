@@ -2,6 +2,7 @@
 // A table of the rules: optional dice, a roll column when it has dice, then the columns. A table with a die can be rolled:
 // the button picks a random result and marks its row.
 import { computed, ref } from 'vue';
+import { t } from '../i18n.js';
 import PinButton from './PinButton.vue';
 
 const props = defineProps({
@@ -35,8 +36,8 @@ function roll() {
   <div class="data-table">
     <div class="dt-title">
       <template v-if="!hideTitle">{{ table.title }}</template><span v-if="table.dice" class="dt-dice">{{ table.dice }}</span>
-      <button v-if="sides" type="button" class="dt-roll-btn" data-test="table-roll" @click="roll">Roll {{ table.dice }}</button>
-      <span v-if="rolled" class="dt-result" data-test="table-rolled">rolled {{ rolled.value }}</span>
+      <button v-if="sides" type="button" class="dt-roll-btn" data-test="table-roll" @click="roll">{{ t('Roll') }} {{ table.dice }}</button>
+      <span v-if="rolled" class="dt-result" data-test="table-rolled">{{ t('rolled {n}', { n: rolled.value }) }}</span>
       <PinButton v-if="pinnable" :snapshot="pinTable" small />
     </div>
     <div class="dt-scroll">

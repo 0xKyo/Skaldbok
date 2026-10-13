@@ -17,37 +17,43 @@
   "school": "",
   "attributes": [
     {
-      "key": "STR",
+      "key": "strength",
+      "short": "STR",
       "name": "Strength",
       "value": 15,
       "baseChance": 6
     },
     {
-      "key": "CON",
+      "key": "constitution",
+      "short": "CON",
       "name": "Constitution",
       "value": 13,
       "baseChance": 6
     },
     {
-      "key": "AGL",
+      "key": "agility",
+      "short": "AGL",
       "name": "Agility",
       "value": 12,
       "baseChance": 5
     },
     {
-      "key": "INT",
+      "key": "intelligence",
+      "short": "INT",
       "name": "Intelligence",
       "value": 9,
       "baseChance": 5
     },
     {
-      "key": "WIL",
+      "key": "willpower",
+      "short": "WIL",
       "name": "Willpower",
       "value": 10,
       "baseChance": 5
     },
     {
-      "key": "CHA",
+      "key": "charisma",
+      "short": "CHA",
       "name": "Charisma",
       "value": 11,
       "baseChance": 5
@@ -66,41 +72,55 @@
   "conditions": [
     {
       "name": "Exhausted",
-      "attribute": "STR",
-      "active": false
+      "attribute": "strength",
+      "active": false,
+      "attributeShort": "STR"
     },
     {
       "name": "Angry",
-      "attribute": "INT",
-      "active": false
+      "attribute": "intelligence",
+      "active": false,
+      "attributeShort": "INT"
     },
     {
       "name": "Sickly",
-      "attribute": "CON",
-      "active": false
+      "attribute": "constitution",
+      "active": false,
+      "attributeShort": "CON"
     },
     {
       "name": "Scared",
-      "attribute": "WIL",
-      "active": false
+      "attribute": "willpower",
+      "active": false,
+      "attributeShort": "WIL"
     },
     {
       "name": "Dazed",
-      "attribute": "AGL",
-      "active": false
+      "attribute": "agility",
+      "active": false,
+      "attributeShort": "AGL"
     },
     {
       "name": "Disheartened",
-      "attribute": "CHA",
-      "active": false
+      "attribute": "charisma",
+      "active": false,
+      "attributeShort": "CHA"
     }
   ],
   "derived": {
     "movement": 10,
-    "damageBonus": {
-      "str": "D4",
-      "agl": ""
-    },
+    "damageBonus": [
+      {
+        "key": "strength",
+        "short": "STR",
+        "value": "D4"
+      },
+      {
+        "key": "agility",
+        "short": "AGL",
+        "value": ""
+      }
+    ],
     "encumbrance": {
       "carried": 3,
       "limit": 8
@@ -110,123 +130,135 @@
   "skills": [
     {
       "name": "Acrobatics",
-      "attribute": "AGL",
+      "attribute": "agility",
       "category": "core",
       "level": 5,
       "base": 5,
       "trained": false,
       "marked": false,
-      "key": "core/skill/acrobatics"
+      "key": "core/skill/acrobatics",
+      "attributeLabel": "AGL"
     },
     {
       "name": "Awareness",
-      "attribute": "INT",
+      "attribute": "intelligence",
       "category": "core",
       "level": 10,
       "base": 5,
       "trained": true,
       "marked": false,
-      "key": "core/skill/awareness"
+      "key": "core/skill/awareness",
+      "attributeLabel": "INT"
     },
     {
       "name": "Evade",
-      "attribute": "AGL",
+      "attribute": "agility",
       "category": "core",
       "level": 10,
       "base": 5,
       "trained": true,
       "marked": false,
-      "key": "core/skill/evade"
+      "key": "core/skill/evade",
+      "attributeLabel": "AGL"
     },
     {
       "name": "Healing",
-      "attribute": "INT",
+      "attribute": "intelligence",
       "category": "core",
       "level": 10,
       "base": 5,
       "trained": true,
       "marked": false,
-      "key": "core/skill/healing"
+      "key": "core/skill/healing",
+      "attributeLabel": "INT"
     },
     {
       "name": "Ice Lore",
-      "attribute": "INT",
+      "attribute": "intelligence",
       "category": "core",
       "level": 5,
       "base": 5,
       "trained": false,
       "marked": false,
-      "key": "core/skill/ice-lore"
+      "key": "core/skill/ice-lore",
+      "attributeLabel": "INT"
     },
     {
       "name": "Riding",
-      "attribute": "AGL",
+      "attribute": "agility",
       "category": "core",
       "level": 10,
       "base": 5,
       "trained": true,
       "marked": false,
-      "key": "core/skill/riding"
+      "key": "core/skill/riding",
+      "attributeLabel": "AGL"
     },
     {
       "name": "Swimming",
-      "attribute": "AGL",
+      "attribute": "agility",
       "category": "core",
       "level": 10,
       "base": 5,
       "trained": true,
       "marked": false,
-      "key": "core/skill/swimming"
+      "key": "core/skill/swimming",
+      "attributeLabel": "AGL"
     },
     {
       "name": "Axes",
-      "attribute": "STR",
+      "attribute": "strength",
       "category": "weapon",
       "level": 12,
       "base": 6,
       "trained": true,
       "marked": false,
-      "key": "core/skill/axes"
+      "key": "core/skill/axes",
+      "attributeLabel": "STR"
     },
     {
       "name": "Bows",
-      "attribute": "AGL",
+      "attribute": "agility",
       "category": "weapon",
       "level": 10,
       "base": 5,
       "trained": true,
       "marked": false,
-      "key": "core/skill/bows"
+      "key": "core/skill/bows",
+      "attributeLabel": "AGL"
     },
     {
       "name": "Brawling",
-      "attribute": "STR",
+      "attribute": "strength",
       "category": "weapon",
       "level": 12,
       "base": 6,
       "trained": true,
       "marked": false,
-      "key": "core/skill/brawling"
+      "key": "core/skill/brawling",
+      "attributeLabel": "STR"
     },
     {
       "name": "Crossbows",
-      "attribute": "AGL",
+      "attribute": "agility",
       "category": "weapon",
       "level": 10,
       "base": 5,
       "trained": true,
       "marked": false,
-      "key": "core/skill/crossbows"
+      "key": "core/skill/crossbows",
+      "attributeLabel": "AGL"
     },
     {
       "name": "Swords",
-      "attribute": "STR",
+      "attribute": "strength",
       "category": "weapon",
       "level": 12,
       "base": 6,
       "trained": true,
       "marked": false,
-      "key": "core/skill/swords"
+      "key": "core/skill/swords",
+      "attributeLabel": "STR"
     }
   ],
   "abilities": [
@@ -331,7 +363,10 @@
           "value": "4"
         }
       ],
-      "banes": ["Evade", "Sneaking"],
+      "banes": [
+        "Evade",
+        "Sneaking"
+      ],
       "ranged": false,
       "description": ""
     },
@@ -382,12 +417,12 @@
     "appearance": "",
     "notes": "Owes the innkeeper 3 silver.",
     "attributes": {
-      "STR": 15,
-      "CON": 13,
-      "AGL": 12,
-      "INT": 9,
-      "WIL": 10,
-      "CHA": 11
+      "strength": 15,
+      "constitution": 13,
+      "agility": 12,
+      "intelligence": 9,
+      "willpower": 10,
+      "charisma": 11
     },
     "hp": 10,
     "wp": 10,
@@ -398,7 +433,7 @@
       {
         "name": "Awareness",
         "key": "core/skill/awareness",
-        "attribute": "INT",
+        "attribute": "intelligence",
         "level": 10,
         "trained": true,
         "marked": false
@@ -406,7 +441,7 @@
       {
         "name": "Evade",
         "key": "core/skill/evade",
-        "attribute": "AGL",
+        "attribute": "agility",
         "level": 10,
         "trained": true,
         "marked": false
@@ -414,7 +449,7 @@
       {
         "name": "Healing",
         "key": "core/skill/healing",
-        "attribute": "INT",
+        "attribute": "intelligence",
         "level": 10,
         "trained": true,
         "marked": false
@@ -422,7 +457,7 @@
       {
         "name": "Riding",
         "key": "core/skill/riding",
-        "attribute": "AGL",
+        "attribute": "agility",
         "level": 10,
         "trained": true,
         "marked": false
@@ -430,7 +465,7 @@
       {
         "name": "Swimming",
         "key": "core/skill/swimming",
-        "attribute": "AGL",
+        "attribute": "agility",
         "level": 10,
         "trained": true,
         "marked": false
@@ -438,7 +473,7 @@
       {
         "name": "Axes",
         "key": "core/skill/axes",
-        "attribute": "STR",
+        "attribute": "strength",
         "level": 12,
         "trained": true,
         "marked": false
@@ -446,7 +481,7 @@
       {
         "name": "Bows",
         "key": "core/skill/bows",
-        "attribute": "AGL",
+        "attribute": "agility",
         "level": 10,
         "trained": true,
         "marked": false
@@ -454,7 +489,7 @@
       {
         "name": "Brawling",
         "key": "core/skill/brawling",
-        "attribute": "STR",
+        "attribute": "strength",
         "level": 12,
         "trained": true,
         "marked": false
@@ -462,7 +497,7 @@
       {
         "name": "Crossbows",
         "key": "core/skill/crossbows",
-        "attribute": "AGL",
+        "attribute": "agility",
         "level": 10,
         "trained": true,
         "marked": false
@@ -470,7 +505,7 @@
       {
         "name": "Swords",
         "key": "core/skill/swords",
-        "attribute": "STR",
+        "attribute": "strength",
         "level": 12,
         "trained": true,
         "marked": false

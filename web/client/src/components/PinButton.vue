@@ -2,6 +2,7 @@
 // 📌 Pin: puts what is on screen on the master's board (the Master tab). Only the GM has a board, so for everybody else it is not there.
 // `snapshot` gives {type, key, title, data} when it is clicked (a function: what is pinned is whatever is open at that moment).
 import { inject } from 'vue';
+import { t } from '../i18n.js';
 
 const props = defineProps({
   snapshot: { type: Function, required: true },
@@ -17,8 +18,8 @@ function pin() {
 </script>
 
 <template>
-  <button v-if="board" type="button" class="pin-btn" :class="{ small }" data-test="pin" title="Pin to the Master board" aria-label="Pin to the Master board" @click.stop="pin">
-    📌<span v-if="!small"> Pin</span>
+  <button v-if="board" type="button" class="pin-btn" :class="{ small }" data-test="pin" :title="t('Pin to the Master board')" :aria-label="t('Pin to the Master board')" @click.stop="pin">
+    📌<span v-if="!small"> {{ t('Pin') }}</span>
   </button>
 </template>
 

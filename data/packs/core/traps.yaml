@@ -1,11 +1,14 @@
 traps:
-  - name: Spike Trap
-    damage: 2D6 piercing
-    description: Snaps shut on an unwary adventurer who tries to open a chest or door. Inflicts 2D6 piercing damage.
-  - name: Trapdoor
-    damage: 3D6 falling
-    roll: EVADE with a bane
-    description: A hatch in the floor opens beneath a [[player character]]. The victim must make an EVADE roll with a [[bane]] and sustains 3D6 falling damage on a failure.
-  - name: Poison Dart Trap
-    roll: AWARENESS
-    description: "Darts dipped in [[poison]] shoot out from the wall, hitting all nearby player characters who fail an AWARENESS roll. The GM decides the potency and whether it is a lethal, paralyzing, or sleeping poison."
+  - id: trap_spikeTrap
+    name: LOC_TRAP_SPIKE_TRAP
+    damage: LOC_TRAP_SPIKE_TRAP_DAMAGE
+    description: LOC_TRAP_SPIKE_TRAP_DESC
+  - id: trap_trapdoor
+    name: LOC_TRAP_TRAPDOOR
+    damage: LOC_TRAP_TRAPDOOR_DAMAGE
+    roll: LOC_TRAP_TRAPDOOR_ROLL
+    description: LOC_TRAP_TRAPDOOR_DESC
+  - id: trap_poisonDartTrap
+    name: LOC_TRAP_POISON_DART_TRAP
+    roll: LOC_TRAP_POISON_DART_TRAP_ROLL
+    description: LOC_TRAP_POISON_DART_TRAP_DESC

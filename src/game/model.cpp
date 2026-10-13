@@ -10,40 +10,27 @@ namespace {
 struct KindInfo {
     Kind kind;
     const char* key;       // saved files, content keys: "<pack>/spell/<id>"
-    const char* label;     // one of them: "Spell"
     const char* file;      // its data file in a pack ("spells.yaml"), and the word a "see" uses for the whole category
     const char* title;     // all of them: "Spells"
-    const char* page;      // the id of the page that shows them
-    bool catalog;          // that page is a list + detail of this kind alone, made from this row (catalog_module.cpp)
 };
 const KindInfo kKinds[kKindCount] = {
-    {Kind::Monster, "monster", "Creature", "creatures", "Creatures", "creatures", true},
-    {Kind::Spell, "spell", "Spell", "spells", "Spells", "spells", true},
-    {Kind::Ability, "ability", "Ability", "abilities", "Abilities", "abilities", true},
-    {Kind::Skill, "skill", "Skill", "skills", "Skills", "skills", true},
-    {Kind::Kin, "kin", "Kin", "kin", "Kin", "kin", true},
-    {Kind::Profession, "profession", "Profession", "professions", "Professions", "professions", true},
-    // shown elsewhere: tables inside the rules, weapons / armor / gear as the book's own tables on the Gear page
-    {Kind::Table, "table", "Table", "tables", "Tables", "rules", false},
-    {Kind::Weapon, "weapon", "Weapon", "weapons", "Weapons", "gear", false},
-    {Kind::Armor, "armor", "Armor", "armor", "Armor", "gear", false},
-    {Kind::Gear, "gear", "Gear", "gear", "Gear", "gear", false},
+    {Kind::Monster, "monster", "creatures", "Creatures"},
+    {Kind::Spell, "spell", "spells", "Spells"},
+    {Kind::Ability, "ability", "abilities", "Abilities"},
+    {Kind::Skill, "skill", "skills", "Skills"},
+    {Kind::Kin, "kin", "kin", "Kin"},
+    {Kind::Profession, "profession", "professions", "Professions"},
+    {Kind::Table, "table", "tables", "Tables"},
+    {Kind::Weapon, "weapon", "weapons", "Weapons"},
+    {Kind::Armor, "armor", "armor", "Armor"},
+    {Kind::Gear, "gear", "gear", "Gear"},
 };
 const KindInfo& info(Kind k) { return kKinds[static_cast<int>(k)]; }
 }  // namespace
 
-const char* kindLabel(Kind k) { return info(k).label; }
 const char* kindKey(Kind k) { return info(k).key; }
 const char* kindFile(Kind k) { return info(k).file; }
 const char* kindTitle(Kind k) { return info(k).title; }
-const char* kindPage(Kind k) { return info(k).page; }
-
-std::vector<Kind> kindsWithOwnPage() {
-    std::vector<Kind> out;
-    for (const KindInfo& k : kKinds)
-        if (k.catalog) out.push_back(k.kind);
-    return out;
-}
 
 bool kindFromKey(const std::string& s, Kind& out) {
     for (const KindInfo& k : kKinds)

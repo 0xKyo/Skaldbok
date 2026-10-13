@@ -1,0 +1,11 @@
+kind: supply
+hidden: true
+entities:
+  - id: supply_common
+    name: LOC_SUPPLY_COMMON
+  - id: supply_uncommon
+    name: LOC_SUPPLY_UNCOMMON
+  - id: supply_rare
+    name: LOC_SUPPLY_RARE
+  - id: supply_unique
+    name: LOC_SUPPLY_UNIQUE

@@ -3,6 +3,7 @@
 // other pack. A choice of what to make on top — creatures, or one of the kinds of data file of Core — and the editor of that kind below.
 import { computed, inject, onMounted, ref, watch } from 'vue';
 import { ApiError, apiGet, apiSend } from '../api.js';
+import { t } from '../i18n.js';
 import HomebrewCreatures from './HomebrewCreatures.vue';
 import HomebrewAdventure from './HomebrewAdventure.vue';
 import HomebrewEntries from './HomebrewEntries.vue';
@@ -39,7 +40,7 @@ if (nav) {
   watch(() => nav.tick.value, putBack);
 }
 
-const kinds = computed(() => [...(viewed.value ? [] : [{ id: 'creatures', label: 'Creatures' }]), ...sections.value.map((s) => ({ id: s.id, label: s.label })), ...(viewed.value ? [] : [{ id: 'adventure', label: 'Adventure' }])]);
+const kinds = computed(() => [...(viewed.value ? [] : [{ id: 'creatures', label: t('Creatures') }]), ...sections.value.map((s) => ({ id: s.id, label: s.label })), ...(viewed.value ? [] : [{ id: 'adventure', label: t('Adventure') }])]);
 // the kinds are many, so they come in groups (the row on top); a kind that is in none of them goes to "More"
 const GROUPS = [
   { id: 'creatures', label: 'Creatures', kinds: ['creatures', 'weakness', 'fear'] },
@@ -53,7 +54,7 @@ const GROUPS = [
 const groups = computed(() => {
   const known = new Set(GROUPS.flatMap((g) => g.kinds));
   const all = [...GROUPS, { id: 'more', label: 'More', kinds: kinds.value.map((k) => k.id).filter((id) => !known.has(id)) }];
-  return all.map((g) => ({ ...g, kinds: g.kinds.filter((id) => kinds.value.some((k) => k.id === id)) })).filter((g) => g.kinds.length);
+  return all.map((g) => ({ ...g, label: t(g.label), kinds: g.kinds.filter((id) => kinds.value.some((k) => k.id === id)) })).filter((g) => g.kinds.length);
 });
 const group = computed(() => groups.value.find((g) => g.kinds.includes(kind.value)) ?? groups.value[0] ?? null);
 const section = computed(() => sections.value.find((s) => s.id === kind.value) ?? null);
@@ -123,10 +124,10 @@ async function rename() {
     } catch {
       /* the list we have still works */
     }
-    status.value = `What you make now goes in «${pack.value.name}».`;
+    status.value = t('What you make now goes in «{name}».', { name: pack.value.name });
   } catch (e) {
     failed.value = true;
-    status.value = e instanceof ApiError ? e.message : 'Could not change the name.';
+    status.value = e instanceof ApiError ? e.message : t('Could not change the name.');
   }
 }
 </script>
@@ -134,33 +135,33 @@ async function rename() {
 <template>
   <section class="homebrew" data-test="homebrew">
     <form class="pack panel" data-test="pack-form" @submit.prevent="rename">
-      <label>Pack <input v-model="nameDraft" maxlength="40" aria-label="Pack name" data-test="pack-name" /></label>
-      <button type="submit" class="pill" :disabled="!nameDraft.trim() || nameDraft.trim() === pack.name" data-test="pack-save">Use this name</button>
+      <label>{{ t('Pack') }} <input v-model="nameDraft" maxlength="40" :aria-label="t('Pack name')" data-test="pack-name" /></label>
+      <button type="submit" class="pill" :disabled="!nameDraft.trim() || nameDraft.trim() === pack.name" data-test="pack-save">{{ t('Use this name') }}</button>
       <span v-if="status" class="status" :class="{ error: failed }" data-test="pack-status">{{ status }}</span>
     </form>
 
-    <label v-if="packs.length > 1" class="looking">Looking at
-      <select :value="viewed ? viewed.id : pack.id" aria-label="Pack to look at" data-test="pack-view" @change="look($event.target.value)">
-        <option v-for="p in packs" :key="p.id" :value="p.id">{{ p.name }}{{ p.editable ? ' (yours)' : ' (read only)' }}</option>
+    <label v-if="packs.length > 1" class="looking">{{ t('Looking at') }}
+      <select :value="viewed ? viewed.id : pack.id" :aria-label="t('Pack to look at')" data-test="pack-view" @change="look($event.target.value)">
+        <option v-for="p in packs" :key="p.id" :value="p.id">{{ p.name }}{{ p.editable ? t(' (yours)') : t(' (read only)') }}</option>
       </select>
     </label>
     <p v-if="viewed" class="looking-note panel" data-test="looking-note">
-      🔒 You are looking into <b>{{ viewed.name }}</b>: it cannot be changed. Open an entry to make a <b>house rule</b> out of it (it replaces the original in the Rules, marked as changed by your pack) or to copy it.
-      <button type="button" class="pill" data-test="back-to-mine" @click="look(pack.id)">Back to my pack</button>
+      🔒 {{ t('You are looking into {name}: it cannot be changed. Open an entry to make a house rule out of it (it replaces the original in the Rules, marked as changed by your pack) or to copy it.', { name: viewed.name }) }}
+      <button type="button" class="pill" data-test="back-to-mine" @click="look(pack.id)">{{ t('Back to my pack') }}</button>
     </p>
 
-    <nav class="groups" role="tablist" aria-label="Kinds of homebrew">
+    <nav class="groups" role="tablist" :aria-label="t('Kinds of homebrew')">
       <button v-for="g in groups" :key="g.id" type="button" role="tab" class="group" :aria-selected="group?.id === g.id" :data-test="`group-${g.id}`" @click="pick(g.kinds[0])">{{ g.label }}</button>
     </nav>
-    <nav v-show="group && group.kinds.length > 1" class="kinds" aria-label="What to make">
+    <nav v-show="group && group.kinds.length > 1" class="kinds" :aria-label="t('What to make')">
       <template v-for="g in groups" :key="g.id">
         <button v-for="id in g.kinds" v-show="group?.id === g.id" :key="id" type="button" class="chip" :class="{ active: kind === id }" :data-test="`kind-${id}`" @click="pick(id)">{{ kinds.find((k) => k.id === id).label }}</button>
       </template>
     </nav>
 
     <p v-if="pending" class="making panel" data-test="making">
-      Making a new entry for «{{ pending.name || labelOf(pending.from) }}» ({{ labelOf(pending.from) }}): save it and you come back to where you were.
-      <button type="button" class="pill" data-test="making-cancel" @click="comeBack(null)">Cancel, go back</button>
+      {{ t('Making a new entry for «{name}» ({kind}): save it and you come back to where you were.', { name: pending.name || labelOf(pending.from), kind: labelOf(pending.from) }) }}
+      <button type="button" class="pill" data-test="making-cancel" @click="comeBack(null)">{{ t('Cancel, go back') }}</button>
     </p>
     <HomebrewCreatures v-if="kind === 'creatures'" :token="token" />
     <HomebrewAdventure v-else-if="kind === 'adventure'" :token="token" />

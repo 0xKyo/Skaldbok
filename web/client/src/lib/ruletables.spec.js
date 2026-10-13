@@ -17,4 +17,9 @@ describe('textBlocks', () => {
   it('does not take a hyphen inside a sentence or a lone dash for a bullet', () => {
     expect(textBlocks('Half-elf text\n– Bore Tvartoff')).toEqual([{ text: 'Half-elf text' }, { text: '– Bore Tvartoff' }]);
   });
+
+  it('puts an included card where its marker is, and drops a marker that has no card', () => {
+    const card = { ref: 'core/ability/adaptive', name: 'Adaptive', body: 'Text.' };
+    expect(textBlocks('Kin text.\n{{include: core/ability/adaptive}}\n{{include: nothing}}', [], [card])).toEqual([{ text: 'Kin text.' }, { card }]);
+  });
 });

@@ -1,0 +1,845 @@
+key,text
+LOC_ATTRIBUTE_STRENGTH,Strength
+LOC_ATTRIBUTE_STRENGTH_ABBR,STR
+LOC_ATTRIBUTE_STRENGTH_DESC,Raw muscle power.
+LOC_ATTRIBUTE_CONSTITUTION,Constitution
+LOC_ATTRIBUTE_CONSTITUTION_ABBR,CON
+LOC_ATTRIBUTE_CONSTITUTION_DESC,Physical fitness and resilience.
+LOC_ATTRIBUTE_AGILITY,Agility
+LOC_ATTRIBUTE_AGILITY_ABBR,AGL
+LOC_ATTRIBUTE_AGILITY_DESC,"Body control, speed, and fine motor skills."
+LOC_ATTRIBUTE_INTELLIGENCE,Intelligence
+LOC_ATTRIBUTE_INTELLIGENCE_ABBR,INT
+LOC_ATTRIBUTE_INTELLIGENCE_DESC,"Mental acuity, intellect, and reasoning skills."
+LOC_ATTRIBUTE_WILLPOWER,Willpower
+LOC_ATTRIBUTE_WILLPOWER_ABBR,WIL
+LOC_ATTRIBUTE_WILLPOWER_DESC,Self-discipline and focus.
+LOC_ATTRIBUTE_CHARISMA,Charisma
+LOC_ATTRIBUTE_CHARISMA_ABBR,CHA
+LOC_ATTRIBUTE_CHARISMA_DESC,Force of personality and empathy.
+LOC_TABLE_ATTRIBUTES,Attributes
+LOC_TABLE_ATTRIBUTES_NAME,ATTRIBUTE
+LOC_TABLE_ATTRIBUTES_ABBR,ABBREVIATION
+LOC_TABLE_ATTRIBUTES_DESC,DESCRIPTION
+LOC_LOOKUP_BASE_CHANCE,Base Chance
+LOC_LOOKUP_BASE_CHANCE_RANGE,ATTRIBUTE
+LOC_LOOKUP_BASE_CHANCE_VALUE,BASE CHANCE
+LOC_LOOKUP_BASE_CHANCE_ROW_1,1–5
+LOC_LOOKUP_BASE_CHANCE_ROW_2,6–8
+LOC_LOOKUP_BASE_CHANCE_ROW_3,9–12
+LOC_LOOKUP_BASE_CHANCE_ROW_4,13–15
+LOC_LOOKUP_BASE_CHANCE_ROW_5,16–18
+LOC_LOOKUP_MOVEMENT_MODIFIER,Movement modifier
+LOC_LOOKUP_MOVEMENT_MODIFIER_RANGE,ATTRIBUTE / RANGE
+LOC_LOOKUP_MOVEMENT_MODIFIER_VALUE,MODIFIER
+LOC_LOOKUP_MOVEMENT_MODIFIER_ROW_1,{agility} 1–6
+LOC_LOOKUP_MOVEMENT_MODIFIER_ROW_2,{agility} 7–9
+LOC_LOOKUP_MOVEMENT_MODIFIER_ROW_3,{agility} 13–15
+LOC_LOOKUP_MOVEMENT_MODIFIER_ROW_4,{agility} 16–18
+LOC_LOOKUP_DAMAGE_BONUS,Damage Bonus
+LOC_LOOKUP_DAMAGE_BONUS_RANGE,{strength}/{agility}
+LOC_LOOKUP_DAMAGE_BONUS_VALUE,DAMAGE BONUS
+LOC_LOOKUP_DAMAGE_BONUS_ROW_1,≤12
+LOC_LOOKUP_DAMAGE_BONUS_ROW_2,13–16
+LOC_LOOKUP_DAMAGE_BONUS_ROW_3,17+
+LOC_ABILITIES_INTRO_SECTIONS_INTRO_NAME,Intro
+LOC_ABILITIES_INTRO_SECTIONS_INTRO_BODY,"Described below are a number of [[heroic abilities|heroic ability]]. All [[player characters|player character]] except mages get one heroic ability each at the start of the game, and you can earn new ones as described on page 29. Note that some heroic abilities require a minimum [[skill level]] to be learned. Some cost [[Willpower Points|wp]] to activate, others do not. Unless stated otherwise, it is possible to combine multiple abilities in the same action, e.g. Assassin and Dragonslayer, but you must pay the WP cost for each ability you wish to use. Some heroic abilities require optional rules. If you are playing without these optional rules, those heroic abilities should not be used."
+LOC_CREATURES_INTRO_SECTIONS_MONSTERS_NAME,Monsters
+LOC_CREATURES_INTRO_SECTIONS_MONSTERS_BODY,"* {{key: Ferocity}}: Some monsters are so powerful that they can act multiple times in the same round. This is indicated by their Ferocity score. At the start of each round, the GM draws one [[initiative card|initiative]] for each point of Ferocity. The monster gets one turn per card, with one action and one movement on each turn.
+* Waiting: If a [[player character]] swaps initiative cards with a monster, the player character can choose any one of the monster’s cards. Monsters themselves never wait.
+* A monster always uses a {{key: monster attack}} when it attacks. Each monster has a unique set of monster attacks, which are summarized in a table. The GM rolls or chooses an attack from this table when it is the monster’s turn to attack. Monsters never roll dice to hit their target – monster attacks succeed automatically. Performing a monster attack counts as an action. Unless otherwise specified, monster attacks have the same range as melee attacks, i.e. 2 meters (an adjacent square if you are using grid maps).
+* [[Dodging|dodge]] & [[Parrying|parry]]: As a rule, a monster attack can be dodged but not parried. This applies to attacks with an area of effect as well, but not fear attacks. Exceptions to this rule are stated in the monster attack description.
+* [[Conditions|condition]]: Monster attacks can inflict conditions on player characters. If a character gains a condition they already have, the player must choose another condition instead.
+* Repeated Attacks: A monster never makes the same attack twice in a row. If the GM rolls the same monster attack two consecutive times, the second roll changes into the next attack on the table. The 6 result becomes a 1
+* Dodging & Parrying: All monsters can dodge, and monsters carrying weapons can also parry. Each dodge or parry uses up one of the monster’s actions in the round. Roll against a default [[skill level]] of 15 for all dodges and parries by monsters.
+* Skills: Monsters can have skills, but they are mainly used outside of combat or for [[opposed rolls|opposed roll]] – not for attacks. They only attack using their monster attacks.
+* {{key: Natural Armor}}: Many monsters have some form of natural armor. This works just like ordinary armor
+* Weak Spots: A piercing attack can find a gap or weak spot in the monster’s natural armor, just like on humanoid opponents (optional rule).
+* Disarm & Grapple: Monsters cannot be disarmed or grappled by player characters.
+* Darkness: Unless otherwise stated, monsters can see in darkness
+* Resistance & Immunity. Some monsters are resistant to certain damage types. This means that all damage of this type is halved, after reduction by armor (rounded up). Some monsters can even be immune to certain types of damage, and therefore take no damage at all from such attacks.
+* Fear & Persuasion: Monsters are too terrifying to get scared themselves, but many of them can certainly instill terror in the player characters. Monsters are also immune to the PERSUASION skill unless otherwise stated.
+* Toppling: A player character can try to topple a monster (optional rule), rolling against a default EVADE skill level of 15 for all monsters. If the monster has four legs or more, the attacker gets a [[bane]] on the roll.
+* Movement: Just like player characters, monsters have a Movement score and can move before or after their attack or divide their movement before and after the attack. Note that this score refers to movement per turn for monsters, not per round. Some monsters have different movement rates on land, in water, and in the air. Taking flight or landing are [[free actions|free action]].
+"
+LOC_CREATURES_INTRO_SECTIONS_SIZE_NAME,Size
+LOC_CREATURES_INTRO_SECTIONS_SIZE_BODY,"Monsters come in all sizes. The game divides them into the following categories, which affect how large an area the monster can block and how narrow a passage it can move through.
+{{table: Sizes}}
+"
+LOC_GEAR_INTRO_SECTIONS_SUPPLY_NAME,Supply
+LOC_GEAR_INTRO_SECTIONS_SUPPLY_BODY,"Some goods and services are rare, and the [[player characters|player character]] cannot expect to find everything they are looking for in any little village. Each listed item has a supply rating, graded on the following scale.
+✦Common: Available in any village or marketplace.
+✦Uncommon: Can usually only be purchased from the artisan making it, which does not necessarily mean it will be available in every village.
+✦Rare: Must generally be specially ordered from artisans.
+✦Unique: Can only be obtained in treasure troves or from the person who found the precious item.
+"
+LOC_GEAR_INTRO_SECTIONS_ENCUMBRANCE_NAME,Encumbrance
+LOC_GEAR_INTRO_SECTIONS_ENCUMBRANCE_BODY,You can carry a number of items equal to half your STR (rounded up) in your Inventory without difficulty. Only the items written down in your Inventory box count towards your {{key: encumbrance}}.
+LOC_GEAR_INTRO_SECTIONS_WEAPONS_AT_HAND_NAME,Weapons at Hand
+LOC_GEAR_INTRO_SECTIONS_WEAPONS_AT_HAND_BODY,"You can have up to three weapons at hand, which means that they are worn on your belt or otherwise readily available for use in combat. Weapons kept at hand are recorded under Weapons on the character sheet and do not count toward your encumbrance. Shields count as weapons and are also recorded here."
+LOC_GEAR_INTRO_SECTIONS_HELMET_ARMOR_NAME,Helmet & Armor
+LOC_GEAR_INTRO_SECTIONS_HELMET_ARMOR_BODY,Any helmet or armor worn on your body is recorded in its respective section and does not count toward your encumbrance.
+LOC_GEAR_INTRO_SECTIONS_FOOD_NAME,Food
+LOC_GEAR_INTRO_SECTIONS_FOOD_BODY,Up to four rations of food count as one item in terms of encumbrance. Always record the number of rations you have left in your Inventory.
+LOC_GEAR_INTRO_SECTIONS_TORCHES_LANTERNS_NAME,Torches & Lanterns
+LOC_GEAR_INTRO_SECTIONS_TORCHES_LANTERNS_BODY,"A torch, lamp, or lantern is an item. Their fire may go out. Lamps and lanterns can be refilled with lamp oil."
+LOC_GEAR_INTRO_SECTIONS_ARROWS_SLINGSTONES_NAME,Arrows & Slingstones
+LOC_GEAR_INTRO_SECTIONS_ARROWS_SLINGSTONES_BODY,"You do not have to count every arrow you are carrying. Instead, each quiver of arrows counts as a single item. As long as you have the quiver, you can use your weapon. Slingstones do not need to be noted down at all – you are assumed to have enough of those."
+LOC_GEAR_INTRO_SECTIONS_BACKPACK_NAME,Backpack
+LOC_GEAR_INTRO_SECTIONS_BACKPACK_BODY,"A backpack increases your carrying capacity by 2. It does not count toward your encumbrance, but you can only carry one backpack at a time."
+LOC_GEAR_INTRO_SECTIONS_HEAVY_ITEMS_NAME,Heavy Items
+LOC_GEAR_INTRO_SECTIONS_HEAVY_ITEMS_BODY,"Really heavy items count as two, three, or even more normal items in terms of encumbrance. These will be indicated as having weight 2, 3, 4, and so on. In your inventory, heavy items take up a number of rows equal to their weight. If no weight is specified, it is always 1."
+LOC_GEAR_INTRO_SECTIONS_TINY_ITEMS_NAME,Tiny Items
+LOC_GEAR_INTRO_SECTIONS_TINY_ITEMS_BODY,"Small and light items that can be hidden in a closed fist are called tiny. Items of this size do not affect your encumbrance at all. Tiny items are recorded in their own section on the character sheet and do not take up any space in your Inventory.
+Single coins count as tiny items and do not affect your encumbrance as long as they are fewer than 100. 100– 199 coins count as one item, 200–299 as two, and so on.
+"
+LOC_GEAR_INTRO_SECTIONS_OVER_ENCUMBERED_NAME,Over-Encumbered
+LOC_GEAR_INTRO_SECTIONS_OVER_ENCUMBERED_BODY,"You can temporarily carry more than your normal encumbrance limit. In that case you must make a STR roll whenever you want to move in a round of combat or walk for a shift of travel. If the roll fails, you must either drop what you are carrying or stay where you are.
+While carrying another person, you automatically count as over-encumbered and cannot fight in combat.
+"
+LOC_GEAR_INTRO_SECTIONS_RIDING_ANIMALS_VEHICLES_NAME,Riding Animals & Vehicles
+LOC_GEAR_INTRO_SECTIONS_RIDING_ANIMALS_VEHICLES_BODY,"If you have a horse or some other riding animal, the animal can carry your gear for you. Wagons and boats can carry even heavier loads. You can find them in the gear lists on page 81."
+LOC_NPCS_NPC_ATTITUDE_VALUES_1,Hostile
+LOC_NPCS_NPC_ATTITUDE_VALUES_2,Evasive
+LOC_NPCS_NPC_ATTITUDE_VALUES_3,Indifferent
+LOC_NPCS_NPC_ATTITUDE_VALUES_4,Friendly
+LOC_NPCS_NPC_KIN_VALUES_1,Human
+LOC_NPCS_NPC_KIN_VALUES_2,Dwarf
+LOC_NPCS_NPC_KIN_VALUES_3,Elf
+LOC_NPCS_NPC_KIN_VALUES_4,Halfling
+LOC_NPCS_NPC_KIN_VALUES_5,Wolfkin
+LOC_NPCS_NPC_KIN_VALUES_6,Mallard
+LOC_NPCS_NPC_MOTIVATION_VALUES_1,"Sweet, glittering gold"
+LOC_NPCS_NPC_MOTIVATION_VALUES_2,Knowledge of the world
+LOC_NPCS_NPC_MOTIVATION_VALUES_3,Deep and eternal love
+LOC_NPCS_NPC_MOTIVATION_VALUES_4,A lifelong oath
+LOC_NPCS_NPC_MOTIVATION_VALUES_5,An injustice that demands retribution
+LOC_NPCS_NPC_MOTIVATION_VALUES_6,A life of joy and song
+LOC_NPCS_NPC_MOTIVATION_VALUES_7,Blood ties that can never be severed
+LOC_NPCS_NPC_MOTIVATION_VALUES_8,Escaping a dark past
+LOC_NPCS_NPC_PROFESSION_VALUES_1,Bard
+LOC_NPCS_NPC_PROFESSION_VALUES_2,Artisan
+LOC_NPCS_NPC_PROFESSION_VALUES_3,Hunter
+LOC_NPCS_NPC_PROFESSION_VALUES_4,Fighter
+LOC_NPCS_NPC_PROFESSION_VALUES_5,Scholar
+LOC_NPCS_NPC_PROFESSION_VALUES_6,Mage
+LOC_NPCS_NPC_PROFESSION_VALUES_7,Merchant
+LOC_NPCS_NPC_PROFESSION_VALUES_8,Knight
+LOC_NPCS_NPC_PROFESSION_VALUES_9,Mariner
+LOC_NPCS_NPC_PROFESSION_VALUES_10,Thief
+LOC_NPCS_NPC_TRAIT_VALUES_1,Talks too much
+LOC_NPCS_NPC_TRAIT_VALUES_2,Strange clothes
+LOC_NPCS_NPC_TRAIT_VALUES_3,Wild-eyed
+LOC_NPCS_NPC_TRAIT_VALUES_4,Smells bad
+LOC_NPCS_NPC_TRAIT_VALUES_5,Joker
+LOC_NPCS_NPC_TRAIT_VALUES_6,Cultist
+LOC_NPCS_NPC_TRAIT_VALUES_7,A bit childish
+LOC_NPCS_NPC_TRAIT_VALUES_8,Quiet and difficult
+LOC_NPCS_NPC_TRAIT_VALUES_9,Demon worshiper
+LOC_NPCS_NPC_TRAIT_VALUES_10,Obstinate
+LOC_NPCS_NPC_TRAIT_VALUES_11,Very touchy
+LOC_NPCS_NPC_TRAIT_VALUES_12,Highly romantic
+LOC_NPCS_NPC_NAME_VALUES_1,Agnar
+LOC_NPCS_NPC_NAME_VALUES_2,Jorid
+LOC_NPCS_NPC_NAME_VALUES_3,Dareios
+LOC_NPCS_NPC_NAME_VALUES_4,Ragnfast
+LOC_NPCS_NPC_NAME_VALUES_5,Ask
+LOC_NPCS_NPC_NAME_VALUES_6,Euanthe
+LOC_NPCS_NPC_NAME_VALUES_7,Arnulf
+LOC_NPCS_NPC_NAME_VALUES_8,Tyra
+LOC_NPCS_NPC_NAME_VALUES_9,Xanthos
+LOC_NPCS_NPC_NAME_VALUES_10,Atle
+LOC_NPCS_NPC_NAME_VALUES_11,Liv
+LOC_NPCS_NPC_NAME_VALUES_12,Athalia
+LOC_NPCS_NPC_NAME_VALUES_13,Guthorm
+LOC_NPCS_NPC_NAME_VALUES_14,Embla
+LOC_NPCS_NPC_NAME_VALUES_15,Kleitos
+LOC_NPCS_NPC_NAME_VALUES_16,Botvid
+LOC_NPCS_NPC_NAME_VALUES_17,Ragna
+LOC_NPCS_NPC_NAME_VALUES_18,Astara
+LOC_NPCS_NPC_NAME_VALUES_19,Kale
+LOC_NPCS_NPC_NAME_VALUES_20,Turid
+LOC_NPCS_NPC_NAME_VALUES_21,Priamus
+LOC_NPCS_NPC_NAME_VALUES_22,Egil
+LOC_NPCS_NPC_NAME_VALUES_23,Jorunn
+LOC_NPCS_NPC_NAME_VALUES_24,Galyna
+LOC_NPCS_NPC_NAME_VALUES_25,Ingemund
+LOC_NPCS_NPC_NAME_VALUES_26,Borghild
+LOC_NPCS_NPC_NAME_VALUES_27,Taras
+LOC_NPCS_NPC_NAME_VALUES_28,Gudmund
+LOC_NPCS_NPC_NAME_VALUES_29,Gylla
+LOC_NPCS_NPC_NAME_VALUES_30,Zenais
+LOC_NPCS_NPC_NAME_VALUES_31,Grim
+LOC_NPCS_NPC_NAME_VALUES_32,Tora
+LOC_NPCS_NPC_NAME_VALUES_33,Hesiod
+LOC_NPCS_NPC_NAME_VALUES_34,Brand
+LOC_NPCS_NPC_NAME_VALUES_35,Edda
+LOC_NPCS_NPC_NAME_VALUES_36,Liene
+LOC_NPCS_NPC_NAME_VALUES_37,Folkvid
+LOC_NPCS_NPC_NAME_VALUES_38,Sigrun
+LOC_NPCS_NPC_NAME_VALUES_39,Eupraxia
+LOC_NPCS_NPC_NAME_VALUES_40,Germund
+LOC_NPCS_NPC_NAME_VALUES_41,Dagrun
+LOC_NPCS_NPC_NAME_VALUES_42,Algot
+LOC_NPCS_NPC_NAME_VALUES_43,Bolla
+LOC_NPCS_NPC_NAME_VALUES_44,Lysandra
+LOC_NPCS_NPC_NAME_VALUES_45,Tolir
+LOC_NPCS_NPC_NAME_VALUES_46,Yrsa
+LOC_NPCS_NPC_NAME_VALUES_47,Kallias
+LOC_NPCS_NPC_NAME_VALUES_48,Hjorvald
+LOC_NPCS_NPC_NAME_VALUES_49,Estrid
+LOC_NPCS_NPC_NAME_VALUES_50,Isidora
+LOC_NPCS_NPC_NAME_VALUES_51,Ambjorn
+LOC_NPCS_NPC_NAME_VALUES_52,Signe
+LOC_NPCS_NPC_NAME_VALUES_53,Athos
+LOC_NPCS_NPC_NAME_VALUES_54,Grunn
+LOC_NPCS_NPC_NAME_VALUES_55,Tilde
+LOC_NPCS_NPC_NAME_VALUES_56,Larysa
+LOC_NPCS_NPC_NAME_VALUES_57,Olgrid
+LOC_NPCS_NPC_NAME_VALUES_58,Idun
+LOC_NPCS_NPC_NAME_VALUES_59,Nikias
+LOC_NPCS_GUARD,Guard
+LOC_CATEGORY_TYPICAL_NPCS,Typical NPCs
+LOC_LABEL_SKILLS,SKILLS
+LOC_VALUE_AWARENESS_10_SWORDS_12,Awareness 10 Swords 12
+LOC_LABEL_HEROIC_ABILITIES,HEROIC ABILITIES
+LOC_LABEL_DAMAGE_BONUS,DAMAGE BONUS
+LOC_VALUE_STR_D4,STR +D4
+LOC_LABEL_HP,HP
+LOC_LABEL_WP,WP
+LOC_LABEL_GEAR,GEAR
+LOC_VALUE_BROADSWORD_STUDDED_LEATHER_ARMOR,"Broadsword, studded leather armor"
+LOC_NPCS_CULTIST,Cultist
+LOC_VALUE_EVADE_14_KNIVES_14,Evade 14 Knives 14
+LOC_VALUE_AGL_D4,AGL +D4
+LOC_VALUE_DAGGER,Dagger
+LOC_NPCS_THIEF,Thief
+LOC_VALUE_EVADE_12_KNIVES_12,Evade 12 Knives 12
+LOC_VALUE_KNIFE,Knife
+LOC_NPCS_VILLAGER,Villager
+LOC_VALUE_BRAWLING_8,Brawling 8
+LOC_VALUE_WOODEN_CLUB,Wooden club
+LOC_NPCS_HUNTER,Hunter
+LOC_VALUE_AWARENESS_12_BOWS_13,Awareness 12 Bows 13
+LOC_VALUE_LONGBOW_LEATHER_ARMOR,"Longbow, leather armor"
+LOC_NPCS_BANDIT,Bandit
+LOC_VALUE_BOWS_12_EVADE_10_SWORDS_12,Bows 12 Evade 10 Swords 12
+LOC_VALUE_SHORT_SWORD_SHORT_BOW,"Short sword, short bow"
+LOC_NPCS_ADVENTURER,Adventurer
+LOC_NPCS_SCHOLAR,Scholar
+LOC_VALUE_LANGUAGES_13_MYTHS_LEGENDS_13_STAVES_8,Languages 13 Myths & Legends 13 Staves 8
+LOC_VALUE_A_GOOD_BOOK,A good book
+LOC_NPCS_BANDIT_CHIEF_BOSS,Bandit Chief (Boss)
+LOC_VALUE_AWARENESS_12_BRAWLING_15_HAMMERS_15,Awareness 12 Brawling 15 Hammers 15
+LOC_VALUE_BERSERKER_ROBUST_6_VETERAN,Berserker Robust × 6 Veteran
+LOC_VALUE_STR_D6,STR +D6
+LOC_VALUE_HEAVY_WARHAMMER_CHAINMAIL_OPEN_HELMET,"Heavy warhammer, chainmail, open helmet"
+LOC_NPCS_KNIGHT_CHAMPION_BOSS,Knight Champion (Boss)
+LOC_VALUE_BRAWLING_14_SWORDS_16,Brawling 14 Swords 16
+LOC_VALUE_DEFENSIVE_DOUBLE_SLASH_FOCUSED_6_ROBUST_6,Defensive Double Slash Focused × 6 Robust × 6
+LOC_NPCS_KNIGHT_CHAMPION_BOSS_FIELDS_GEAR,"Longsword, large shield, plate armor, great helm, combat-trained horse"
+LOC_NPCS_ARCHMAGE_BOSS,Archmage (Boss)
+LOC_VALUE_MAGIC_SCHOOL_15_STAVES_13,Magic School 15 Staves 13
+LOC_VALUE_FOCUSED_6_MASTER_SPELLCASTER_ROBUST_4,Focused × 6 Master Spellcaster Robust × 4
+LOC_VALUE_STAFF_GRIMOIRE,"Staff, grimoire"
+LOC_PROFESSIONS_INTRO_BODY,"Your choice of profession will determine much about your character, mainly your skills – six of your trained starting skills must be chosen from those listed for your profession. Your profession also determines what gear you start out with and which heroic ability you get."
+LOC_CATEGORY_REST_TYPES,Rest Types
+LOC_REST_ROUND_REST,Round Rest
+LOC_LABEL_HP_RECOVERED,HP RECOVERED
+LOC_LABEL_WP_RECOVERED,WP RECOVERED
+LOC_LABEL_CONDITIONS_HEALED,CONDITIONS HEALED
+LOC_LABEL_NOTES,NOTES
+LOC_VALUE_ONCE_PER_SHIFT,Once per shift
+LOC_REST_STRETCH_REST,Stretch Rest
+LOC_VALUE_D6_2D6_WITH_HEALING,D6 (2D6 with HEALING)
+LOC_VALUE_1_CONDITION_OF_CHOICE,1 condition of choice
+LOC_VALUE_ONCE_PER_SHIFT_CAREGIVER_CANNOT_REST,Once per shift; caregiver cannot rest
+LOC_REST_SHIFT_REST,Shift Rest
+LOC_VALUE_ALL,All
+LOC_VALUE_SAFE_LOCATION_NO_ENEMIES_NEARBY,Safe location; no enemies nearby
+LOC_RULE_CHARACTER_CREATION,Character Creation
+LOC_RULE_CHARACTER_CREATION_SECTIONS_INTRO_NAME,Intro
+LOC_RULE_CHARACTER_CREATION_SECTIONS_INTRO_BODY,"The adventurer you play in Dragonbane is called your {{key: player character}}. To create one, take a character sheet and a pencil, and follow these thirteen steps in order:          
+"
+LOC_RULE_CREATION_KIN,Kin
+LOC_RULE_CREATION_KIN_BODY,"Choose your kin, or roll on the table below. There are six playable kin: human, halfling, dwarf, elf, mallard and wolfkin. Humans are the most common, but you are free to choose any of them.
+Your kin decides three things: your innate ability, the base of your Movement rating (step 6) and the list of six typical names you can pick your name from (step 4). Each kin is described in the Kin entries, whose cards also hold its table of six first names (open the card).
+Each kin has an innate ability that no other kin can learn (mallards have two). Write it down in the Abilities & Spells section of your character sheet. Using an innate ability usually costs [[Willpower Points|wp]] (WP).
+All [[player characters|player character]] can speak, read and write a common language, which for simplicity's sake is called the common tongue. Most creatures the player characters meet know it, but there may be exceptions. Non-human kin often have their own languages that few humans understand. To understand other languages, the Languages skill is used.
+{{table: Kin}}
+"
+LOC_RULE_CREATION_PROFESSION,Profession
+LOC_RULE_CREATION_PROFESSION_BODY,"Choose your profession, or roll on the table below. There are ten professions: artisan, bard, fighter, hunter, knight, mage, mariner, merchant, scholar and thief. All [[player characters|player character]] are adventurers, but you learned a thing or two before the game begins.
+Your profession decides: six of your trained skills, which must be chosen from the list of the profession (step 7); the gear you can start with (step 10); your [[heroic ability]] (step 8, mages get magic instead); and it offers typical nicknames (step 4).
+{{table: Profession}}
+"
+LOC_RULE_CREATION_AGE,Age
+LOC_RULE_CREATION_AGE_BODY,"Choose your age (young, adult or old), or roll on the table below. Older age means lower [[attributes|attribute]] but more skills. Your age in years depends on your kin and has no mechanical significance.
+Age changes two things: how many trained skills of your own choice you get in step 8 (two, four or six, on top of the six from your profession) and how your attributes are adjusted once you have rolled them in step 6. The adjustments do not stack, and no attribute can go above 18.
+{{table: Age}}
+"
+LOC_RULE_CREATION_NAME,Name and Nickname
+LOC_RULE_CREATION_NAME_BODY,"Once you have chosen your kin and profession it is time to name your adventurer. Each kin has a list of six typical names: choose or roll (D6) one of them, or make up your own.
+Nickname (optional): a common custom for adventurers, often one that says something about your appearance, personality or personal history. You can choose it now or add one later. A number of typical nicknames are listed by your profession.
+"
+LOC_RULE_CREATION_ATTRIBUTES,Attributes
+LOC_RULE_CREATION_ATTRIBUTES_BODY,"Your adventurer has six attributes that measure their basic physical and mental capabilities, on a scale from 3 to 18 (the higher, the better): Strength (STR), Constitution (CON), Agility (AGL), Intelligence (INT), Willpower (WIL) and Charisma (CHA).
+Roll 4D6 and remove the lowest die: that is a score between 3 and 18. Assign it to the attribute of your choice. Repeat five more times, assigning each score as you roll it, until every attribute has one. When you are done you may swap two scores. Then adjust your attributes for your age (step 3); you can never have more than 18 in an attribute. Once assigned, attributes rarely change during the game.
+Any other method works if everyone in the group agrees.
+{{table: Attributes}}
+"
+LOC_RULE_CREATION_ATTRIBUTES_SECTIONS_STARTING_SCORES_NAME,Starting Scores
+LOC_RULE_CREATION_ATTRIBUTES_SECTIONS_STARTING_SCORES_BODY,"Roll 4D6 and remove the worst die, which gives you a score between 3 and 18. Assign that score to an {{key: attribute}} of your choice. Repeat this process five more times until you have assigned a score to each attribute. You must assign each score as you roll them, but once done you may swap two scores. Then you adjust your attributes based on your age. Note that you can never have more than 18 in an attribute, regardless of your age. Once assigned, your attributes rarely change during the game."
+LOC_RULE_CREATION_ATTRIBUTES_SECTIONS_OTHER_METHODS_NAME,Other Methods
+LOC_RULE_CREATION_ATTRIBUTES_SECTIONS_OTHER_METHODS_BODY,"There are many other ways to determine the [[player characters|player character]]’ attributes, such as rolling for all of them and then distributing the results afterwards or adding up the rolls into a big pool and distributing the points freely. As long as you all agree in the group, you can use any method you prefer"
+LOC_RULE_CREATION_ATTRIBUTES_SECTIONS_ABBREVIATIONS_NAME,Abbreviations
+LOC_RULE_CREATION_ATTRIBUTES_SECTIONS_ABBREVIATIONS_BODY,"- [[HP]] = Hit Points
+- [[WP]] = Willpower Points
+- GM = Gamemaster
+- [[NPC]] = Non-Player Character
+"
+LOC_RULE_CREATION_DERIVED_RATINGS,Derived Ratings
+LOC_RULE_CREATION_DERIVED_RATINGS_BODY,"Calculate these from your [[attributes|attribute]] and your kin:
+Movement: the meters you can run in a round of combat. It starts from your kin and is modified by your AGL.
+[[Damage bonus|Derived Ratings]]: you have two, one for STR-based weapons and one for AGL-based weapons.
+Hit Points (HP): your maximum equals your CON (the [[heroic ability]] Robust can raise it).
+Willpower Points (WP): your maximum equals your WIL (the heroic ability Focused can raise it).
+{{table: Movement}}
+{{table: Movement modifier}}
+{{table: Damage Bonus}}
+"
+LOC_RULE_CREATION_DERIVED_RATINGS_SECTIONS_HIT_POINTS_HP_NAME,Hit Points (HP)
+LOC_RULE_CREATION_DERIVED_RATINGS_SECTIONS_HIT_POINTS_HP_BODY,"This rating determines how much damage you can take. Your maximum number of {{key: HP}} is equal to your CON, but can be increased by the heroic ability Robust. For more information about damage, see chapter 4."
+LOC_RULE_CREATION_DERIVED_RATINGS_SECTIONS_WILLPOWER_POINTS_WP_NAME,Willpower Points (WP)
+LOC_RULE_CREATION_DERIVED_RATINGS_SECTIONS_WILLPOWER_POINTS_WP_BODY,"{{key: Willpower Points | wp}} are used for magic, as well as innate and heroic abilities. Your maximum number of WP is equal to your WIL, but can be increased by the heroic ability Focused."
+LOC_RULE_CREATION_SKILLS,Trained Skills
+LOC_RULE_CREATION_SKILLS_BODY,"Choose your trained skills: six from the list of your profession, plus two (young), four (adult) or six (old) of your own choice, from the thirty core skills. A trained skill starts at twice its base chance. Skill levels go from 1 to 18.
+If you play a mage, you also choose a [[school of magic]], which becomes one of your trained skills, and your first spells (see Magic below). You may go back and adjust your trained skills to fit your gear (step 10).
+"
+LOC_RULE_CREATION_SKILLS_SECTIONS_BASE_CHANCE_NAME,Base Chance
+LOC_RULE_CREATION_SKILLS_SECTIONS_BASE_CHANCE_BODY,"Every skill is connected to an [[attribute]], which determines your base chance in that skill. The attribute is shown next to each skill on your character sheet. The base chance is a “free” skill level you get automatically.
+{{table: Base Chance}}
+"
+LOC_RULE_CREATION_SKILLS_SECTIONS_STARTING_SKILL_LEVELS_NAME,Starting Skill Levels
+LOC_RULE_CREATION_SKILLS_SECTIONS_STARTING_SKILL_LEVELS_BODY,"In addition to your base chances you start with a number of trained skills: eight, ten or twelve, depending on your age. At the start of the game your level in a trained skill is twice its base chance. Six of your trained skills must be chosen from the list of your profession; the rest (two, four or six, by age) are chosen freely. You can increase your {{key: skill levels | skill level}} during the game."
+LOC_RULE_CREATION_SKILLS_SECTIONS_SECONDARY_SKILLS_NAME,Secondary Skills
+LOC_RULE_CREATION_SKILLS_SECTIONS_SECONDARY_SKILLS_BODY,"Beyond the core skills there are secondary skills, such as the schools of magic. In the base game you don't get a base chance in any secondary skill, but future expansions and supplements may modify this."
+LOC_RULE_CREATION_SKILLS_SECTIONS_MAGIC_NAME,Magic
+LOC_RULE_CREATION_SKILLS_SECTIONS_MAGIC_BODY,"Magic is divided into different schools, and each school is a separate skill. As a newly created mage you must select a school of magic, which then becomes one of your trained skills (based on INT).
+You may choose three rank 1 spells and three [[magic tricks|magic trick]] from your school or general magic. You can learn more spells, and schools of magic, during the game.
+"
+LOC_RULE_CREATION_HEROIC_ABILITY,Heroic Ability
+LOC_RULE_CREATION_HEROIC_ABILITY_BODY,"You start the game with one {{key: heroic ability}}, determined by your profession (see its entry in Professions). Some heroic abilities require a minimum [[skill level]], but that does not apply to your starting ability.
+If you play a mage you don't get a heroic ability at the start: your magic makes up for it. If the ability of your profession really doesn't fit the character you want to create, the GM may allow you to choose a different starting ability. You can earn new heroic abilities during play (see Experience).
+"
+LOC_RULE_CREATION_HEROIC_ABILITY_SECTIONS_MAGES_NAME,Mages
+LOC_RULE_CREATION_HEROIC_ABILITY_SECTIONS_MAGES_BODY,"If you play a mage, you don’t get any heroic ability at the start of the game – your magic will make up for that disadvantage! You can earn new heroic abilities during play just like other professions, however."
+LOC_RULE_CREATION_HEROIC_ABILITY_SECTIONS_ALTERNATIVE_ABILITIES_NAME,Alternative Abilities
+LOC_RULE_CREATION_HEROIC_ABILITY_SECTIONS_ALTERNATIVE_ABILITIES_BODY,"If you feel that that the heroic ability listed by your profession really doesn’t match the character you want to create, the GM may allow you to choose a different starting ability."
+LOC_RULE_CREATION_WEAKNESS,Weakness
+LOC_RULE_CREATION_WEAKNESS_BODY,"Optional. Your character is a capable individual, but even an adventurer has an Achilles heel that can get them into trouble. Roll on the table below, choose from it, or choose your weakness freely.
+A weakness adds depth and personality to your character and can be used by the GM to create challenges for you. Roleplaying according to your weakness gives you an extra [[advancement mark]] at the end of the session.
+{{table: Weakness}}
+"
+LOC_RULE_CREATION_GEAR,Gear
+LOC_RULE_CREATION_GEAR_BODY,"Write down all the items you carry on your character sheet, one item per row. Weapons at hand, and the armor, helmet and shield you wear, go in their boxes; every other item goes in the Inventory. If it is not on your sheet, you do not have it with you.
+The lists of weapons, armor and other equipment are in Equipment. How much you can carry is in [[Encumbrance]], below.
+"
+LOC_RULE_CREATION_GEAR_SECTIONS_STARTING_GEAR_NAME,Starting Gear
+LOC_RULE_CREATION_GEAR_SECTIONS_STARTING_GEAR_BODY,"Your profession determines what gear you can choose from at the start of the game. Roll on the gear table of your profession or choose one of its three sets. If you want to, you may go back and adjust your trained skills to fit your gear. In addition, you have simple clothes, which do not need to be written down."
+LOC_RULE_CREATION_GEAR_SECTIONS_COINS_NAME,Coins
+LOC_RULE_CREATION_GEAR_SECTIONS_COINS_BODY,"Monetary transactions are generally made with silver coins. Copper coins are used for smaller transactions and gold for larger ones. Ten copper coins equal one silver, and ten silver coins equal one gold. The coins you get when creating your character can be used to purchase additional starting gear."
+LOC_RULE_CREATION_MEMENTO,Memento
+LOC_RULE_CREATION_MEMENTO_BODY,"Optional. In addition to your other equipment you can have a memento: an item of great sentimental value that you always carry. Choose something suitable or roll on the table below.
+A memento is always a tiny item with no practical use, but once per game session you can use it to recover an additional [[condition]] during a [[stretch rest]]. If you lose your memento, you may choose a new item you found on your adventures at the end of the session.
+{{table: Memento}}
+"
+LOC_RULE_CREATION_APPEARANCE,Appearance
+LOC_RULE_CREATION_APPEARANCE_BODY,"On your character sheet you can write down something about your character's appearance. It does not have to be detailed: one or a few distinct features are enough. Choose for yourself, or make one or more rolls on the table below.
+{{table: Appearance}}
+"
+LOC_RULE_CHARACTER_CREATION_CHILDREN_EXPERIENCE_NAME,Experience
+LOC_RULE_CHARACTER_CREATION_CHILDREN_EXPERIENCE_BODY,"Life as an adventurer brings many challenges, and if you survive you are sure to change and maybe even learn a thing or two along the way."
+LOC_RULE_CHARACTER_CREATION_CHILDREN_EXPERIENCE_SECTIONS_ADVANCEMENT_MARKS_NAME,Advancement Marks
+LOC_RULE_CHARACTER_CREATION_CHILDREN_EXPERIENCE_SECTIONS_ADVANCEMENT_MARKS_BODY,"When you have rolled a dragon or demon when using a skill, tick the check box next to that skill. At the end of the game session, the GM asks you the following questions about the session you just completed. For each question that you can reply “yes” to, and justify your answer, you may place another {{key: advancement mark}} next to an unmarked skill of your choice. The GM has the final word, but should adopt a permissive attitude.
+✦Did you participate in the game session?
+✦Did you explore a new location?
+✦Did you defeat one or more dangerous adversaries?
+✦Did you overcome an obstacle without using force?
+✦Did you give in to your weakness (optional rule)?
+"
+LOC_RULE_CHARACTER_CREATION_CHILDREN_EXPERIENCE_SECTIONS_ADVANCEMENT_ROLLS_NAME,Advancement Rolls
+LOC_RULE_CHARACTER_CREATION_CHILDREN_EXPERIENCE_SECTIONS_ADVANCEMENT_ROLLS_BODY,"After placing your marks, roll a D20 for each of them – if the result exceeds your current [[skill level]], it is increased by one, up to a maximum of 18. Once you have made your advancement rolls, erase the marks and start over in the next game session."
+LOC_RULE_CHARACTER_CREATION_CHILDREN_EXPERIENCE_SECTIONS_TEACHER_NAME,Teacher
+LOC_RULE_CHARACTER_CREATION_CHILDREN_EXPERIENCE_SECTIONS_TEACHER_BODY,"A shift of intense training with a teacher whose skill level is 15 or higher and exceeds your own gives you an additional advancement roll to improve the skill in question. Make the roll immediately, without waiting for the session to end. However, a teacher can only raise a skill level by one – after that you must improve the skill through experience before you can get more help from a teacher. Teachers, especially those with high skill levels, are usually very expensive."
+LOC_RULE_CHARACTER_CREATION_CHILDREN_EXPERIENCE_SECTIONS_MAGIC_NAME,Magic
+LOC_RULE_CHARACTER_CREATION_CHILDREN_EXPERIENCE_SECTIONS_MAGIC_BODY,"A [[school of magic]] that you already know can be improved like any other skill. However, learning new spells and new schools of magic requires special training. For more information, see chapter 5."
+LOC_RULE_CHARACTER_CREATION_CHILDREN_EXPERIENCE_SECTIONS_HEROIC_ABILITIES_NAME,Heroic Abilities
+LOC_RULE_CHARACTER_CREATION_CHILDREN_EXPERIENCE_SECTIONS_HEROIC_ABILITIES_BODY,"You can earn new [[heroic abilities|heroic ability]] during play in two ways:
+✦When you increase a skill level to 18, you immediately gain a new heroic ability of your choice. If the skill level is reduced below 18 for any reason, you keep the heroic ability and you will even gain a new ability if the skill level is increased to 18 again.
+✦After a grand heroic deed, the GM or the adventure can reward you with a heroic ability. This should be a rare event, never more than once per standard-length adventure.
+To earn a new heroic ability, you must meet its skill requirement.
+"
+LOC_RULE_CHARACTER_CREATION_CHILDREN_EXPERIENCE_SECTIONS_OVERCOME_WEAKNESS_NAME,Overcome Weakness
+LOC_RULE_CHARACTER_CREATION_CHILDREN_EXPERIENCE_SECTIONS_OVERCOME_WEAKNESS_BODY,"If you during the session acted in a way that clearly goes against your weakness, you get two advancement marks (instead of one mark for giving into it). You have now also overcome your weakness and must remove it. You must then play a full session without a weakness. After that, you may choose a new weakness, preferably based on something that has occurred in the game."
+LOC_RULE_COMBAT,Combat
+LOC_RULE_COMBAT_CHILDREN_ROUNDS_INITIATIVE_NAME,Rounds & Initiative
+LOC_RULE_COMBAT_CHILDREN_ROUNDS_INITIATIVE_BODY,"Combat is played in rounds, each representing roughly ten seconds. At the start of each round, the first step is to decide who has the initiative – that is, in what order the combatants will act during the round."
+LOC_RULE_COMBAT_CHILDREN_ROUNDS_INITIATIVE_SECTIONS_DRAWING_THE_INITIATIVE_NAME,Drawing the Initiative
+LOC_RULE_COMBAT_CHILDREN_ROUNDS_INITIATIVE_SECTIONS_DRAWING_THE_INITIATIVE_BODY,"- To determine the {{key: initiative}}, ten cards numbered 1 to 10 are used.
+- Each player taking part in the conflict, voluntarily or otherwise, draws a random card at the beginning of each round, and the GM draws cards for [[NPCs|npc]].
+- The number on the card determines the order in which you act in the round.
+- Your place in the initiative order is called your turn.
+- Place your initiative card by your character sheet so everyone can see the order in which each person acts.
+- The GM puts their card (or cards) in front of them.
+- When all participants have had their turn, the round is over and a new round begins by drawing the initiative again.
+"
+LOC_RULE_COMBAT_CHILDREN_ROUNDS_INITIATIVE_SECTIONS_INITIATIVE_FOR_NPCS_NAME,Initiative for NPCs
+LOC_RULE_COMBAT_CHILDREN_ROUNDS_INITIATIVE_SECTIONS_INITIATIVE_FOR_NPCS_BODY,"To make things simple, particularly in large battles, the GM can draw a single initiative card for a group of NPCs. All NPCs in that group act on the same turn in the round. The order among them is decided by the GM."
+LOC_RULE_COMBAT_CHILDREN_ROUNDS_INITIATIVE_SECTIONS_SURPRISE_NAME,Surprise
+LOC_RULE_COMBAT_CHILDREN_ROUNDS_INITIATIVE_SECTIONS_SURPRISE_BODY,"If you perform an attack that the GM deems surprising to your enemy, you get to choose any initiative card you want in the first round of combat. If several characters participate in the surprise attack, you may all choose a card. The other combatants draw the initiative from the cards that remain. At the start of the second round, everyone draws the initiative as usual."
+LOC_RULE_COMBAT_CHILDREN_ROUNDS_INITIATIVE_SECTIONS_WAITING_NAME,Waiting
+LOC_RULE_COMBAT_CHILDREN_ROUNDS_INITIATIVE_SECTIONS_WAITING_BODY,"On your turn in the round, you can choose to wait. This means that you swap initiative cards – and therefore places in the turn order – with another creature whose turn comes after yours. You can swap cards with other [[player characters|player character]] as well as NPCs (or group of NPCs acting on the same turn), and they cannot refuse the trade. However, you cannot swap initiative cards with anyone who has already had their turn, or who themselves chose to wait earlier in the round.
+Monsters: Monsters often have multiple turns in a single round, and therefore draw multiple initiative cards. In that case you decide which card you want, as long as it comes after your current turn in the initiative order. Monsters themselves never choose to wait.
+"
+LOC_RULE_COMBAT_CHILDREN_ROUNDS_INITIATIVE_SECTIONS_FLIP_THE_INITIATIVE_CARD_NAME,Flip the Initiative Card
+LOC_RULE_COMBAT_CHILDREN_ROUNDS_INITIATIVE_SECTIONS_FLIP_THE_INITIATIVE_CARD_BODY,"* Once you have had your turn in the round, you can flip the initiative card face down to make it clear to you and everyone else that your turn is over. This means that you cannot perform any reaction (such as parrying an attack) later in the round."
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_NAME,Melee Combat
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_BODY,"To attack someone in melee, you generally must be within 2 meters of your target. On the grid map you need to be positioned in a square adjacent to the enemy (including diagonally). When attacking in close combat, you use the skill that covers the type of weapon you are wielding.
+{{table: Demon Roll in Melee}}
+{{table: Melee Combat Actions}}
+"
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_WEAPON_NAME,Weapon
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_WEAPON_BODY,"You can have up to three weapons at hand. Write them down in the Weapons section on your character sheet. To attack with a weapon, it must also be drawn. Drawing a weapon kept at hand, or exchanging your drawn weapon for another weapon at hand, is a [[free action]]. Picking up another weapon from the ground or from your inventory costs a regular action.
+"
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_SHOVE_NAME,Shove
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_SHOVE_BODY,"If you hit an enemy with a melee attack and your STR damage bonus is equal to or higher than your opponent’s damage bonus, you can choose to shove the enemy up to 2 meters in any direction (to an adjacent square, if you are using a grid map) in addition to doing damage. This movement does not count toward the enemy’s total movement in the round and does not trigger [[free attacks|free attack]] from anyone. Monsters cannot shove or be shoved.
+time. The STR requirement of a one-handed weapon decreases by 3 if you hold it with both hands.
+"
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_PRONE_TARGETS_NAME,Prone Targets
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_PRONE_TARGETS_BODY,"If you are standing up but your enemy is lying on the ground, your attack gets a [[boon]] and inflicts an extra D6 damage."
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_DAMAGE_TYPES_NAME,Damage Types
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_DAMAGE_TYPES_BODY,"The types of damage are listed below. The damage types of various weapons are listed in the weapon tables in chapter 6. Some weapons, such as swords, can inflict both slashing damage and piercing damage – you must state whether you stab or slash before rolling the die. The damage type influences the effectiveness of armor, and monsters can be resistant to certain types of damage.
+{{table: Damage Types}}
+"
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_CRITICAL_HIT_NAME,Critical Hit
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_CRITICAL_HIT_BODY,"By rolling a dragon when you attack, you score a {{key: critical hit}}. This means that a dragon roll is required to parry or dodge the attack, and that you may choose one of the following effects:
+✦Roll double the amount of dice for the weapon’s damage, before adding any damage bonus and other bonuses. For example, if you get a critical hit with a broadsword (damage 2D6) and have damage bonus D4, the damage is 4D6+D4.
+✦You can immediately perform a second attack against another enemy. This additional attack is a free action.
+✦Armor has no effect against the attack, as it finds a gap or weak spot. This effect can only be chosen if the attack deals piercing damage (optional rule, below).
+"
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_HITTING_INANIMATE_OBJECTS_NAME,Hitting Inanimate Objects
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_HITTING_INANIMATE_OBJECTS_BODY,"If you hit a non-living object, like a door or a lock, you hit automatically – only roll for damage. Inanimate objects often have an [[armor rating]], however."
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_DODGING_NAME,Dodging
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_DODGING_BODY,"As an alternative to parrying, you can try to {{key: dodge}} when hit by an attack. You cannot parry and dodge the same attack – you must choose one or the other. You can dodge while prone. You must declare that you are dodging before your opponent rolls for damage. Roll for EVADE – on success you evade the attack and take no damage. On a failure, you are hit by the attack."
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_DODGING_REACTION_NAME,Dodging: Reaction
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_DODGING_REACTION_BODY,"Dodging is a reaction and, like parrying, requires that you have not already had your turn in the round. Once you have dodged, your turn in the round is spent and you must flip your initiative card."
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_MOVEMENT_NAME,Movement
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_MOVEMENT_BODY,"On a successful dodge you may, if you want, move up to 2 meters in any direction. This movement does not trigger free attacks from anyone."
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_DODGING_MONSTERS_NAME,Dodging: Monsters
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_DODGING_MONSTERS_BODY,"As a rule, monster attacks can be dodged, unless otherwise specified."
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_SPECIAL_ATTACKS_NAME,Special Attacks
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_SPECIAL_ATTACKS_BODY,"In addition to simply trying to hit the enemy, there are a few special attacks that you can use in melee combat. You must always declare that you are using a special attack before rolling the attack. Several special attacks are resolved by [[opposed rolls|opposed roll]]. When rolling for an [[NPC]] without the skill in question, the GM rolls against the default skill level 5.
+Find Weak Spot: If your weapon is piercing, you can try to find a gap in the enemy’s armor or [[natural armor]]. You get a bane on the attack, but if it hits, the enemy counts as armorless.
+Topple: You try to topple an enemy to the ground instead of inflicting damage. This is handled with an opposed roll between your skill level in the weapon you are using and the enemy’s EVADE. If your weapon has the toppling feature, you get a boon. The attack counts as an action for you, but not for your opponent. It cannot be dodged or parried. An effective way of using this special attack is to work together with another person – if you topple the opponent, your friend can attack the prone enemy before they can get up.
+Disarm: You try to disarm your enemy instead of inflicting damage. This is handled with an opposed roll between your and the enemy’s skill level in the
+weapons you are using. The attack counts as an action for you, but not for your opponent. It cannot be dodged or parried. If the enemy is holding the weapon with both hands, you get a bane. If you succeed, the weapon lands D6 meters away in a direction of your choice. Picking up a weapon from the ground is an action. Disarm does not work on shields or natural weapons.
+Grapple: You try to grapple a humanoid enemy instead of inflicting damage. This is handled with an opposed roll between your BRAWLING and the enemy’s BRAWLING. The attack counts as an action for you, but not for your opponent. It cannot be dodged or parried. If your attempt fails, you fall to the ground. If it succeeds, both of you fall to the ground and the enemy is trapped in your grip. As long as you maintain your grip the enemy can neither move nor perform any action that requires body movement, except trying to break free. Doing so is an opposed roll between your BRAWLING and the enemy’s BRAWLING. The roll is a free action for the enemy, but not for you. While maintaining your grip, you are also unable to move or perform any action that requires body movement, except break – this counts as an unarmed attack with a boon that cannot be dodged or parried. Releasing the enemy is a free action.
+"
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_MELEE_TACTICS_NAME,Melee Tactics
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_MELEE_TACTICS_BODY,"To be successful in melee combat it is important to realize that your most precious resource is your actions – you only get one per round, including reactions such as dodging or parrying. If several [[player characters|player character]] are fighting together, it is often very effective to focus on the same enemy, as that person can only parry or dodge once, which leaves them vulnerable to multiple attacks. But always remember that you too are exposed to attacks after performing your action. The heroic abilities Defensive and Lightning Fast significantly
+increase your ability to defend yourself against multiple opponents. In single combat against an opponent as powerful as yourself, it may be wise to wait and let the enemy strike first. If their attack misses you do not need to parry or dodge, and can then perform your own attack while the enemy is unable to protect themselves. The drawback is that you surrender the initiative to your enemy, who may choose a completely different action than you expected.
+"
+LOC_RULE_COMBAT_CHILDREN_RANGED_COMBAT_NAME,Ranged Combat
+LOC_RULE_COMBAT_CHILDREN_RANGED_COMBAT_BODY,"To use a ranged weapon, it must first be drawn ([[free action]]), just like in melee. You should preferably be positioned over 2 meters from your target (i.e. not in an adjacent square on the map). Standing 2 meters away or less gives you a [[bane]] on your attack. Roll against the skill for the weapon you are using. For throwing weapons, use the same skill as for melee attacks (such as KNIVES or SPEARS). If the attack hits, the weapon determines which dice you should roll to see how much damage it inflicts. The damage can be increased by [[Damage bonus|Derived Ratings]] and a [[dragon roll|dragon]], and decreased by armor.
+{{table: Demon Roll in Ranged Combat}}
+"
+LOC_RULE_COMBAT_CHILDREN_RANGED_COMBAT_SECTIONS_DAMAGE_BONUS_NAME,Damage Bonus
+LOC_RULE_COMBAT_CHILDREN_RANGED_COMBAT_SECTIONS_DAMAGE_BONUS_BODY,"You get a damage bonus for ranged weapons, just as in melee. But note that crossbows do not give you a damage bonus."
+LOC_RULE_COMBAT_CHILDREN_RANGED_COMBAT_SECTIONS_RANGE_NAME,Range
+LOC_RULE_COMBAT_CHILDREN_RANGED_COMBAT_SECTIONS_RANGE_BODY,"The weapon tables on pages 74–75 specify the range of various weapons – that is, the maximum distance (in meters) at which the weapon can be used effectively. You can fire at targets up to twice the listed range, but then you get a bane."
+LOC_RULE_COMBAT_CHILDREN_RANGED_COMBAT_SECTIONS_CRITICAL_HIT_NAME,Critical Hit
+LOC_RULE_COMBAT_CHILDREN_RANGED_COMBAT_SECTIONS_CRITICAL_HIT_BODY,"Rolling a dragon when performing a ranged attack results in a [[critical hit]], which means that it can only be [[dodged|dodge]] (or [[parried|parry]] with a shield) if the opponent also rolls a dragon. You may also choose one of the following effects:
+✦Your weapon’s damage is doubled, excluding the damage bonus and other bonuses. Roll twice as many dice as normal and add them up. For example, a critical hit with a longbow inflicts 2D12 damage.
+✦Armor and [[natural armor]] have no effect against the attack, as it hits a gap or weak spot. This effect can only be chosen if the attack deals piercing damage (optional rule).
+"
+LOC_RULE_COMBAT_CHILDREN_RANGED_COMBAT_SECTIONS_PARRY_DODGE_NAME,Parry & Dodge
+LOC_RULE_COMBAT_CHILDREN_RANGED_COMBAT_SECTIONS_PARRY_DODGE_BODY,"Parrying a ranged attack requires a shield. It works the same way as in melee combat, except that rolling a dragon does not give you a counterattack. You can dodge ranged attacks just like melee attacks."
+LOC_RULE_COMBAT_CHILDREN_RANGED_COMBAT_SECTIONS_OBSCURED_TARGETS_NAME,Obscured Targets
+LOC_RULE_COMBAT_CHILDREN_RANGED_COMBAT_SECTIONS_OBSCURED_TARGETS_BODY,"If your view of the target is partially obscured by an object or person, no matter if it is a friend or foe, you get a bane on your attack. On a grid map you can shoot past a person standing between you and your target, but with a bane. If the target is completely out of sight, perhaps hiding behind a wall, you cannot shoot it at all. If you are playing without a map, the GM decides whether your line of sight is partially or completely blocked."
+LOC_RULE_COMBAT_DAMAGE_DAMAGE,Damage
+LOC_RULE_COMBAT_DAMAGE_DAMAGE_BODY,"Life as an adventurer is hard and risky. The rewards may be great, but the only thing you know for sure is that you will suffer all sorts of damage along the way. Taking damage reduces your [[hit points|hp]] (HP)."
+LOC_RULE_COMBAT_DAMAGE_DAMAGE_SECTIONS_ARMOR_NAME,Armor
+LOC_RULE_COMBAT_DAMAGE_DAMAGE_SECTIONS_ARMOR_BODY,"Wearing leather, chainmail, or plate armor can protect your body from damage. Equipping or unequipping armor counts as an action in combat. The armor you are wearing should be written down in the Armor section on your character sheet and does not count toward your [[encumbrance]]. You can only wear one suit of armor at a time. Some armors can give you a [[bane]] on certain skill rolls or restrict your movement."
+LOC_RULE_COMBAT_DAMAGE_DAMAGE_SECTIONS_ARMOR_RATING_NAME,Armor Rating
+LOC_RULE_COMBAT_DAMAGE_DAMAGE_SECTIONS_ARMOR_RATING_BODY,"An armor’s effectiveness is determined by its {{key: armor rating}}. Whenever you take damage from a physical attack, subtract the armor rating from the damage. If the damage from a melee attack is completely negated, the attacking weapon itself suffers the damage instead, which might break the weapon."
+LOC_RULE_COMBAT_DAMAGE_DAMAGE_SECTIONS_HELMETS_NAME,Helmets
+LOC_RULE_COMBAT_DAMAGE_DAMAGE_SECTIONS_HELMETS_BODY,"Your armor can be combined with a helmet, which can further increase your armor rating. Equipping or unequipping a helmet counts as an action. Helmets can also give you a bane when using certain skills."
+LOC_RULE_COMBAT_DAMAGE_DAMAGE_SECTIONS_DAMAGE_TYPES_ARMOR_NAME,Damage Types & Armor
+LOC_RULE_COMBAT_DAMAGE_DAMAGE_SECTIONS_DAMAGE_TYPES_ARMOR_BODY,"If the optional rule for damage types is used, some armor gains a bonus to its armor rating against certain types of damage, as its entry in Armor says. If the type of damage is not stated, the armor has its normal effect.
+"
+LOC_RULE_COMBAT_CHILDREN_DEATH_NAME,Death
+LOC_RULE_COMBAT_CHILDREN_DEATH_SECTIONS_DEATH_NAME,Death
+LOC_RULE_COMBAT_CHILDREN_DEATH_SECTIONS_DEATH_BODY,"If your HP reaches zero, you drop to the ground and risk dying. You cannot move or perform any actions except trying to rally (below)."
+LOC_RULE_COMBAT_CHILDREN_DEATH_SECTIONS_DEATH_ROLL_NAME,Death Roll
+LOC_RULE_COMBAT_CHILDREN_DEATH_SECTIONS_DEATH_ROLL_BODY,"On your turn in each subsequent round, you must make a {{key: death roll}} – a roll against your CON. The death roll cannot be [[pushed|push]] if that optional rule is used. Record the results of your death rolls on your character sheet. After three successful death rolls you recover D6 HP and stop making death rolls. After three failed death rolls, your [[player character]] dies. [[Rolling a dragon|dragon]] counts as two successful death rolls, and [[rolling a demon|demon]] counts as two failures. If the combat ends, keep counting rounds until all death rolls have been made. Any failed death rolls are reset if you survive."
+LOC_RULE_COMBAT_CHILDREN_DEATH_SECTIONS_ZERO_HP_FOR_NPCS_NAME,Zero HP for NPCs
+LOC_RULE_COMBAT_CHILDREN_DEATH_SECTIONS_ZERO_HP_FOR_NPCS_BODY,"When an [[NPC]] reaches zero HP, no death rolls are made – the GM decides whether the person lives or dies. However, an NPC dies if hit by an instantly killing attack, just like a player character."
+LOC_RULE_COMBAT_CHILDREN_DEATH_SECTIONS_ADDITIONAL_DAMAGE_NAME,Additional Damage
+LOC_RULE_COMBAT_CHILDREN_DEATH_SECTIONS_ADDITIONAL_DAMAGE_BODY,"If you suffer additional damage while at zero HP, it automatically counts as a failed death roll."
+LOC_RULE_COMBAT_CHILDREN_DEATH_SECTIONS_RALLY_NAME,Rally
+LOC_RULE_COMBAT_CHILDREN_DEATH_SECTIONS_RALLY_BODY,"Another player character within 10 meters and earshot can PERSUADE you to rally and keep fighting despite having zero HP. This counts as an action. If you rally, you can continue acting as normal, but must keep making death rolls as described above. You can even try to rally yourself, rolling against your WIL with a bane (instead of PERSUASION)."
+LOC_RULE_COMBAT_CHILDREN_DEATH_SECTIONS_SAVING_LIFE_NAME,Saving Life
+LOC_RULE_COMBAT_CHILDREN_DEATH_SECTIONS_SAVING_LIFE_BODY,"When you have zero HP, another person next to you can save your life with a successful HEALING roll. Without bandages, they get a bane to the roll. This counts as an action. Multiple attempts are allowed. If the roll succeeds, you stop making death rolls and recover D6 HP. You cannot save your own life this way, even if you have rallied (see above). Additional HEALING rolls have no effect once you are no longer at zero HP, except when resting. Magic can save lives as well."
+LOC_RULE_COMBAT_CHILDREN_DEATH_SECTIONS_INSTANT_DEATH_NAME,Instant Death
+LOC_RULE_COMBAT_CHILDREN_DEATH_SECTIONS_INSTANT_DEATH_BODY,"You don’t record negative HP, but if a single attack reduces your HP to a negative score equal to your full HP, your player character dies instantly. Time to honor the fallen adventurer and create a new one!
+{{table: Severe Injuries: Injury}}
+"
+LOC_RULE_COMBAT_CHILDREN_CONDITIONS_NAME,Conditions
+LOC_RULE_COMBAT_CHILDREN_CONDITIONS_BODY,"In this game you can suffer six different conditions. Each condition gives you a [[bane]] on all rolls against a certain [[attribute]] and skill rolls based on that attribute:
+{{table: Conditions}}
+"
+LOC_RULE_COMBAT_CHILDREN_CONDITIONS_SECTIONS_SUFFERING_A_CONDITION_NAME,Suffering a Condition
+LOC_RULE_COMBAT_CHILDREN_CONDITIONS_SECTIONS_SUFFERING_A_CONDITION_BODY,"The most common way to suffer {{key: conditions | condition}} is to [[push your roll|push]]. You must then choose a condition and describe how you get it. You can suffer conditions in other ways as well, for example because of [[monster attacks|monster attack]] or spells."
+LOC_RULE_COMBAT_CHILDREN_CONDITIONS_SECTIONS_MULTIPLE_CONDITIONS_NAME,Multiple Conditions
+LOC_RULE_COMBAT_CHILDREN_CONDITIONS_SECTIONS_MULTIPLE_CONDITIONS_BODY,"If you suffer a condition that you already have, you must choose another condition. If you have all six conditions, you instead lose D6 [[WP]] if you suffer another condition. If you are out of WP, you instead lose D6 [[HP]]."
+LOC_RULE_COMBAT_CHILDREN_CONDITIONS_SECTIONS_HEALING_CONDITIONS_NAME,Healing Conditions
+LOC_RULE_COMBAT_CHILDREN_CONDITIONS_SECTIONS_HEALING_CONDITIONS_BODY,You can heal one condition of your choice during a [[stretch rest]]. A [[shift rest]] heals all conditions.
+LOC_RULE_COMBAT_CHILDREN_HEALING_RESTING_NAME,Healing & Resting
+LOC_RULE_COMBAT_CHILDREN_HEALING_RESTING_BODY,"Lost [[HP]] and [[WP]] are recovered by resting. There are three kinds of rest – round rest, stretch rest, and shift rest. While resting, you cannot perform any actions that require die rolls or WP.
+{{table: Rest Types}}
+"
+LOC_RULE_COMBAT_CHILDREN_HEALING_RESTING_SECTIONS_ROUND_REST_NAME,Round Rest
+LOC_RULE_COMBAT_CHILDREN_HEALING_RESTING_SECTIONS_ROUND_REST_BODY,"A quick rest that lasts just a single round. During a {{key: round rest}} you recover only D6 WP, no HP. You can only have a round rest once per shift."
+LOC_RULE_COMBAT_CHILDREN_HEALING_RESTING_SECTIONS_STRETCH_REST_NAME,Stretch Rest
+LOC_RULE_COMBAT_CHILDREN_HEALING_RESTING_SECTIONS_STRETCH_REST_BODY,"A short rest that only lasts for one stretch of time. During a {{key: stretch rest}} you heal D6 HP, or 2D6 HP if someone else is tending to you and succeeds with a HEALING roll. The caregiver cannot rest during the same stretch and can only heal one person during the rest.
+During a stretch rest, you also recover D6 Willpower Points and heal a [[condition]] of your choice. If something dramatic interrupts your rest, the effects are lost. You can only have a stretch rest once per shift.
+"
+LOC_RULE_COMBAT_CHILDREN_HEALING_RESTING_SECTIONS_SHIFT_REST_NAME,Shift Rest
+LOC_RULE_COMBAT_CHILDREN_HEALING_RESTING_SECTIONS_SHIFT_REST_BODY,A {{key: shift rest}} lasts one full shift of time and can only take place in a safe location where there are no enemies nearby. During a shift rest you recover all your lost HP and WP and heal all conditions. If a shift rest is interrupted by combat or hard work it has no effect.
+LOC_RULE_COMBAT_CHILDREN_HEALING_RESTING_SECTIONS_MAGIC_NAME,Magic
+LOC_RULE_COMBAT_CHILDREN_HEALING_RESTING_SECTIONS_MAGIC_BODY,Spells can allow you to heal HP more quickly than usual.
+LOC_RULE_COMBAT_CHILDREN_IMPROVISED_WEAPONS_NAME,Improvised Weapons
+LOC_RULE_COMBAT_CHILDREN_IMPROVISED_WEAPONS_BODY,"Battles are sometimes fought in places where things in the environment can be used in combat – as weapons, for protection, or for movement. These improvised weapons can be lots of different things, but what they all have in common is that they normally can only be used once, after which they are consumed. Using an improvised weapon is an action and can be combined with movement. Examples of improvised weapons can be found at the end of this book, and they are printed on cards in the boxed Dragonbane Core Set.
+At the start of combat, the GM can randomly determine D3 improvised weapons that are available – or simply decide for themselves. The GM can mark an improvised weapon’s exact location on the map, or say that it is available anywhere in the area. Once used, an improvised weapon is consumed. Complete adventures can feature new and unique improvised weapons that are connected to a certain adventure site.
+{{table: Inn}}
+{{table: Cave}}
+{{table: Forest}}
+"
+LOC_SIZES_SMALL,Small
+LOC_LABEL_DESCRIPTION,DESCRIPTION
+LOC_SIZES_SMALL_FIELDS_DESCRIPTION,A small monster is less than a meter tall and cannot block any area. It can easily pass through tiny passages.
+LOC_SIZES_NORMAL,Normal
+LOC_SIZES_NORMAL_FIELDS_DESCRIPTION,A normal-sized monster is roughly the size of a human. It can block an area of 2×2 meters (one square on a combat map) and pass through a passage half a meter wide.
+LOC_SIZES_LARGE,Large
+LOC_SIZES_LARGE_FIELDS_DESCRIPTION,A large monster can block an area of 4×4 meters and pass through a 1-meter-wide passage.
+LOC_SIZES_HUGE,Huge
+LOC_SIZES_HUGE_FIELDS_DESCRIPTION,A huge monster can block an area of 8×8 meters and pass through a 2-meter-wide passage.
+LOC_SIZES_SWARM,Swarm
+LOC_SIZES_SWARM_FIELDS_DESCRIPTION,"A swarm can range in size from Normal to Huge, but never blocks the area it is in, and can pass through tiny passages."
+LOC_SKILLS_INTRO_SECTIONS_ROLLING_DICE_NAME,Rolling Dice
+LOC_SKILLS_INTRO_SECTIONS_ROLLING_DICE_BODY,"Playing Dragonbane is a conversation between the GM and the players, back and forth, until a dramatic or challenging situation arises where the outcome is uncertain. Then it is time to roll dice. 
+* The rules often ask you to roll multiple dice of the same type and add the results together. For example, rolling 2D6 means that you roll two six-sided dice and add the results.
+* To determine whether an action succeeds or fails, you usually roll a D20. Rolling equal to or under your [[skill level]] means that the action succeeds. If you have a [[boon]], you roll two D20s for that action and only count the lowest result. If you have a [[bane]], you also roll two D20s, but instead only count the highest result. Skill rolls are explained in more detail in chapter 3.
+* There are thirty core skills in total in the game, not counting secondary skills like the [[schools of magic|school of magic]]. Each skill is connected to one of the [[attributes|attribute]], which determines your base chance in the skill when you create your [[player character]]. When using a skill, first describe what your player character is trying to achieve. Then roll a D20. A result that is lower than or equal to your skill level means that your action succeeds. In combat your skill rolls often have specific effects. Outside of combat the GM, or the adventure you are playing, determines the effects of the roll.
+* Only One Chance: As a rule, you only have one chance to succeed with any action. Once you have rolled the dice, you may not roll again to achieve the same goal. You need to try something different, wait until the circumstances have changed in a substantial way, or let another player character try. This rule does not apply in combat.
+* Rolling above your skill level means that your action fails. You and the GM can describe what happens. The GM can also let failures have additional consequences to advance the story in an exciting way.
+* NO STANDSTILL: Failure must not stop the story completely. Even when you fail, there must be a way forward – perhaps at the cost of time, risk, or gold, but still a way. The GM has the final say on the consequences of failure in that particular situation.
+"
+LOC_SKILLS_INTRO_SECTIONS_ROLLING_A_DRAGON_NAME,Rolling a Dragon
+LOC_SKILLS_INTRO_SECTIONS_ROLLING_A_DRAGON_BODY,"* Rolling a one (1) on D20 means that you are particularly successful. This is called {{key: rolling a dragon | dragon}}. In combat, a dragon roll has specific effects – increasing the damage of an attack, for example. Outside of combat the GM decides the effect. Some suggestions:
+  * You impress everyone around you.
+  * You achieve more than intended.
+  * The action is performed faster than usual.
+"
+LOC_SKILLS_INTRO_SECTIONS_ROLLING_A_DEMON_NAME,Rolling a Demon
+LOC_SKILLS_INTRO_SECTIONS_ROLLING_A_DEMON_BODY,"* Rolling a 20 on D20 is called {{key: rolling a demon | demon}} and means that the roll fails regardless of your [[skill level]] and other circumstances. Rolling a demon also means that the roll cannot be [[pushed|Pushing Your Roll]] Demon rolls can have additional effects in combat and during spellcasting. Outside of combat the GM can let demon rolls have effects such as:
+  * You damage yourself, someone else, or an item.
+  * You make a fool of yourself in front of everyone around you.
+  * You make a lot of noise.
+[[ATTRIBUTE]] ROLLS
+When no skill seems relevant to the situation, the GM can instruct you to roll against a base attribute instead – a Strength roll to lift something heavy, for example. But if there is a skill that covers the action you wish to perform, your roll must be based on that. In unclear cases the GM decides what is appropriate.
+"
+LOC_SKILLS_INTRO_SECTIONS_BOONS_BANES_NAME,Boons & Banes
+LOC_SKILLS_INTRO_SECTIONS_BOONS_BANES_BODY,"* Normally, the GM does not assess how difficult an action is. You only roll dice in challenging situations – period. But sometimes the GM might want to underscore that external factors either help or hinder an action. You might then get a {{key: boon}} or {{key: bane}} to your roll. In both cases you roll two D20, but only one result counts. If you have a boon, only the lowest result applies. If you have a bane, only the highest result applies. There are also cases where the rules say that you get a boon or a bane, for example when attacking a prone opponent or shooting at long range.
+* Multiple Boons/Banes: If you get multiple boons/banes to your roll, roll an additional D20 for each boon/bane and count only the lowest/highest result. Each boon negates one bane, and vice versa
+"
+LOC_SKILLS_INTRO_SECTIONS_HELP_FROM_OTHERS_NAME,Help from Others
+LOC_SKILLS_INTRO_SECTIONS_HELP_FROM_OTHERS_BODY,"One other [[player character]] or [[NPC]] can help you succeed at a die roll. This must be declared before you roll any dice. It must also make sense in the story – the individual helping you must be physically present and have the capacity to support your action. The GM has the final say. Whenever someone helps you with a roll, you get a [[boon]]. In combat, helping counts as an action – by helping someone else you lose your own action that round. NPCs can help each other just as player characters can. Only one character can help a roll.
+normal roll (one D20). If you have two boons and one [[bane]], it counts as a boon.
+"
+LOC_SKILLS_INTRO_SECTIONS_PUSHING_YOUR_ROLL_NAME,Pushing Your Roll
+LOC_SKILLS_INTRO_SECTIONS_PUSHING_YOUR_ROLL_BODY,"If you fail a skill or [[attribute]] roll, you can choose to {{key: push the roll | push}}, which means that you make another attempt. The new result applies, whatever it is. If you have [[boons|boon]] or [[banes|bane]], you must re-roll all dice. You can never push a [[demon roll|demon]] (a natural 20). Whenever you push a roll, immediately after the re-roll, you suffer a [[condition]]. This means that you get a bane on all rolls for skills based on a certain attribute, and rolls against the attribute in question. Each attribute is linked to a certain condition. Thus, there are six different conditions:
+{{table: Conditions}}
+You decide which condition you get from pushing a roll, with two important restrictions:
+✦You cannot choose a condition you already have.
+✦You must be able to explain how the condition results from the action you are trying to perform. The GM has the right to reject clearly unreasonable explanations.
+Once you have all six conditions, you may no longer push your rolls. In addition to their effects, conditions provide inspiration for roleplaying. Mark conditions on your character sheet.
+Healing Conditions: You can recover from a condition by resting – for more on resting and healing, see page 52.
+[[NPCs|npc]] and Monsters: Only the [[player characters|player character]] can push their rolls, not NPCs or monsters.
+"
+LOC_SKILLS_INTRO_SECTIONS_PUSHED_ROLLS_NAME,Pushed Rolls
+LOC_SKILLS_INTRO_SECTIONS_PUSHED_ROLLS_BODY,"[[Opposed rolls|opposed roll]] can be [[pushed|push]] (optional rule, see previous page) as well, but only if you are the active party. This can be done even after your opponent’s roll."
+LOC_SKILLS_INTRO_SECTIONS_OPPOSED_ROLLS_NAME,Opposed Rolls
+LOC_SKILLS_INTRO_SECTIONS_OPPOSED_ROLLS_BODY,"Sometimes you must beat your enemy in an {{key: opposed roll}} to succeed with an action. This means that both you and your adversary roll dice. Opposed rolls are used sparingly in the game, and only when someone is actively opposing you. In combat it only counts as an action for the active party.
+✦If your roll fails, your action fails as well, regardless of your opponent’s roll.
+✦If your roll succeeds while your opponent fails, your action succeeds.
+✦If both of you succeed with your rolls, your action succeeds if the result of your roll is lower than or equal to your opponent’s result. If the opponent’s result is lower than yours, you fail.
+"
+LOC_SKILLS_INTRO_SECTIONS_OPEN_OPPOSED_ROLLS_NAME,Open Opposed Rolls
+LOC_SKILLS_INTRO_SECTIONS_OPEN_OPPOSED_ROLLS_BODY,"The GM can also use [[opposed rolls|opposed roll]] in situations where there is no active party – e.g. rolling STR against STR to decide the outcome of an arm-wrestling match. This is called an open opposed roll. Open opposed rolls are re-rolled if both parties fail, or if both succeed and get the same result. Both parties can push their rolls."
+LOC_SKILLS_INTRO_SECTIONS_THE_CORE_SKILLS_NAME,The Core Skills
+LOC_SKILLS_INTRO_SECTIONS_THE_CORE_SKILLS_BODY,This section describes all core skills in the game. The [[schools of magic|school of magic]] are secondary skills and covered in chapter 5.
+LOC_SKILLS_INTRO_SECTIONS_NPCS_AND_SKILLS_NAME,NPCs and Skills
+LOC_SKILLS_INTRO_SECTIONS_NPCS_AND_SKILLS_BODY,"Non-[[player characters|player character]] use skills in the same way as player characters. The GM rolls dice for them, but only for actions that affect a player character directly – for example, if the [[NPC]] is attacking a player character or attempting to save them. When an NPC performs an action that does not directly affect a player character, the GM can simply decide what happens. NPC stat blocks don’t list all skills – when rolling for an NPC against an unlisted skill, the GM uses a default [[skill level]] of 5."
+LOC_SKILLS_INTRO_SECTIONS_SCHOOLS_OF_MAGIC_NAME,Schools of Magic
+LOC_SKILLS_INTRO_SECTIONS_SCHOOLS_OF_MAGIC_BODY,"There are different [[schools of magic|school of magic]], and each school is a separate secondary skill. For more information on magic, see chapter 5."
+LOC_SKILLS_INTRO_ENTITIES_ROUND_NAME,Round
+LOC_CATEGORY_MEASURING_TIME,Measuring Time
+LOC_LABEL_DURATION,DURATION
+LOC_VALUE_10_SECONDS,10 seconds
+LOC_LABEL_ENOUGH_TIME_TO,ENOUGH TIME TO
+LOC_VALUE_PERFORM_AN_ACTION_IN_COMBAT_TAKE_A_ROUND_REST,"Perform an action in combat, take a round rest."
+LOC_SKILLS_INTRO_ENTITIES_STRETCH_NAME,Stretch
+LOC_VALUE_15_MINUTES,15 minutes
+LOC_VALUE_EXPLORE_A_ROOM_TAKE_A_STRETCH_REST,"Explore a room, take a stretch rest."
+LOC_SKILLS_INTRO_ENTITIES_SHIFT_NAME,Shift
+LOC_VALUE_6_HOURS,6 hours
+LOC_VALUE_HIKE_FOR_15_KILOMETERS_TAKE_A_SHIFT_REST,"Hike for 15 kilometers, take a shift rest."
+LOC_SKILLS_INTRO_ENTITIES_EXHAUSTED_NAME,Exhausted
+LOC_CATEGORY_CONDITIONS,Conditions
+LOC_LABEL_ATTRIBUTE,ATTRIBUTE
+LOC_VALUE_STR,STR
+LOC_SKILLS_INTRO_ENTITIES_ANGRY_NAME,Angry
+LOC_VALUE_INT,INT
+LOC_SKILLS_INTRO_ENTITIES_SICKLY_NAME,Sickly
+LOC_VALUE_CON,CON
+LOC_SKILLS_INTRO_ENTITIES_SCARED_NAME,Scared
+LOC_VALUE_WIL,WIL
+LOC_SKILLS_INTRO_ENTITIES_DAZED_NAME,Dazed
+LOC_VALUE_AGL,AGL
+LOC_SKILLS_INTRO_ENTITIES_DISHEARTENED_NAME,Disheartened
+LOC_VALUE_CHA,CHA
+LOC_SPELLS_INTRO_SECTIONS_INTRO_NAME,Intro
+LOC_SPELLS_INTRO_SECTIONS_INTRO_BODY,"Some call magic a gift from the dragons, others a curse from the demons, and still others call it the blessing of the gods or spirits. And it is true that dragons, demons, gods, and spirits influence magic and can guide the mage who wields it, but the reality is that magic is a basic force of nature that exists throughout the physical world as well as beyond it. Gods and demons, dragons and spirits – they are all equally dependent on magic."
+LOC_SPELLS_INTRO_SECTIONS_SCHOOLS_OF_MAGIC_NAME,Schools of Magic
+LOC_SPELLS_INTRO_SECTIONS_SCHOOLS_OF_MAGIC_BODY,"Exploring magic is as much art as it is science. There are different {{key: schools of magic | school of magic}}, each with a unique view on what magic is and how it works. There are said to be more magic schools in the world of Dragonbane, even necromancy and other dark arts, but the three below are the only ones available to [[player characters|player character]] in the core game."
+LOC_SPELLS_INTRO_SECTIONS_SKILLS_NAME,Skills
+LOC_SPELLS_INTRO_SECTIONS_SKILLS_BODY,"Each [[school of magic]] is a separate secondary skill. As a newly created mage you may select one school as a trained skill (based on INT). You don’t get a base chance in magic schools that you are not trained in, even as a mage. You can learn additional schools of magic during the game."
+LOC_SPELLS_INTRO_SECTIONS_GENERAL_MAGIC_NAME,General Magic
+LOC_SPELLS_INTRO_SECTIONS_GENERAL_MAGIC_BODY,"General magic is not a school, but a collection of general spells. You can learn general spells no matter which [[school of magic]] you subscribe to."
+LOC_SPELLS_INTRO_SECTIONS_NEWLY_CREATED_MAGE_NAME,Newly Created Mage
+LOC_SPELLS_INTRO_SECTIONS_NEWLY_CREATED_MAGE_BODY,As a newly created mage you may select three rank 1 spells and three [[magic tricks|magic trick]] to start the game with. They must be chosen from your [[school of magic]] or general magic. You also get a [[grimoire]] where all your spells are recorded.
+LOC_SPELLS_INTRO_SECTIONS_REQUIREMENTS_NAME,Requirements
+LOC_SPELLS_INTRO_SECTIONS_REQUIREMENTS_BODY,"To cast a spell, you must fulfill one or more requirements which are specified in the description of each spell.
+✦Word: The spell is activated with a chant or power word. It cannot be a whisper.
+✦Gesture: The spell is activated by making specific hand movements.
+✦Focus: The spell is activated with an item held in your hand, such as a wand, crystal ball, or amulet.
+✦Ingredient: The spell is activated using a certain ingredient, which is consumed in the process.
+Some spells have multiple requirements. You cannot cast a spell unless all its requirements are fulfilled.
+"
+LOC_SPELLS_INTRO_SECTIONS_CASTING_TIME_NAME,Casting Time
+LOC_SPELLS_INTRO_SECTIONS_CASTING_TIME_BODY,"Unless otherwise stated, casting a spell always counts as an action in combat. However, there are reaction spells which are performed outside your own turn. Unlike other reactions in combat, such as [[parrying|parry]] and [[dodging|dodge]], reaction spells do not replace your regular action in the round. This means that you can cast as many of them as you want, if you have enough [[WP]]. There are also rituals, which take a stretch of time or even a shift to perform."
+LOC_SPELLS_INTRO_SECTIONS_GRIMOIRE_NAME,Grimoire
+LOC_SPELLS_INTRO_SECTIONS_GRIMOIRE_BODY,"Casting an unprepared spell from your [[grimoire]] takes twice as long, which means that you must spend an extra round, stretch, or shift on preparations. Make the roll when the spell is completed. Reaction spells cannot be cast from your grimoire."
+LOC_SPELLS_INTRO_SECTIONS_RANGE_NAME,Range
+LOC_SPELLS_INTRO_SECTIONS_RANGE_BODY,"Each spell has a maximum range. Unlike ranged weapons, spells cannot be used on targets outside their specified range. Personal range means that the spell only affects the person casting it."
+LOC_SPELLS_INTRO_SECTIONS_AREA_OF_EFFECT_NAME,Area of Effect
+LOC_SPELLS_INTRO_SECTIONS_AREA_OF_EFFECT_BODY,"Some spells affect an entire area. That area is called the area of effect. Unless stated otherwise, the area of effect always starts at the mage casting the spell. Area of effect spells can be [[dodged|dodge]] but not [[parried|parry]], unless stated otherwise. You can exempt one or more targets within the area from the spell’s effects, but you then get a [[bane]] on the roll."
+LOC_SPELLS_INTRO_SECTIONS_SPHERE_NAME,Sphere
+LOC_SPELLS_INTRO_SECTIONS_SPHERE_BODY,"If the range is described as sphere, the spell affects all targets within the chosen area except the mage themself."
+LOC_SPELLS_INTRO_SECTIONS_CONE_NAME,Cone
+LOC_SPELLS_INTRO_SECTIONS_CONE_BODY,"If the range is described as cone, the spell affects all targets within a cone-shaped area whose width at any given point equals the distance from the source of the spell. The range indicates the length of the cone."
+LOC_SPELLS_INTRO_SECTIONS_DURATION_NAME,Duration
+LOC_SPELLS_INTRO_SECTIONS_DURATION_BODY,"Each spell specifies the duration of its effect.
+{{table: Duration}}
+"
+LOC_SPELLS_INTRO_SECTIONS_MAGIC_ITEMS_NAME,Magic Items
+LOC_SPELLS_INTRO_SECTIONS_MAGIC_ITEMS_BODY,"Magic items may contain one or more spells that can be activated even by non-mages. Unless stated otherwise, it takes a successful roll against LANGUAGES or any [[school of magic]] to identify the spells and be able to use them.
+[[Willpower Points|wp]]: Using the spells inside a magic item still costs WP. Some magic items can store WP which you can use instead of your own. Read more on page 62.
+"
+LOC_SPELLS_INTRO_SECTIONS_FAILURE_DRAGONS_AND_DEMONS_NAME,"Failure, Dragons and Demons"
+LOC_SPELLS_INTRO_SECTIONS_FAILURE_DRAGONS_AND_DEMONS_BODY,"If the roll for casting a spell fails, the spell has no effect, but you still spend your [[WP]]. You are free to describe how the failure manifests itself in the story, as long as it has no mechanical effect."
+LOC_SPELLS_INTRO_SECTIONS_ROLLING_A_DRAGON_NAME,Rolling a Dragon
+LOC_SPELLS_INTRO_SECTIONS_ROLLING_A_DRAGON_BODY,"[[Rolling a Dragon|dragon]] when you cast a spell means that your target must roll a dragon to resist, [[parry]], or [[dodge]] the spell, and that you may choose one of the following effects:
+✦The damage or range of the spell is doubled.
+✦The spell does not cost any [[WP]].
+✦You can immediately cast another spell, but get a [[bane]] on the roll.
+"
+LOC_SPELLS_INTRO_SECTIONS_ROLLING_A_DEMON_NAME,Rolling a Demon
+LOC_SPELLS_INTRO_SECTIONS_ROLLING_A_DEMON_BODY,"If you roll a Demon, you cannot [[push the roll|push]]. There is also a risk of something going terribly wrong – see the optional rule for magical mishaps below."
+LOC_SPELLS_INTRO_SECTIONS_MAGICAL_MISHAP_NAME,Magical Mishap
+LOC_SPELLS_INTRO_SECTIONS_MAGICAL_MISHAP_BODY,"A magical mishap occurs if you roll a Demon (20) when casting a spell. Roll on the table on page 60.
+{{table: Magical Mishaps}}
+"
+LOC_SPELLS_INTRO_SECTIONS_LEARNING_MAGIC_NAME,Learning Magic
+LOC_SPELLS_INTRO_SECTIONS_LEARNING_MAGIC_BODY,"You can learn new spells from a teacher or [[grimoire]]. You must have a [[skill level]] in the relevant [[school of magic]], or any school of magic for general spells."
+LOC_SPELLS_INTRO_SECTIONS_PREREQUISITES_NAME,Prerequisites
+LOC_SPELLS_INTRO_SECTIONS_PREREQUISITES_BODY,Some spells have a prerequisite that must be met in order to learn them. It is usually a [[school of magic]] or knowing another spell.
+LOC_SPELLS_INTRO_SECTIONS_TEACHERS_NAME,Teachers
+LOC_SPELLS_INTRO_SECTIONS_TEACHERS_BODY,"The easiest (but often most expensive) way to learn a spell is from a teacher who already knows it. The lesson takes one shift, but you cannot activate the new spell until the end of the game session. You must then use an [[advancement mark]] for the school to learn the new spell instead of trying to increase your [[skill level]] in the school. Make a roll against INT, with a [[boon]]. On success you learn the spell, otherwise you do not."
+LOC_SPELLS_INTRO_SECTIONS_GRIMOIRES_NAME,Grimoires
+LOC_SPELLS_INTRO_SECTIONS_GRIMOIRES_BODY,"If you are lucky, you can find spells in other mages’ [[grimoires|grimoire]]. You can learn them on your own. This works the same way as with a teacher, but you roll against LANGUAGES instead of INT, without the [[boon]]."
+LOC_SPELLS_INTRO_SECTIONS_SCHOOLS_OF_MAGIC_2_NAME,Schools of Magic
+LOC_SPELLS_INTRO_SECTIONS_SCHOOLS_OF_MAGIC_2_BODY,"You can learn additional [[schools of magic|school of magic]] by first acquiring the [[heroic ability]] Magic Talent, and then studying under a teacher with a [[skill level]] in the school for at least a week. At the end of the week you make a roll against INT. On a success you get your base chance (INT) as the skill level in the school. On failure you may try again after another week of study. Even non-mages can learn magic this way."
+LOC_SPELLS_INTRO_SECTIONS_SPELL_LIST_NAME,Spell List
+LOC_SPELLS_INTRO_SECTIONS_SPELL_LIST_BODY,"The following pages list all [[magic tricks|magic trick]] and spells in the Dragonbane core game. First up is General Magic, followed by the three schools of Animism, Elementalism, and Mentalism."
+LOC_SPELLS_INTRO_SECTIONS_MAGIC_TRICKS_NAME,Magic Tricks
+LOC_SPELLS_INTRO_SECTIONS_MAGIC_TRICKS_BODY,{{key: magic trick}}{{key: magic tricks}}Magic tricks are easier to learn than real spells. It takes one stretch to learn a new trick from a teacher or [[grimoire]]. No [[advancement mark]] or roll is required.
+LOC_SPELLS_INTRO_ENTITIES_CASTING_NAME,Casting
+LOC_CATEGORY_CASTING_SPELLS,Casting Spells
+LOC_SPELLS_INTRO_ENTITIES_CASTING_FIELDS_DESCRIPTION,Description
+LOC_SPELLS_INTRO_ENTITIES_CASTING_FIELDS_DESCRIPTION_2,"To cast a spell you must spend [[Willpower Points|wp]] (WP) and roll against your [[skill level]] in the relevant school. Any school can be used to cast general spells. If the roll succeeds, the spell has the intended effect, as per its description. Otherwise, it has no effect. You can [[push the roll|push]] if this optional rule is used. [[Magic tricks|magic trick]] succeed automatically and always cost 1 WP."
+LOC_SPELLS_INTRO_ENTITIES_RANK_NAME,Rank
+LOC_SPELLS_INTRO_ENTITIES_RANK_FIELDS_DESCRIPTION,Description
+LOC_SPELLS_INTRO_ENTITIES_RANK_FIELDS_DESCRIPTION_2,"Spells are divided into ranks. These have no mechanical effect, but indicate how complex and powerful spells are. As a mage you start the game with only rank 1 spells, but you can learn higher rank spells during the game."
+LOC_SPELLS_INTRO_ENTITIES_PREPARED_SPELLS_NAME,Prepared Spells
+LOC_SPELLS_INTRO_ENTITIES_PREPARED_SPELLS_FIELDS_DESCRIPTION,Description
+LOC_SPELLS_INTRO_ENTITIES_PREPARED_SPELLS_FIELDS_DESCRIPTION_2,"Spells are complicated, and the maximum number of spells you can hold prepared in your memory at the same time is equal to your base chance for INT. When you have reached your limit and want to prepare another spell, you need to replace a spell. To prepare spells, you need to study them in a [[grimoire]]. This takes a shift of time, regardless of the number of spells. It can be done during a [[shift rest]]. You can only prepare spells that you have learned. Mark your prepared spells with an X on your character sheet."
+LOC_SPELLS_INTRO_ENTITIES_GRIMOIRE_NAME,Grimoire
+LOC_SPELLS_INTRO_ENTITIES_GRIMOIRE_FIELDS_DESCRIPTION,Description
+LOC_SPELLS_INTRO_ENTITIES_GRIMOIRE_FIELDS_DESCRIPTION_2,"Most mages have a {{key: grimoire}}, and newly created mages automatically get one. In the grimoire, you record all the spells you know. Recording one spell takes a shift of time. You can record unreadied spells. Once you have learned more spells than can be held prepared, your grimoire becomes crucial. In an emergency, you can cast spells directly from the grimoire, but it takes twice as long as normal (see below). Grimoires from other mages are also an effective way to learn new spells, should you not have a teacher. 
+If you lose your [[grimoire]], you cannot prepare the spells you kept in it. To be able to use the unprepared spells again, you first need to get a new grimoire and record these spells in it.
+"
+LOC_SPELLS_INTRO_ENTITIES_MAGIC_TRICKS_NAME,Magic Tricks
+LOC_SPELLS_INTRO_ENTITIES_MAGIC_TRICKS_FIELDS_DESCRIPTION,Description
+LOC_SPELLS_INTRO_ENTITIES_MAGIC_TRICKS_FIELDS_DESCRIPTION_2,"So-called {{key: magic tricks | magic trick}} are minor, relatively harmless spells. They are often the first thing a mage learns, as these simple spells train their minds to handle magical power. Each school has its own magic tricks. The limit on prepared spells (above) does not apply to magic tricks. Your magic tricks are always prepared. All magic tricks require a gesture (below) to be cast."
+LOC_SPELLS_INTRO_ENTITIES_ZERO_WP_NAME,Zero WP
+LOC_SPELLS_INTRO_ENTITIES_ZERO_WP_FIELDS_DESCRIPTION,Description
+LOC_SPELLS_INTRO_ENTITIES_ZERO_WP_FIELDS_DESCRIPTION_2,Some spells can drain [[WP]] from another person. Hitting zero WP has no other effect than prohibiting the use of abilities that require WP.
+LOC_SPELLS_INTRO_ENTITIES_POWER_LEVEL_NAME,Power Level
+LOC_SPELLS_INTRO_ENTITIES_POWER_LEVEL_FIELDS_DESCRIPTION,Description
+LOC_SPELLS_INTRO_ENTITIES_POWER_LEVEL_FIELDS_DESCRIPTION_2,"The power level of a spell indicates how much power you charge it with. The power level ranges from 1 to 3. Casting a spell costs 2 [[WP]] per power level. In other words, normal spells always cost at least 2 WP, and [[magic tricks|magic trick]] always cost 1 WP. Some spells do not use power level – these always cost 2 WP."
+LOC_SPELLS_INTRO_ENTITIES_POWER_FROM_THE_BODY_NAME,Power from the Body
+LOC_SPELLS_INTRO_ENTITIES_POWER_FROM_THE_BODY_FIELDS_DESCRIPTION,Description
+LOC_SPELLS_INTRO_ENTITIES_POWER_FROM_THE_BODY_FIELDS_DESCRIPTION_2,"If you have just one or zero [[WP]] left, you can draw power from your body if need be. But this is harmful, potentially even lethal. Roll a die of your choice (D4, D6, D8, D10, D12, or D20) before casting the spell – the result indicates how many WP you gain and must use straight away, but you also take the same amount of damage. WP not used immediately are lost. The damage is applied after the spell is cast. Power from the body cannot be used for healing spells."
+LOC_SPELLS_INTRO_ENTITIES_MAGIC_AND_METAL_NAME,Magic and Metal
+LOC_SPELLS_INTRO_ENTITIES_MAGIC_AND_METAL_FIELDS_DESCRIPTION,Description
+LOC_SPELLS_INTRO_ENTITIES_MAGIC_AND_METAL_FIELDS_DESCRIPTION_2,"Metal has an anti-magical effect, which means that you cannot use magic if you are wearing metal armor or have a metal weapon at hand. This includes partially metal items such as axes, spears, studded leather, and arrows (but not staves, clubs, or slings). Items in your inventory do not count."
+LOC_SPELLS_INTRO_ENTITIES_RANK_2_NAME,Rank
+LOC_SPELLS_INTRO_ENTITIES_RANK_2_FIELDS_DESCRIPTION,Description
+LOC_VALUE_TO,To
+LOC_SPELLS_INTRO_ENTITIES_RANK_3_NAME,Rank
+LOC_SPELLS_INTRO_ENTITIES_RANK_3_FIELDS_DESCRIPTION,Description
+LOC_WORLD_WORLD,World
+LOC_WORLD_WORLD_CHILDREN_JOURNEYS_NAME,Journeys
+LOC_TAB_JOURNEYS,Journeys
+LOC_WORLD_WORLD_CHILDREN_JOURNEYS_BODY,"As adventurers in the world of Dragonbane, the [[player characters|player character]] must often journey through dark forests, rugged moors, and high mountains. A journey can be much more than just a way of getting somewhere – it can be a little adventure in itself. Who knows what lies in wait around the corner?"
+LOC_WORLD_WORLD_CHILDREN_JOURNEYS_SECTIONS_TRAVEL_NAME,Travel
+LOC_WORLD_WORLD_CHILDREN_JOURNEYS_SECTIONS_TRAVEL_BODY,"Journeys proceed in shifts. As mentioned in chapter 1, there are four shifts in a day: morning, day, evening, and night. As a rule, the player characters can hike roughly 15 kilometers per shift on foot or roughly 30 kilometers on horseback. Difficult terrain might slow them down. The player characters can normally walk or ride for a maximum of two shifts per day, including a few short breaks. If they make a long stop on the road, the distance they cover is reduced. They cannot march with weapons drawn."
+LOC_WORLD_WORLD_CHILDREN_JOURNEYS_SECTIONS_FORCED_MARCH_NAME,Forced March
+LOC_WORLD_WORLD_CHILDREN_JOURNEYS_SECTIONS_FORCED_MARCH_BODY,"A player character can walk or ride for a third shift during the same day, but becomes Exhausted in the process. An already Exhausted character cannot travel a third shift, and no one can ever travel more than three shifts in a single day."
+LOC_WORLD_WORLD_CHILDREN_JOURNEYS_SECTIONS_TRAVEL_MAPS_NAME,Travel Maps
+LOC_WORLD_WORLD_CHILDREN_JOURNEYS_SECTIONS_TRAVEL_MAPS_BODY,"Most official adventures for Dragonbane include a map of the area where the adventure takes place. You can use the adventure map to determine how far the player characters need to travel and keep track of their progress. The maps are not exact, so you will sometimes have to make a judgment call."
+LOC_WORLD_WORLD_CHILDREN_JOURNEYS_SECTIONS_LONG_JOURNEYS_NAME,Long Journeys
+LOC_WORLD_WORLD_CHILDREN_JOURNEYS_SECTIONS_LONG_JOURNEYS_BODY,"The travel rules are designed for short treks within a limited area. If the player characters go on a long journey to another part of the world, there is no need to play it out in detail – the GM can just make a cut in the story and pick up again when they arrive at their destination."
+LOC_WORLD_WORLD_CHILDREN_JOURNEYS_SECTIONS_PATHFINDERS_NAME,Pathfinders
+LOC_WORLD_WORLD_CHILDREN_JOURNEYS_SECTIONS_PATHFINDERS_BODY,"Player characters who follow a road or clear path are not at risk of getting lost, but such luxuries are rarely available. When they are out in the wilderness, navigation is more difficult, and all sorts of mishaps can occur. When traveling through pathless terrain, the player characters must appoint a pathfinder who leads the way for the group. This person must make a BUSHCRAFT roll every shift to find their way. If the pathfinder has no map, the roll gets a [[bane]]. A spyglass gives a [[boon]]. On a failure, the group suffers a mishap – roll on the table. You can adjust the mishap to better fit the area.
+{{table: Mishaps}}
+"
+LOC_WORLD_WORLD_CHILDREN_JOURNEYS_SECTIONS_ROLLING_A_DRAGON_NAME,Rolling a Dragon
+LOC_WORLD_WORLD_CHILDREN_JOURNEYS_SECTIONS_ROLLING_A_DRAGON_BODY,A pathfinder who rolls a Dragon finds a shortcut – the distance covered this shift is doubled.
+LOC_WORLD_WORLD_CHILDREN_JOURNEYS_SECTIONS_DIFFICULT_TERRAIN_NAME,Difficult Terrain
+LOC_WORLD_WORLD_CHILDREN_JOURNEYS_SECTIONS_DIFFICULT_TERRAIN_BODY,"If the terrain is particularly difficult, you can add a bane to the BUSHCRAFT roll."
+LOC_WORLD_WORLD_CHILDREN_JOURNEYS_SECTIONS_RANDOM_ENCOUNTERS_NAME,Random Encounters
+LOC_WORLD_WORLD_CHILDREN_JOURNEYS_SECTIONS_RANDOM_ENCOUNTERS_BODY,"During a journey, the player characters can encounter the strangest creatures from far and near. Once per shift, or whenever you deem appropriate, you can roll on a table for random encounters. Random encounters can vary depending on the area you are
+in, which is why they are typically included in the adventure. You can also choose a suitable encounter instead of rolling randomly or make one up yourself. Some random encounters can even occur at night and when the player characters have made camp.
+"
+LOC_WORLD_WORLD_CHILDREN_WILDERNESS_NAME,Wilderness
+LOC_WORLD_WORLD_CHILDREN_WILDERNESS_SECTIONS_COLD_NAME,Cold
+LOC_WORLD_WORLD_CHILDREN_WILDERNESS_SECTIONS_COLD_BODY,"In cold weather, particularly at night, the player characters must make a BUSHCRAFT roll to withstand the cold. It takes a blanket to avoid a bane, while a fur grants a boon on the roll."
+LOC_WORLD_WORLD_CHILDREN_WILDERNESS_SECTIONS_MAKING_CAMP_NAME,Making Camp
+LOC_WORLD_WORLD_CHILDREN_WILDERNESS_SECTIONS_MAKING_CAMP_BODY,"The player characters need to sleep at least one shift per day to avoid sleep deprivation. Out in the wilderness, each player character must make a BUSHCRAFT roll to find a suitable resting place. Anyone without a sleeping fur gets a bane on the roll. If it fails, the shift does not count as sleep, nor can it be used as a [[shift rest]]."
+LOC_WORLD_WORLD_CHILDREN_WILDERNESS_SECTIONS_TENT_NAME,Tent
+LOC_WORLD_WORLD_CHILDREN_WILDERNESS_SECTIONS_TENT_BODY,"A tent grants a boon when making camp, and a successful roll allows multiple people to sleep in the tent without making their own BUSHCRAFT rolls. A small tent can accommodate two people and a large one has room for six. If the person setting up the tent fails, other player characters can roll separately for the same shift."
+LOC_WORLD_WORLD_CHILDREN_WILDERNESS_SECTIONS_KEEPING_WATCH_NAME,Keeping Watch
+LOC_WORLD_WORLD_CHILDREN_WILDERNESS_SECTIONS_KEEPING_WATCH_BODY,"Since random encounters can occur at any time, it may be wise for the player characters to sleep during different shifts so there is always someone awake to keep watch."
+LOC_WORLD_WORLD_CHILDREN_WILDERNESS_SECTIONS_DANGEROUS_LOCATIONS_NAME,Dangerous Locations
+LOC_WORLD_WORLD_CHILDREN_WILDERNESS_SECTIONS_DANGEROUS_LOCATIONS_BODY,"In certain locations, such as a dungeon with enemies all around, the player characters cannot make camp or take a shift rest. They must first leave the area and find a safer spot."
+LOC_WORLD_WORLD_CHILDREN_WILDERNESS_SECTIONS_FOOD_IN_THE_WILDERNESS_NAME,Food in the Wilderness
+LOC_WORLD_WORLD_CHILDREN_WILDERNESS_SECTIONS_FOOD_IN_THE_WILDERNESS_BODY,"Out in the wilds a player character can spend a shift hunting, fishing, or foraging for edible plants. The character cannot make any progress on the map during such a shift.
+{{table: Hunting}}
+"
+LOC_WORLD_WORLD_CHILDREN_WILDERNESS_SECTIONS_FISHING_NAME,Fishing
+LOC_WORLD_WORLD_CHILDREN_WILDERNESS_SECTIONS_FISHING_BODY,"Fishing requires fishing gear and is handled with a HUNTING & FISHING roll. If it succeeds, the fisher catches D4 rations of food with a fishing rod or D6 rations with a fishing net."
+LOC_WORLD_WORLD_CHILDREN_WILDERNESS_SECTIONS_FORAGING_NAME,Foraging
+LOC_WORLD_WORLD_CHILDREN_WILDERNESS_SECTIONS_FORAGING_BODY,"The player character makes a BUSHCRAFT roll – with a bane in winter and a boon in the fall. On a success, the forager finds D3 food rations worth of edible mushrooms, roots, and other plants."
+LOC_WORLD_WORLD_CHILDREN_WILDERNESS_SECTIONS_COOKING_NAME,Cooking
+LOC_WORLD_WORLD_CHILDREN_WILDERNESS_SECTIONS_COOKING_BODY,"Anyone eating raw fish or meat is at risk of falling ill – roll against virulence 10. Plants can be eaten raw without risk, but it takes two rations of raw plants to cover the daily need of food. Cooking up to ten rations of food takes one shift and requires a successful BUSHCRAFT roll. On a failure, the food counts as uncooked. A field kitchen gives a boon to the roll. The same goes for a proper kitchen, and there you can also cook as much food as you want. See the Master Chef [[heroic ability]]."
+LOC_WORLD_WORLD_CHILDREN_NON_PLAYER_CHARACTERS_NAME,Non-Player Characters
+LOC_TAB_NPC,NPC
+LOC_WORLD_WORLD_CHILDREN_NON_PLAYER_CHARACTERS_BODY,"You control everything in the world around the [[player characters|player character]], from dragons to demons, but your most important tool for creating drama is often your non-player characters. Stats for typical types of {{key: NPCs | npc}} can be found on the table.
+{{table: Typical NPCs}}
+"
+LOC_WORLD_WORLD_CHILDREN_NON_PLAYER_CHARACTERS_SECTIONS_MANAGING_NPCS_NAME,Managing NPCs
+LOC_WORLD_WORLD_CHILDREN_NON_PLAYER_CHARACTERS_SECTIONS_MANAGING_NPCS_BODY,"Mechanically, NPCs function like player characters. They move, perform actions, sustain damage, and use [[WP]] in the same way. But in practice, you should disregard all rules mechanics for NPCs if they do not directly affect a player character. Don’t roll dice for actions performed by NPCs unless they are attacking or healing a player character. You can roll for NPCs in other situations if it enhances the drama, but usually there is no need for it. Remember, an NPC rolls against the default [[skill level]] of 5 if no other level is listed."
+LOC_WORLD_WORLD_CHILDREN_NON_PLAYER_CHARACTERS_SECTIONS_MINIONS_BOSSES_NAME,Minions & Bosses
+LOC_WORLD_WORLD_CHILDREN_NON_PLAYER_CHARACTERS_SECTIONS_MINIONS_BOSSES_BODY,NPCs can be divided into two categories: minions and bosses.
+LOC_WORLD_WORLD_CHILDREN_NON_PLAYER_CHARACTERS_SECTIONS_MINIONS_NAME,Minions
+LOC_WORLD_WORLD_CHILDREN_NON_PLAYER_CHARACTERS_SECTIONS_MINIONS_BODY,Are groups of less significant NPCs with identical stats. They are rarely described by name or personality. A minion who reaches zero [[HP]] is dead unless you want it to survive – perhaps to tell the player characters something important with its dying words. Minions almost never use WP and often act on the same turn in combat.
+LOC_WORLD_WORLD_CHILDREN_NON_PLAYER_CHARACTERS_SECTIONS_BOSSES_NAME,Bosses
+LOC_WORLD_WORLD_CHILDREN_NON_PLAYER_CHARACTERS_SECTIONS_BOSSES_BODY,"Are different. They are often described with names and backgrounds, and usually play an important part in the adventure. A boss draws their own [[initiative card|initiative]] in combat. Bosses have WP and use innate and [[heroic abilities|heroic ability]] just like player characters. Particularly powerful bosses often have multiple heroic abilities – not least Robust and Focused several times over, which can give them far more HP and WP than the player characters. If possible, try not to have your bosses die too early in the game. A boss who lives to fight another day is more fun than a dead one. Also make sure that the player characters cannot get to the boss too easily – put some minions in their way that need to be dealt with first. A boss encounter should be challenging!"
+LOC_WORLD_WORLD_CHILDREN_NON_PLAYER_CHARACTERS_SECTIONS_ATTRIBUTES_FOR_NPCS_NAME,Attributes for NPCs
+LOC_WORLD_WORLD_CHILDREN_NON_PLAYER_CHARACTERS_SECTIONS_ATTRIBUTES_FOR_NPCS_BODY,"In adventures for Dragonbane, [[attribute]] scores for NPCs are not listed as they are very rarely used. If you at some point would need to roll against an exact attribute score for an NPC, use the guidelines below: STR & AGL: Use the [[Damage bonus|Derived Ratings]]. At +D6, roll against an attribute score of 17. At +D4, roll against 14. At no bonus, roll against 10.
+CON: Roll against maximum HP, reduced by 2 for each level of the Robust heroic ability. WIL: Roll against maximum WP if this is listed, reduced by 2 for each level of the Focused heroic ability. If WP is not listed, roll against 10. INT & CHA: Roll against 10.
+"
+LOC_WORLD_WORLD_CHILDREN_NPC_CREATOR_NAME,NPC Creator
+LOC_WORLD_WORLD_CHILDREN_NPC_CREATOR_BODY,"Roll a random non-player character (name, attitude, kin, motivation, profession and trait) using the lists in Creating NPCs. Each result can be re-rolled on its own."
+LOC_WORLD_WORLD_CHILDREN_TREASURE_NAME,Treasure
+LOC_TAB_TREASURE,Treasure
+LOC_WORLD_WORLD_CHILDREN_TREASURE_BODY,"Roll D6 to see which of the tables to use: 1–3: Treasure table 1, 4–6: Treasure table 2.
+{{table: Treasure Table 1}}
+{{table: Treasure Table 2}}
+"
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_NAME,Other Hazards
+LOC_TAB_HAZARDS,Hazards
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_DARKNESS_NAME,Darkness
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_DARKNESS_BODY,"In complete darkness you cannot dash or hit enemies with ranged attacks. To attack an enemy in melee combat, you must first make an AWARENESS roll (not an action)."
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_TORCHES_LANTERNS_NAME,Torches & Lanterns
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_TORCHES_LANTERNS_BODY,"A torch or lantern lights up 10 meters (five squares) in all directions. Lighting a torch or lantern is an action and requires flint and tinder or a fire to light it with, or the [[magic trick]] IGNITE . If none of these are available, you can light it with a successful BUSHCRAFT roll, but that takes one stretch of work. A torch or lantern is carried in one hand, which means that you cannot use two-handed weapons or a second one-handed weapon at the same time. A torch can be used as a weapon, and counts as a small wooden club that deals fire damage. Whenever you hit someone with it, you must immediately roll to see whether the flame goes out (below). A torch or lantern can burn for up to a shift of time, but they are unreliable. After each stretch, or whenever the GM wants to heighten the drama, you must roll a die (the type depends on the light source. A result of 1 means that the flame goes out."
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_FEAR_NAME,Fear
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_FEAR_BODY,"There are many horrifying beasts lurking in the ruins and forests of Dragonbane. Such creatures can perform so-called fear attacks. Fear attacks can also be triggered by magic and other terrifying experiences. When struck by a fear attack you must immediately make a roll against WIL. The roll can be [[pushed|push]] (optional rule) and does not count as an action. Particularly frightening events can give you a [[bane]] on the roll. If the WIL roll fails, you must roll on the fear table on the next page.
+{{table: Fear Table}}
+"
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_POISON_NAME,Poison
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_POISON_BODY,"{{key: Poisons | poison}} are measured by potency. A weak poison has potency 9, a moderate poison has potency 12, and a strong poison can have potency 15 or even more. Whenever you ingest a poison, the GM makes an [[open opposed roll|opposed roll]] between the potency and your CON. If the poison wins, you suffer its full effect. If you win, you only suffer the limited effect of the poison. Poison has no effect on monsters.
+[[NPCs|npc]]: For poison effects on NPCs, roll against their maximum [[HP]], reduced by 2 for each level of the Robust [[heroic ability]].
+"
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_LETHAL_POISON_NAME,Lethal Poison
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_LETHAL_POISON_BODY,"✦Full Effect: You take D6 damage per round, on your turn, until you reach zero HP. If you consume an antidote in time the effect is halted.
+✦Limited Effect: You take D6 damage on your next turn.
+"
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_PARALYZING_POISON_NAME,Paralyzing Poison
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_PARALYZING_POISON_BODY,"✦Full Effect: You become Exhausted and must make a CON roll each turn (not an action). If it fails, you can neither move nor perform actions (not even [[free actions|free action]]) that round. The effect wears off after one stretch or if you are given an antidote.
+✦Limited Effect: You become Exhausted.
+"
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_SLEEPING_POISON_NAME,Sleeping Poison
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_SLEEPING_POISON_BODY,"✦Full Effect: You become Dazed and must make a CON roll each turn (not an action). If it fails, you fall asleep and remain sleeping for one shift. Being given an antidote or taking at least one point of damage wakes you up.
+✦Limited Effect: You become Dazed.
+"
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_DISEASE_NAME,Disease
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_DISEASE_BODY,"When you are exposed to a dangerous disease, the GM makes an open opposed roll between the disease’s virulence rating and your CON. If you win, you resist the disease. If not, you fall ill after one day – you become Sickly and lose D6 HP. While sick you cannot heal HP, [[WP]], or [[conditions|condition]]. Make a new roll against the disease every day, where each failure inflicts D6 damage. If you reach zero HP while sick, you die a day later. As soon as you win the opposed roll, you are fully cured – you stop rolling and can heal as usual."
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_HEALING_NAME,Healing
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_HEALING_BODY,"If someone tends to you with the HEALING skill while you are sick, that person can make the roll against the disease instead of you. The caregiver rolls for HEALING against the virulence of the disease. An herbal concoction adds a [[boon]] to the roll."
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_FALLING_NAME,Falling
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_FALLING_BODY,"Falling on a hard surface inflicts a number of D6s of bludgeoning damage equal to half of the height of the fall in meters, rounded down. A fall of less than two meters inflicts no damage. A successful ACROBATICS roll reduces the number of D6 by half (rounded up). Armor does not protect against falling damage."
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_SWIMMING_DROWNING_NAME,Swimming & Drowning
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_SWIMMING_DROWNING_BODY,"All [[player characters|player character]] are decent swimmers. In water your movement rate is half your movement rate on land. No ranged attacks can be performed in water, and melee attacks are performed with a bane. More difficult underwater maneuvers, like diving for something, require a"
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_HUNGER_NAME,Hunger
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_HUNGER_BODY,"You must eat at least one ration of food per day. After one day without food you become famished and cannot heal HP, WP, or conditions except through magic. You also take one point of damage per day that you haven’t eaten. If you reach zero HP while famished, you die from starvation after one day. Once you have eaten a ration of food you are no longer famished and can heal normally again."
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_COLD_NAME,Cold
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_COLD_BODY,"When the cold is bitter and you do not have enough shelter (according to the GM), you must roll BUSHCRAFT regularly. You usually roll once per shift, but in extreme cold you may have to roll every stretch or even every round. If you don’t have a blanket, you get a bane to the roll, while a fur gives you a boon.
+On failure you lose D6 HP and D6 WP, and can no longer heal these or conditions except through magic. You must then keep making rolls to withstand the cold, with the same effect if you fail. If you reach zero HP while cold, you die when it is time for the next roll. Only when you get warm, if only by a campfire, can you stop making rolls and heal normally again.
+"
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_SLEEP_DEPRIVATION_NAME,Sleep Deprivation
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_SLEEP_DEPRIVATION_BODY,"You need at least one shift of uninterrupted sleep every day. You cannot sleep in armor. After three shifts without sleep you can no longer heal WP or conditions. You heal HP as usual. You also lose D6 WP each shift you remain awake. If you reach zero WP while suffering from sleep deprivation, you collapse and sleep for at least one shift, and cannot be woken. Once you have slept at least one shift, you can heal WP and conditions normally again."
+LOC_WORLD_WORLD_CHILDREN_RIDING_ANIMALS_NAME,Riding Animals
+LOC_WORLD_WORLD_CHILDREN_RIDING_ANIMALS_BODY,A loyal horse or some other mount is a great asset to any adventurer.
+LOC_WORLD_WORLD_CHILDREN_RIDING_ANIMALS_SECTIONS_SADDLEBAGS_NAME,Saddlebags
+LOC_WORLD_WORLD_CHILDREN_RIDING_ANIMALS_SECTIONS_SADDLEBAGS_BODY,The Gear lists specify how many units of weight the animal can carry.
+LOC_WORLD_WORLD_CHILDREN_RIDING_ANIMALS_SECTIONS_MOVEMENT_NAME,Movement
+LOC_WORLD_WORLD_CHILDREN_RIDING_ANIMALS_SECTIONS_MOVEMENT_BODY,"While mounted you travel twice as fast as on foot – roughly 30 kilometers per shift. All [[player characters|player character]] are assumed to be able to get up on a horse and ride slowly, but for more advanced maneuvers a roll for RIDING is required."
+LOC_WORLD_WORLD_CHILDREN_RIDING_ANIMALS_SECTIONS_COMBAT_NAME,Combat
+LOC_WORLD_WORLD_CHILDREN_RIDING_ANIMALS_SECTIONS_COMBAT_BODY,"In order to fight on horseback, your mount must be combat trained. You may then move at your mount’s movement rate instead of your own. On horseback you fight as usual, but all attacks and [[parries|parry]] use the lowest of your RIDING skill and the weapon skill. Also, RIDING replaces EVADE when horseback. If you don’t have a saddle, all rolls get a [[bane]]. Enemies attacking you must choose whether they target you or your mount. Melee attacks from the ground get a bane against you."
+LOC_WORLD_WORLD_CHILDREN_RIDING_ANIMALS_SECTIONS_DAMAGE_NAME,Damage
+LOC_WORLD_WORLD_CHILDREN_RIDING_ANIMALS_SECTIONS_DAMAGE_BODY,"Mounts heal [[HP]] just like player characters. A mount that reaches zero HP does not make [[death rolls|death roll]], but simply dies."

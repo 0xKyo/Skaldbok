@@ -2,10 +2,11 @@
 // more than one campaign.
 import { ref } from 'vue';
 import { ApiError, apiGet, apiSend } from './api.js';
+import { t } from './i18n.js';
 
 export function useCampaigns(token, say = () => {}) {
   const tokenNow = () => (typeof token === 'function' ? token() : token);
-  const list = ref([]);                 // [{id, name, created, characters: [ids], sessions}], newest first
+  const list = ref([]);                 // [{id, name, created, characters: [ids], shifts (0 to 4), sessions}], newest first
   const loaded = ref(false);
   const error = ref('');
 
@@ -17,7 +18,7 @@ export function useCampaigns(token, say = () => {}) {
       error.value = '';
       loaded.value = true;
     } catch (e) {
-      error.value = e instanceof ApiError ? e.message : 'Could not open the campaigns.';
+      error.value = e instanceof ApiError ? e.message : t('Could not open the campaigns.');
     }
   }
 
@@ -25,10 +26,10 @@ export function useCampaigns(token, say = () => {}) {
     try {
       const made = await apiSend('POST', '/gm/campaigns', tokenNow(), name ? { name } : {});
       await refresh();
-      say(`Started the campaign “${made.name}”.`);
+      say(t('Started the campaign “{name}”.', { name: made.name }));
       return made.id;
     } catch (e) {
-      say(e instanceof ApiError ? e.message : 'Could not start the campaign.');
+      say(e instanceof ApiError ? e.message : t('Could not start the campaign.'));
       return null;
     }
   }
@@ -38,13 +39,15 @@ export function useCampaigns(token, say = () => {}) {
       list.value = (await apiSend('PUT', `/gm/campaigns/${encodeURIComponent(id)}`, tokenNow(), patch)).campaigns ?? list.value;
       return true;
     } catch (e) {
-      say(e instanceof ApiError ? e.message : 'Could not save the campaign.');
+      say(e instanceof ApiError ? e.message : t('Could not save the campaign.'));
       return false;
     }
   }
 
   const rename = (id, name) => (name.trim() && name.trim() !== find(id)?.name ? save(id, { name: name.trim() }) : Promise.resolve(false));
   const setCharacters = (id, characters) => save(id, { characters });
+  const setShifts = (id, shifts) => save(id, { shifts });
+  const resetShifts = (id) => save(id, { shifts: 0, reset: true });          // a new day: the shifts at 0 and every rest given back, even if nothing changed
 
   // Deletes a campaign with its sessions; gives back what the server answers (the lists after it) so that the sessions can be updated too
   async function remove(id) {
@@ -52,13 +55,13 @@ export function useCampaigns(token, say = () => {}) {
     try {
       const after = await apiSend('DELETE', `/gm/campaigns/${encodeURIComponent(id)}`, tokenNow());
       list.value = after.campaigns ?? [];
-      say(`Deleted “${name}”.`);
+      say(t('Deleted “{name}”.', { name }));
       return after;
     } catch (e) {
-      say(e instanceof ApiError ? e.message : 'Could not delete the campaign.');
+      say(e instanceof ApiError ? e.message : t('Could not delete the campaign.'));
       return null;
     }
   }
 
-  return { list, loaded, error, find, refresh, create, rename, setCharacters, remove };
+  return { list, loaded, error, find, refresh, create, rename, setCharacters, setShifts, resetShifts, remove };
 }

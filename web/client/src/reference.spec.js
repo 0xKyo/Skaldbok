@@ -61,4 +61,11 @@ describe('useReference', () => {
     expect(ref.current.tab).toBe(1);
     expect(ref.jump).toEqual({ type: 'weapons', key: 'core/weapon/axe' });
   });
+
+  it('a link made of a card\'s full key finds the page of its kind by itself', async () => {
+    const ref = await loaded();
+    ref.goTo({ key: 'core/weapon/axe' });
+    expect(ref.current.label).toBe('Gear');
+    expect(ref.jump).toEqual({ type: 'weapons', key: 'core/weapon/axe' });
+  });
 });

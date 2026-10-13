@@ -4,6 +4,7 @@
 // screen and looking at it later is the same thing.
 import { ref } from 'vue';
 import { ApiError, apiGet, apiSend } from './api.js';
+import { t } from './i18n.js';
 import { useBoard } from './board.js';
 
 export function useSessions(token, say = () => {}) {
@@ -30,7 +31,7 @@ export function useSessions(token, say = () => {}) {
       error.value = '';
       loaded.value = true;
     } catch (e) {
-      error.value = e instanceof ApiError ? e.message : 'Could not open the sessions.';
+      error.value = e instanceof ApiError ? e.message : t('Could not open the sessions.');
     }
   }
 
@@ -52,10 +53,10 @@ export function useSessions(token, say = () => {}) {
     try {
       const made = await apiSend('POST', '/gm/sessions', tokenNow(), name ? { campaign, name } : { campaign });
       await refresh();
-      say(`Started “${made.name}”.`);
+      say(t('Started “{name}”.', { name: made.name }));
       return made.id;
     } catch (e) {
-      say(e instanceof ApiError ? e.message : 'Could not start the session.');
+      say(e instanceof ApiError ? e.message : t('Could not start the session.'));
       return null;
     }
   }
@@ -64,10 +65,10 @@ export function useSessions(token, say = () => {}) {
     try {
       await boards[id]?.save();                                  // what was written a moment ago is kept before it is closed
       take(await apiSend('POST', `/gm/sessions/${encodeURIComponent(id)}/end`, tokenNow()));
-      say(`Ended “${find(id)?.name ?? 'the session'}”.`);
+      say(t('Ended “{name}”.', { name: find(id)?.name ?? t('the session') }));
       return true;
     } catch (e) {
-      say(e instanceof ApiError ? e.message : 'Could not end the session.');
+      say(e instanceof ApiError ? e.message : t('Could not end the session.'));
       return false;
     }
   }
@@ -76,10 +77,10 @@ export function useSessions(token, say = () => {}) {
     try {
       await boards[active.value]?.save();
       take(await apiSend('POST', `/gm/sessions/${encodeURIComponent(id)}/open`, tokenNow()));
-      say(`“${find(id)?.name ?? 'The session'}” is the active session.`);
+      say(t('“{name}” is the active session.', { name: find(id)?.name ?? t('The session') }));
       return true;
     } catch (e) {
-      say(e instanceof ApiError ? e.message : 'Could not open the session.');
+      say(e instanceof ApiError ? e.message : t('Could not open the session.'));
       return false;
     }
   }
@@ -90,10 +91,10 @@ export function useSessions(token, say = () => {}) {
     try {
       delete boards[id];
       take(await apiSend('DELETE', `/gm/sessions/${encodeURIComponent(id)}`, tokenNow()));
-      say(`Deleted “${name}”.`);
+      say(t('Deleted “{name}”.', { name }));
       return true;
     } catch (e) {
-      say(e instanceof ApiError ? e.message : 'Could not delete the session.');
+      say(e instanceof ApiError ? e.message : t('Could not delete the session.'));
       return false;
     }
   }
@@ -107,7 +108,7 @@ export function useSessions(token, say = () => {}) {
       if (s) s.name = clean;
       return true;
     } catch (e) {
-      say(e instanceof ApiError ? e.message : 'Could not rename the session.');
+      say(e instanceof ApiError ? e.message : t('Could not rename the session.'));
       return false;
     }
   }
@@ -116,20 +117,20 @@ export function useSessions(token, say = () => {}) {
   async function send(item) {
     const target = activeSession();
     if (!target) {
-      say('There is no active session: start one in Sessions.');
+      say(t('There is no active session: start one in Sessions.'));
       return false;
     }
     const board = boardFor(target.id);
     await board.ready;
     const id = board.addCopy(item);
     if (!id) {
-      say(board.loadError.value || 'Could not send it to the session.');
+      say(board.loadError.value || t('Could not send it to the session.'));
       return false;
     }
     await board.save();
     const s = find(target.id);
     if (s) s.items = board.items.value.length;
-    say(`Sent to “${target.name}”.`);
+    say(t('Sent to “{name}”.', { name: target.name }));
     return true;
   }
 

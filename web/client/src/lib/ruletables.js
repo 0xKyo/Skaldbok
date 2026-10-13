@@ -1,5 +1,6 @@
 // Tables inside rule text: a line that is only "{{table: Name}}" is where that table goes.
 const MARKER = /^\{\{table:\s*(.+?)\s*\}\}$/i;
+const INCLUDE = /^\{\{include:\s*(.+?)\s*\}\}$/i;
 // A bullet line: "* text", "- text", "• text" or "✦text".
 const BULLET = /^\s*(?:[*•-]\s+|✦\s*)(.*\S.*)$/;
 
@@ -7,13 +8,20 @@ export const markerName = (line) => line.trim().match(MARKER)?.[1] ?? null;
 
 const same = (a, b) => a.trim().toLowerCase() === b.trim().toLowerCase();
 
-// A text as blocks in reading order: {text} paragraphs, {list} for a run of bullet lines, and {table} at each marker
-// (a marker with no such table is dropped).
-export function textBlocks(text, tables = []) {
+// A text as blocks in reading order: {text} paragraphs, {list} for a run of bullet lines, {table} at each table marker and {card} at each
+// include marker (a marker with nothing to show is dropped).
+export function textBlocks(text, tables = [], includes = []) {
   const out = [];
   let list = null;
   for (const line of (text ?? '').split('\n')) {
     if (!line.trim()) continue;
+    const ref = line.trim().match(INCLUDE)?.[1];           // "{{include: Ref}}": another card, drawn right here
+    if (ref !== undefined) {
+      list = null;
+      const card = includes.find((c) => same(c.ref, ref));
+      if (card) out.push({ card });
+      continue;
+    }
     const bullet = line.match(BULLET);
     if (bullet) {
       if (!list) { list = []; out.push({ list }); }

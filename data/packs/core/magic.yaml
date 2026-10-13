@@ -1,37 +1,57 @@
 kind: magical-mishap
-category: Magical Mishaps
+category: LOC_CATEGORY_MAGICAL_MISHAPS
 rollable:
   - Magical Mishaps
 entities:
-  - name: The magical powers leave you Dazed.
-  - name: The spellcasting suddenly makes you Exhausted.
-  - name: The energies take a toll on your body and make you Sickly.
-  - name: You lose control of the spell, which makes you very Angry.
-  - name: The spell subjects you to demonic visions that leave you Scared.
-  - name: You see the world beyond the veil and realize your own insignificance
-    description: You feel Disheartened.
-  - name: The magic ravages your body, inflicting D6 damage per power level.
-  - name: The spell drains your willpower and you lose D6 WP per power level.
-  - name: The spell gives rise to a magical disease with virulence 3D6
-    description: You and everyone you come into contact with during the next shift are exposed to the disease.
-  - name: Another random spell of yours is activated instead of the one you cast, with the same target and power level.
-  - name: You vomit a frog the moment you tell a lie
-    description: Roll D4 every morning. On a 1, the effect wears off. It can also be lifted with DISPEL.
-  - name: Any gold or silver you touch withers into dust
-    description: Roll D4 every morning. On a 1, the effect wears off. It can also be lifted with DISPEL.
-  - name: The spell blinds you, and you act as if in total darkness
-    description: Roll D4 every morning. On a 1, you recover. The effect can also be lifted with DISPEL.
-  - name: You are struck by amnesia and forget who you and the other player characters are
-    description: The effect must be roleplayed. Roll D4 every morning. On a 1, your memory returns.
-  - name: The spell also affects a friend or other unintended victim
-    description: A healing or helping spell affects an enemy.
-  - name: The spell backfires
-    description: An offensive spell affects you instead of the intended target. A protecting or healing spell inflicts damage instead.
-  - name: You turn into an animal
-    description: "Roll D6. 1: cat, 2: fox, 3: goat, 4: wolf, 5: deer, 6: bear. You get stats according to the table on page 99 and cannot speak, but you retain your mental acuity. Roll a D4 every morning. On a 1, you revert back to your original form."
-  - name: You become one category younger, for example from adult to young
-    description: Your attributes and derived ratings change as per the table on page 24, but your skill levels do not. If you were already young, you turn into a child with −2 STR and CON, to a minimum of 3. The effect is permanent and you age normally from your new age.
-  - name: You become one category older, for example from adult to old
-    description: Your attributes and derived ratings change as per the table on page 24, but your skill levels do not. If you were already old, you become very frail and get −2 STR and CON. The effect is permanent and you age normally from your new age.
-  - name: Your magic attracts a demon from another dimension
-    description: The demon shows up within the next shift and attacks or causes some kind of trouble. The details are up to the GM.
+  - id: magic_theMagicalPowersLeaveYouDazed
+    name: LOC_MAGIC_THE_MAGICAL_POWERS_LEAVE_YOU_DAZED
+  - id: magic_theSpellcastingSuddenlyMakesYouExhausted
+    name: LOC_MAGIC_THE_SPELLCASTING_SUDDENLY_MAKES_YOU_EXHAUSTED
+  - id: magic_theEnergiesTakeATollOnYourBodyAndMakeYouSickly
+    name: LOC_MAGIC_THE_ENERGIES_TAKE_A_TOLL_ON_YOUR_BODY_AND_MAKE_YOU_SICKL
+  - id: magic_youLoseControlOfTheSpellWhichMakesYouVeryAngry
+    name: LOC_MAGIC_YOU_LOSE_CONTROL_OF_THE_SPELL_WHICH_MAKES_YOU_VERY_ANGRY
+  - id: magic_theSpellSubjectsYouToDemonicVisionsThatLeaveYouScared
+    name: LOC_MAGIC_THE_SPELL_SUBJECTS_YOU_TO_DEMONIC_VISIONS_THAT_LEAVE_YOU
+  - id: magic_youSeeTheWorldBeyondTheVeilAndRealizeYourOwnInsignificance
+    name: LOC_MAGIC_YOU_SEE_THE_WORLD_BEYOND_THE_VEIL_AND_REALIZE_YOUR_OWN_I
+    description: LOC_MAGIC_YOU_SEE_THE_WORLD_BEYOND_THE_VEIL_AND_REALIZE_YOUR_OWN_I_DESC
+  - id: magic_theMagicRavagesYourBodyInflictingD6DamagePerPowerLevel
+    name: LOC_MAGIC_THE_MAGIC_RAVAGES_YOUR_BODY_INFLICTING_D6_DAMAGE_PER_POW
+  - id: magic_theSpellDrainsYourWillpowerAndYouLoseD6WpPerPowerLevel
+    name: LOC_MAGIC_THE_SPELL_DRAINS_YOUR_WILLPOWER_AND_YOU_LOSE_D6_WP_PER_P
+  - id: magic_theSpellGivesRiseToAMagicalDiseaseWithVirulence_3d6
+    name: LOC_MAGIC_THE_SPELL_GIVES_RISE_TO_A_MAGICAL_DISEASE_WITH_VIRULENCE
+    description: LOC_MAGIC_THE_SPELL_GIVES_RISE_TO_A_MAGICAL_DISEASE_WITH_VIRULENCE_DESC
+  - id: magic_anotherRandomSpellOfYoursIsActivatedInsteadOfTheOneYouCastWithTheSameTargetAndPowerLevel
+    name: LOC_MAGIC_ANOTHER_RANDOM_SPELL_OF_YOURS_IS_ACTIVATED_INSTEAD_OF_TH
+  - id: magic_youVomitAFrogTheMomentYouTellALie
+    name: LOC_MAGIC_YOU_VOMIT_A_FROG_THE_MOMENT_YOU_TELL_A_LIE
+    description: LOC_MAGIC_YOU_VOMIT_A_FROG_THE_MOMENT_YOU_TELL_A_LIE_DESC
+  - id: magic_anyGoldOrSilverYouTouchWithersIntoDust
+    name: LOC_MAGIC_ANY_GOLD_OR_SILVER_YOU_TOUCH_WITHERS_INTO_DUST
+    description: LOC_MAGIC_ANY_GOLD_OR_SILVER_YOU_TOUCH_WITHERS_INTO_DUST_DESC
+  - id: magic_theSpellBlindsYouAndYouActAsIfInTotalDarkness
+    name: LOC_MAGIC_THE_SPELL_BLINDS_YOU_AND_YOU_ACT_AS_IF_IN_TOTAL_DARKNESS
+    description: LOC_MAGIC_THE_SPELL_BLINDS_YOU_AND_YOU_ACT_AS_IF_IN_TOTAL_DARKNESS_DESC
+  - id: magic_youAreStruckByAmnesiaAndForgetWhoYouAndTheOtherPlayerCharactersAre
+    name: LOC_MAGIC_YOU_ARE_STRUCK_BY_AMNESIA_AND_FORGET_WHO_YOU_AND_THE_OTH
+    description: LOC_MAGIC_YOU_ARE_STRUCK_BY_AMNESIA_AND_FORGET_WHO_YOU_AND_THE_OTH_DESC
+  - id: magic_theSpellAlsoAffectsAFriendOrOtherUnintendedVictim
+    name: LOC_MAGIC_THE_SPELL_ALSO_AFFECTS_A_FRIEND_OR_OTHER_UNINTENDED_VICT
+    description: LOC_MAGIC_THE_SPELL_ALSO_AFFECTS_A_FRIEND_OR_OTHER_UNINTENDED_VICT_DESC
+  - id: magic_theSpellBackfires
+    name: LOC_MAGIC_THE_SPELL_BACKFIRES
+    description: LOC_MAGIC_THE_SPELL_BACKFIRES_DESC
+  - id: magic_youTurnIntoAnAnimal
+    name: LOC_MAGIC_YOU_TURN_INTO_AN_ANIMAL
+    description: LOC_MAGIC_YOU_TURN_INTO_AN_ANIMAL_DESC
+  - id: magic_youBecomeOneCategoryYoungerForExampleFromAdultToYoung
+    name: LOC_MAGIC_YOU_BECOME_ONE_CATEGORY_YOUNGER_FOR_EXAMPLE_FROM_ADULT_T
+    description: LOC_MAGIC_YOU_BECOME_ONE_CATEGORY_YOUNGER_FOR_EXAMPLE_FROM_ADULT_T_DESC
+  - id: magic_youBecomeOneCategoryOlderForExampleFromAdultToOld
+    name: LOC_MAGIC_YOU_BECOME_ONE_CATEGORY_OLDER_FOR_EXAMPLE_FROM_ADULT_TO
+    description: LOC_MAGIC_YOU_BECOME_ONE_CATEGORY_OLDER_FOR_EXAMPLE_FROM_ADULT_TO_DESC
+  - id: magic_yourMagicAttractsADemonFromAnotherDimension
+    name: LOC_MAGIC_YOUR_MAGIC_ATTRACTS_A_DEMON_FROM_ANOTHER_DIMENSION
+    description: LOC_MAGIC_YOUR_MAGIC_ATTRACTS_A_DEMON_FROM_ANOTHER_DIMENSION_DESC

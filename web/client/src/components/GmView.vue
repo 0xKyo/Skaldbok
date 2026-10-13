@@ -3,6 +3,7 @@
 // (the Reference, the same the players have) and Homebrew (only the GM has it: what the GM makes).
 import { computed, inject, onBeforeUnmount, onMounted, provide, ref, watch } from 'vue';
 import { ApiError, apiGet, apiSend } from '../api.js';
+import { t } from '../i18n.js';
 import ChatView from './ChatView.vue';
 import AdventuresView from './AdventuresView.vue';
 import HomebrewView from './HomebrewView.vue';
@@ -47,16 +48,16 @@ const confirmingCharDelete = ref(false);
 let timer = null;
 
 const selected = computed(() => characters.value.find((c) => c.id === selectedId.value) ?? null);
-const unreadOf = (id) => threads.value.find((t) => t.characterId === id)?.unread ?? 0;
-const totalUnread = computed(() => threads.value.reduce((n, t) => n + (t.unread ?? 0), 0));
+const unreadOf = (id) => threads.value.find((th) => th.characterId === id)?.unread ?? 0;
+const totalUnread = computed(() => threads.value.reduce((n, th) => n + (th.unread ?? 0), 0));
 
 const tabs = computed(() => [
-  { id: 'character', label: 'Character' },
-  { id: 'chat', label: totalUnread.value > 0 && tab.value !== 'chat' ? `Chat (${totalUnread.value})` : 'Chat' },
-  { id: 'rules', label: 'Rules' },
-  { id: 'adventures', label: 'Adventures' },
-  { id: 'master', label: 'Master' },
-  { id: 'homebrew', label: 'Homebrew' },
+  { id: 'character', label: t('Character') },
+  { id: 'chat', label: totalUnread.value > 0 && tab.value !== 'chat' ? t('Chat ({n})', { n: totalUnread.value }) : t('Chat') },
+  { id: 'rules', label: t('Rules') },
+  { id: 'adventures', label: t('Adventures') },
+  { id: 'master', label: t('Master') },
+  { id: 'homebrew', label: t('Homebrew') },
 ]);
 
 // ---- data loading ----
@@ -113,7 +114,7 @@ async function selectCharacter(id) {
   if (id) await loadSelected();
 }
 
-watch(tab, (t) => window.history.replaceState(window.history.state, '', `${window.location.pathname}${window.location.search}#${t}`));
+watch(tab, (id) => window.history.replaceState(window.history.state, '', `${window.location.pathname}${window.location.search}#${id}`));
 
 // the tab and the character picked are two of the things the ◀ ▶ buttons remember
 watch([tab, selectedId], ([, now], old) => nav?.record('gm', { tab: tab.value, char: selectedId.value }, old?.[1] === null && now !== null && !!nav?.slice('gm')), { immediate: true });
@@ -177,29 +178,29 @@ onBeforeUnmount(() => clearTimeout(timer));
   <div class="gm-view">
     <Teleport :to="tabsSlot" :disabled="!tabsSlot">
       <nav class="tabs" role="tablist">
-        <button v-for="t in tabs" :key="t.id" role="tab" :aria-selected="tab === t.id" data-test="gm-tab" @click="tab = t.id">{{ t.label }}</button>
+        <button v-for="tb in tabs" :key="tb.id" role="tab" :aria-selected="tab === tb.id" data-test="gm-tab" @click="tab = tb.id">{{ tb.label }}</button>
       </nav>
     </Teleport>
 
     <p v-if="problem" class="error" style="padding: 1rem;">{{ problem }}</p>
-    <p v-else-if="offline" class="error" style="padding: 0 0 1rem;">Cannot reach the server. Trying again…</p>
+    <p v-else-if="offline" class="error" style="padding: 0 0 1rem;">{{ t('Cannot reach the server. Trying again…') }}</p>
 
     <template v-if="!problem">
       <!-- the character picked in the dropdown: Character shows its sheet, Chat its conversation -->
       <div v-if="(tab === 'character' && !creator) || tab === 'chat'" class="pick-bar">
-        <select :value="selectedId ?? ''" aria-label="Character" data-test="character-select" :disabled="!characters.length" @change="selectCharacter($event.target.value)">
-          <option v-if="!characters.length" value="">No characters yet</option>
+        <select :value="selectedId ?? ''" :aria-label="t('Character')" data-test="character-select" :disabled="!characters.length" @change="selectCharacter($event.target.value)">
+          <option v-if="!characters.length" value="">{{ t('No characters yet') }}</option>
           <option v-for="c in characters" :key="c.id" :value="c.id">{{ c.name || c.id }}{{ unreadOf(c.id) ? ` (${unreadOf(c.id)})` : '' }} · {{ c.kin }} {{ c.profession }}</option>
         </select>
         <template v-if="tab === 'character'">
-          <button type="button" class="pick-btn" data-test="new-character" @click="openCreator('wizard')">+ New character</button>
-          <button type="button" class="pick-btn" data-test="new-random" @click="openCreator('random')">Random</button>
+          <button type="button" class="pick-btn" data-test="new-character" @click="openCreator('wizard')">{{ t('+ New character') }}</button>
+          <button type="button" class="pick-btn" data-test="new-random" @click="openCreator('random')">{{ t('Random') }}</button>
           <span v-if="selected" class="char-actions">
-            <a v-if="selected.link" :href="selected.link" target="_blank" class="player-link">Player link ↗</a>
-            <button v-if="!confirmingCharDelete" type="button" class="del-btn" data-test="delete-character" @click="confirmingCharDelete = true">Delete character</button>
-            <span v-else class="confirm" data-test="char-delete-confirm">Delete «{{ selected.name }}»? This cannot be undone.
-              <button type="button" class="del-btn sure" data-test="char-delete-yes" @click="deleteCharacter">Delete</button>
-              <button type="button" class="del-btn" data-test="char-delete-no" @click="confirmingCharDelete = false">Cancel</button>
+            <a v-if="selected.link" :href="selected.link" target="_blank" class="player-link">{{ t('Player link ↗') }}</a>
+            <button v-if="!confirmingCharDelete" type="button" class="del-btn" data-test="delete-character" @click="confirmingCharDelete = true">{{ t('Delete character') }}</button>
+            <span v-else class="confirm" data-test="char-delete-confirm">{{ t('Delete «{name}»? This cannot be undone.', { name: selected.name }) }}
+              <button type="button" class="del-btn sure" data-test="char-delete-yes" @click="deleteCharacter">{{ t('Delete') }}</button>
+              <button type="button" class="del-btn" data-test="char-delete-no" @click="confirmingCharDelete = false">{{ t('Cancel') }}</button>
             </span>
           </span>
         </template>
@@ -217,9 +218,9 @@ onBeforeUnmount(() => clearTimeout(timer));
             @updated="(fresh) => { sheet = fresh; loadCharacterList(); }"
             @goto-rules="goToRules"
           />
-          <p v-else class="muted" style="padding: 1rem;">Loading…</p>
+          <p v-else class="muted" style="padding: 1rem;">{{ t('Loading…') }}</p>
         </template>
-        <p v-else class="muted" style="padding: 1rem;">There are no characters yet. Use “+ New character” or “Random”.</p>
+        <p v-else class="muted" style="padding: 1rem;">{{ t('There are no characters yet. Use “+ New character” or “Random”.') }}</p>
       </template>
 
       <!-- Chat: for now the player's own view, of the character picked above -->
@@ -234,7 +235,7 @@ onBeforeUnmount(() => clearTimeout(timer));
           :as-gm="true"
           @sent="loadSelected"
         />
-        <p v-else class="muted" style="padding: 1rem;">There are no characters to talk to yet.</p>
+        <p v-else class="muted" style="padding: 1rem;">{{ t('There are no characters to talk to yet.') }}</p>
       </template>
 
       <!-- Rules: the Reference, exactly the players' -->

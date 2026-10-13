@@ -32,8 +32,8 @@ struct Creation {
     std::string kinKey, professionKey;
     std::string age = "adult";
     std::string school;                                    // only for professions with schools of magic (the mage)
-    int rolled[kAttrCount] = {0, 0, 0, 0, 0, 0};           // score given to each attribute as rolled, before age (0 = not yet)
-    std::vector<std::string> professionSkills;             // kProfessionSkills of them, from the profession's list
+    std::vector<int> rolled;                               // score given to each attribute as rolled, before age (0 = not yet), in the order of the content's attributes
+    std::vector<std::string> professionSkills;             // the age says how many (six), from the profession's list
     std::vector<std::string> freeSkills;                   // the rest, any skill
     std::string heroicAbility;                             // name; not for mages
     std::vector<std::string> spells;                       // spell and trick keys (mages)

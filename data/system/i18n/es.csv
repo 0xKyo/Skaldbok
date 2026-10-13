@@ -1,0 +1,844 @@
+key,text
+LOC_ATTRIBUTE_STRENGTH,Fuerza
+LOC_ATTRIBUTE_STRENGTH_ABBR,FUE
+LOC_ATTRIBUTE_STRENGTH_DESC,Potencia muscular pura.
+LOC_ATTRIBUTE_CONSTITUTION,Constitución
+LOC_ATTRIBUTE_CONSTITUTION_ABBR,CON
+LOC_ATTRIBUTE_CONSTITUTION_DESC,Forma física y resistencia.
+LOC_ATTRIBUTE_AGILITY,Agilidad
+LOC_ATTRIBUTE_AGILITY_ABBR,AGI
+LOC_ATTRIBUTE_AGILITY_DESC,"Control corporal, velocidad y destreza motriz."
+LOC_ATTRIBUTE_INTELLIGENCE,Inteligencia
+LOC_ATTRIBUTE_INTELLIGENCE_ABBR,INT
+LOC_ATTRIBUTE_INTELLIGENCE_DESC,"Agudeza mental, intelecto y habilidades de razonamiento."
+LOC_ATTRIBUTE_WILLPOWER,Voluntad
+LOC_ATTRIBUTE_WILLPOWER_ABBR,VOL
+LOC_ATTRIBUTE_WILLPOWER_DESC,Autodisciplina y concentración.
+LOC_ATTRIBUTE_CHARISMA,Carisma
+LOC_ATTRIBUTE_CHARISMA_ABBR,CAR
+LOC_ATTRIBUTE_CHARISMA_DESC,Personalidad y empatía.
+LOC_TABLE_ATTRIBUTES,Atributos
+LOC_TABLE_ATTRIBUTES_NAME,ATRIBUTO
+LOC_TABLE_ATTRIBUTES_ABBR,ABREVIATURA
+LOC_TABLE_ATTRIBUTES_DESC,DESCRIPCIÓN
+LOC_LOOKUP_BASE_CHANCE,Nivel inicial
+LOC_LOOKUP_BASE_CHANCE_RANGE,ATRIBUTO
+LOC_LOOKUP_BASE_CHANCE_VALUE,NIVEL INICIAL
+LOC_LOOKUP_BASE_CHANCE_ROW_1,1 a 5
+LOC_LOOKUP_BASE_CHANCE_ROW_2,6 a 8
+LOC_LOOKUP_BASE_CHANCE_ROW_3,9 a 12
+LOC_LOOKUP_BASE_CHANCE_ROW_4,13 a 15
+LOC_LOOKUP_BASE_CHANCE_ROW_5,16 a 18
+LOC_LOOKUP_MOVEMENT_MODIFIER,Modificador de movimiento
+LOC_LOOKUP_MOVEMENT_MODIFIER_RANGE,ATRIBUTO / ALCANCE
+LOC_LOOKUP_MOVEMENT_MODIFIER_VALUE,MODIFICADOR
+LOC_LOOKUP_MOVEMENT_MODIFIER_ROW_1,{agility} 1–6
+LOC_LOOKUP_MOVEMENT_MODIFIER_ROW_2,{agility} 7–9
+LOC_LOOKUP_MOVEMENT_MODIFIER_ROW_3,{agility} 13–15
+LOC_LOOKUP_MOVEMENT_MODIFIER_ROW_4,{agility} 16–18
+LOC_LOOKUP_DAMAGE_BONUS,Bonificador al daño
+LOC_LOOKUP_DAMAGE_BONUS_RANGE,{strength}/{agility}
+LOC_LOOKUP_DAMAGE_BONUS_VALUE,BONIFICADOR AL DAÑO
+LOC_LOOKUP_DAMAGE_BONUS_ROW_1,12 o menos
+LOC_LOOKUP_DAMAGE_BONUS_ROW_2,13 a 16
+LOC_LOOKUP_DAMAGE_BONUS_ROW_3,17 o más
+LOC_ABILITIES_INTRO_SECTIONS_INTRO_NAME,Introducción
+LOC_ABILITIES_INTRO_SECTIONS_INTRO_BODY,"A continuación se describen una serie de [[capacidades heroicas|heroic ability]]. Todos los [[personajes jugadores|player character]], excepto los magos, obtienen una capacidad heroica al comienzo del juego y pueden ganar otras nuevas como se explica en la página 29. Ten en cuenta que algunas capacidades heroicas requieren un [[nivel de habilidad|skill level]] mínimo para ser aprendidas. Algunas gastan [[Puntos de voluntad|wp]] al activarse y otras no. A menos que se indique lo contrario, es posible combinar múltiples capacidades en la misma acción (por ejemplo, Asesino y Matadragones), pero debes pagar el coste de PV de cada capacidad que quieras usar. Algunas capacidades heroicas dependen de reglas opcionales; si jugáis sin esas reglas, no deberían usarse."
+LOC_CREATURES_INTRO_SECTIONS_MONSTERS_NAME,Monstruos
+LOC_CREATURES_INTRO_SECTIONS_MONSTERS_BODY,"* {{key: Ferocidad | Ferocity}}: Algunos monstruos son tan poderosos que pueden actuar varias veces en una misma ronda. Esto se indica por su puntuación de Ferocidad. Al comienzo de cada ronda, el DJ roba una [[carta de iniciativa|initiative]] por cada punto de Ferocidad. El monstruo juega un turno por carta, con su correspondiente acción y movimiento.
+* Retrasar turno: si un [[personaje jugador|player character]] intercambia su carta de iniciativa con un monstruo, el personaje jugador puede elegir cualquiera de las cartas del monstruo. Los monstruos nunca retrasan su turno voluntariamente.
+* Un monstruo siempre usa un {{key: ataque de monstruo | monster attack}} cuando ataca. Cada monstruo tiene un conjunto único de ataques de monstruo, resumidos en una tabla. El DJ tira o elige un ataque de esta tabla cuando sea el turno del monstruo. Los monstruos nunca tiran dados para atacar: los ataques de monstruo tienen éxito automáticamente. Realizar un ataque de monstruo cuenta como una acción. A menos que se diga lo contrario, los ataques de monstruo tienen el mismo alcance que los de cuerpo a cuerpo, es decir, 2 metros (un cuadrado adyacente si usas mapas de cuadrícula).
+* [[Esquivar|dodge]] y [[parar|parry]]: como regla general, un ataque de monstruo puede esquivarse pero no pararse. Esto también se aplica a los ataques con un área de efecto, pero no a los ataques de miedo. Las excepciones a esta regla aparecen en la descripción del ataque del monstruo.
+* [[Estados|condition]]: los ataques de monstruo pueden infligir estados a los personajes jugadores. Si un personaje gana un estado que ya tenía, debe elegir otro en su lugar.
+* Ataques repetidos: un monstruo nunca hace el mismo ataque dos veces seguidas. Si la tirada del DJ en la tabla de ataque obtiene el mismo resultado dos veces seguidas, se usa el siguiente ataque de la tabla. Un 6 se convierte en un 1.
+* Esquivar y parar: todos los monstruos pueden esquivar y los que llevan armas también pueden parar. Cada esquiva o parada consume una de las acciones de la ronda del monstruo. Tira contra un [[nivel de habilidad|skill level]] predeterminado de 15 para todas las esquivas y paradas de monstruos.
+* Habilidades: los monstruos pueden tener habilidades, pero se usan principalmente fuera del combate o para [[tiradas enfrentadas|opposed roll]], no para atacar. Solo atacan usando sus ataques de monstruo.
+* {{key: Armadura natural | Natural Armor}}: muchos monstruos tienen algún tipo de armadura natural, que funciona igual que una armadura normal.
+* Puntos débiles: al igual que con los oponentes humanoides, un ataque perforante puede encontrar un hueco o un punto débil en la armadura natural de un monstruo (regla opcional).
+* Desarmar y apresar: los monstruos no pueden ser desarmados ni apresados por los personajes jugadores.
+* Oscuridad: a menos que se indique lo contrario, los monstruos pueden ver en la oscuridad.
+* Resistencia e inmunidad: algunos monstruos son resistentes a ciertos tipos de daño. Eso significa que todo el daño de ese tipo se reduce a la mitad, después de restar la armadura (redondeando hacia arriba). Algunos monstruos pueden incluso ser inmunes a ciertos tipos de daño y, por tanto, no sufren ningún daño por esos ataques.
+* Miedo y persuasión: los monstruos son demasiado aterradores para asustarse, pero muchos son capaces de infundir terror a los personajes jugadores. También son inmunes a la habilidad PERSUADIR, a menos que se indique lo contrario.
+* Derribar: un personaje jugador puede intentar derribar a un monstruo (regla opcional), tirando contra un nivel de ESQUIVAR predeterminado de 15 para todos los monstruos. Si el monstruo tiene cuatro patas o más, el atacante sufre una [[desventaja|bane]] en la tirada.
+* Movimiento: al igual que los personajes jugadores, los monstruos tienen una puntuación de Movimiento y pueden moverse antes o después de atacar, o dividir su movimiento antes y después del ataque. Ten en cuenta que la puntuación de los monstruos se refiere al movimiento por turno, no por ronda. Algunos monstruos se mueven a diferente velocidad por tierra, agua y aire. Alzar el vuelo o aterrizar son [[acciones gratuitas|free action]].
+"
+LOC_CREATURES_INTRO_SECTIONS_SIZE_NAME,Tamaño
+LOC_CREATURES_INTRO_SECTIONS_SIZE_BODY,"Los monstruos pueden ser de cualquier tamaño. El juego los divide en las siguientes categorías, que determinan el área que pueden bloquear y el ancho que necesitan para poder moverse.
+{{table: Sizes}}
+"
+LOC_GEAR_INTRO_SECTIONS_SUPPLY_NAME,Disponibilidad
+LOC_GEAR_INTRO_SECTIONS_SUPPLY_BODY,"Algunos bienes y servicios son escasos, y los [[personajes jugadores|player character]] no pueden esperar encontrar todo lo que buscan en cualquier pequeña aldea. Cada objeto de las listas tiene un nivel de disponibilidad según la siguiente escala.
+✦Común: disponible en cualquier aldea o mercado.
+✦Infrecuente: por lo general solo se puede comprar al artesano que lo hace, por lo que no siempre estará disponible en cada aldea.
+✦Raro: por lo general debe encargarse especialmente a un artesano.
+✦Único: solo se puede obtener en tesoros o de la persona que encontró el valioso objeto.
+"
+LOC_GEAR_INTRO_SECTIONS_ENCUMBRANCE_NAME,Límite de carga
+LOC_GEAR_INTRO_SECTIONS_ENCUMBRANCE_BODY,Puedes llevar sin dificultad un número de objetos en tu inventario igual a la mitad de tu FUE (redondeada hacia arriba). Solo los objetos anotados en el recuadro de inventario cuentan para tu {{key: límite de carga | encumbrance}}.
+LOC_GEAR_INTRO_SECTIONS_WEAPONS_AT_HAND_NAME,Armas a mano
+LOC_GEAR_INTRO_SECTIONS_WEAPONS_AT_HAND_BODY,"Puedes tener hasta tres armas a mano, lo que significa que las llevas al cinto o que están disponibles para usarse en combate. Las armas que tengas a mano se anotan en el recuadro de Armas de tu hoja de personaje y no cuentan para tu límite de carga. Los escudos cuentan como armas y también se anotan ahí."
+LOC_GEAR_INTRO_SECTIONS_HELMET_ARMOR_NAME,Casco y armadura
+LOC_GEAR_INTRO_SECTIONS_HELMET_ARMOR_BODY,El casco y la armadura que lleves puestos se anotan en su sección correspondiente y no cuentan para el límite de carga.
+LOC_GEAR_INTRO_SECTIONS_FOOD_NAME,Comida
+LOC_GEAR_INTRO_SECTIONS_FOOD_BODY,"A efectos de carga, hasta cuatro raciones de comida cuentan como un solo objeto. Anota siempre en tu inventario el número de raciones que te quedan."
+LOC_GEAR_INTRO_SECTIONS_TORCHES_LANTERNS_NAME,Antorchas y linternas
+LOC_GEAR_INTRO_SECTIONS_TORCHES_LANTERNS_BODY,"Una antorcha, lámpara o linterna cuenta como un objeto. Su fuego puede apagarse. Las lámparas y linternas se pueden rellenar con aceite de lámpara."
+LOC_GEAR_INTRO_SECTIONS_ARROWS_SLINGSTONES_NAME,Flechas y piedras de honda
+LOC_GEAR_INTRO_SECTIONS_ARROWS_SLINGSTONES_BODY,"No tienes que contar cada flecha que llevas; cada carcaj de flechas cuenta como un solo objeto. Mientras tengas el carcaj, puedes usar tu arma. Las piedras de honda no hace falta anotarlas: se supone que siempre tienes suficientes."
+LOC_GEAR_INTRO_SECTIONS_BACKPACK_NAME,Mochila
+LOC_GEAR_INTRO_SECTIONS_BACKPACK_BODY,"Una mochila aumenta tu capacidad de carga en 2. No cuenta para tu límite de carga, pero solo puedes llevar una mochila a la vez."
+LOC_GEAR_INTRO_SECTIONS_HEAVY_ITEMS_NAME,Objetos pesados
+LOC_GEAR_INTRO_SECTIONS_HEAVY_ITEMS_BODY,"Los objetos realmente pesados cuentan como dos, tres o incluso más objetos normales respecto a tu límite de carga. Se indican con un peso de 2, 3, 4, etcétera. En tu inventario, los objetos pesados ocupan un número de filas igual a su peso. Cuando no se especifica el peso, siempre es 1."
+LOC_GEAR_INTRO_SECTIONS_TINY_ITEMS_NAME,Objetos diminutos
+LOC_GEAR_INTRO_SECTIONS_TINY_ITEMS_BODY,"Los objetos pequeños y ligeros que se pueden ocultar en un puño cerrado se llaman diminutos. Los objetos de ese tamaño no afectan para nada a tu límite de carga. Se anotan en su propia sección de la hoja de personaje y no ocupan espacio en tu inventario.
+Las monedas sueltas cuentan como objetos diminutos y no afectan a tu límite de carga mientras sean menos de 100. De 100 a 199 monedas cuentan como un objeto, de 200 a 299 como dos, etcétera.
+"
+LOC_GEAR_INTRO_SECTIONS_OVER_ENCUMBERED_NAME,Sobrecarga
+LOC_GEAR_INTRO_SECTIONS_OVER_ENCUMBERED_BODY,"Puedes superar tu límite de carga temporalmente. En ese caso debes hacer una tirada de FUE cada vez que quieras moverte en una ronda de combate o caminar un tramo largo de viaje. Si la tirada falla, debes soltar lo que llevas o quedarte donde estás.
+Mientras cargas con otra persona, cuentas automáticamente como sobrecargado y no puedes combatir.
+"
+LOC_GEAR_INTRO_SECTIONS_RIDING_ANIMALS_VEHICLES_NAME,Animales de monta y vehículos
+LOC_GEAR_INTRO_SECTIONS_RIDING_ANIMALS_VEHICLES_BODY,"Si tienes un caballo o algún otro animal de monta, este puede llevar tu equipo por ti. Los carros y las barcas pueden transportar cargas aún más pesadas. Los encontrarás en las listas de equipo de la página 81."
+LOC_NPCS_NPC_ATTITUDE_VALUES_1,Hostil
+LOC_NPCS_NPC_ATTITUDE_VALUES_2,Evasivo
+LOC_NPCS_NPC_ATTITUDE_VALUES_3,Indiferente
+LOC_NPCS_NPC_ATTITUDE_VALUES_4,Amistoso
+LOC_NPCS_NPC_KIN_VALUES_1,Humano
+LOC_NPCS_NPC_KIN_VALUES_2,Enano
+LOC_NPCS_NPC_KIN_VALUES_3,Elfo
+LOC_NPCS_NPC_KIN_VALUES_4,Halfling
+LOC_NPCS_NPC_KIN_VALUES_5,Lupino
+LOC_NPCS_NPC_KIN_VALUES_6,Anátida
+LOC_NPCS_NPC_MOTIVATION_VALUES_1,Dulce y reluciente oro
+LOC_NPCS_NPC_MOTIVATION_VALUES_2,Conocimiento del mundo
+LOC_NPCS_NPC_MOTIVATION_VALUES_3,Amor profundo y eterno
+LOC_NPCS_NPC_MOTIVATION_VALUES_4,Un juramento de por vida
+LOC_NPCS_NPC_MOTIVATION_VALUES_5,Una injusticia que exige castigo
+LOC_NPCS_NPC_MOTIVATION_VALUES_6,Una vida de canto y disfrute
+LOC_NPCS_NPC_MOTIVATION_VALUES_7,Lazos de sangre imposibles de cortar
+LOC_NPCS_NPC_MOTIVATION_VALUES_8,Escapar de un oscuro pasado
+LOC_NPCS_NPC_PROFESSION_VALUES_1,Bardo
+LOC_NPCS_NPC_PROFESSION_VALUES_2,Artesano
+LOC_NPCS_NPC_PROFESSION_VALUES_3,Cazador
+LOC_NPCS_NPC_PROFESSION_VALUES_4,Guerrero
+LOC_NPCS_NPC_PROFESSION_VALUES_5,Erudito
+LOC_NPCS_NPC_PROFESSION_VALUES_6,Mago
+LOC_NPCS_NPC_PROFESSION_VALUES_7,Mercader
+LOC_NPCS_NPC_PROFESSION_VALUES_8,Caballero
+LOC_NPCS_NPC_PROFESSION_VALUES_9,Marinero
+LOC_NPCS_NPC_PROFESSION_VALUES_10,Ladrón
+LOC_NPCS_NPC_TRAIT_VALUES_1,Habla demasiado
+LOC_NPCS_NPC_TRAIT_VALUES_2,Ropa extraña
+LOC_NPCS_NPC_TRAIT_VALUES_3,Ojos salvajes
+LOC_NPCS_NPC_TRAIT_VALUES_4,Huele mal
+LOC_NPCS_NPC_TRAIT_VALUES_5,Bromista
+LOC_NPCS_NPC_TRAIT_VALUES_6,Sectario
+LOC_NPCS_NPC_TRAIT_VALUES_7,Un poco infantil
+LOC_NPCS_NPC_TRAIT_VALUES_8,Tranquilo y difícil
+LOC_NPCS_NPC_TRAIT_VALUES_9,Adorador de demonios
+LOC_NPCS_NPC_TRAIT_VALUES_10,Obstinado
+LOC_NPCS_NPC_TRAIT_VALUES_11,Muy delicado
+LOC_NPCS_NPC_TRAIT_VALUES_12,Muy romántico
+LOC_NPCS_NPC_NAME_VALUES_1,Agnar
+LOC_NPCS_NPC_NAME_VALUES_2,Jorid
+LOC_NPCS_NPC_NAME_VALUES_3,Dareios
+LOC_NPCS_NPC_NAME_VALUES_4,Ragnfast
+LOC_NPCS_NPC_NAME_VALUES_5,Ask
+LOC_NPCS_NPC_NAME_VALUES_6,Euanthe
+LOC_NPCS_NPC_NAME_VALUES_7,Arnulf
+LOC_NPCS_NPC_NAME_VALUES_8,Tyra
+LOC_NPCS_NPC_NAME_VALUES_9,Xanthos
+LOC_NPCS_NPC_NAME_VALUES_10,Atle
+LOC_NPCS_NPC_NAME_VALUES_11,Liv
+LOC_NPCS_NPC_NAME_VALUES_12,Athalia
+LOC_NPCS_NPC_NAME_VALUES_13,Guthorm
+LOC_NPCS_NPC_NAME_VALUES_14,Embla
+LOC_NPCS_NPC_NAME_VALUES_15,Kleitos
+LOC_NPCS_NPC_NAME_VALUES_16,Botvid
+LOC_NPCS_NPC_NAME_VALUES_17,Ragna
+LOC_NPCS_NPC_NAME_VALUES_18,Astara
+LOC_NPCS_NPC_NAME_VALUES_19,Kale
+LOC_NPCS_NPC_NAME_VALUES_20,Turid
+LOC_NPCS_NPC_NAME_VALUES_21,Priamus
+LOC_NPCS_NPC_NAME_VALUES_22,Egil
+LOC_NPCS_NPC_NAME_VALUES_23,Jorunn
+LOC_NPCS_NPC_NAME_VALUES_24,Galyna
+LOC_NPCS_NPC_NAME_VALUES_25,Ingemund
+LOC_NPCS_NPC_NAME_VALUES_26,Borghild
+LOC_NPCS_NPC_NAME_VALUES_27,Taras
+LOC_NPCS_NPC_NAME_VALUES_28,Gudmund
+LOC_NPCS_NPC_NAME_VALUES_29,Gylla
+LOC_NPCS_NPC_NAME_VALUES_30,Zenais
+LOC_NPCS_NPC_NAME_VALUES_31,Grim
+LOC_NPCS_NPC_NAME_VALUES_32,Tora
+LOC_NPCS_NPC_NAME_VALUES_33,Hesiod
+LOC_NPCS_NPC_NAME_VALUES_34,Brand
+LOC_NPCS_NPC_NAME_VALUES_35,Edda
+LOC_NPCS_NPC_NAME_VALUES_36,Liene
+LOC_NPCS_NPC_NAME_VALUES_37,Folkvid
+LOC_NPCS_NPC_NAME_VALUES_38,Sigrun
+LOC_NPCS_NPC_NAME_VALUES_39,Eupraxia
+LOC_NPCS_NPC_NAME_VALUES_40,Germund
+LOC_NPCS_NPC_NAME_VALUES_41,Dagrun
+LOC_NPCS_NPC_NAME_VALUES_42,Algot
+LOC_NPCS_NPC_NAME_VALUES_43,Bolla
+LOC_NPCS_NPC_NAME_VALUES_44,Lysandra
+LOC_NPCS_NPC_NAME_VALUES_45,Tolir
+LOC_NPCS_NPC_NAME_VALUES_46,Yrsa
+LOC_NPCS_NPC_NAME_VALUES_47,Kallias
+LOC_NPCS_NPC_NAME_VALUES_48,Hjorvald
+LOC_NPCS_NPC_NAME_VALUES_49,Estrid
+LOC_NPCS_NPC_NAME_VALUES_50,Isidora
+LOC_NPCS_NPC_NAME_VALUES_51,Ambjorn
+LOC_NPCS_NPC_NAME_VALUES_52,Signe
+LOC_NPCS_NPC_NAME_VALUES_53,Athos
+LOC_NPCS_NPC_NAME_VALUES_54,Grunn
+LOC_NPCS_NPC_NAME_VALUES_55,Tilde
+LOC_NPCS_NPC_NAME_VALUES_56,Larysa
+LOC_NPCS_NPC_NAME_VALUES_57,Olgrid
+LOC_NPCS_NPC_NAME_VALUES_58,Idun
+LOC_NPCS_NPC_NAME_VALUES_59,Nikias
+LOC_NPCS_GUARD,Guardia
+LOC_CATEGORY_TYPICAL_NPCS,PNJs típicos
+LOC_LABEL_SKILLS,HABILIDADES
+LOC_VALUE_AWARENESS_10_SWORDS_12,Alerta 10 Espadas 12
+LOC_LABEL_HEROIC_ABILITIES,CAPACIDADES HEROICAS
+LOC_LABEL_DAMAGE_BONUS,BONIFICACIÓN DE DAÑO
+LOC_VALUE_STR_D4,FUE +D4
+LOC_LABEL_HP,PG
+LOC_LABEL_WP,PV
+LOC_LABEL_GEAR,EQUIPO
+LOC_VALUE_BROADSWORD_STUDDED_LEATHER_ARMOR,"Espada ancha, armadura de cuero tachonado"
+LOC_NPCS_CULTIST,Sectario
+LOC_VALUE_EVADE_14_KNIVES_14,Esquivar 14 Cuchillos 14
+LOC_VALUE_AGL_D4,AGI +D4
+LOC_VALUE_DAGGER,Daga
+LOC_NPCS_THIEF,Ladrón
+LOC_VALUE_EVADE_12_KNIVES_12,Esquivar 12 Cuchillos 12
+LOC_VALUE_KNIFE,Cuchillo
+LOC_NPCS_VILLAGER,Aldeano
+LOC_VALUE_BRAWLING_8,Pelea 8
+LOC_VALUE_WOODEN_CLUB,Garrote de madera
+LOC_NPCS_HUNTER,Cazador
+LOC_VALUE_AWARENESS_12_BOWS_13,Alerta 12 Arcos 13
+LOC_VALUE_LONGBOW_LEATHER_ARMOR,"Arco largo, armadura de cuero"
+LOC_NPCS_BANDIT,Bandido
+LOC_VALUE_BOWS_12_EVADE_10_SWORDS_12,Arcos 12 Esquivar 10 Espadas 12
+LOC_VALUE_SHORT_SWORD_SHORT_BOW,"Espada corta, arco corto"
+LOC_NPCS_ADVENTURER,Aventurero
+LOC_NPCS_SCHOLAR,Erudito
+LOC_VALUE_LANGUAGES_13_MYTHS_LEGENDS_13_STAVES_8,Idiomas 13 Mitos y leyendas 13 Varas 8
+LOC_VALUE_A_GOOD_BOOK,Un buen libro
+LOC_NPCS_BANDIT_CHIEF_BOSS,Bandido líder (jefe)
+LOC_VALUE_AWARENESS_12_BRAWLING_15_HAMMERS_15,Alerta 12 Pelea 15 Martillos 15
+LOC_VALUE_BERSERKER_ROBUST_6_VETERAN,Berserker Robusto × 6 Veterano
+LOC_VALUE_STR_D6,FUE +D6
+LOC_VALUE_HEAVY_WARHAMMER_CHAINMAIL_OPEN_HELMET,"Martillo de guerra pesado, cota de malla, casco"
+LOC_NPCS_KNIGHT_CHAMPION_BOSS,Caballero de renombre (jefe)
+LOC_VALUE_BRAWLING_14_SWORDS_16,Pelea 14 Espadas 16
+LOC_VALUE_DEFENSIVE_DOUBLE_SLASH_FOCUSED_6_ROBUST_6,Parada refleja Tajo doble Concentración × 6 Robusto × 6
+LOC_NPCS_KNIGHT_CHAMPION_BOSS_FIELDS_GEAR,"Espada larga, escudo grande, armadura completa, yelmo, caballo entrenado en combate"
+LOC_NPCS_ARCHMAGE_BOSS,Archimago (jefe)
+LOC_VALUE_MAGIC_SCHOOL_15_STAVES_13,Escuela de magia 15 Varas 13
+LOC_VALUE_FOCUSED_6_MASTER_SPELLCASTER_ROBUST_4,Concentración × 6 Maestro lanzahechizos Robusto × 4
+LOC_VALUE_STAFF_GRIMOIRE,"Bastón, grimorio"
+LOC_PROFESSIONS_INTRO_BODY,"La profesión que elijas determinará mucho de tu personaje, sobre todo sus habilidades, ya que seis de tus habilidades iniciales entrenadas deben elegirse de entre las enumeradas para tu profesión. La profesión también determina con qué equipo comienzas y qué capacidad heroica obtienes."
+LOC_CATEGORY_REST_TYPES,Tipos de descanso
+LOC_REST_ROUND_REST,Descanso de ronda
+LOC_LABEL_HP_RECOVERED,PG RECUPERADOS
+LOC_LABEL_WP_RECOVERED,PV RECUPERADOS
+LOC_LABEL_CONDITIONS_HEALED,ESTADOS CURADOS
+LOC_LABEL_NOTES,NOTAS
+LOC_VALUE_ONCE_PER_SHIFT,Una vez por tramo largo
+LOC_REST_STRETCH_REST,Descanso corto
+LOC_VALUE_D6_2D6_WITH_HEALING,D6 (2D6 con CURACIÓN)
+LOC_VALUE_1_CONDITION_OF_CHOICE,1 estado a elección
+LOC_VALUE_ONCE_PER_SHIFT_CAREGIVER_CANNOT_REST,Una vez por tramo largo; quien cuida no puede descansar
+LOC_REST_SHIFT_REST,Descanso largo
+LOC_VALUE_ALL,Todos
+LOC_VALUE_SAFE_LOCATION_NO_ENEMIES_NEARBY,Lugar seguro; sin enemigos cerca
+LOC_RULE_CHARACTER_CREATION,Creación de personajes
+LOC_RULE_CHARACTER_CREATION_SECTIONS_INTRO_NAME,Introducción
+LOC_RULE_CHARACTER_CREATION_SECTIONS_INTRO_BODY,"El aventurero que interpretas en Dragonbane se llama tu {{key: personaje jugador | player character}}. Para crearlo, coge una hoja de personaje y un lápiz y sigue estos trece pasos en orden:
+"
+LOC_RULE_CREATION_KIN,Raza
+LOC_RULE_CREATION_KIN_BODY,"Elige tu raza o tira en la tabla siguiente. Hay seis razas jugables: humano, halfling, enano, elfo, anátida y lupino. Los humanos son los más comunes, pero eres libre de elegir cualquiera.
+Tu raza determina tres cosas: tu capacidad innata, la base de tu Movimiento (paso 6) y la lista de seis nombres típicos de la que puedes elegir tu nombre (paso 4). Cada raza se describe en las entradas de Razas, cuyas cartas también tienen su tabla de seis nombres (abre la carta).
+Cada raza tiene una capacidad innata que ninguna otra puede aprender (los anátidas tienen dos). Anótala en la sección de Capacidades y hechizos de tu hoja de personaje. Usar una capacidad innata suele costar [[Puntos de voluntad|wp]] (PV).
+Todos los [[personajes jugadores|player character]] saben hablar, leer y escribir un idioma común, que por simplicidad se llama lengua común. La mayoría de las criaturas que se encuentran los personajes la conocen, aunque puede haber excepciones. Las razas no humanas suelen tener sus propios idiomas, que pocos humanos entienden. Para entender otros idiomas se usa la habilidad Idiomas.
+{{table: Kin}}
+"
+LOC_RULE_CREATION_PROFESSION,Profesión
+LOC_RULE_CREATION_PROFESSION_BODY,"Elige tu profesión o tira en la tabla siguiente. Hay diez profesiones: artesano, bardo, guerrero, cazador, caballero, mago, marinero, mercader, erudito y ladrón. Todos los [[personajes jugadores|player character]] son aventureros, pero aprendiste algo antes de que empiece el juego.
+Tu profesión determina: seis de tus habilidades entrenadas, que deben elegirse de la lista de la profesión (paso 7); el equipo con el que puedes empezar (paso 10); tu [[capacidad heroica|heroic ability]] (paso 8, los magos obtienen magia en su lugar); y ofrece apodos típicos (paso 4).
+{{table: Profession}}
+"
+LOC_RULE_CREATION_AGE,Edad
+LOC_RULE_CREATION_AGE_BODY,"Elige tu edad (joven, adulto o viejo) o tira en la tabla siguiente. Cuanto mayor seas, más bajos serán tus [[atributos|attribute]], pero tendrás más habilidades. Tu edad en años depende de tu raza y no tiene relevancia a nivel de reglas.
+La edad cambia dos cosas: cuántas habilidades entrenadas de tu elección obtienes en el paso 8 (dos, cuatro o seis, además de las seis de tu profesión) y cómo se ajustan tus atributos una vez tirados en el paso 6. Los ajustes no se acumulan y ningún atributo puede superar 18.
+{{table: Age}}
+"
+LOC_RULE_CREATION_NAME,Nombre y apodo
+LOC_RULE_CREATION_NAME_BODY,"Tras elegir raza y profesión, es hora de ponerle nombre a tu aventurero. Cada raza tiene una lista de seis nombres típicos: elige o tira (D6) uno de ellos, o invéntate uno.
+Apodo (opcional): una costumbre común entre los aventureros, a menudo relacionado con su apariencia, su personalidad o su pasado. Puedes elegirlo ahora o añadirlo más tarde. Cada profesión incluye una lista de apodos típicos.
+"
+LOC_RULE_CREATION_ATTRIBUTES,Atributos
+LOC_RULE_CREATION_ATTRIBUTES_BODY,"Tu aventurero tiene seis atributos que miden sus capacidades físicas y mentales básicas, en una escala del 3 al 18 (cuanto mayor, mejor): Fuerza (FUE), Constitución (CON), Agilidad (AGI), Inteligencia (INT), Voluntad (VOL) y Carisma (CAR).
+Tira 4D6 y descarta el dado más bajo: eso te da una puntuación entre 3 y 18. Asígnala al atributo que quieras. Repite cinco veces más, asignando cada puntuación al tirarla, hasta que cada atributo tenga una. Al terminar puedes intercambiar dos valores. Después ajusta tus atributos según tu edad (paso 3); nunca puedes tener más de 18 en un atributo. Una vez asignados, los atributos casi nunca cambian durante el juego.
+Cualquier otro método sirve si todo el grupo está de acuerdo.
+{{table: Attributes}}
+"
+LOC_RULE_CREATION_ATTRIBUTES_SECTIONS_STARTING_SCORES_NAME,Puntuaciones iniciales
+LOC_RULE_CREATION_ATTRIBUTES_SECTIONS_STARTING_SCORES_BODY,"Tira 4D6 y suma los tres mejores resultados. Eso te dará un total de entre 3 y 18. Asigna esa puntuación a un {{key: atributo | attribute}} a tu elección. Repite el proceso cinco veces más, hasta que cada atributo tenga una puntuación. Cada vez que tires los dados debes asignar la puntuación, pero al terminar puedes intercambiar dos valores. Finalmente, ajusta tus atributos en función de la edad, pero ten en cuenta que no puedes tener más de 18 en un atributo, sin importar tu edad. Los atributos casi nunca cambian su puntuación durante las partidas."
+LOC_RULE_CREATION_ATTRIBUTES_SECTIONS_OTHER_METHODS_NAME,Otros métodos
+LOC_RULE_CREATION_ATTRIBUTES_SECTIONS_OTHER_METHODS_BODY,"Hay otras formas de determinar los atributos de los [[personajes jugadores|player character]]: hacer todas las tiradas de golpe y luego repartir los resultados, sumar todas las tiradas y distribuir los puntos libremente, etcétera. Puedes usar el método que prefieras siempre que todo el grupo esté de acuerdo."
+LOC_RULE_CREATION_ATTRIBUTES_SECTIONS_ABBREVIATIONS_NAME,Abreviaturas
+LOC_RULE_CREATION_ATTRIBUTES_SECTIONS_ABBREVIATIONS_BODY,"- [[PG|HP]] = Puntos de golpe
+- [[PV|WP]] = Puntos de voluntad
+- DJ = Director de juego
+- [[PNJ|NPC]] = Personaje no jugador
+"
+LOC_RULE_CREATION_DERIVED_RATINGS,Valores derivados
+LOC_RULE_CREATION_DERIVED_RATINGS_BODY,"Calcúlalos a partir de tus [[atributos|attribute]] y tu raza:
+Movimiento: los metros que puedes correr en una ronda de combate. Parte de tu raza y se modifica por tu AGI.
+[[Bonificación al daño|Derived Ratings]]: tienes dos, una para las armas basadas en FUE y otra para las basadas en AGI.
+Puntos de golpe (PG): tu máximo es igual a tu CON (la [[capacidad heroica|heroic ability]] Robusto puede aumentarlo).
+Puntos de voluntad (PV): tu máximo es igual a tu VOL (la capacidad heroica Concentración puede aumentarlo).
+{{table: Movement}}
+{{table: Movement modifier}}
+{{table: Damage Bonus}}
+"
+LOC_RULE_CREATION_DERIVED_RATINGS_SECTIONS_HIT_POINTS_HP_NAME,Puntos de golpe (PG)
+LOC_RULE_CREATION_DERIVED_RATINGS_SECTIONS_HIT_POINTS_HP_BODY,"Este valor determina la cantidad de daño que puedes sufrir. Tu número máximo de {{key: PG | HP}} es igual a tu CON, pero puede aumentar con la capacidad heroica Robusto. Hay más información sobre el daño en el capítulo 4."
+LOC_RULE_CREATION_DERIVED_RATINGS_SECTIONS_WILLPOWER_POINTS_WP_NAME,Puntos de voluntad (PV)
+LOC_RULE_CREATION_DERIVED_RATINGS_SECTIONS_WILLPOWER_POINTS_WP_BODY,"Los {{key: puntos de voluntad | wp}} sirven para hacer magia y usar capacidades innatas y heroicas. Tu máximo de PV es igual a tu VOL, pero puede aumentar con la capacidad heroica Concentración."
+LOC_RULE_CREATION_SKILLS,Habilidades entrenadas
+LOC_RULE_CREATION_SKILLS_BODY,"Elige tus habilidades entrenadas: seis de la lista de tu profesión, más dos (joven), cuatro (adulto) o seis (viejo) a tu elección, entre las treinta habilidades básicas. Una habilidad entrenada empieza con el doble de su nivel inicial. Los niveles de habilidad van del 1 al 18.
+Si juegas con un mago, también eliges una [[escuela de magia|school of magic]], que pasa a ser una de tus habilidades entrenadas, y tus primeros hechizos (ver Magia, más abajo). Puedes retroceder y ajustar tus habilidades entrenadas para que encajen con tu equipo (paso 10).
+"
+LOC_RULE_CREATION_SKILLS_SECTIONS_BASE_CHANCE_NAME,Nivel inicial
+LOC_RULE_CREATION_SKILLS_SECTIONS_BASE_CHANCE_BODY,"Cada habilidad está conectada a un [[atributo|attribute]] que determina tu nivel inicial en ella. El atributo aparece junto a cada habilidad en tu hoja de personaje. El nivel inicial es un nivel de habilidad “gratuito” que obtienes automáticamente.
+{{table: Base Chance}}
+"
+LOC_RULE_CREATION_SKILLS_SECTIONS_STARTING_SKILL_LEVELS_NAME,Niveles de habilidad iniciales
+LOC_RULE_CREATION_SKILLS_SECTIONS_STARTING_SKILL_LEVELS_BODY,"Además de los niveles iniciales, tu personaje tiene ocho, diez o doce habilidades entrenadas, dependiendo de su edad. Al comienzo del juego, el nivel de esas habilidades es igual al doble de su nivel inicial. Debes entrenar seis habilidades de la lista de tu profesión; el resto (dos, cuatro o seis, según la edad) puedes elegirlas libremente. Podrás aumentar tus {{key: niveles de habilidad | skill level}} durante el juego."
+LOC_RULE_CREATION_SKILLS_SECTIONS_SECONDARY_SKILLS_NAME,Habilidades secundarias
+LOC_RULE_CREATION_SKILLS_SECTIONS_SECONDARY_SKILLS_BODY,"Aparte de las habilidades básicas hay habilidades secundarias, como las escuelas de magia. En las reglas básicas, las habilidades secundarias no tienen nivel inicial, pero las futuras expansiones y suplementos pueden modificar eso."
+LOC_RULE_CREATION_SKILLS_SECTIONS_MAGIC_NAME,Magia
+LOC_RULE_CREATION_SKILLS_SECTIONS_MAGIC_BODY,"La magia se divide en diferentes escuelas, cada una con su propia habilidad. Como mago recién creado debes elegir una escuela, que pasa a convertirse en una de tus habilidades entrenadas (basada en INT).
+Puedes elegir tres hechizos de rango 1 y tres [[trucos mágicos|magic trick]] de tu escuela o de magia común. Podrás aprender más hechizos y escuelas de magia durante el juego.
+"
+LOC_RULE_CREATION_HEROIC_ABILITY,Capacidad heroica
+LOC_RULE_CREATION_HEROIC_ABILITY_BODY,"Comienzas el juego con una {{key: capacidad heroica | heroic ability}} determinada por tu profesión (consulta su entrada en Profesiones). Algunas capacidades heroicas requieren un [[nivel de habilidad|skill level]] mínimo, pero eso no se aplica a tu capacidad inicial.
+Si juegas con un mago no obtienes ninguna capacidad heroica al comienzo: tu magia lo compensa. Si la capacidad de tu profesión de verdad no encaja con el personaje que quieres crear, el DJ puede dejar que elijas una capacidad inicial diferente. Podrás ganar nuevas capacidades heroicas durante el juego (ver Experiencia).
+"
+LOC_RULE_CREATION_HEROIC_ABILITY_SECTIONS_MAGES_NAME,Magos
+LOC_RULE_CREATION_HEROIC_ABILITY_SECTIONS_MAGES_BODY,"Si juegas con un mago no obtienes ninguna capacidad heroica al comienzo del juego, ¡aunque tu magia compensa esta desventaja! Sin embargo, al igual que las demás profesiones, podrás ganar capacidades heroicas durante el juego."
+LOC_RULE_CREATION_HEROIC_ABILITY_SECTIONS_ALTERNATIVE_ABILITIES_NAME,Capacidades alternativas
+LOC_RULE_CREATION_HEROIC_ABILITY_SECTIONS_ALTERNATIVE_ABILITIES_BODY,"Si crees que la capacidad heroica inicial de tu profesión no encaja con el personaje que quieres crear, el DJ puede dejar que elijas una diferente."
+LOC_RULE_CREATION_WEAKNESS,Debilidad
+LOC_RULE_CREATION_WEAKNESS_BODY,"Opcional. Tu personaje es un aventurero capaz, pero todo el mundo tiene un talón de Aquiles que puede meterlo en problemas. Tira en la tabla siguiente, elige de ella o inventa tu debilidad libremente.
+La debilidad añade profundidad y personalidad a tu personaje y puede ser utilizada por el DJ para crear desafíos. Si interpretas a tu personaje de acuerdo a su debilidad, ganas una [[marca de mejora|advancement mark]] adicional al final de la sesión.
+{{table: Weakness}}
+"
+LOC_RULE_CREATION_GEAR,Equipo
+LOC_RULE_CREATION_GEAR_BODY,"Anota todas las cosas que llevas en tu hoja de personaje, un objeto por fila. Las armas a mano y la armadura, el casco y el escudo que portes van en sus recuadros; todo lo demás va en el inventario. Si algo no aparece en tu hoja, no lo llevas contigo.
+Las listas de armas, armaduras y demás equipo están en Equipo. Cuánto puedes cargar se explica en [[Límite de carga|Encumbrance]], más abajo.
+"
+LOC_RULE_CREATION_GEAR_SECTIONS_STARTING_GEAR_NAME,Equipo inicial
+LOC_RULE_CREATION_GEAR_SECTIONS_STARTING_GEAR_BODY,"Tu profesión determina qué equipo puedes elegir al comienzo del juego. Tira en la tabla de equipo de tu profesión o elige una de sus tres combinaciones. Si quieres, puedes retroceder y modificar tus habilidades entrenadas para que se ajusten mejor a tu equipo. Además, vistes ropa sencilla, que no necesita ser anotada."
+LOC_RULE_CREATION_GEAR_SECTIONS_COINS_NAME,Monedas
+LOC_RULE_CREATION_GEAR_SECTIONS_COINS_BODY,"Las transacciones monetarias suelen realizarse con monedas de plata. Las de cobre se utilizan para compras más pequeñas y las de oro para las más grandes. Diez monedas de cobre equivalen a una de plata y diez de plata, a una de oro. Las monedas que obtienes al crear tu personaje se pueden usar para comprar más equipo inicial."
+LOC_RULE_CREATION_MEMENTO,Recuerdo
+LOC_RULE_CREATION_MEMENTO_BODY,"Opcional. Además de tu equipo, puedes tener un recuerdo: un objeto de gran valor sentimental que siempre llevas contigo. Elige algo adecuado o tira en la tabla siguiente.
+Un recuerdo es siempre un objeto diminuto sin uso práctico, pero una vez por sesión puedes usarlo para recuperarte de un [[estado|condition]] adicional durante un [[descanso corto|stretch rest]]. Si pierdes tu recuerdo, al final de la sesión puedes elegir como nuevo recuerdo un objeto que hayas encontrado en tus aventuras.
+{{table: Memento}}
+"
+LOC_RULE_CREATION_APPEARANCE,Aspecto
+LOC_RULE_CREATION_APPEARANCE_BODY,"En tu hoja de personaje puedes anotar algo sobre el aspecto de tu personaje. No hace falta que sea detallado: basta con uno o unos pocos rasgos distintivos. Elígelos tú o haz una o más tiradas en la tabla siguiente.
+{{table: Appearance}}
+"
+LOC_RULE_CHARACTER_CREATION_CHILDREN_EXPERIENCE_NAME,Experiencia
+LOC_RULE_CHARACTER_CREATION_CHILDREN_EXPERIENCE_BODY,"La vida de tu aventurero está llena de desafíos que, si no acaban con su vida, lo transformarán e incluso le enseñarán una o dos cosas."
+LOC_RULE_CHARACTER_CREATION_CHILDREN_EXPERIENCE_SECTIONS_ADVANCEMENT_MARKS_NAME,Marcas de mejora
+LOC_RULE_CHARACTER_CREATION_CHILDREN_EXPERIENCE_SECTIONS_ADVANCEMENT_MARKS_BODY,"Cuando saques un dragón o un demonio al usar una habilidad, marca la casilla que hay junto a esta. Al final de cada sesión, el DJ te hará las siguientes preguntas sobre la sesión. Por cada pregunta a la que respondas “sí” y justifiques tu respuesta, puedes colocar otra {{key: marca de mejora | advancement mark}} junto a una habilidad sin marcar a tu elección. El DJ tiene la última palabra, pero debería ser permisivo.
+✦¿Participaste en la partida?
+✦¿Exploraste alguna nueva ubicación?
+✦¿Derrotaste a uno o más adversarios peligrosos?
+✦¿Superaste un obstáculo sin usar la fuerza?
+✦¿Sucumbiste a tu debilidad (regla opcional)?
+"
+LOC_RULE_CHARACTER_CREATION_CHILDREN_EXPERIENCE_SECTIONS_ADVANCEMENT_ROLLS_NAME,Tiradas de mejora
+LOC_RULE_CHARACTER_CREATION_CHILDREN_EXPERIENCE_SECTIONS_ADVANCEMENT_ROLLS_BODY,"Después de anotar las marcas, tira un D20 por cada una de ellas y, si el resultado excede tu [[nivel de habilidad|skill level]] actual, aumenta dicho nivel en uno, hasta un máximo de 18. Cuando hayas hecho todas las tiradas de mejora, borra las marcas y comienza de nuevo en la siguiente sesión."
+LOC_RULE_CHARACTER_CREATION_CHILDREN_EXPERIENCE_SECTIONS_TEACHER_NAME,Maestro
+LOC_RULE_CHARACTER_CREATION_CHILDREN_EXPERIENCE_SECTIONS_TEACHER_BODY,"Un tramo largo de entrenamiento intensivo con un maestro cuyo nivel de habilidad sea 15 o más y superior al tuyo te da una tirada de mejora adicional para esa habilidad. Haz la tirada de inmediato, sin esperar a que termine la sesión. Sin embargo, un maestro solo puede elevar una habilidad un nivel; después de eso, deberás mejorarla a través de la experiencia antes de que un maestro pueda volver a ayudarte. Los maestros, especialmente aquellos con niveles altos de habilidad, suelen ser muy caros."
+LOC_RULE_CHARACTER_CREATION_CHILDREN_EXPERIENCE_SECTIONS_MAGIC_NAME,Magia
+LOC_RULE_CHARACTER_CREATION_CHILDREN_EXPERIENCE_SECTIONS_MAGIC_BODY,"Una [[escuela de magia|school of magic]] que ya conozcas puede mejorarse como cualquier otra habilidad. Sin embargo, aprender nuevos hechizos y nuevas escuelas de magia requiere un entrenamiento especial. Tienes más información en el capítulo 5."
+LOC_RULE_CHARACTER_CREATION_CHILDREN_EXPERIENCE_SECTIONS_HEROIC_ABILITIES_NAME,Capacidades heroicas
+LOC_RULE_CHARACTER_CREATION_CHILDREN_EXPERIENCE_SECTIONS_HEROIC_ABILITIES_BODY,"Puedes obtener nuevas [[capacidades heroicas|heroic ability]] durante el juego de dos maneras:
+✦Cuando subas una habilidad a nivel 18, ganas inmediatamente una nueva capacidad heroica a tu elección. Si el nivel de habilidad baja de 18 por cualquier motivo, conservas la capacidad heroica, e incluso ganarás otra si el nivel vuelve a subir a 18.
+✦Después de una gran hazaña heroica, el DJ o la aventura pueden recompensarte con una capacidad heroica, aunque es algo que debería suceder con poca frecuencia y nunca más de una vez por aventura de duración estándar.
+Para obtener una nueva capacidad heroica debes cumplir con su requisito de habilidad.
+"
+LOC_RULE_CHARACTER_CREATION_CHILDREN_EXPERIENCE_SECTIONS_OVERCOME_WEAKNESS_NAME,Superar una debilidad
+LOC_RULE_CHARACTER_CREATION_CHILDREN_EXPERIENCE_SECTIONS_OVERCOME_WEAKNESS_BODY,"Si durante la sesión actuaste claramente en contra de tu debilidad, obtienes dos marcas de mejora (en lugar de una por sucumbir a ella). Se considera que has superado tu debilidad y debes eliminarla. Después debes jugar una sesión completa sin debilidad. Tras eso, puedes elegir una nueva debilidad, preferiblemente basada en algo que ocurriera durante la partida."
+LOC_RULE_COMBAT,Combate
+LOC_RULE_COMBAT_CHILDREN_ROUNDS_INITIATIVE_NAME,Rondas e iniciativa
+LOC_RULE_COMBAT_CHILDREN_ROUNDS_INITIATIVE_BODY,"El combate se juega por rondas, cada una de unos diez segundos. Al comienzo de cada ronda, el primer paso es decidir quién tiene la iniciativa, es decir, en qué orden actúan los combatientes durante la ronda."
+LOC_RULE_COMBAT_CHILDREN_ROUNDS_INITIATIVE_SECTIONS_DRAWING_THE_INITIATIVE_NAME,Robar la iniciativa
+LOC_RULE_COMBAT_CHILDREN_ROUNDS_INITIATIVE_SECTIONS_DRAWING_THE_INITIATIVE_BODY,"- Para determinar la {{key: iniciativa | initiative}} se usan diez cartas numeradas del 1 al 10.
+- Cada jugador que participa en el conflicto, voluntariamente o no, roba una carta al azar al comienzo de cada ronda, y el DJ roba cartas para los [[PNJs|npc]].
+- El número en la carta determina el orden en que actúas en la ronda.
+- Tu lugar en el orden de iniciativa se llama tu turno.
+- Coloca tu carta de iniciativa junto a tu hoja de personaje para que todos puedan ver en qué orden actúa cada uno.
+- El DJ pone su carta (o cartas) delante suya.
+- Cuando todo el mundo haya jugado su turno, la ronda termina y comienza otra robando la iniciativa de nuevo.
+"
+LOC_RULE_COMBAT_CHILDREN_ROUNDS_INITIATIVE_SECTIONS_INITIATIVE_FOR_NPCS_NAME,La iniciativa de los PNJs
+LOC_RULE_COMBAT_CHILDREN_ROUNDS_INITIATIVE_SECTIONS_INITIATIVE_FOR_NPCS_BODY,"Para simplificar las cosas, especialmente en combates multitudinarios, el DJ puede robar una sola carta de iniciativa para un grupo de PNJs. Todos los PNJs de ese grupo actúan en el mismo turno de la ronda, en el orden que decida el DJ."
+LOC_RULE_COMBAT_CHILDREN_ROUNDS_INITIATIVE_SECTIONS_SURPRISE_NAME,Sorpresa
+LOC_RULE_COMBAT_CHILDREN_ROUNDS_INITIATIVE_SECTIONS_SURPRISE_BODY,"Si realizas un ataque que el DJ considere que sorprende a tu enemigo, puedes elegir la carta de iniciativa que quieras en la primera ronda de combate. Si hay varios personajes participando en el ataque sorpresa, cada uno podéis elegir una carta. Los demás combatientes roban la iniciativa de las cartas que queden. Al comienzo de la segunda ronda, todo el mundo roba su iniciativa como de costumbre."
+LOC_RULE_COMBAT_CHILDREN_ROUNDS_INITIATIVE_SECTIONS_WAITING_NAME,Retrasar turno
+LOC_RULE_COMBAT_CHILDREN_ROUNDS_INITIATIVE_SECTIONS_WAITING_BODY,"Cuando te llegue el turno, puedes elegir esperar. Esto significa que intercambias tu carta de iniciativa (y por lo tanto tu lugar en el orden de actuación) con otra criatura cuyo turno venga después del tuyo. Puedes intercambiarla con otros [[personajes jugadores|player character]] o con PNJs (o un grupo de PNJs que actúen en el mismo turno), y no pueden rechazarlo. Sin embargo, no puedes intercambiar tu carta de iniciativa con nadie que ya haya jugado su turno o que haya decidido retrasar su turno antes en la ronda.
+Monstruos: los monstruos a menudo tienen varios turnos en una sola ronda y, por lo tanto, roban varias cartas de iniciativa. En ese caso, decides qué carta quieres, siempre que venga después de tu turno actual en el orden de iniciativa. Los monstruos nunca retrasan su turno voluntariamente.
+"
+LOC_RULE_COMBAT_CHILDREN_ROUNDS_INITIATIVE_SECTIONS_FLIP_THE_INITIATIVE_CARD_NAME,Voltear la carta de iniciativa
+LOC_RULE_COMBAT_CHILDREN_ROUNDS_INITIATIVE_SECTIONS_FLIP_THE_INITIATIVE_CARD_BODY,"* Cuando hayas jugado tu turno de la ronda, puedes poner tu carta de iniciativa boca abajo para que quede claro que has actuado. Eso también significa que no podrás realizar ninguna reacción (como parar un ataque) durante el resto de la ronda."
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_NAME,Combate cuerpo a cuerpo
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_BODY,"Por lo general, para atacar a alguien cuerpo a cuerpo debes estar a menos de 2 metros de tu objetivo. En un mapa de cuadrícula eso significa que debes estar en un cuadrado adyacente al enemigo (incluso en diagonal). Al atacar cuerpo a cuerpo, usas la habilidad que corresponda al tipo de arma que empuñes.
+{{table: Demon Roll in Melee}}
+{{table: Melee Combat Actions}}
+"
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_WEAPON_NAME,Armas
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_WEAPON_BODY,"Puedes tener hasta tres armas a mano. Anótalas en la sección de armas de tu hoja de personaje. Para atacar con un arma, también debes desenvainarla. Desenvainar un arma que tengas a mano, o intercambiar el arma desenvainada por otra que tengas a mano, es una [[acción gratuita|free action]]. Coger otra arma del suelo o de tu inventario cuesta una acción normal.
+"
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_SHOVE_NAME,Empujar
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_SHOVE_BODY,"Si golpeas a un enemigo con un ataque cuerpo a cuerpo y tu bonificación de daño de FUE es igual o superior a la de tu oponente, puedes, además de hacerle daño, empujarlo hasta 2 metros en cualquier dirección (a un cuadrado adyacente, si usas un mapa de cuadrícula). Este movimiento no cuenta para el movimiento total del enemigo en esa ronda y no provoca [[ataques gratuitos|free attack]] de nadie. Los monstruos no pueden empujar ni ser empujados.
+El requisito de FUE de un arma de una mano disminuye en 3 si la empuñas con ambas manos.
+"
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_PRONE_TARGETS_NAME,Objetivos tumbados
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_PRONE_TARGETS_BODY,"Si estás de pie y tu objetivo está en el suelo, tu ataque recibe una [[ventaja|boon]] e infliges un D6 adicional de daño."
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_DAMAGE_TYPES_NAME,Tipos de daño
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_DAMAGE_TYPES_BODY,"Los tipos de daño aparecen a continuación. Los tipos de daño de las armas aparecen en las tablas de armas del capítulo 6. Algunas armas, como las espadas, pueden infligir daño cortante y perforante, por lo que debes indicar si das una estocada o un tajo antes de tirar el dado. El tipo de daño influye en la efectividad de la armadura, y los monstruos pueden ser resistentes a ciertos tipos de daño.
+{{table: Damage Types}}
+"
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_CRITICAL_HIT_NAME,Golpe crítico
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_CRITICAL_HIT_BODY,"Si sacas un dragón al atacar, consigues un {{key: golpe crítico | critical hit}}. Eso significa que hace falta sacar un dragón para parar o esquivar el ataque y que puedes elegir uno de los siguientes efectos:
+✦Tirar el doble de dados por el daño del arma, antes de sumar cualquier bonificación de daño u otros bonificadores. Por ejemplo, si haces un golpe crítico con una espada ancha (daño 2D6) y tienes una bonificación de daño D4, el daño es 4D6+D4.
+✦Puedes realizar inmediatamente un segundo ataque contra otro enemigo. Ese ataque adicional es una acción gratuita.
+✦La armadura no tiene efecto contra el ataque, ya que encuentras un hueco o un punto débil. Este efecto solo se puede elegir si el ataque hace daño perforante (regla opcional, a continuación).
+"
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_HITTING_INANIMATE_OBJECTS_NAME,Golpear objetos inanimados
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_HITTING_INANIMATE_OBJECTS_BODY,"Si golpeas un objeto inerte, como una puerta o una cerradura, golpeas automáticamente y solo tiras el daño. Sin embargo, los objetos inanimados a menudo tienen un [[nivel de armadura|armor rating]]."
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_DODGING_NAME,Esquivar
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_DODGING_BODY,"Como alternativa a la parada, puedes intentar {{key: esquivar | dodge}} un ataque que te golpee. No puedes parar y esquivar el mismo ataque: debes elegir. Puedes esquivar mientras estás derribado. Debes declarar que estás esquivando antes de que tu oponente haga la tirada de daño. Haz una tirada de ESQUIVAR: si tienes éxito, esquivas el ataque y no recibes daño. Si fallas, el ataque te alcanza."
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_DODGING_REACTION_NAME,Esquivar: reacción
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_DODGING_REACTION_BODY,"Esquivar es una reacción y, al igual que parar, solo puedes hacerlo si aún no has jugado tu turno en esa ronda. Cuando esquives, gastas tu turno de la ronda y debes poner tu carta de iniciativa boca abajo."
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_MOVEMENT_NAME,Movimiento
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_MOVEMENT_BODY,"Si tu esquiva tiene éxito, puedes moverte, si quieres, hasta 2 metros en cualquier dirección. Este movimiento no desencadena ataques gratuitos de nadie."
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_DODGING_MONSTERS_NAME,Esquivar: monstruos
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_DODGING_MONSTERS_BODY,"Como regla general y a menos que se indique lo contrario, los ataques de monstruos se pueden esquivar."
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_SPECIAL_ATTACKS_NAME,Ataques especiales
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_SPECIAL_ATTACKS_BODY,"Además de simplemente intentar golpear al enemigo, hay algunos ataques especiales que puedes usar cuerpo a cuerpo. Debes declarar siempre que estás usando un ataque especial antes de tirar el ataque. Varios ataques especiales se resuelven con [[tiradas enfrentadas|opposed roll]]. Cuando un [[PNJ|NPC]] no tenga la habilidad en cuestión, el DJ tira contra el nivel de habilidad por defecto, 5.
+Encontrar el punto débil: si tu arma es perforante, puedes intentar encontrar un hueco en la armadura o la [[armadura natural|natural armor]] del enemigo. Tu ataque sufre una desventaja, pero si golpeas se considera que el enemigo no tiene armadura.
+Derribar: intentas derribar a tu enemigo en lugar de infligirle daño. La acción se resuelve con una tirada enfrentada entre tu habilidad con el arma que estés usando y el ESQUIVAR del enemigo. Si tu arma tiene la característica embestidora, ganas una ventaja. El ataque cuenta como una acción para ti, pero no para tu oponente, y no se puede esquivar ni parar. Una forma efectiva de usar este ataque especial es trabajando en equipo: si derribas al oponente, un aliado tuyo puede atacarle antes de que se levante.
+Desarmar: intentas desarmar a tu enemigo en lugar de infligirle daño. El ataque se resuelve con una tirada enfrentada entre tu nivel de habilidad y el del enemigo con las armas
+que estéis usando. El ataque cuenta como una acción para ti, pero no para tu oponente, y no se puede esquivar ni parar. Si el enemigo empuña su arma a dos manos, sufres una desventaja. Si tienes éxito, su arma aterriza a D6 metros de distancia en la dirección que elijas. Recoger un arma del suelo cuesta una acción. Desarmar no funciona contra escudos ni armas naturales.
+Presa: intentas apresar a un enemigo humanoide en lugar de infligirle daño. El ataque se resuelve con una tirada enfrentada entre tu PELEA y la PELEA del enemigo. El ataque cuenta como una acción para ti, pero no para tu oponente, y no se puede esquivar ni parar. Si fallas, caes al suelo. Si tienes éxito, ambos caéis al suelo y el enemigo queda atrapado en tu presa. Mientras mantengas la presa, el enemigo no puede moverse ni realizar ninguna acción que requiera movimiento, excepto tratar de liberarse. Liberarse es una tirada enfrentada entre tu PELEA y la PELEA del enemigo. La tirada es una acción gratuita para el enemigo, pero no para ti. Mientras mantengas la presa, tú tampoco puedes moverte ni realizar ninguna acción que requiera movimiento, excepto aplastarle: cuenta como un ataque desarmado con una ventaja que no se puede esquivar ni parar. Soltar al enemigo es una acción gratuita.
+"
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_MELEE_TACTICS_NAME,Tácticas de combate cuerpo a cuerpo
+LOC_RULE_COMBAT_CHILDREN_MELEE_COMBAT_SECTIONS_MELEE_TACTICS_BODY,"Para tener éxito en el combate cuerpo a cuerpo es importante darse cuenta de que tu recurso más preciado son tus acciones: solo tienes una por ronda, incluyendo las reacciones como esquivar o parar. Si varios [[personajes jugadores|player character]] luchan juntos, a menudo es muy efectivo centrarse en un mismo enemigo, ya que este solo podrá parar o esquivar una vez, quedando expuesto a los siguientes ataques. Pero recuerda siempre que, después de realizar tu acción, tú también estás expuesto a los ataques. Las capacidades heroicas Parada refleja y Rápido como el rayo aumentan
+de forma significativa tu capacidad de defenderte de varios oponentes. En combate individual contra un oponente tan poderoso como tú, puede ser prudente esperar y dejar que el enemigo ataque primero. Si falla, no necesitas parar ni esquivar y puedes realizar tu propio ataque mientras el enemigo no puede protegerse. El inconveniente es que cedes la iniciativa a tu enemigo, que quizás elija una acción completamente diferente a la que esperabas.
+"
+LOC_RULE_COMBAT_CHILDREN_RANGED_COMBAT_NAME,Combate a distancia
+LOC_RULE_COMBAT_CHILDREN_RANGED_COMBAT_BODY,"Para usar un arma a distancia, primero debes desenvainarla o prepararla ([[acción gratuita|free action]]), igual que cuerpo a cuerpo. Deberías situarte a más de 2 metros de tu objetivo (es decir, no en un cuadrado adyacente en el mapa). Si estás a 2 metros o menos, tu ataque sufre una [[desventaja|bane]]. Tira contra la habilidad del arma que estás usando. Para las armas arrojadizas, usa la misma habilidad que para los ataques cuerpo a cuerpo (como CUCHILLOS o LANZAS). Si el ataque golpea, el arma determina qué dados debes tirar para ver cuánto daño inflige. El daño puede aumentar con la [[bonificación al daño|Derived Ratings]] y sacando un [[dragón|dragon]], y disminuir por la armadura.
+{{table: Demon Roll in Ranged Combat}}
+"
+LOC_RULE_COMBAT_CHILDREN_RANGED_COMBAT_SECTIONS_DAMAGE_BONUS_NAME,Bonificación al daño
+LOC_RULE_COMBAT_CHILDREN_RANGED_COMBAT_SECTIONS_DAMAGE_BONUS_BODY,"Las armas a distancia también obtienen una bonificación de daño, igual que cuerpo a cuerpo. Pero ten en cuenta que las ballestas no dan bonificación de daño."
+LOC_RULE_COMBAT_CHILDREN_RANGED_COMBAT_SECTIONS_RANGE_NAME,Alcance
+LOC_RULE_COMBAT_CHILDREN_RANGED_COMBAT_SECTIONS_RANGE_BODY,"Las tablas de armas especifican el alcance de cada arma, es decir, la distancia máxima (en metros) a la que se puede usar de manera efectiva. Puedes disparar a objetivos hasta el doble del alcance indicado, pero sufres una desventaja."
+LOC_RULE_COMBAT_CHILDREN_RANGED_COMBAT_SECTIONS_CRITICAL_HIT_NAME,Golpe crítico
+LOC_RULE_COMBAT_CHILDREN_RANGED_COMBAT_SECTIONS_CRITICAL_HIT_BODY,"Si sacas un dragón al realizar un ataque a distancia, obtienes un [[golpe crítico|critical hit]], lo que significa que el enemigo solo puede [[esquivarlo|dodge]] (o [[pararlo|parry]] con un escudo) si también saca un dragón. Además, puedes elegir uno de estos efectos:
+✦El daño de tu arma se duplica, excluyendo la bonificación de daño y otras bonificaciones. Tira el doble de dados de lo normal y súmalos. Por ejemplo, un golpe crítico con un arco largo inflige 2D12 de daño.
+✦La armadura y la [[armadura natural|natural armor]] no tienen efecto contra el ataque, ya que golpeas a través de un hueco o en un punto débil. Solo puedes elegir este efecto si tu ataque inflige daño perforante (regla opcional).
+"
+LOC_RULE_COMBAT_CHILDREN_RANGED_COMBAT_SECTIONS_PARRY_DODGE_NAME,Parar y esquivar
+LOC_RULE_COMBAT_CHILDREN_RANGED_COMBAT_SECTIONS_PARRY_DODGE_BODY,"Parar un ataque a distancia requiere un escudo. Funciona de la misma manera que en cuerpo a cuerpo, excepto que si sacas un dragón no ganas un contraataque. Puedes esquivar ataques a distancia al igual que en cuerpo a cuerpo."
+LOC_RULE_COMBAT_CHILDREN_RANGED_COMBAT_SECTIONS_OBSCURED_TARGETS_NAME,Objetivos a cubierto
+LOC_RULE_COMBAT_CHILDREN_RANGED_COMBAT_SECTIONS_OBSCURED_TARGETS_BODY,"Si tu visión del objetivo está parcialmente tapada por un objeto o una persona, sin importar si es un amigo o un enemigo, sufres una desventaja en tu ataque. En un mapa cuadriculado puedes disparar a través de una persona que se interponga entre tú y tu objetivo, pero con una desventaja. Si el objetivo está completamente fuera de tu vista, por ejemplo tapado por una pared, no puedes dispararle. Si juegas sin mapa, el DJ decide si tu línea de visión está bloqueada parcial o totalmente."
+LOC_RULE_COMBAT_DAMAGE_DAMAGE,Daño
+LOC_RULE_COMBAT_DAMAGE_DAMAGE_BODY,"La vida de un aventurero es dura y peligrosa. Las recompensas pueden ser enormes, pero lo único seguro es que sufrirás toda clase de daños por el camino. Sufrir daño reduce tus [[puntos de golpe|hp]] (PG)."
+LOC_RULE_COMBAT_DAMAGE_DAMAGE_SECTIONS_ARMOR_NAME,Armadura
+LOC_RULE_COMBAT_DAMAGE_DAMAGE_SECTIONS_ARMOR_BODY,"El uso de una armadura de cuero, cota de malla o completa puede proteger tu cuerpo de los golpes. Ponerte o quitarte una armadura cuenta como una acción en combate. La armadura que lleves puesta debe estar anotada en la sección de armadura de tu hoja de personaje y no cuenta para tu [[límite de carga|encumbrance]]. Solo puedes llevar una armadura a la vez. Algunas armaduras pueden darte una [[desventaja|bane]] en ciertas tiradas de habilidad o restringir tu movimiento."
+LOC_RULE_COMBAT_DAMAGE_DAMAGE_SECTIONS_ARMOR_RATING_NAME,Nivel de armadura
+LOC_RULE_COMBAT_DAMAGE_DAMAGE_SECTIONS_ARMOR_RATING_BODY,"La efectividad de una armadura viene determinada por su {{key: nivel de armadura | armor rating}}. Cada vez que sufras daño de un ataque físico, resta el nivel de armadura del daño. Si el daño de un ataque cuerpo a cuerpo queda completamente anulado, el arma atacante sufre el daño en su lugar, lo que incluso podría romperla."
+LOC_RULE_COMBAT_DAMAGE_DAMAGE_SECTIONS_HELMETS_NAME,Cascos
+LOC_RULE_COMBAT_DAMAGE_DAMAGE_SECTIONS_HELMETS_BODY,"La armadura se puede combinar con un casco, lo que podría aumentar aún más tu nivel de armadura. Ponerse o quitarse un casco cuenta como una acción. Los cascos también pueden darte una desventaja al usar ciertas habilidades."
+LOC_RULE_COMBAT_DAMAGE_DAMAGE_SECTIONS_DAMAGE_TYPES_ARMOR_NAME,Tipos de daño y armadura
+LOC_RULE_COMBAT_DAMAGE_DAMAGE_SECTIONS_DAMAGE_TYPES_ARMOR_BODY,"Si se usa la regla opcional de tipos de daño, algunas armaduras obtienen una bonificación a su nivel de armadura contra ciertos tipos de daño, como indica su entrada en Armaduras. Si no se especifica el tipo de daño, la armadura tiene su efecto normal.
+"
+LOC_RULE_COMBAT_CHILDREN_DEATH_NAME,Muerte
+LOC_RULE_COMBAT_CHILDREN_DEATH_SECTIONS_DEATH_NAME,Muerte
+LOC_RULE_COMBAT_CHILDREN_DEATH_SECTIONS_DEATH_BODY,"Si tus PG llegan a cero, caes al suelo y corres el riesgo de morir. No puedes moverte ni realizar ninguna acción excepto intentar reanimarte (ver más abajo)."
+LOC_RULE_COMBAT_CHILDREN_DEATH_SECTIONS_DEATH_ROLL_NAME,Tirada de muerte
+LOC_RULE_COMBAT_CHILDREN_DEATH_SECTIONS_DEATH_ROLL_BODY,"En tu turno en cada ronda subsiguiente, debes hacer una {{key: tirada de muerte | death roll}}, una tirada contra tu CON. La tirada de muerte no puede [[forzarse|push]] si usáis esa regla opcional. Anota los resultados de tus tiradas de muerte en tu hoja de personaje. Después de tres tiradas de muerte con éxito, recuperas D6 PG y dejas de hacer tiradas de muerte. Después de tres tiradas de muerte fallidas, tu [[personaje jugador|player character]] muere. [[Sacar un dragón|dragon]] cuenta como dos éxitos y [[sacar un demonio|demon]] cuenta como dos fracasos. Si el combate termina, sigue contando rondas hasta que se hayan hecho todas las tiradas de muerte. Si sobrevives, las tiradas de muerte fallidas se borran."
+LOC_RULE_COMBAT_CHILDREN_DEATH_SECTIONS_ZERO_HP_FOR_NPCS_NAME,PNJs con cero PG
+LOC_RULE_COMBAT_CHILDREN_DEATH_SECTIONS_ZERO_HP_FOR_NPCS_BODY,"Cuando un [[PNJ|NPC]] alcanza cero PG, no se hacen tiradas de muerte; el DJ decide si vive o muere. Sin embargo, al igual que un personaje jugador, un PNJ muere si es golpeado por un ataque que mate instantáneamente."
+LOC_RULE_COMBAT_CHILDREN_DEATH_SECTIONS_ADDITIONAL_DAMAGE_NAME,Daño adicional
+LOC_RULE_COMBAT_CHILDREN_DEATH_SECTIONS_ADDITIONAL_DAMAGE_BODY,"Si sufres daño adicional estando a cero PG, este cuenta automáticamente como una tirada de muerte fallida."
+LOC_RULE_COMBAT_CHILDREN_DEATH_SECTIONS_RALLY_NAME,Reanimación
+LOC_RULE_COMBAT_CHILDREN_DEATH_SECTIONS_RALLY_BODY,"Otro personaje jugador a menos de 10 metros y a alcance de oído puede usar PERSUADIR para reanimarte y que sigas luchando aunque tengas cero PG. Esto cuenta como una acción. Si te reanimas, puedes actuar con normalidad, pero debes seguir haciendo tiradas de muerte como se explica más arriba. También puedes intentar reanimarte a ti mismo con una tirada de VOL con desventaja (en lugar de PERSUADIR)."
+LOC_RULE_COMBAT_CHILDREN_DEATH_SECTIONS_SAVING_LIFE_NAME,Salvar vidas
+LOC_RULE_COMBAT_CHILDREN_DEATH_SECTIONS_SAVING_LIFE_BODY,"Cuando tienes cero PG, alguien situado junto a ti puede salvarte la vida con una tirada de CURACIÓN con éxito. Si no tiene vendas, sufre una desventaja a su tirada. Eso cuenta como una acción y se permiten múltiples intentos. Si la tirada tiene éxito, dejas de hacer tiradas de muerte y recuperas D6 PG. No puedes salvarte tu propia vida de esta manera, incluso si te has reanimado (ver arriba). Las tiradas de CURACIÓN adicionales no tienen efecto cuando ya no estás a cero PG, excepto al descansar. La magia también puede salvar vidas."
+LOC_RULE_COMBAT_CHILDREN_DEATH_SECTIONS_INSTANT_DEATH_NAME,Muerte instantánea
+LOC_RULE_COMBAT_CHILDREN_DEATH_SECTIONS_INSTANT_DEATH_BODY,"Tus PG nunca son negativos, pero si un solo ataque reduce tus PG a una puntuación negativa igual a tus PG máximos, tu personaje jugador muere al instante. ¡Es hora de honrar al aventurero caído y crear uno nuevo!
+{{table: Severe Injuries: Injury}}
+"
+LOC_RULE_COMBAT_CHILDREN_CONDITIONS_NAME,Estados
+LOC_RULE_COMBAT_CHILDREN_CONDITIONS_BODY,"En este juego puedes sufrir seis estados diferentes. Cada estado te impone una [[desventaja|bane]] en todas las tiradas contra un [[atributo|attribute]] determinado y en las tiradas de habilidad basadas en este:
+{{table: Conditions}}
+"
+LOC_RULE_COMBAT_CHILDREN_CONDITIONS_SECTIONS_SUFFERING_A_CONDITION_NAME,Sufrir un estado
+LOC_RULE_COMBAT_CHILDREN_CONDITIONS_SECTIONS_SUFFERING_A_CONDITION_BODY,"La forma más común de sufrir {{key: estados | condition}} es [[forzar una tirada|push]]. Tras hacerlo, debes elegir un estado y describir cómo lo sufres. También puedes sufrir estados de otras maneras, por ejemplo debido a [[ataques de monstruo|monster attack]] o hechizos."
+LOC_RULE_COMBAT_CHILDREN_CONDITIONS_SECTIONS_MULTIPLE_CONDITIONS_NAME,Múltiples estados
+LOC_RULE_COMBAT_CHILDREN_CONDITIONS_SECTIONS_MULTIPLE_CONDITIONS_BODY,"Si recibes un estado que ya tienes, debes elegir otro. Si ya tienes los seis, pierdes D6 [[PV|WP]] al sufrir otro estado. Si no te quedan PV, pierdes D6 [[PG|HP]] en su lugar."
+LOC_RULE_COMBAT_CHILDREN_CONDITIONS_SECTIONS_HEALING_CONDITIONS_NAME,Curar estados
+LOC_RULE_COMBAT_CHILDREN_CONDITIONS_SECTIONS_HEALING_CONDITIONS_BODY,Puedes curarte un estado a tu elección durante un [[descanso corto|stretch rest]]. Un [[descanso largo|shift rest]] cura todos los estados.
+LOC_RULE_COMBAT_CHILDREN_HEALING_RESTING_NAME,Curación y descanso
+LOC_RULE_COMBAT_CHILDREN_HEALING_RESTING_BODY,"Los [[PG|HP]] y [[PV|WP]] perdidos se recuperan descansando. Hay tres tipos de descanso: descanso de ronda, descanso corto y descanso largo. Mientras descansas no puedes realizar ninguna acción que requiera una tirada o gasto de PV.
+{{table: Rest Types}}
+"
+LOC_RULE_COMBAT_CHILDREN_HEALING_RESTING_SECTIONS_ROUND_REST_NAME,Descanso de ronda
+LOC_RULE_COMBAT_CHILDREN_HEALING_RESTING_SECTIONS_ROUND_REST_BODY,"Un descanso rápido que solo dura una ronda. Durante un {{key: descanso de ronda | round rest}} solo recuperas D6 PV, ningún PG. Solo puedes hacer un descanso de ronda por tramo largo."
+LOC_RULE_COMBAT_CHILDREN_HEALING_RESTING_SECTIONS_STRETCH_REST_NAME,Descanso corto
+LOC_RULE_COMBAT_CHILDREN_HEALING_RESTING_SECTIONS_STRETCH_REST_BODY,"Un descanso breve que solo dura un tramo corto. Durante un {{key: descanso corto | stretch rest}} te curas D6 PG, o 2D6 PG si alguien más te atiende y tiene éxito con una tirada de CURACIÓN. Quien esté cuidando a alguien no puede descansar durante el mismo tramo corto y solo puede curar a una persona durante el descanso.
+Durante un descanso corto, también recuperas D6 puntos de voluntad y te curas un [[estado|condition]] a tu elección. Si algo dramático interrumpe tu descanso, no obtienes ninguno de sus beneficios. Solo se puede hacer un descanso corto por tramo largo.
+"
+LOC_RULE_COMBAT_CHILDREN_HEALING_RESTING_SECTIONS_SHIFT_REST_NAME,Descanso largo
+LOC_RULE_COMBAT_CHILDREN_HEALING_RESTING_SECTIONS_SHIFT_REST_BODY,"Un {{key: descanso largo | shift rest}} dura un tramo largo entero y solo puede realizarse en un lugar seguro, lejos de cualquier enemigo. Durante un descanso largo, recuperas todos tus PG y PV perdidos y te curas todos los estados. Si un combate o un trabajo duro interrumpe el descanso largo, no tiene efecto."
+LOC_RULE_COMBAT_CHILDREN_HEALING_RESTING_SECTIONS_MAGIC_NAME,Magia
+LOC_RULE_COMBAT_CHILDREN_HEALING_RESTING_SECTIONS_MAGIC_BODY,Los hechizos pueden permitirte recuperar PG más rápido de lo habitual.
+LOC_RULE_COMBAT_CHILDREN_IMPROVISED_WEAPONS_NAME,Armas improvisadas
+LOC_RULE_COMBAT_CHILDREN_IMPROVISED_WEAPONS_BODY,"A veces las batallas se libran en lugares donde el entorno se puede usar en combate: como arma, para protegerse o para moverse. Hay muchas cosas que pueden usarse como arma improvisada, pero lo que todas tienen en común es que normalmente solo sirven para un uso y luego quedan inservibles. Usar un arma improvisada es una acción y se puede combinar con el movimiento. La caja básica de Dragonbane incluye ejemplos de armas improvisadas en forma de cartas.
+Al comienzo del combate, el DJ puede determinar al azar D3 armas improvisadas disponibles, o simplemente decidirlas. El DJ puede señalar la ubicación exacta de un arma improvisada en el mapa o decidir que puede conseguirse en cualquier lugar del área. Un arma improvisada se consume tras un solo uso. Las aventuras completas pueden incluir armas improvisadas nuevas, únicas y relacionadas con un determinado lugar de aventuras.
+{{table: Inn}}
+{{table: Cave}}
+{{table: Forest}}
+"
+LOC_SIZES_SMALL,Pequeño
+LOC_LABEL_DESCRIPTION,DESCRIPCIÓN
+LOC_SIZES_SMALL_FIELDS_DESCRIPTION,Un monstruo pequeño mide menos de un metro de altura y no puede bloquear ningún área. Puede pasar fácilmente a través de pasillos muy estrechos.
+LOC_SIZES_NORMAL,Normal
+LOC_SIZES_NORMAL_FIELDS_DESCRIPTION,Un monstruo de tamaño normal es aproximadamente del tamaño de un humano. Puede bloquear un área de 2×2 metros (un cuadrado en un mapa de combate) y moverse por un pasillo de medio metro de ancho.
+LOC_SIZES_LARGE,Grande
+LOC_SIZES_LARGE_FIELDS_DESCRIPTION,Un monstruo grande puede bloquear un área de 4×4 metros y moverse por un pasillo de 1 metro de ancho.
+LOC_SIZES_HUGE,Enorme
+LOC_SIZES_HUGE_FIELDS_DESCRIPTION,Un monstruo enorme puede bloquear un área de 8×8 metros y moverse por un pasillo de 2 metros de ancho.
+LOC_SIZES_SWARM,Enjambre
+LOC_SIZES_SWARM_FIELDS_DESCRIPTION,"Un enjambre puede ser de tamaño Normal a Enorme, pero nunca bloquea el área en la que está y puede pasar a través de pasillos muy estrechos."
+LOC_SKILLS_INTRO_SECTIONS_ROLLING_DICE_NAME,Tirar los dados
+LOC_SKILLS_INTRO_SECTIONS_ROLLING_DICE_BODY,"Una partida de Dragonbane es una conversación entre el DJ y los jugadores, de ida y vuelta, hasta que surge una situación dramática o difícil de resultado incierto. Entonces es hora de tirar los dados.
+* A menudo las reglas te pedirán que tires varios dados del mismo tipo y sumes sus resultados. Por ejemplo, tirar 2D6 significa que tiras dos dados de seis caras y sumas los resultados.
+* Por lo general, para determinar si una acción tiene éxito o no, tiras un D20. Si el resultado es igual o inferior a tu [[nivel de habilidad|skill level]], la acción tiene éxito. Si tienes una [[ventaja|boon]], tiras dos D20 para esa acción y solo cuentas el resultado más bajo. Si tienes una [[desventaja|bane]], también tiras dos D20, pero solo cuentas el resultado más alto. Las tiradas de habilidad se explican con más detalle en el capítulo 3.
+* En el juego hay treinta habilidades básicas en total, sin contar las habilidades secundarias como las [[escuelas de magia|school of magic]]. Cada habilidad está conectada a uno de los [[atributos|attribute]], que determina tu nivel inicial en la habilidad cuando creas tu [[personaje jugador|player character]]. Cuando uses una habilidad, empieza describiendo lo que tu personaje quiere lograr. Luego tira un D20. Un resultado inferior o igual al nivel de la habilidad significa que la acción tiene éxito. En combate, las tiradas de habilidad suelen tener efectos específicos; fuera de él, el DJ o la aventura que estés jugando determinan los efectos de la tirada.
+* Una sola oportunidad: como regla general, solo tienes una oportunidad de tener éxito con cualquier acción. Una vez que lances los dados no puedes repetir la tirada para lograr el mismo objetivo. Deberás probar algo diferente, esperar a que las circunstancias cambien de manera sustancial o dejar que otro personaje jugador lo intente. Esta regla no se aplica en combate.
+* Si el resultado es superior a tu nivel de habilidad, la acción fracasa. Tú y el DJ podéis describir qué sucede. El DJ también puede dejar que los fracasos tengan consecuencias adicionales para que la historia avance de forma emocionante.
+* ¡NO DEJÉIS QUE LA AVENTURA SE DETENGA! Un fracaso no debe detener la historia por completo. Incluso cuando fallas, debe haber un camino abierto; tal vez a costa de tiempo, riesgo u oro, pero un camino. El DJ tiene la última palabra sobre las consecuencias del fracaso en cada situación particular.
+"
+LOC_SKILLS_INTRO_SECTIONS_ROLLING_A_DRAGON_NAME,Sacar un dragón
+LOC_SKILLS_INTRO_SECTIONS_ROLLING_A_DRAGON_BODY,"* Si al tirar un D20 sacas un uno (1), tienes un éxito especial. Eso se llama {{key: sacar un dragón | dragon}}. En combate, una tirada dragón tiene efectos concretos, como aumentar el daño de un ataque, por ejemplo. Fuera del combate, el DJ decide el efecto. Algunas sugerencias:
+  * Impresionas a quienes te rodean.
+  * Logras más de lo que pretendías.
+  * Realizas la acción más rápido de lo habitual.
+"
+LOC_SKILLS_INTRO_SECTIONS_ROLLING_A_DEMON_NAME,Sacar un demonio
+LOC_SKILLS_INTRO_SECTIONS_ROLLING_A_DEMON_BODY,"* Un resultado de 20 en un D20 se conoce como {{key: sacar un demonio | demon}} y significa que la tirada falla sin importar tu [[nivel de habilidad|skill level]] ni las demás circunstancias. Sacar un demonio también significa que la tirada no puede ser [[forzada|Pushing Your Roll]]. Las tiradas de demonio pueden tener efectos adicionales en combate y durante el lanzamiento de hechizos. Fuera del combate, el DJ puede hacer que tengan efectos como:
+  * Te dañas a ti mismo, a otra persona o a un objeto.
+  * Haces el ridículo delante de todos los que te rodean.
+  * Haces mucho ruido.
+TIRADAS DE [[ATRIBUTO|ATTRIBUTE]]
+Cuando no haya ninguna habilidad relevante para la situación, el DJ puede pedirte que tires contra uno de tus atributos básicos: por ejemplo, una tirada de Fuerza para levantar algo pesado. Sin embargo, si hay una habilidad que abarque la acción que deseas realizar, tu tirada debe basarse en ella. Si la situación no está clara, el DJ decide lo apropiado.
+"
+LOC_SKILLS_INTRO_SECTIONS_BOONS_BANES_NAME,Ventajas y desventajas
+LOC_SKILLS_INTRO_SECTIONS_BOONS_BANES_BODY,"* Normalmente el DJ no valora lo difícil que es una acción. Solo se tiran dados en situaciones difíciles, y punto. Pero a veces el DJ querrá destacar que hay factores externos que ayudan o dificultan una acción. En esos casos puedes obtener una {{key: ventaja | boon}} o una {{key: desventaja | bane}} a tu tirada. En ambos casos tiras dos D20, pero solo cuenta uno de los resultados. Si tienes una ventaja, solo se aplica el resultado más bajo. Si tienes una desventaja, solo se aplica el más alto. También hay casos en los que las reglas dicen que obtienes una ventaja o una desventaja, como por ejemplo al atacar a un oponente derribado o al disparar a larga distancia.
+* Múltiples ventajas/desventajas: si tu tirada suma varias ventajas/desventajas, tira un D20 adicional por cada una de ellas y cuenta solo el resultado más bajo/más alto. Cada ventaja anula una desventaja, y viceversa.
+"
+LOC_SKILLS_INTRO_SECTIONS_HELP_FROM_OTHERS_NAME,Ayudar a otro personaje
+LOC_SKILLS_INTRO_SECTIONS_HELP_FROM_OTHERS_BODY,"Otro [[personaje jugador|player character]] o [[PNJ|NPC]] puede ayudarte a tener éxito en una tirada. Debe declararlo antes de que tires los dados. También debe tener sentido en la historia: quien te ayuda debe estar presente y tener la capacidad de apoyar tu acción. El DJ tiene la última palabra. Cada vez que alguien te ayude con una tirada, obtienes una [[ventaja|boon]]. Ayudar en combate cuenta como una acción: si ayudas a otra persona, pierdes tu propia acción en esa ronda. Los PNJs pueden ayudarse entre sí, al igual que los personajes jugadores. Solo un personaje puede ayudar en una tirada.
+Si tienes una ventaja y una [[desventaja|bane]], haz una tirada normal (un D20). Si tienes dos ventajas y una desventaja, cuenta como una ventaja.
+"
+LOC_SKILLS_INTRO_SECTIONS_PUSHING_YOUR_ROLL_NAME,Forzar una tirada
+LOC_SKILLS_INTRO_SECTIONS_PUSHING_YOUR_ROLL_BODY,"Si fallas una tirada de habilidad o de [[atributo|attribute]], puedes elegir {{key: forzar la tirada | push}}, lo que significa que haces otro intento. El nuevo resultado se aplica, sea cual sea. Si tienes [[ventajas|boon]] o [[desventajas|bane]], debes volver a tirar todos los dados. Nunca puedes forzar una [[tirada de demonio|demon]] (un 20 natural). Cada vez que fuerces una tirada, inmediatamente después de repetirla sufres un [[estado|condition]]. Eso significa que tienes una desventaja en todas las tiradas de las habilidades basadas en un atributo concreto y en las tiradas de ese atributo. Cada atributo está vinculado a un estado concreto, por lo que hay seis estados diferentes:
+{{table: Conditions}}
+Tú decides qué estado obtienes al forzar una tirada, con dos limitaciones importantes:
+✦No puedes elegir un estado que ya tengas.
+✦Debes poder explicar cómo la acción que intentas realizar provoca el estado. El DJ tiene derecho a rechazar las explicaciones claramente irracionales.
+Si llegas a tener los seis estados, ya no puedes forzar más tiradas. Además de sus efectos, los estados sirven de inspiración para interpretar a tu personaje. Marca los estados en tu hoja de personaje.
+Curar estados: puedes recuperarte de un estado descansando; para más información sobre el descanso y la curación, consulta la página 52.
+[[PNJs|npc]] y monstruos: solo los [[personajes jugadores|player character]] pueden forzar sus tiradas, no los PNJs ni los monstruos.
+"
+LOC_SKILLS_INTRO_SECTIONS_PUSHED_ROLLS_NAME,Tiradas forzadas
+LOC_SKILLS_INTRO_SECTIONS_PUSHED_ROLLS_BODY,"Las [[tiradas enfrentadas|opposed roll]] también pueden [[forzarse|push]] (regla opcional, consulta la página anterior), pero solo cuando eres la parte activa. Puedes hacerlo incluso después de la tirada de tu oponente."
+LOC_SKILLS_INTRO_SECTIONS_OPPOSED_ROLLS_NAME,Tiradas enfrentadas
+LOC_SKILLS_INTRO_SECTIONS_OPPOSED_ROLLS_BODY,"A veces, para tener éxito con una acción debes vencer a tu enemigo en una {{key: tirada enfrentada | opposed roll}}. Eso significa que tanto tú como tu adversario tiráis los dados. Las tiradas enfrentadas se usan poco en el juego y solo cuando alguien se enfrenta a ti de forma activa. En combate solo cuenta como una acción para la parte activa.
+✦Si tu tirada falla, tu acción también falla, independientemente de la tirada de tu oponente.
+✦Si tu tirada tiene éxito y tu oponente falla, tu acción tiene éxito.
+✦Si ambos tenéis éxito en la tirada, tu acción tiene éxito si el resultado de tu tirada es igual o inferior al de tu oponente. Si el resultado del oponente es inferior al tuyo, fallas.
+"
+LOC_SKILLS_INTRO_SECTIONS_OPEN_OPPOSED_ROLLS_NAME,Tiradas enfrentadas abiertas
+LOC_SKILLS_INTRO_SECTIONS_OPEN_OPPOSED_ROLLS_BODY,"El DJ también puede usar [[tiradas enfrentadas|opposed roll]] en situaciones en las que no hay una parte activa; por ejemplo, tirar FUE contra FUE para decidir el resultado de un pulso. Esto se conoce como una tirada enfrentada abierta. Las tiradas enfrentadas abiertas se repiten si ambas partes fallan, o si las dos tienen éxito y obtienen el mismo resultado. Ambas partes pueden forzar sus tiradas."
+LOC_SKILLS_INTRO_SECTIONS_THE_CORE_SKILLS_NAME,Las habilidades básicas
+LOC_SKILLS_INTRO_SECTIONS_THE_CORE_SKILLS_BODY,Esta sección describe todas las habilidades básicas del juego. Las [[escuelas de magia|school of magic]] son habilidades secundarias y se tratan en el capítulo 5.
+LOC_SKILLS_INTRO_SECTIONS_NPCS_AND_SKILLS_NAME,PNJs y habilidades
+LOC_SKILLS_INTRO_SECTIONS_NPCS_AND_SKILLS_BODY,"Los personajes no jugadores usan habilidades de la misma manera que los [[personajes jugadores|player character]]. El DJ tira los dados por ellos, pero solo para acciones que afecten directamente a un personaje jugador, como por ejemplo si el [[PNJ|NPC]] está atacando o intentando salvar a un personaje jugador. Cuando un PNJ realiza una acción que no afecta directamente a un personaje jugador, el DJ simplemente decide qué sucede. Los perfiles de los PNJs no incluyen todas las habilidades; al tirar por un PNJ una habilidad que no aparece, el DJ usa un [[nivel de habilidad|skill level]] de 5 por defecto."
+LOC_SKILLS_INTRO_SECTIONS_SCHOOLS_OF_MAGIC_NAME,Escuelas de magia
+LOC_SKILLS_INTRO_SECTIONS_SCHOOLS_OF_MAGIC_BODY,"Hay diferentes [[escuelas de magia|school of magic]], y cada escuela es una habilidad secundaria diferente. Para más información sobre la magia, consulta el capítulo 5."
+LOC_SKILLS_INTRO_ENTITIES_ROUND_NAME,Ronda
+LOC_CATEGORY_MEASURING_TIME,Medir el tiempo
+LOC_LABEL_DURATION,DURACIÓN
+LOC_VALUE_10_SECONDS,10 segundos
+LOC_LABEL_ENOUGH_TIME_TO,TIEMPO SUFICIENTE PARA
+LOC_VALUE_PERFORM_AN_ACTION_IN_COMBAT_TAKE_A_ROUND_REST,"Realizar una acción en combate, hacer un descanso de ronda."
+LOC_SKILLS_INTRO_ENTITIES_STRETCH_NAME,Tramo corto
+LOC_VALUE_15_MINUTES,15 minutos
+LOC_VALUE_EXPLORE_A_ROOM_TAKE_A_STRETCH_REST,"Explorar una habitación, hacer un descanso corto."
+LOC_SKILLS_INTRO_ENTITIES_SHIFT_NAME,Tramo largo
+LOC_VALUE_6_HOURS,6 horas
+LOC_VALUE_HIKE_FOR_15_KILOMETERS_TAKE_A_SHIFT_REST,"Caminar 15 kilómetros, hacer un descanso largo."
+LOC_SKILLS_INTRO_ENTITIES_EXHAUSTED_NAME,Agotado
+LOC_CATEGORY_CONDITIONS,Estados
+LOC_LABEL_ATTRIBUTE,ATRIBUTO
+LOC_VALUE_STR,FUE
+LOC_SKILLS_INTRO_ENTITIES_ANGRY_NAME,Enfadado
+LOC_VALUE_INT,INT
+LOC_SKILLS_INTRO_ENTITIES_SICKLY_NAME,Enfermo
+LOC_VALUE_CON,CON
+LOC_SKILLS_INTRO_ENTITIES_SCARED_NAME,Asustado
+LOC_VALUE_WIL,VOL
+LOC_SKILLS_INTRO_ENTITIES_DAZED_NAME,Aturdido
+LOC_VALUE_AGL,AGI
+LOC_SKILLS_INTRO_ENTITIES_DISHEARTENED_NAME,Desanimado
+LOC_VALUE_CHA,CAR
+LOC_SPELLS_INTRO_SECTIONS_INTRO_NAME,Introducción
+LOC_SPELLS_INTRO_SECTIONS_INTRO_BODY,"Algunos dicen que la magia es un regalo de los dragones. Otros, que es una maldición de los demonios. También hay quienes aseguran que es una bendición de los dioses o espíritus. Y es cierto que los dragones, demonios, dioses y espíritus influyen en la magia y pueden guiar al mago en su camino, pero la realidad es que la magia es una energía primordial de la naturaleza que existe en el mundo físico y más allá de él. Dioses y demonios, dragones y espíritus: todos dependen de la magia por igual."
+LOC_SPELLS_INTRO_SECTIONS_SCHOOLS_OF_MAGIC_NAME,Escuelas de magia
+LOC_SPELLS_INTRO_SECTIONS_SCHOOLS_OF_MAGIC_BODY,"Explorar la magia es mitad arte, mitad ciencia. Hay diferentes {{key: escuelas de magia | school of magic}}, cada una con su propia visión sobre qué es la magia y cómo funciona. Se dice que en el mundo de Dragonbane hay más escuelas de magia, incluso nigromancia y otras artes oscuras, pero las tres siguientes son las únicas disponibles para los [[personajes jugadores|player character]] en las reglas básicas."
+LOC_SPELLS_INTRO_SECTIONS_SKILLS_NAME,Habilidades
+LOC_SPELLS_INTRO_SECTIONS_SKILLS_BODY,"Cada [[escuela de magia|school of magic]] es una habilidad secundaria diferente. Como mago recién creado, puedes seleccionar una escuela como habilidad entrenada (basada en INT). No tienes nivel inicial en las escuelas de magia que no hayas entrenado, ni siquiera como mago. Puedes aprender escuelas de magia adicionales durante el juego."
+LOC_SPELLS_INTRO_SECTIONS_GENERAL_MAGIC_NAME,Magia común
+LOC_SPELLS_INTRO_SECTIONS_GENERAL_MAGIC_BODY,"La magia común no es una escuela, sino una colección de hechizos generales. Puedes aprender hechizos de magia común sin importar a qué [[escuela de magia|school of magic]] pertenezcas."
+LOC_SPELLS_INTRO_SECTIONS_NEWLY_CREATED_MAGE_NAME,Mago recién creado
+LOC_SPELLS_INTRO_SECTIONS_NEWLY_CREATED_MAGE_BODY,"Como mago recién creado, puedes seleccionar tres hechizos de rango 1 y tres [[trucos mágicos|magic trick]] para comenzar a jugar. Debes elegirlos de tu [[escuela de magia|school of magic]] o de la magia común. También obtienes un [[grimorio|grimoire]] donde escribir todos tus hechizos."
+LOC_SPELLS_INTRO_SECTIONS_REQUIREMENTS_NAME,Requisitos
+LOC_SPELLS_INTRO_SECTIONS_REQUIREMENTS_BODY,"Para lanzar un hechizo debes cumplir uno o más requisitos, que se indican en la descripción de cada hechizo.
+✦Palabra: el hechizo se activa con un canto o palabra de poder. No puede ser un susurro.
+✦Gesto: el hechizo se activa haciendo movimientos específicos con la mano.
+✦Foco: el hechizo se activa con un objeto en la mano, como una varita mágica, una bola de cristal o un amuleto.
+✦Ingrediente: el hechizo se activa con un ingrediente concreto que se consume en el proceso.
+Algunos hechizos tienen varios requisitos. No puedes lanzar un hechizo a menos que cumplas todos sus requisitos.
+"
+LOC_SPELLS_INTRO_SECTIONS_CASTING_TIME_NAME,Tiempo de lanzamiento
+LOC_SPELLS_INTRO_SECTIONS_CASTING_TIME_BODY,"A menos que se indique lo contrario, lanzar un hechizo siempre cuenta como una acción en combate. Sin embargo, hay hechizos que se realizan fuera de tu propio turno, como reacción. A diferencia de otras reacciones en combate, como [[parar|parry]] y [[esquivar|dodge]], los hechizos de reacción no consumen tu acción de la ronda. Eso significa que puedes lanzar tantos como quieras mientras tengas suficientes [[PV|WP]]. También hay rituales que tardan un tramo corto o incluso uno largo en lanzarse."
+LOC_SPELLS_INTRO_SECTIONS_GRIMOIRE_NAME,Grimorio
+LOC_SPELLS_INTRO_SECTIONS_GRIMOIRE_BODY,"Lanzar un hechizo no preparado desde tu [[grimorio|grimoire]] lleva el doble de tiempo, lo que significa que debes gastar una ronda, tramo corto o largo adicional en los preparativos. Haz la tirada cuando se complete el hechizo. Los hechizos de reacción no se pueden lanzar desde el grimorio."
+LOC_SPELLS_INTRO_SECTIONS_RANGE_NAME,Alcance
+LOC_SPELLS_INTRO_SECTIONS_RANGE_BODY,"Cada hechizo tiene un alcance máximo. A diferencia de las armas a distancia, los hechizos no se pueden usar en objetivos más allá de su alcance. El alcance «personal» significa que el hechizo solo afecta a la persona que lo lanza."
+LOC_SPELLS_INTRO_SECTIONS_AREA_OF_EFFECT_NAME,Área de efecto
+LOC_SPELLS_INTRO_SECTIONS_AREA_OF_EFFECT_BODY,"Algunos hechizos afectan a una zona entera, lo que se conoce como área de efecto. A menos que se indique lo contrario, el área de efecto comienza donde está el mago que lanza el hechizo. Los hechizos de área se pueden [[esquivar|dodge]] pero no [[parar|parry]], salvo que se indique lo contrario. Puedes eximir a uno o más objetivos dentro del área de los efectos del hechizo, pero entonces sufres una [[desventaja|bane]] en la tirada."
+LOC_SPELLS_INTRO_SECTIONS_SPHERE_NAME,Esfera
+LOC_SPELLS_INTRO_SECTIONS_SPHERE_BODY,"Si el alcance se describe como esfera, el hechizo afecta a todos los objetivos dentro del área elegida, excepto al propio mago."
+LOC_SPELLS_INTRO_SECTIONS_CONE_NAME,Cono
+LOC_SPELLS_INTRO_SECTIONS_CONE_BODY,"Si el alcance se describe como cono, el hechizo afecta a todos los objetivos dentro de un área en forma de cono cuyo ancho en cada punto es igual a la distancia desde el origen del hechizo. El alcance indica la longitud del cono."
+LOC_SPELLS_INTRO_SECTIONS_DURATION_NAME,Duración
+LOC_SPELLS_INTRO_SECTIONS_DURATION_BODY,"Cada hechizo especifica la duración de su efecto.
+{{table: Duration}}
+"
+LOC_SPELLS_INTRO_SECTIONS_MAGIC_ITEMS_NAME,Objetos mágicos
+LOC_SPELLS_INTRO_SECTIONS_MAGIC_ITEMS_BODY,"Los objetos mágicos pueden contener uno o más hechizos que pueden ser activados incluso por quienes no son magos. A menos que se indique lo contrario, se necesita una tirada exitosa de IDIOMAS o de cualquier [[escuela de magia|school of magic]] para identificar los hechizos y poder usarlos.
+[[Puntos de voluntad|wp]]: usar los hechizos de un objeto mágico también cuesta PV. Algunos objetos mágicos pueden almacenar PV que puedes usar en lugar de los tuyos.
+"
+LOC_SPELLS_INTRO_SECTIONS_FAILURE_DRAGONS_AND_DEMONS_NAME,"Fallos, dragones y demonios"
+LOC_SPELLS_INTRO_SECTIONS_FAILURE_DRAGONS_AND_DEMONS_BODY,"Si la tirada para lanzar un hechizo falla, el hechizo no tiene efecto, pero sigues gastando tus [[PV|WP]]. Eres libre de explicar cómo se produce el fracaso en la historia, siempre que no tenga un efecto mecánico."
+LOC_SPELLS_INTRO_SECTIONS_ROLLING_A_DRAGON_NAME,Sacar un dragón
+LOC_SPELLS_INTRO_SECTIONS_ROLLING_A_DRAGON_BODY,"[[Sacar un dragón|dragon]] al lanzar un hechizo significa que tu objetivo debe sacar otro dragón para resistirse, [[pararlo|parry]] o [[esquivarlo|dodge]], y además puedes elegir uno de estos efectos:
+✦El daño o el alcance del hechizo se duplica.
+✦El hechizo no cuesta [[PV|WP]].
+✦Puedes lanzar otro hechizo de inmediato, pero tiras con una [[desventaja|bane]].
+"
+LOC_SPELLS_INTRO_SECTIONS_ROLLING_A_DEMON_NAME,Sacar un demonio
+LOC_SPELLS_INTRO_SECTIONS_ROLLING_A_DEMON_BODY,"Si sacas un demonio, no puedes [[forzar la tirada|push]]. También existe el riesgo de que algo salga terriblemente mal; consulta la regla opcional de accidentes mágicos, más abajo."
+LOC_SPELLS_INTRO_SECTIONS_MAGICAL_MISHAP_NAME,Accidente mágico
+LOC_SPELLS_INTRO_SECTIONS_MAGICAL_MISHAP_BODY,"Cuando sacas un demonio (20) al lanzar un hechizo, provocas un accidente mágico. Tira en la tabla.
+{{table: Magical Mishaps}}
+"
+LOC_SPELLS_INTRO_SECTIONS_LEARNING_MAGIC_NAME,Aprender magia
+LOC_SPELLS_INTRO_SECTIONS_LEARNING_MAGIC_BODY,"Puedes aprender nuevos hechizos de un maestro o de un [[grimorio|grimoire]]. Debes tener un [[nivel de habilidad|skill level]] en la [[escuela de magia|school of magic]] correspondiente, o en cualquier escuela de magia si es un hechizo de magia común."
+LOC_SPELLS_INTRO_SECTIONS_PREREQUISITES_NAME,Prerrequisitos
+LOC_SPELLS_INTRO_SECTIONS_PREREQUISITES_BODY,Algunos hechizos tienen un prerrequisito que debe cumplirse para aprenderlos. Por lo general es una [[escuela de magia|school of magic]] o conocer algún otro hechizo.
+LOC_SPELLS_INTRO_SECTIONS_TEACHERS_NAME,Maestros
+LOC_SPELLS_INTRO_SECTIONS_TEACHERS_BODY,"La forma más fácil (pero a menudo la más cara) de aprender un hechizo es de un maestro que ya lo conozca. La lección dura un tramo largo, pero no puedes activar el nuevo hechizo hasta el final de esa partida. Además, para aprender el nuevo hechizo debes gastar una [[marca de mejora|advancement mark]] de esa escuela, en vez de intentar subir tu [[nivel de habilidad|skill level]] en ella. Haz una tirada contra INT con una [[ventaja|boon]]. Si tienes éxito, aprendes el hechizo; de lo contrario, no lo haces."
+LOC_SPELLS_INTRO_SECTIONS_GRIMOIRES_NAME,Grimorios
+LOC_SPELLS_INTRO_SECTIONS_GRIMOIRES_BODY,"Si tienes suerte, puedes encontrar hechizos en los [[grimorios|grimoire]] de otros magos. Puedes aprenderlos por tu cuenta. Funciona de la misma manera que con un maestro, pero la tirada es de IDIOMAS en lugar de INT y sin la [[ventaja|boon]]."
+LOC_SPELLS_INTRO_SECTIONS_SCHOOLS_OF_MAGIC_2_NAME,Escuelas de magia
+LOC_SPELLS_INTRO_SECTIONS_SCHOOLS_OF_MAGIC_2_BODY,"Puedes aprender [[escuelas de magia|school of magic]] adicionales adquiriendo primero la [[capacidad heroica|heroic ability]] Talento mágico y luego estudiando durante al menos una semana con un maestro con un [[nivel de habilidad|skill level]] en la escuela. Al final de la semana, haz una tirada de INT. Si tienes éxito, ganas tu nivel inicial (INT) como nivel de habilidad en esa escuela. Si fallas, puedes volver a intentarlo tras otra semana de estudio. Incluso quienes no son magos pueden aprender magia de esta manera."
+LOC_SPELLS_INTRO_SECTIONS_SPELL_LIST_NAME,Lista de hechizos
+LOC_SPELLS_INTRO_SECTIONS_SPELL_LIST_BODY,"Las siguientes páginas describen todos los [[trucos mágicos|magic trick]] y hechizos de las reglas básicas de Dragonbane. Primero aparece la Magia común, seguida de las escuelas de Animismo, Elementalismo y Mentalismo."
+LOC_SPELLS_INTRO_SECTIONS_MAGIC_TRICKS_NAME,Trucos mágicos
+LOC_SPELLS_INTRO_SECTIONS_MAGIC_TRICKS_BODY,"{{key: truco mágico | magic trick}}{{key: trucos mágicos | magic tricks}}Los trucos mágicos son más fáciles de aprender que los hechizos. Solo se necesita un tramo corto para aprender un truco nuevo de un maestro o de un [[grimorio|grimoire]], y no requieren gastar una [[marca de mejora|advancement mark]] ni superar una tirada."
+LOC_SPELLS_INTRO_ENTITIES_CASTING_NAME,Lanzamiento
+LOC_CATEGORY_CASTING_SPELLS,Lanzamiento de hechizos
+LOC_SPELLS_INTRO_ENTITIES_CASTING_FIELDS_DESCRIPTION,Descripción
+LOC_SPELLS_INTRO_ENTITIES_CASTING_FIELDS_DESCRIPTION_2,"Para lanzar un hechizo debes gastar [[Puntos de voluntad|wp]] (PV) y tirar contra tu [[nivel de habilidad|skill level]] en la escuela correspondiente. Para lanzar hechizos comunes se puede usar cualquier escuela. Si la tirada tiene éxito, el hechizo tiene el efecto deseado según su descripción. De lo contrario, no tiene efecto. Si usáis esa regla opcional, puedes [[forzar la tirada|push]]. Los [[trucos mágicos|magic trick]] tienen éxito automáticamente y siempre cuestan 1 PV."
+LOC_SPELLS_INTRO_ENTITIES_RANK_NAME,Rango
+LOC_SPELLS_INTRO_ENTITIES_RANK_FIELDS_DESCRIPTION,Descripción
+LOC_SPELLS_INTRO_ENTITIES_RANK_FIELDS_DESCRIPTION_2,"Los hechizos se dividen en rangos. No tienen efecto mecánico, pero indican lo complejos y poderosos que son. Como mago, comienzas a jugar solo con hechizos de rango 1, pero puedes aprender hechizos de rango superior durante el juego."
+LOC_SPELLS_INTRO_ENTITIES_PREPARED_SPELLS_NAME,Hechizos preparados
+LOC_SPELLS_INTRO_ENTITIES_PREPARED_SPELLS_FIELDS_DESCRIPTION,Descripción
+LOC_SPELLS_INTRO_ENTITIES_PREPARED_SPELLS_FIELDS_DESCRIPTION_2,"Los hechizos son complicados y el número máximo que puedes tener preparados en tu memoria al mismo tiempo es igual a tu nivel inicial de INT. Cuando estés en tu límite y quieras preparar otro hechizo, debes reemplazar uno de los que tengas preparados. Para preparar hechizos, debes estudiarlos en un [[grimorio|grimoire]]. Eso requiere un tramo largo, independientemente del número de hechizos, aunque puedes hacerlo durante un [[descanso largo|shift rest]]. Solo puedes preparar hechizos que hayas aprendido. Marca los hechizos preparados con una X en tu hoja de personaje."
+LOC_SPELLS_INTRO_ENTITIES_GRIMOIRE_NAME,Grimorio
+LOC_SPELLS_INTRO_ENTITIES_GRIMOIRE_FIELDS_DESCRIPTION,Descripción
+LOC_SPELLS_INTRO_ENTITIES_GRIMOIRE_FIELDS_DESCRIPTION_2,"La mayoría de los magos tienen un {{key: grimorio | grimoire}} y los magos recién creados obtienen uno automáticamente. El grimorio contiene todos los hechizos que conoces. Escribir un hechizo consume un tramo largo. Puedes escribir hechizos no preparados. Una vez que hayas aprendido más hechizos de los que puedes preparar, tu grimorio se vuelve esencial. En caso de emergencia, puedes lanzar hechizos directamente desde el grimorio, pero tardas el doble de lo normal (ver más abajo). Si no tienes un maestro, los grimorios de otros magos también son una forma efectiva de aprender nuevos hechizos.
+Si pierdes tu [[grimorio|grimoire]], no puedes preparar los hechizos que escribiste en él. Para poder volver a usar los hechizos no preparados, primero debes obtener un nuevo grimorio y escribir esos hechizos en él.
+"
+LOC_SPELLS_INTRO_ENTITIES_MAGIC_TRICKS_NAME,Trucos mágicos
+LOC_SPELLS_INTRO_ENTITIES_MAGIC_TRICKS_FIELDS_DESCRIPTION,Descripción
+LOC_SPELLS_INTRO_ENTITIES_MAGIC_TRICKS_FIELDS_DESCRIPTION_2,"Los {{key: trucos mágicos | magic trick}} son hechizos menores, sencillos y relativamente inofensivos. Suelen ser lo primero que aprende un mago, ya que le permiten entrenar la mente en el manejo de las energías mágicas. Cada escuela tiene sus propios trucos mágicos. El límite de hechizos preparados (ver más arriba) no se aplica a los trucos. Tus trucos mágicos siempre están preparados. Todos los trucos mágicos requieren un gesto (ver más abajo) para lanzarse."
+LOC_SPELLS_INTRO_ENTITIES_ZERO_WP_NAME,Cero PV
+LOC_SPELLS_INTRO_ENTITIES_ZERO_WP_FIELDS_DESCRIPTION,Descripción
+LOC_SPELLS_INTRO_ENTITIES_ZERO_WP_FIELDS_DESCRIPTION_2,Algunos hechizos pueden drenar [[PV|WP]] de otra persona. Tener cero PV no tiene otro efecto que impedir el uso de capacidades que requieran PV.
+LOC_SPELLS_INTRO_ENTITIES_POWER_LEVEL_NAME,Nivel de poder
+LOC_SPELLS_INTRO_ENTITIES_POWER_LEVEL_FIELDS_DESCRIPTION,Descripción
+LOC_SPELLS_INTRO_ENTITIES_POWER_LEVEL_FIELDS_DESCRIPTION_2,"El nivel de poder de un hechizo indica con cuánto poder lo cargas. El nivel de poder va de 1 a 3. Lanzar un hechizo cuesta 2 [[PV|WP]] por nivel de poder. Dicho de otro modo, los hechizos normales siempre cuestan al menos 2 PV y los [[trucos mágicos|magic trick]] siempre cuestan 1 PV. Algunos hechizos no usan nivel de poder; esos cuestan siempre 2 PV."
+LOC_SPELLS_INTRO_ENTITIES_POWER_FROM_THE_BODY_NAME,Energía vital
+LOC_SPELLS_INTRO_ENTITIES_POWER_FROM_THE_BODY_FIELDS_DESCRIPTION,Descripción
+LOC_SPELLS_INTRO_ENTITIES_POWER_FROM_THE_BODY_FIELDS_DESCRIPTION_2,"Si te queda uno o ningún [[PV|WP]], puedes extraer energía de tu cuerpo si es necesario, aunque es un proceso dañino y potencialmente letal. Tira un dado a tu elección (D4, D6, D8, D10, D12 o D20) antes de lanzar el hechizo: el resultado indica cuántos PV ganas, que debes usar de inmediato, pero también sufres la misma cantidad de daño. Los PV que no uses en el momento se pierden. El daño se aplica después de lanzar el hechizo. La energía vital no se puede usar para hechizos de curación."
+LOC_SPELLS_INTRO_ENTITIES_MAGIC_AND_METAL_NAME,Magia y metal
+LOC_SPELLS_INTRO_ENTITIES_MAGIC_AND_METAL_FIELDS_DESCRIPTION,Descripción
+LOC_SPELLS_INTRO_ENTITIES_MAGIC_AND_METAL_FIELDS_DESCRIPTION_2,"El metal tiene un efecto antimagia, lo que significa que no puedes usar magia si llevas una armadura de metal o tienes un arma de metal a mano. Esto incluye objetos con partes de metal como hachas, lanzas, cuero tachonado y flechas (pero no varas, garrotes u hondas). Los objetos de tu inventario no cuentan."
+LOC_SPELLS_INTRO_ENTITIES_RANK_2_NAME,Rango
+LOC_SPELLS_INTRO_ENTITIES_RANK_2_FIELDS_DESCRIPTION,Descripción
+LOC_VALUE_TO,…
+LOC_SPELLS_INTRO_ENTITIES_RANK_3_NAME,Rango
+LOC_SPELLS_INTRO_ENTITIES_RANK_3_FIELDS_DESCRIPTION,Descripción
+LOC_WORLD_WORLD,Mundo
+LOC_WORLD_WORLD_CHILDREN_JOURNEYS_NAME,Viajes
+LOC_TAB_JOURNEYS,Viajes
+LOC_WORLD_WORLD_CHILDREN_JOURNEYS_BODY,"Los [[personajes jugadores|player character]] son aventureros en el mundo de Dragonbane y a menudo deberán viajar a través de bosques oscuros, páramos escarpados y montañas inhóspitas. Un viaje puede ser mucho más que una forma de ir de un punto a otro, también puede ser una pequeña aventura en sí misma. ¿Quién sabe lo que acecha tras cada recodo del camino?"
+LOC_WORLD_WORLD_CHILDREN_JOURNEYS_SECTIONS_TRAVEL_NAME,Viajar
+LOC_WORLD_WORLD_CHILDREN_JOURNEYS_SECTIONS_TRAVEL_BODY,"Los viajes se realizan por tramos largos. Como dijimos en el capítulo 1, hay cuatro tramos largos en un día: mañana, día, tarde y noche. Como regla general, los personajes jugadores pueden caminar unos 15 kilómetros por tramo largo a pie o unos 30 a caballo. El terreno difícil puede ralentizar su paso. Por lo general, los personajes jugadores no pueden caminar o montar más de dos tramos largos por día, con algunas pausas breves incluidas. Si hacen una parada larga, la distancia que cubren se reduce. No pueden marchar con las armas desenvainadas."
+LOC_WORLD_WORLD_CHILDREN_JOURNEYS_SECTIONS_FORCED_MARCH_NAME,Marcha forzada
+LOC_WORLD_WORLD_CHILDREN_JOURNEYS_SECTIONS_FORCED_MARCH_BODY,"Un personaje jugador puede caminar o montar durante un tercer tramo largo en un mismo día, pero queda Agotado. Si ya tenía ese estado, no puede viajar un tercer tramo largo. Nadie puede viajar más de tres tramos largos en un solo día."
+LOC_WORLD_WORLD_CHILDREN_JOURNEYS_SECTIONS_TRAVEL_MAPS_NAME,Mapas de viaje
+LOC_WORLD_WORLD_CHILDREN_JOURNEYS_SECTIONS_TRAVEL_MAPS_BODY,La mayoría de las aventuras oficiales de Dragonbane incluyen un mapa de la zona donde transcurren. Puedes usar el mapa de la aventura para calcular cuánto deben viajar los personajes jugadores y llevar la cuenta de su avance. Los mapas no son exactos y a veces tendrás que aplicar tu propio criterio.
+LOC_WORLD_WORLD_CHILDREN_JOURNEYS_SECTIONS_LONG_JOURNEYS_NAME,Viajes largos
+LOC_WORLD_WORLD_CHILDREN_JOURNEYS_SECTIONS_LONG_JOURNEYS_BODY,"Las reglas de viaje están diseñadas para trayectos cortos dentro de un área limitada. Si los personajes jugadores hacen un viaje largo a otra parte del mundo, no hay necesidad de jugarlo en detalle: el DJ puede simplemente saltar hasta el momento en que llegan a su destino."
+LOC_WORLD_WORLD_CHILDREN_JOURNEYS_SECTIONS_PATHFINDERS_NAME,Exploradores
+LOC_WORLD_WORLD_CHILDREN_JOURNEYS_SECTIONS_PATHFINDERS_BODY,"Los personajes jugadores que sigan una carretera o un camino despejado no corren el riesgo de perderse, pero esos lujos rara vez están disponibles. En plena naturaleza es más difícil orientarse y pueden ocurrir toda clase de contratiempos. Cuando viajan sin un sendero que marque la ruta, los personajes jugadores deben designar a un explorador que guíe al grupo. Esa persona debe hacer una tirada de SUPERVIVENCIA cada tramo largo para encontrar el camino. Si el explorador no tiene mapa, la tirada sufre una [[desventaja|bane]]. Un catalejo da una [[ventaja|boon]]. Si falla, el grupo sufre un percance: tira en la tabla. Puedes ajustar el percance para que encaje mejor con la zona.
+{{table: Mishaps}}
+"
+LOC_WORLD_WORLD_CHILDREN_JOURNEYS_SECTIONS_ROLLING_A_DRAGON_NAME,Sacar un dragón
+LOC_WORLD_WORLD_CHILDREN_JOURNEYS_SECTIONS_ROLLING_A_DRAGON_BODY,Un explorador que saque un dragón encuentra un atajo y la distancia recorrida en ese tramo largo se duplica.
+LOC_WORLD_WORLD_CHILDREN_JOURNEYS_SECTIONS_DIFFICULT_TERRAIN_NAME,Terreno difícil
+LOC_WORLD_WORLD_CHILDREN_JOURNEYS_SECTIONS_DIFFICULT_TERRAIN_BODY,"Si el terreno es particularmente difícil, puedes añadir una desventaja a la tirada de SUPERVIVENCIA."
+LOC_WORLD_WORLD_CHILDREN_JOURNEYS_SECTIONS_RANDOM_ENCOUNTERS_NAME,Encuentros aleatorios
+LOC_WORLD_WORLD_CHILDREN_JOURNEYS_SECTIONS_RANDOM_ENCOUNTERS_BODY,"Durante sus viajes, los personajes jugadores pueden encontrarse con todo tipo de criaturas. Una vez por tramo largo, o cuando lo consideres apropiado, puedes tirar en una tabla de encuentros aleatorios. Los encuentros aleatorios pueden variar según la zona, por lo que generalmente cada aventura incluye sus propias tablas. También puedes elegir un encuentro adecuado en lugar de tirarlo al azar o incluso inventarlo tú mismo. Algunos encuentros aleatorios pueden ocurrir de noche o cuando los personajes jugadores hayan acampado.
+"
+LOC_WORLD_WORLD_CHILDREN_WILDERNESS_NAME,Naturaleza
+LOC_WORLD_WORLD_CHILDREN_WILDERNESS_SECTIONS_COLD_NAME,Frío
+LOC_WORLD_WORLD_CHILDREN_WILDERNESS_SECTIONS_COLD_BODY,"Con temperaturas bajas, especialmente por la noche, los personajes jugadores deben hacer una tirada de SUPERVIVENCIA para resistir el frío. Se necesita una manta para evitar una desventaja, mientras que vestir pieles otorga una ventaja a la tirada."
+LOC_WORLD_WORLD_CHILDREN_WILDERNESS_SECTIONS_MAKING_CAMP_NAME,Acampar
+LOC_WORLD_WORLD_CHILDREN_WILDERNESS_SECTIONS_MAKING_CAMP_BODY,"Los personajes jugadores necesitan dormir al menos un tramo largo al día para evitar la falta de sueño. En plena naturaleza, cada personaje jugador debe hacer una tirada de SUPERVIVENCIA para encontrar un lugar de descanso adecuado. Quien no tenga unas pieles para dormir sufre una desventaja en la tirada. En caso de fallo, el tramo largo no cuenta como sueño ni se puede usar como un [[descanso largo|shift rest]]."
+LOC_WORLD_WORLD_CHILDREN_WILDERNESS_SECTIONS_TENT_NAME,Tienda de campaña
+LOC_WORLD_WORLD_CHILDREN_WILDERNESS_SECTIONS_TENT_BODY,"Una tienda otorga una ventaja al acampar y una tirada con éxito permite que varias personas duerman en su interior sin hacer sus propias tiradas de SUPERVIVENCIA. Una tienda pequeña puede acomodar a dos personas y una grande hasta seis. Si la persona que monta la tienda falla la tirada, los demás personajes jugadores pueden tirar por separado para el mismo tramo largo."
+LOC_WORLD_WORLD_CHILDREN_WILDERNESS_SECTIONS_KEEPING_WATCH_NAME,Guardias
+LOC_WORLD_WORLD_CHILDREN_WILDERNESS_SECTIONS_KEEPING_WATCH_BODY,"Dado que los encuentros aleatorios pueden ocurrir en cualquier momento, es aconsejable que los personajes jugadores duerman durante diferentes tramos largos para que siempre haya alguien despierto vigilando."
+LOC_WORLD_WORLD_CHILDREN_WILDERNESS_SECTIONS_DANGEROUS_LOCATIONS_NAME,Lugares peligrosos
+LOC_WORLD_WORLD_CHILDREN_WILDERNESS_SECTIONS_DANGEROUS_LOCATIONS_BODY,"En ciertos lugares, como una mazmorra llena de enemigos, los personajes jugadores no pueden acampar ni hacer descansos largos. Primero deben abandonar el área y encontrar un lugar más seguro."
+LOC_WORLD_WORLD_CHILDREN_WILDERNESS_SECTIONS_FOOD_IN_THE_WILDERNESS_NAME,Comida en la naturaleza
+LOC_WORLD_WORLD_CHILDREN_WILDERNESS_SECTIONS_FOOD_IN_THE_WILDERNESS_BODY,"En plena naturaleza, un personaje jugador puede dedicar un tramo largo a cazar, pescar o buscar plantas comestibles. El personaje no puede hacer ningún progreso en el mapa durante ese tramo largo.
+{{table: Hunting}}
+"
+LOC_WORLD_WORLD_CHILDREN_WILDERNESS_SECTIONS_FISHING_NAME,Pesca
+LOC_WORLD_WORLD_CHILDREN_WILDERNESS_SECTIONS_FISHING_BODY,"La pesca requiere equipo de pesca y una tirada de CAZA Y PESCA. Si tiene éxito, el pescador atrapa D4 raciones de comida con una caña de pescar o D6 con una red."
+LOC_WORLD_WORLD_CHILDREN_WILDERNESS_SECTIONS_FORAGING_NAME,Forrajeo
+LOC_WORLD_WORLD_CHILDREN_WILDERNESS_SECTIONS_FORAGING_BODY,"El personaje jugador hace una tirada de SUPERVIVENCIA, con una desventaja en invierno y una ventaja en otoño. En caso de éxito, el recolector encuentra D3 raciones de alimentos en setas comestibles, raíces y otras plantas."
+LOC_WORLD_WORLD_CHILDREN_WILDERNESS_SECTIONS_COOKING_NAME,Cocinar
+LOC_WORLD_WORLD_CHILDREN_WILDERNESS_SECTIONS_COOKING_BODY,"Cualquier persona que coma pescado o carne cruda corre el riesgo de enfermar y debe hacer una tirada contra virulencia 10. Las plantas se pueden comer crudas sin riesgo, pero se necesitan dos raciones de plantas crudas para cubrir la necesidad diaria de alimentos. Cocinar hasta diez raciones de comida requiere un tramo largo y una tirada de SUPERVIVENCIA con éxito. En caso de fallo, la comida cuenta como cruda. Una cocina de campaña da una ventaja a la tirada. Lo mismo ocurre con una cocina normal, donde además se puede cocinar toda la comida que se quiera. Consulta la [[capacidad heroica|heroic ability]] Maestro cocinero."
+LOC_WORLD_WORLD_CHILDREN_NON_PLAYER_CHARACTERS_NAME,Personajes no jugadores
+LOC_TAB_NPC,PNJ
+LOC_WORLD_WORLD_CHILDREN_NON_PLAYER_CHARACTERS_BODY,"Aunque controlas todo lo que rodea a los [[personajes jugadores|player character]], dragones y demonios incluidos, tu principal herramienta para crear drama serán a menudo los personajes no jugadores. Los valores de juego de los tipos de {{key: PNJs | npc}} más habituales aparecen en la tabla.
+{{table: Typical NPCs}}
+"
+LOC_WORLD_WORLD_CHILDREN_NON_PLAYER_CHARACTERS_SECTIONS_MANAGING_NPCS_NAME,Gestión de PNJs
+LOC_WORLD_WORLD_CHILDREN_NON_PLAYER_CHARACTERS_SECTIONS_MANAGING_NPCS_BODY,"A nivel de reglas, los PNJs funcionan igual que los personajes jugadores. Se mueven, realizan acciones, sufren daño y gastan [[PV|WP]] de la misma forma. Pero en la práctica, cuando las acciones de un PNJ no afectan directamente a un personaje jugador, ignora las reglas. No hagas tiradas para las acciones de los PNJs a menos que estén atacando o curando a un personaje jugador. También puedes tirar cuando hacerlo le dé más emoción a la partida, pero generalmente no es necesario. Recuerda que, cuando la descripción de un PNJ no incluye una habilidad, tira contra el [[nivel de habilidad|skill level]] predeterminado de 5."
+LOC_WORLD_WORLD_CHILDREN_NON_PLAYER_CHARACTERS_SECTIONS_MINIONS_BOSSES_NAME,Esbirros y jefes
+LOC_WORLD_WORLD_CHILDREN_NON_PLAYER_CHARACTERS_SECTIONS_MINIONS_BOSSES_BODY,Los PNJs se pueden dividir en dos categorías: esbirros y jefes.
+LOC_WORLD_WORLD_CHILDREN_NON_PLAYER_CHARACTERS_SECTIONS_MINIONS_NAME,Esbirros
+LOC_WORLD_WORLD_CHILDREN_NON_PLAYER_CHARACTERS_SECTIONS_MINIONS_BODY,"Son PNJs menos importantes, con valores de juego idénticos, y su descripción no suele incluir su nombre ni personalidad. Un esbirro que llega a cero [[PG|HP]] muere a menos que quieras que sobreviva, tal vez para decirle algo importante a los personajes jugadores con su último aliento. Los esbirros casi nunca usan PV y suelen actuar en el mismo turno de combate."
+LOC_WORLD_WORLD_CHILDREN_NON_PLAYER_CHARACTERS_SECTIONS_BOSSES_NAME,Jefes
+LOC_WORLD_WORLD_CHILDREN_NON_PLAYER_CHARACTERS_SECTIONS_BOSSES_BODY,"Son diferentes. A menudo se los describe con nombres y trasfondo y generalmente juegan un papel importante en la aventura. Un jefe roba su propia [[carta de iniciativa|initiative]] en combate. Los jefes tienen PV y usan capacidades innatas y [[heroicas|heroic ability]] al igual que los personajes jugadores. Los jefes particularmente poderosos suelen tener varias capacidades heroicas, sobre todo varios niveles de Robusto y Concentración, lo que puede hacer que tengan muchos más PG y PV que los personajes jugadores. Si es posible, trata de que tus jefes no mueran demasiado pronto. Un jefe que vive para luchar otro día es más divertido que uno muerto. Asegúrate también de poner algunos esbirros en el camino para que los personajes jugadores no puedan llegar al jefe con demasiada facilidad. ¡Un encuentro con un jefe debería ser un desafío!"
+LOC_WORLD_WORLD_CHILDREN_NON_PLAYER_CHARACTERS_SECTIONS_ATTRIBUTES_FOR_NPCS_NAME,Atributos para los PNJs
+LOC_WORLD_WORLD_CHILDREN_NON_PLAYER_CHARACTERS_SECTIONS_ATTRIBUTES_FOR_NPCS_BODY,"En las aventuras de Dragonbane, los [[atributos|attribute]] de los PNJs no aparecen porque casi nunca se usan. Si en algún momento necesitas hacer una tirada contra el atributo de un PNJ, usa esta guía: FUE y AGI: usa la [[bonificación de daño|Derived Ratings]]. Si es +D6, tira contra 17. Si es +D4, tira contra 14. Si no tiene, tira contra 10.
+CON: tira contra sus PG máximos, restando 2 por cada nivel de la capacidad heroica Robusto. VOL: tira contra sus PV máximos si aparecen, restando 2 por cada nivel de la capacidad heroica Concentración. Si no tiene PV, tira contra 10. INT y CAR: tira contra 10.
+"
+LOC_WORLD_WORLD_CHILDREN_NPC_CREATOR_NAME,Creador de PNJs
+LOC_WORLD_WORLD_CHILDREN_NPC_CREATOR_BODY,"Crea un personaje no jugador al azar (nombre, actitud, raza, motivación, profesión y rasgo) con las listas de Creación de PNJs. Cada resultado se puede volver a tirar por separado."
+LOC_WORLD_WORLD_CHILDREN_TREASURE_NAME,Tesoros
+LOC_TAB_TREASURE,Tesoros
+LOC_WORLD_WORLD_CHILDREN_TREASURE_BODY,"Tira D6 para saber qué tabla usar: 1–3: tabla de tesoros 1, 4–6: tabla de tesoros 2.
+{{table: Treasure Table 1}}
+{{table: Treasure Table 2}}
+"
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_NAME,Otros peligros
+LOC_TAB_HAZARDS,Peligros
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_DARKNESS_NAME,Oscuridad
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_DARKNESS_BODY,"En completa oscuridad no puedes esprintar ni golpear a tus enemigos con ataques a distancia. Para atacar a un enemigo cuerpo a cuerpo, primero debes hacer una tirada de ALERTA (no cuenta como acción)."
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_TORCHES_LANTERNS_NAME,Antorchas y linternas
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_TORCHES_LANTERNS_BODY,"Una antorcha o linterna ilumina 10 metros (cinco cuadrados) en todas las direcciones. Encender una antorcha o una linterna es una acción y requiere yesca y pedernal, un fuego ya encendido o el [[truco mágico|magic trick]] ENCENDER. Si no tienes nada de eso, puedes encenderla con una tirada de SUPERVIVENCIA con éxito, pero eso consume un tramo corto de trabajo. Las antorchas y linternas se llevan en una mano, lo que significa que no puedes usar armas a dos manos o una segunda arma a una mano al mismo tiempo. Una antorcha se puede usar como arma y cuenta como una clava de madera pequeña que inflige daño de fuego. Cada vez que golpees a alguien con ella, debes tirar inmediatamente para ver si se apaga (ver a continuación). Una antorcha o linterna puede arder un tramo largo como máximo, pero no es de fiar. Después de cada tramo corto, o cada vez que el DJ quiera aumentar la tensión, debes tirar un dado (cuyo tipo depende de la fuente de luz). Un resultado de 1 significa que la llama se apaga."
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_FEAR_NAME,Miedo
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_FEAR_BODY,"Las ruinas y bosques de Dragonbane están repletos de horribles bestias capaces de realizar los llamados ataques de miedo. La magia y otras experiencias aterradoras también pueden producir ataques de miedo. Cuando seas objetivo de un ataque de miedo, debes hacer inmediatamente una tirada de VOL. La tirada puede [[forzarse|push]] (regla opcional) y no cuenta como una acción. Las situaciones particularmente aterradoras pueden darte una [[desventaja|bane]] a la tirada. Si la tirada de VOL falla, debes tirar en la tabla de miedo.
+{{table: Fear Table}}
+"
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_POISON_NAME,Venenos
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_POISON_BODY,"Los {{key: venenos | poison}} se clasifican por su potencia. Un veneno débil tiene potencia 9, uno moderado tiene potencia 12 y uno fuerte puede tener 15 o incluso más. Si resultas envenenado, el DJ hace una [[tirada abierta enfrentada|opposed roll]] entre la potencia y tu CON. Si el veneno gana, sufres todos sus efectos. Si ganas tú, solo sufres su efecto limitado. El veneno no tiene efecto sobre los monstruos.
+[[PNJs|npc]]: para los efectos del veneno sobre los PNJs, tira contra sus [[PG|HP]] máximos, restando 2 por cada nivel de la [[capacidad heroica|heroic ability]] Robusto.
+"
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_LETHAL_POISON_NAME,Veneno mortífero
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_LETHAL_POISON_BODY,"✦Efecto completo: sufres D6 de daño por ronda en tu turno, hasta que llegues a cero PG. Si tomas un antídoto a tiempo, el efecto se detiene.
+✦Efecto limitado: sufres D6 de daño en tu próximo turno.
+"
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_PARALYZING_POISON_NAME,Veneno paralizante
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_PARALYZING_POISON_BODY,"✦Efecto completo: estás Agotado y debes hacer una tirada de CON cada turno (no consume acción). Si fallas, no puedes moverte ni realizar acciones (ni siquiera [[gratuitas|free action]]) esa ronda. El efecto desaparece después de un tramo corto o si te dan un antídoto.
+✦Efecto limitado: estás Agotado.
+"
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_SLEEPING_POISON_NAME,Veneno somnífero
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_SLEEPING_POISON_BODY,"✦Efecto completo: estás Aturdido y debes hacer una tirada de CON cada turno (no consume acción). Si fallas, te duermes y permaneces dormido durante un tramo largo. Te despiertas si te dan un antídoto o si recibes al menos un punto de daño.
+✦Efecto limitado: estás Aturdido.
+"
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_DISEASE_NAME,Enfermedades
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_DISEASE_BODY,"Cuando te expones a una enfermedad peligrosa, el DJ hace una tirada abierta enfrentada entre la virulencia de la enfermedad y tu CON. Si ganas, resistes la enfermedad. Si no, enfermas después de un día, estás Enfermo y pierdes D6 PG. Mientras estés enfermo, no puedes curarte PG, [[PV|WP]] ni [[estados|condition]]. Haz una nueva tirada contra la enfermedad todos los días; cada fallo te inflige D6 de daño. Si llegas a cero PG estando enfermo, mueres un día después. En cuanto ganes una tirada enfrentada, estás completamente curado, dejas de tirar y puedes curarte como de costumbre."
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_HEALING_NAME,Curación
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_HEALING_BODY,"Si alguien con la habilidad CURACIÓN te atiende mientras estás enfermo, esa persona puede tirar contra la enfermedad en tu lugar. El cuidador tira CURACIÓN contra la virulencia de la enfermedad. Una mezcla de hierbas curativas le da una [[ventaja|boon]] a la tirada."
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_FALLING_NAME,Caídas
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_FALLING_BODY,"Caer sobre una superficie dura inflige una cantidad de D6 de daño contundente igual a la mitad de la altura de la caída en metros, redondeando hacia abajo. Una caída inferior a dos metros no inflige daño. Una tirada exitosa de ATLETISMO reduce el número de D6 a la mitad (redondeando hacia arriba). La armadura no protege contra el daño por caída."
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_SWIMMING_DROWNING_NAME,Nadar y ahogarse
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_SWIMMING_DROWNING_BODY,"Todos los [[personajes jugadores|player character]] saben nadar. Su velocidad de movimiento en el agua es la mitad de su velocidad de movimiento en tierra. No se pueden realizar ataques a distancia en el agua y los de cuerpo a cuerpo sufren una desventaja. Las maniobras más complejas bajo el agua, como bucear en busca de algo, requieren una tirada de NADAR."
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_HUNGER_NAME,Hambre
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_HUNGER_BODY,"Debes comer al menos una ración de alimentos al día. Después de un día sin comida estás hambriento y no puedes curarte PG, PV ni estados, excepto por medios mágicos. También sufres un punto de daño cada día que no comas. Si llegas a cero PG mientras estás hambriento, mueres de hambre al día siguiente. Si consumes una ración de alimentos, dejas de estar hambriento y puedes curarte con normalidad."
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_COLD_NAME,Frío
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_COLD_BODY,"Cuando haya un frío intenso y no estés lo suficientemente protegido (a juicio del DJ), debes tirar SUPERVIVENCIA con regularidad. Normalmente tiras una vez por tramo largo, pero si el frío es extremo puede que tengas que tirar cada tramo corto o incluso cada ronda. Si no tienes una manta, sufres una desventaja a la tirada, mientras que unas pieles te dan una ventaja.
+En caso de fallo, pierdes D6 PG y D6 PV y ya no puedes curarte esos puntos ni estados, excepto por medios mágicos. Luego debes seguir haciendo tiradas para soportar el frío, con el mismo efecto si fallas. Si llegas a cero PG mientras estás con frío, mueres cuando te toque hacer la siguiente tirada. Solo cuando entres en calor, aunque sea junto a una fogata, puedes dejar de hacer tiradas y volver a curarte con normalidad.
+"
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_SLEEP_DEPRIVATION_NAME,Falta de sueño
+LOC_WORLD_WORLD_CHILDREN_OTHER_HAZARDS_SECTIONS_SLEEP_DEPRIVATION_BODY,"Necesitas dormir al menos un tramo largo sin interrupciones cada día. No puedes dormir con armadura. Después de tres tramos largos sin dormir, ya no puedes curarte PV ni estados, aunque sí PG. También pierdes D6 PV cada tramo largo que permanezcas despierto. Si llegas a cero PV mientras sufres de falta de sueño, colapsas y duermes durante al menos un tramo largo sin que te puedan despertar. Tras dormir al menos un tramo largo, puedes volver a curarte los PV y estados de forma normal."
+LOC_WORLD_WORLD_CHILDREN_RIDING_ANIMALS_NAME,Bestias de monta
+LOC_WORLD_WORLD_CHILDREN_RIDING_ANIMALS_BODY,Un caballo leal o una montura de otro tipo son un gran recurso para cualquier aventurero.
+LOC_WORLD_WORLD_CHILDREN_RIDING_ANIMALS_SECTIONS_SADDLEBAGS_NAME,Alforjas
+LOC_WORLD_WORLD_CHILDREN_RIDING_ANIMALS_SECTIONS_SADDLEBAGS_BODY,Las listas de Equipo especifican cuántas unidades de peso puede transportar el animal.
+LOC_WORLD_WORLD_CHILDREN_RIDING_ANIMALS_SECTIONS_MOVEMENT_NAME,Movimiento
+LOC_WORLD_WORLD_CHILDREN_RIDING_ANIMALS_SECTIONS_MOVEMENT_BODY,"Viajar montado supone ir el doble de rápido que a pie, a unos 30 kilómetros por tramo largo. Se supone que todos los [[personajes jugadores|player character]] saben subirse a un caballo e ir al paso, pero cualquier maniobra más compleja requiere una tirada de CABALGAR."
+LOC_WORLD_WORLD_CHILDREN_RIDING_ANIMALS_SECTIONS_COMBAT_NAME,Combate
+LOC_WORLD_WORLD_CHILDREN_RIDING_ANIMALS_SECTIONS_COMBAT_BODY,"Para luchar montado, tu montura debe estar entrenada en combate. En ese caso puedes moverte a la velocidad de movimiento de tu montura en lugar de la tuya. A caballo luchas como de costumbre, pero todos los ataques y [[paradas|parry]] usan el nivel más bajo entre CABALGAR y tu habilidad de arma. Además, cuando montas a caballo CABALGAR reemplaza a ESQUIVAR. Si no tienes una silla de montar, todas las tiradas sufren una [[desventaja|bane]]. Los enemigos que te ataquen deben elegir si te atacan a ti o a tu montura. Los ataques cuerpo a cuerpo desde el suelo contra ti sufren una desventaja."
+LOC_WORLD_WORLD_CHILDREN_RIDING_ANIMALS_SECTIONS_DAMAGE_NAME,Daño
+LOC_WORLD_WORLD_CHILDREN_RIDING_ANIMALS_SECTIONS_DAMAGE_BODY,"Las monturas se curan los [[PG|HP]] como los personajes jugadores. Una montura que caiga a cero PG no hace [[tiradas de muerte|death roll]], sino que muere sin más."

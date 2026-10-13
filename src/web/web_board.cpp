@@ -112,12 +112,13 @@ std::vector<json> allSessions(const std::string& prefsDir) {
 
 // ---- the campaigns ----
 constexpr size_t kMaxCharacters = 60;
+constexpr int kShiftsPerDay = 4;                  // a day of play is four shifts: the Master marks them as they pass
 
 json readCampaign(const std::string& prefsDir, const std::string& id) {
     if (!fs::safeId(id)) return nullptr;
     const auto root = jsonLoad(campaignFile(prefsDir, id));
     if (!root || !root->is_object()) return nullptr;
-    json c = {{"id", id}, {"name", jsonStr(*root, "name", id)}, {"created", jsonStr(*root, "created")}, {"characters", json::array()}};
+    json c = {{"id", id}, {"name", jsonStr(*root, "name", id)}, {"created", jsonStr(*root, "created")}, {"characters", json::array()}, {"shifts", std::clamp(jsonInt(*root, "shifts"), 0, kShiftsPerDay)}};
     if (const json* list = jsonFind(*root, "characters"); list && list->is_array())
         for (const json& ch : *list)
             if (ch.is_string() && fs::safeId(ch.get<std::string>())) c["characters"].push_back(ch);
@@ -260,8 +261,17 @@ BoardResult campaignSave(const std::string& prefsDir, const std::string& id, con
         }
         c["characters"] = list;
     }
+    bool shiftChanged = false;
+    if (const json* shifts = jsonFind(body, "shifts")) {
+        if (!shifts->is_number_integer() || shifts->get<int>() < 0 || shifts->get<int>() > kShiftsPerDay) return failure(400, "shifts must be 0 to 4.");
+        shiftChanged = c.value("shifts", 0) != shifts->get<int>();
+        c["shifts"] = shifts->get<int>();
+    }
     if (!writeCampaign(prefsDir, c)) return failure(500, "Could not save the campaign.");
-    return BoardResult();
+    BoardResult done;
+    if (jsonBool(body, "reset")) shiftChanged = true;                       // "reset" asks for the rests back even if the shifts were already at 0
+    if (shiftChanged) done.body = {{"restReset", c["characters"]}};          // the next shift: whoever plays it has their rests back
+    return done;
 }
 
 BoardResult campaignDelete(const std::string& prefsDir, const std::string& id) {

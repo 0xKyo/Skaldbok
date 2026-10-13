@@ -15,26 +15,29 @@ constexpr int kKindCount = 10;
 
 // One table (model.cpp) says everything about each kind; a new kind is a row there plus its loader in content.cpp,
 // and it gets its page, "see" word and counts from it.
-const char* kindLabel(Kind k);                       // "Creature", "Spell"...
 const char* kindKey(Kind k);                         // "monster", "spell"... stable name used in saved files
 const char* kindFile(Kind k);                        // "creatures", "spells"...: its data file, and its word in a "see"
 const char* kindTitle(Kind k);                       // "Creatures", "Spells"...
-const char* kindPage(Kind k);                        // the id of the page that shows it ("spells"; weapons live on "gear")
-std::vector<Kind> kindsWithOwnPage();                // the kinds with a catalog page of their own (list + detail), in order
 bool kindFromKey(const std::string& s, Kind& out);
 bool kindFromFile(const std::string& s, Kind& out);
 
 // Tables get ids from here up (every table comes from a content pack), so they never look like another kind's handle.
 constexpr int kPackTableBase = 1000000;
 
-// One line of a list on the left side.
-struct ListItem {
-    int id = 0;
-    Kind kind = Kind::Monster;
-    std::string name;
-    std::string sub;       // small grey text: category, school, ...
-    int sourceId = 0;
-    int page = 0;          // physical page in its PDF
+// An age of the character (age.yaml: young, adult, old...): how many trained skills it gives and what it does to the rolled attributes.
+struct AgeDef {
+    std::string id;                  // "young": what a sheet keeps
+    std::string name;                // as shown
+    std::string english;             // in English
+    int professionSkills = 6;        // trained skills that must come from the profession
+    int freeSkills = 4;              // and the ones of the player's own choice
+    std::vector<std::pair<std::string, int>> mods;       // attribute id -> added to the rolled score (never above 18)
+    int trainedSkills() const { return professionSkills + freeSkills; }
+    int modFor(const std::string& attributeId) const {
+        for (const auto& [id, delta] : mods)
+            if (id == attributeId) return delta;
+        return 0;
+    }
 };
 
 // Where the original lives: enough to open the PDF at the right page.
@@ -62,6 +65,7 @@ struct DataTable {
     bool browse = true;                // shown in the Tables list
     int sourceId = 0;
     std::string title, dice;           // dice: "D6", "D20", "" for plain tables
+    std::string canon;                 // the title in English (the same as `title` unless the content was read in another language)
     std::vector<std::string> columns;
     std::vector<TableRow> rows;
     PageRef ref;
@@ -78,6 +82,7 @@ struct Entry {
     std::string key;                   // stable: "<pack>/<kind>/<id>", what characters and saved files refer to
     int sourceId = 0;
     std::string title, subtitle;
+    std::string canon;                 // the title in English (the same as `title` unless the content was read in another language)
     std::vector<Field> fields;
     std::string body;
     std::string image;                 // absolute path to a small illustration for the card; empty if none
@@ -128,6 +133,7 @@ struct Monster {
     std::string key;
     int sourceId = 0;
     std::string name, kind, category, description, quote, randomEncounter, adventureSeed, statsRef;
+    std::string canon;                 // the name in English
     std::string attackDice;            // "D6", "D4"
     std::string image;                 // absolute path; empty if none
     std::string pageNote;
@@ -146,6 +152,7 @@ struct RuleNode {
     int parent = 0;                    // 0 = top level
     int level = 1;
     std::string title, body;
+    std::string canon;                 // the title in English
     int sourceId = 0;                  // where it comes from (a book, or a homebrew source)
     PageRef ref;                       // a book page that can be opened (books only)
     std::string pageNote;              // "p.12" for sources without a PDF
@@ -154,6 +161,7 @@ struct RuleNode {
     // rule's tables, instead of being a separate rule a reader has to click into. A rule can have several.
     struct Section {
         std::string title, body;
+        std::string canon;             // the title in English
     };
     std::vector<Section> sections;
     // What the rule points to in the rest of the data, for the reader to jump to: a category of entries ("kin", "professions", "skills",

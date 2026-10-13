@@ -1,7 +1,12 @@
 // Talking to the server. Player token comes from ?t=..., GM token from ?gm=...; both are kept in the browser and stay in the address
 // bar, so every tab says who it is: a GM tab and a player tab can be open at the same time, and each one reloads as itself.
+import { lang, t } from './i18n.js';
+
 const KEY = 'skaldbok.token';
 const GM_KEY = 'skaldbok.gmtoken';
+
+// Every request says the language of the page, so what the server sends (rules, cards, messages) comes in it.
+const headers = (token, extra = {}) => ({ Authorization: `Bearer ${token}`, 'X-Skaldbok-Lang': lang.value, ...extra });
 
 export class ApiError extends Error {
   constructor(status, message) {
@@ -55,32 +60,24 @@ export function captureGmToken(win = window) {
   }
 }
 
-export function forgetGmToken(win = window) {
-  try {
-    win.localStorage.removeItem(GM_KEY);
-  } catch {
-    /* nothing to forget */
-  }
-}
-
 // A picture is fetched with the token in a header and shown from a local blob address: an <img> could not send the header.
 export async function apiBlobUrl(path, token, fetchImpl = fetch, urls = URL) {
   let res;
   try {
-    res = await fetchImpl(`/api${path}`, { headers: { Authorization: `Bearer ${token}` } });
+    res = await fetchImpl(`/api${path}`, { headers: headers(token) });
   } catch {
-    throw new ApiError(0, 'Cannot reach the server.');
+    throw new ApiError(0, t('Cannot reach the server.'));
   }
-  if (!res.ok) throw new ApiError(res.status, `Error ${res.status}`);
+  if (!res.ok) throw new ApiError(res.status, t('Error {n}', { n: res.status }));
   return urls.createObjectURL(await res.blob());
 }
 
 export async function apiGet(path, token, fetchImpl = fetch) {
   let res;
   try {
-    res = await fetchImpl(`/api${path}`, { headers: { Authorization: `Bearer ${token}` }, cache: 'no-store' });
+    res = await fetchImpl(`/api${path}`, { headers: headers(token), cache: 'no-store' });
   } catch {
-    throw new ApiError(0, 'Cannot reach the server.');
+    throw new ApiError(0, t('Cannot reach the server.'));
   }
   let body = null;
   try {
@@ -88,8 +85,18 @@ export async function apiGet(path, token, fetchImpl = fetch) {
   } catch {
     /* no JSON body */
   }
-  if (!res.ok) throw new ApiError(res.status, body?.error ?? `Error ${res.status}`);
+  if (!res.ok) throw new ApiError(res.status, body?.error ?? t('Error {n}', { n: res.status }));
   return body;
+}
+
+// The GM's language and whether the server is there; needs no token.
+export async function apiHealth(fetchImpl = fetch) {
+  try {
+    const res = await fetchImpl('/api/health', { cache: 'no-store' });
+    return res.ok ? await res.json() : null;
+  } catch {
+    return null;
+  }
 }
 
 // A write (POST or PATCH) with a JSON body; the answer is the JSON the server sends back.
@@ -98,12 +105,12 @@ export async function apiSend(method, path, token, payload, fetchImpl = fetch) {
   try {
     res = await fetchImpl(`/api${path}`, {
       method,
-      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      headers: headers(token, { 'Content-Type': 'application/json' }),
       body: JSON.stringify(payload),
       cache: 'no-store',
     });
   } catch {
-    throw new ApiError(0, 'Cannot reach the server.');
+    throw new ApiError(0, t('Cannot reach the server.'));
   }
   let body = null;
   try {
@@ -111,6 +118,6 @@ export async function apiSend(method, path, token, payload, fetchImpl = fetch) {
   } catch {
     /* no JSON body */
   }
-  if (!res.ok) throw new ApiError(res.status, body?.error ?? `Error ${res.status}`);
+  if (!res.ok) throw new ApiError(res.status, body?.error ?? t('Error {n}', { n: res.status }));
   return body;
 }

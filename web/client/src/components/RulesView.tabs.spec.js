@@ -85,12 +85,8 @@ describe('RulesView with layout: tabs', () => {
     expect(w.get('.rules-detail').text()).toContain('Roll the weapon dice.');
   });
 
-  it('searches the rows, moving to the tab that has a match, and an empty intro adds no panel', async () => {
+  it('an empty intro adds no panel', async () => {
     const w = await mountIt();
-    await w.setProps({ query: 'shout' });
-    expect(rows(w)).toEqual(['Shout']);
-    expect(w.findAll('[data-test=chapter-tab]')[1].attributes('aria-pressed')).toBe('true');
-    await w.setProps({ query: '' });
     await w.findAll('[data-test=chapter-tab]')[2].trigger('click');
     expect(w.findAll('.inline-intro')).toHaveLength(1);
   });
@@ -132,13 +128,5 @@ describe('RulesView with layout: groups', () => {
     await w.findAll('[data-test=group-tab]')[1].trigger('click');
     expect(listed(w)).toEqual(['Non-Player Characters', 'NPC Creator']);
     expect(w.get('.rules-detail-name').text()).toBe('Non-Player Characters');
-  });
-
-  it('searches across tabs, moving to the tab that has the match', async () => {
-    const w = await mountWorld();
-    await w.setProps({ query: 'random npc' });
-    expect(w.findAll('[data-test=group-tab]')[1].attributes('aria-pressed')).toBe('true');
-    expect(listed(w)).toEqual(['NPC Creator']);
-    expect(w.get('.rules-detail-name').text()).toBe('NPC Creator');
   });
 });

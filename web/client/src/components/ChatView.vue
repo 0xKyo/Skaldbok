@@ -3,6 +3,7 @@
 // Text is always shown as text, never as HTML.
 import { computed, nextTick, ref, watch } from 'vue';
 import { apiSend } from '../api.js';
+import { locale, t } from '../i18n.js';
 import MessageImage from './MessageImage.vue';
 
 const MAX_PICTURE = 8 * 1024 * 1024;
@@ -27,11 +28,11 @@ const canSend = computed(() => (text.value.trim() !== '' || picture.value) && !s
 
 const timeOf = (iso) => {
   const d = new Date(iso);
-  return Number.isNaN(d.getTime()) ? '' : d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  return Number.isNaN(d.getTime()) ? '' : d.toLocaleTimeString(locale(), { hour: '2-digit', minute: '2-digit' });
 };
 const dayOf = (iso) => {
   const d = new Date(iso);
-  return Number.isNaN(d.getTime()) ? '' : d.toLocaleDateString([], { dateStyle: 'medium' });
+  return Number.isNaN(d.getTime()) ? '' : d.toLocaleDateString(locale(), { dateStyle: 'medium' });
 };
 const startsDay = (i) => i === 0 || dayOf(messages.value[i].at) !== dayOf(messages.value[i - 1].at);
 const lines = (value) => (value ?? '').split('\n');
@@ -56,11 +57,11 @@ function pick(event) {
   if (!file) return;
   error.value = '';
   if (!/^image\/(png|jpeg|gif|webp)$/.test(file.type)) {
-    error.value = 'Choose a PNG, JPEG, GIF or WebP picture.';
+    error.value = t('Choose a PNG, JPEG, GIF or WebP picture.');
     return;
   }
   if (file.size > MAX_PICTURE) {
-    error.value = 'That picture is too big (8 MB at most).';
+    error.value = t('That picture is too big (8 MB at most).');
     return;
   }
   const reader = new FileReader();
@@ -91,33 +92,33 @@ async function send() {
 </script>
 
 <template>
-  <section class="chat" :aria-label="asGm ? 'Chat with player' : 'Chat with your GM'">
+  <section class="chat" :aria-label="asGm ? t('Chat with player') : t('Chat with your GM')">
     <div ref="log" class="chat-log" data-test="chat-log">
-      <p v-if="!messages.length" class="muted">{{ asGm ? 'No messages yet.' : 'Nothing yet. Write to your GM below; only they can read it.' }}</p>
+      <p v-if="!messages.length" class="muted">{{ asGm ? t('No messages yet.') : t('Nothing yet. Write to your GM below; only they can read it.') }}</p>
       <template v-for="(m, i) in messages" :key="m.id">
         <div v-if="startsDay(i)" class="chat-day muted small">{{ dayOf(m.at) }}</div>
         <article v-if="m.kind === 'broadcast'" class="broadcast" data-test="broadcast">
-          <header><b>Broadcast</b><span v-if="m.to"> · {{ m.to }}</span><span class="muted small"> · {{ timeOf(m.at) }}</span></header>
+          <header><b>{{ t('Broadcast') }}</b><span v-if="m.to"> · {{ m.to }}</span><span class="muted small"> · {{ timeOf(m.at) }}</span></header>
           <MessageImage v-if="m.image" :token="token" :path="m.image" :alt="m.text" />
           <p v-for="(line, n) in lines(m.text)" :key="n" class="message-text">{{ line }}</p>
         </article>
         <div v-else class="bubble" :class="m.from === 'player' ? 'mine' : 'theirs'" data-test="message">
           <MessageImage v-if="m.image" :token="token" :path="m.image" :alt="m.text" />
           <p v-for="(line, n) in lines(m.text)" :key="n" class="message-text">{{ line }}</p>
-          <small>{{ timeOf(m.at) }}<span v-if="seen(m)" data-test="seen"> · seen</span></small>
+          <small>{{ timeOf(m.at) }}<span v-if="seen(m)" data-test="seen"> · {{ t('seen') }}</span></small>
         </div>
       </template>
     </div>
 
     <form class="composer" @submit.prevent="send">
-      <textarea v-model="text" rows="2" maxlength="4000" :placeholder="asGm ? 'Write to the player…' : 'Write to your GM…'" aria-label="Message" @keydown.enter.ctrl.prevent="send"></textarea>
+      <textarea v-model="text" rows="2" maxlength="4000" :placeholder="asGm ? t('Write to the player…') : t('Write to your GM…')" :aria-label="t('Message')" @keydown.enter.ctrl.prevent="send"></textarea>
       <div class="composer-row">
         <label class="btn secondary">
-          Picture
+          {{ t('Picture') }}
           <input type="file" accept="image/png,image/jpeg,image/gif,image/webp" hidden @change="pick" />
         </label>
-        <span v-if="picture" class="small muted" data-test="attached">{{ picture.name }} <button type="button" class="link" @click="picture = null">remove</button></span>
-        <button type="submit" class="btn" :disabled="!canSend" data-test="send">Send</button>
+        <span v-if="picture" class="small muted" data-test="attached">{{ picture.name }} <button type="button" class="link" @click="picture = null">{{ t('remove') }}</button></span>
+        <button type="submit" class="btn" :disabled="!canSend" data-test="send">{{ t('Send') }}</button>
       </div>
       <p v-if="error" class="error small" data-test="chat-error">{{ error }}</p>
     </form>

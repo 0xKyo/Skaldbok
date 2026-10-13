@@ -5,9 +5,11 @@ import { ApiError, apiGet, apiSend, captureToken, captureGmToken, forgetToken } 
 import ChatView from './components/ChatView.vue';
 import GmView from './components/GmView.vue';
 import BackupMenu from './components/BackupMenu.vue';
+import LangSwitch from './components/LangSwitch.vue';
 import NavButtons from './components/NavButtons.vue';
 import ReferenceView from './components/ReferenceView.vue';
 import SheetView from './components/SheetView.vue';
+import { locale, t } from './i18n.js';
 import { createNav } from './nav.js';
 import { useReference } from './reference.js';
 
@@ -29,9 +31,9 @@ provide('nav', nav);
 // what the GM wrote after the last message this player read (the server keeps the marker, so it follows them from phone to phone)
 const unread = computed(() => chat.value.messages.filter((m) => m.from === 'gm' && m.id > chat.value.playerRead).length);
 const tabs = computed(() => [
-  { id: 'sheet', label: 'My character' },
-  { id: 'chat', label: unread.value && tab.value !== 'chat' ? `Chat (${unread.value})` : 'Chat' },
-  { id: 'rules', label: 'Rules' },
+  { id: 'sheet', label: t('My character') },
+  { id: 'chat', label: unread.value && tab.value !== 'chat' ? t('Chat ({n})', { n: unread.value }) : t('Chat') },
+  { id: 'rules', label: t('Rules') },
 ]);
 
 // Looking at the chat is reading it.
@@ -123,7 +125,7 @@ onBeforeUnmount(() => {
   window.removeEventListener('popstate', onPopState);
 });
 
-const updated = computed(() => (lastUpdate.value ? lastUpdate.value.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : ''));
+const updated = computed(() => (lastUpdate.value ? lastUpdate.value.toLocaleTimeString(locale(), { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : ''));
 document.title = 'Skaldbok';                         // the tab is always called Skaldbok
 </script>
 
@@ -134,8 +136,9 @@ document.title = 'Skaldbok';                         // the tab is always called
       <span class="wordmark">Skaldbok <small class="ver">0.8</small></span>
       <NavButtons />
       <div id="gm-tabs" class="gm-tabs"></div>
+      <LangSwitch />
       <BackupMenu :token="gmToken" />
-      <span class="live"><span class="dot"></span>GM</span>
+      <span class="live"><span class="dot"></span>{{ t('GM') }}</span>
     </header>
     <GmView :token="gmToken" />
   </main>
@@ -144,14 +147,15 @@ document.title = 'Skaldbok';                         // the tab is always called
     <div v-if="!token" class="notice" data-test="no-link">
       <h1>Skaldbok <small class="ver">0.8</small></h1>
       <p v-if="problem" class="error">{{ problem }}</p>
-      <p v-else>Open the personal link your GM sent you. It looks like <span class="gold">…/?t=xxxxxxxx</span>.</p>
-      <p class="muted small">The link is yours alone: it opens your character and nobody else's.</p>
+      <p v-else>{{ t('Open the personal link your GM sent you. It looks like') }} <span class="gold">…/?t=xxxxxxxx</span>.</p>
+      <p class="muted small">{{ t("The link is yours alone: it opens your character and nobody else's.") }}</p>
+      <LangSwitch />
     </div>
 
     <div v-else-if="!me" class="notice" data-test="loading">
       <p v-if="problem" class="error">{{ problem }}</p>
-      <p v-else-if="offline" class="error">Cannot reach the server. Trying again…</p>
-      <p v-else class="muted">Loading your character…</p>
+      <p v-else-if="offline" class="error">{{ t('Cannot reach the server. Trying again…') }}</p>
+      <p v-else class="muted">{{ t('Loading your character…') }}</p>
     </div>
 
     <template v-else>
@@ -163,8 +167,9 @@ document.title = 'Skaldbok';                         // the tab is always called
             <button v-for="t in tabs" :key="t.id" role="tab" :aria-selected="tab === t.id" @click="pick(t.id)">{{ t.label }}</button>
           </nav>
         </div>
-        <span class="live" :title="offline ? 'Connection lost: showing the last data' : 'Updates by itself every few seconds'">
-          <span class="dot" :class="{ off: offline }"></span>{{ offline ? 'offline' : `updated ${updated}` }}
+        <LangSwitch />
+        <span class="live" :title="offline ? t('Connection lost: showing the last data') : t('Updates by itself every few seconds')">
+          <span class="dot" :class="{ off: offline }"></span>{{ offline ? t('offline') : t('updated {time}', { time: updated }) }}
         </span>
       </header>
       <SheetView v-if="tab === 'sheet'" :me="me" :token="token" @updated="(fresh) => (me = fresh)" @goto-rules="goToRules" />

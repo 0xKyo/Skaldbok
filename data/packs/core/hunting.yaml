@@ -1,28 +1,41 @@
 kind: animal
+category: LOC_CATEGORY_HUNTING
 rollable:
   - Hunting
 entities:
-  - name: Squirrel
+  - id: hunting_squirrel
+    name: LOC_HUNTING_SQUIRREL
     fields:
-      REQUIREMENT: Weapon or trap
-      RATIONS: "1"
-  - name: Crow
+      LOC_LABEL_REQUIREMENT: LOC_VALUE_WEAPON_OR_TRAP
+      rations_amount: 1
+      rations_dice: "-"
+  - id: hunting_crow
+    name: LOC_HUNTING_CROW
     fields:
-      REQUIREMENT: Weapon
-      RATIONS: "1"
-  - name: Rabbit
+      LOC_LABEL_REQUIREMENT: LOC_VALUE_WEAPON
+      rations_amount: 1
+      rations_dice: "-"
+  - id: hunting_rabbit
+    name: LOC_HUNTING_RABBIT
     fields:
-      REQUIREMENT: Weapon or trap
-      RATIONS: D3
-  - name: Fox
+      LOC_LABEL_REQUIREMENT: LOC_VALUE_WEAPON_OR_TRAP
+      rations_amount: 1
+      rations_dice: core_dice_D3
+  - id: hunting_fox
+    name: LOC_HUNTING_FOX
     fields:
-      REQUIREMENT: Weapon or trap
-      RATIONS: D4
-  - name: Boar*
+      LOC_LABEL_REQUIREMENT: LOC_VALUE_WEAPON_OR_TRAP
+      rations_amount: 1
+      rations_dice: core_dice_D4
+  - id: hunting_boar
+    name: LOC_HUNTING_BOAR
     fields:
-      REQUIREMENT: Weapon
-      RATIONS: 2D6
-  - name: Deer
+      LOC_LABEL_REQUIREMENT: LOC_VALUE_WEAPON
+      rations_amount: 2
+      rations_dice: core_dice_D6
+  - id: hunting_deer
+    name: LOC_HUNTING_DEER
     fields:
-      REQUIREMENT: Weapon
-      RATIONS: 2D8
+      LOC_LABEL_REQUIREMENT: LOC_VALUE_WEAPON
+      rations_amount: 2
+      rations_dice: core_dice_D8

@@ -2,6 +2,7 @@
 // "Add a spell…": search the rules a player may look up and pick one. Emits the entry's key and name.
 import { onBeforeUnmount, ref, watch } from 'vue';
 import { apiGet } from '../api.js';
+import { t } from '../i18n.js';
 
 const props = defineProps({
   token: { type: String, required: true },
@@ -47,9 +48,9 @@ function choose(entry) {
 
 <template>
   <div class="picker">
-    <button type="button" class="btn secondary small-btn" :aria-expanded="open" @click="open = !open">{{ open ? 'Close' : label }}</button>
+    <button type="button" class="btn secondary small-btn" :aria-expanded="open" @click="open = !open">{{ open ? t('Close') : label }}</button>
     <div v-if="open" class="picker-panel">
-      <input v-model="query" type="search" placeholder="Search…" aria-label="Search the rules" />
+      <input v-model="query" type="search" :placeholder="t('Search…')" :aria-label="t('Search the rules')" />
       <p v-if="error" class="error small">{{ error }}</p>
       <ul>
         <li v-for="e in entries" :key="e.key">
@@ -58,7 +59,7 @@ function choose(entry) {
           </button>
         </li>
       </ul>
-      <p v-if="!entries.length && !error" class="muted small">Nothing found.</p>
+      <p v-if="!entries.length && !error" class="muted small">{{ t('Nothing found.') }}</p>
     </div>
   </div>
 </template>

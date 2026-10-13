@@ -1,0 +1,19 @@
+kind: dice
+hidden: true
+entities:
+  - id: core_dice_D3
+    name: D3
+  - id: core_dice_D4
+    name: D4
+  - id: core_dice_D6
+    name: D6
+  - id: core_dice_D8
+    name: D8
+  - id: core_dice_D10
+    name: D10
+  - id: core_dice_D12
+    name: D12
+  - id: core_dice_D20
+    name: D20
+  - id: core_dice_D100
+    name: D100

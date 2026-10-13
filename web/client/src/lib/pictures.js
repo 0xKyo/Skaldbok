@@ -1,16 +1,18 @@
 // A picture file for a board: shrunk (a photo of 4000 pixels is not needed on a canvas) and given as base64 to send. Where the browser cannot draw
 // it (or a test), the file is sent as it is.
+import { t } from '../i18n.js';
+
 const MAX_SIDE = 1600;
 
 const readAsDataUrl = (file) => new Promise((resolve, reject) => {
   const reader = new FileReader();
   reader.onload = () => resolve(String(reader.result));
-  reader.onerror = () => reject(reader.error ?? new Error('Could not read the picture.'));
+  reader.onerror = () => reject(reader.error ?? new Error(t('Could not read the picture.')));
   reader.readAsDataURL(file);
 });
 
 export async function pictureForBoard(file, maxSide = MAX_SIDE) {
-  if (!file || !String(file.type).startsWith('image/')) throw new Error('That is not a picture.');
+  if (!file || !String(file.type).startsWith('image/')) throw new Error(t('That is not a picture.'));
   const original = await readAsDataUrl(file);
   if (typeof createImageBitmap === 'function' && typeof document !== 'undefined' && file.type !== 'image/gif') {
     try {

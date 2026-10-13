@@ -4,57 +4,75 @@ rollable:
   - Cave
   - Forest
 entities:
-  - name: Boiling Cauldron
-    category: Inn
-    description: ✦Throw the boiling water in a cone that is 4 meters in both length and width. ✦Everyone within the cone suffers 2D6 damage. ✦The attack can be dodged, but not parried. ✦Armor has no effect.
-  - name: Bucket of Soapy Water
-    category: Inn
-    description: ✦Throw the soapy water in a cone that is 4 meters in both length and width. ✦Everyone within the cone falls down. ✦The attack can be dodged, but not parried.
-  - name: Burning Firewood
-    category: Inn
-    description: ✦Hit an enemy within 2 meters with the firewood. ✦Requires one free hand. ✦The attack hits automatically and inflicts 2D6 fire damage plus damage bonus. ✦The attack can be dodged or parried. ✦The firewood can then be used as a torch.
-  - name: Rummaging Pig
-    category: Inn
-    description: ✦Make a BUSHCRAFT roll to agitate the pig and make it attack an enemy of your choice within 10 meters. ✦The attack hits automatically and inflicts 3D6 bludgeoning damage. ✦The attack can be dodged but not parried. ✦Then the pig storms off.
-  - name: Wine Bottle
-    category: Inn
-    description: ✦Hit an enemy within 2 meters with the bottle. ✦Requires one free hand. ✦The attack hits automatically and inflicts 2D6 bludgeoning damage plus damage bonus. ✦The attack can be dodged or parried. ✦The enemy gets wine in their eyes, which stings so bad that it gives a bane on all actions until your next turn.
-  - name: Chandelier
-    category: Inn
-    description: ✦Swing yourself from the chandelier and perform a melee attack. ✦You can take a normal movement action without triggering free attacks. ✦The melee attack must be unarmed, but cannot be dodged or parried. ✦If the attack fails, you fall to the ground and take D6 bludgeoning damage.
-  - name: Stalactite
-    category: Cave
-    description: ✦Shove an enemy within 2 meters into the sharp rock formations hanging from the ceiling. ✦The attack hits automatically and inflicts 2D6 piercing damage plus damage bonus. ✦The attack can be dodged but not parried. ✦Armor has no effect, except helmets.
-  - name: Torch
-    category: Cave
-    description: ✦Grab a torch from the wall and strike an enemy within 2 meters. ✦Requires one free hand. ✦The attack hits automatically and inflicts 2D6 fire damage plus damage bonus. ✦The attack can be dodged or parried. ✦You may then keep the torch.
-  - name: Stalagmite
-    category: Cave
-    description: ✦Shove an enemy within 2 meters into a tall rock formation on the cave floor. ✦The attack hits automatically and inflicts D6 bludgeoning damage plus damage bonus and knocks the enemy to the ground. ✦The attack can be dodged but not parried.
-  - name: Puddle
-    category: Cave
-    description: ✦Roll to topple the enemy. ✦If you succeed, the enemy must spend one action and make an ACROBATICS roll to get back up.
-  - name: Crevice
-    category: Cave
-    description: ✦Roll to topple the enemy. ✦If you succeed, the enemy falls into a 2D6 meter deep crevice and suffers falling damage. ✦Climbing up requires an ACROBATICS roll.
-  - name: Bats
-    category: Cave
-    description: ✦Make a BUSHCRAFT roll to agitate the bats and make them attack an enemy within 10 meters. ✦For stats, see page 99. ✦The bats keep attacking the enemy for D3 rounds. ✦If your BUSHCRAFT roll fails, the bats attack you instead.
-  - name: Low Brach
-    category: Forest
-    description: ✦Swing yourself from the branch and perform a melee attack. ✦You can make a normal move without triggering free attacks. ✦The melee attack must be unarmed, but cannot be dodged or parried. ✦If the attack fails, you fall to the ground and take D6 bludgeoning damage.
-  - name: Wasp Nest
-    category: Forest
-    description: ✦Roll BUSHCRAFT to pick up the wasp’s nest and hurl it at an enemy within 10 meters. ✦The enemy gets badly stung, which inflicts 2D6 damage and gives them a bane on all actions for a Shift. ✦The attack can be dodged but not parried. ✦Armor has no effect. ✦If your BUSHCRAFT roll fails the wasps sting you instead.
-  - name: Gnarled Roots
-    category: Forest
-    description: ✦Roll to topple the enemy. ✦If you succeed, the enemy must spend one action and make an ACROBATICS roll to get back up.
-  - name: Boulder
-    category: Forest
-    description: ✦Make an ACROBATICS roll to jump up on the boulder and throw yourself at an enemy within 2 meters. ✦The attack inflicts 2D6 damage (bludgeoning) plus damage bonus and cannot be dodged or parried. ✦If it succeeds, both you and the enemy drop to the ground. ✦If your roll fails, only you fall over and suffer D6 damage.
-  - name: Viper
-    category: Forest
-    description: ✦Roll BUSHCRAFT to pick up the snake and throw it at an enemy within 10 meters. ✦The enemy gets bitten, which inflicts D6 damage and a lethal poison with Potency 12 if the bite pierces armor. ✦The attack can be dodged but not parried. ✦If your BUSHCRAFT roll fails, the snake bites you instead.
-  - name: Patch of Dirt
-    category: Forest
-    description: ✦Throw dirt in the eyes of an enemy within 10 meters. ✦The enemy suffers D6 damage (armor has no effect) and gets a bane on all actions for the rest of the combat. ✦The attack can be dodged but not parried.
+  - id: improvisedWeapons_boilingCauldron
+    name: LOC_IMPROVISED_WEAPONS_BOILING_CAULDRON
+    category: LOC_CATEGORY_INN
+    description: LOC_IMPROVISED_WEAPONS_BOILING_CAULDRON_DESC
+  - id: improvisedWeapons_bucketOfSoapyWater
+    name: LOC_IMPROVISED_WEAPONS_BUCKET_OF_SOAPY_WATER
+    category: LOC_CATEGORY_INN
+    description: LOC_IMPROVISED_WEAPONS_BUCKET_OF_SOAPY_WATER_DESC
+  - id: improvisedWeapons_burningFirewood
+    name: LOC_IMPROVISED_WEAPONS_BURNING_FIREWOOD
+    category: LOC_CATEGORY_INN
+    description: LOC_IMPROVISED_WEAPONS_BURNING_FIREWOOD_DESC
+  - id: improvisedWeapons_rummagingPig
+    name: LOC_IMPROVISED_WEAPONS_RUMMAGING_PIG
+    category: LOC_CATEGORY_INN
+    description: LOC_IMPROVISED_WEAPONS_RUMMAGING_PIG_DESC
+  - id: improvisedWeapons_wineBottle
+    name: LOC_IMPROVISED_WEAPONS_WINE_BOTTLE
+    category: LOC_CATEGORY_INN
+    description: LOC_IMPROVISED_WEAPONS_WINE_BOTTLE_DESC
+  - id: improvisedWeapons_chandelier
+    name: LOC_IMPROVISED_WEAPONS_CHANDELIER
+    category: LOC_CATEGORY_INN
+    description: LOC_IMPROVISED_WEAPONS_CHANDELIER_DESC
+  - id: improvisedWeapons_stalactite
+    name: LOC_IMPROVISED_WEAPONS_STALACTITE
+    category: LOC_CATEGORY_CAVE
+    description: LOC_IMPROVISED_WEAPONS_STALACTITE_DESC
+  - id: improvisedWeapons_torch
+    name: LOC_IMPROVISED_WEAPONS_TORCH
+    category: LOC_CATEGORY_CAVE
+    description: LOC_IMPROVISED_WEAPONS_TORCH_DESC
+  - id: improvisedWeapons_stalagmite
+    name: LOC_IMPROVISED_WEAPONS_STALAGMITE
+    category: LOC_CATEGORY_CAVE
+    description: LOC_IMPROVISED_WEAPONS_STALAGMITE_DESC
+  - id: improvisedWeapons_puddle
+    name: LOC_IMPROVISED_WEAPONS_PUDDLE
+    category: LOC_CATEGORY_CAVE
+    description: LOC_IMPROVISED_WEAPONS_PUDDLE_DESC
+  - id: improvisedWeapons_crevice
+    name: LOC_IMPROVISED_WEAPONS_CREVICE
+    category: LOC_CATEGORY_CAVE
+    description: LOC_IMPROVISED_WEAPONS_CREVICE_DESC
+  - id: improvisedWeapons_bats
+    name: LOC_IMPROVISED_WEAPONS_BATS
+    category: LOC_CATEGORY_CAVE
+    description: LOC_IMPROVISED_WEAPONS_BATS_DESC
+  - id: improvisedWeapons_lowBrach
+    name: LOC_IMPROVISED_WEAPONS_LOW_BRACH
+    category: LOC_CATEGORY_FOREST
+    description: LOC_IMPROVISED_WEAPONS_LOW_BRACH_DESC
+  - id: improvisedWeapons_waspNest
+    name: LOC_IMPROVISED_WEAPONS_WASP_NEST
+    category: LOC_CATEGORY_FOREST
+    description: LOC_IMPROVISED_WEAPONS_WASP_NEST_DESC
+  - id: improvisedWeapons_gnarledRoots
+    name: LOC_IMPROVISED_WEAPONS_GNARLED_ROOTS
+    category: LOC_CATEGORY_FOREST
+    description: LOC_IMPROVISED_WEAPONS_GNARLED_ROOTS_DESC
+  - id: improvisedWeapons_boulder
+    name: LOC_IMPROVISED_WEAPONS_BOULDER
+    category: LOC_CATEGORY_FOREST
+    description: LOC_IMPROVISED_WEAPONS_BOULDER_DESC
+  - id: improvisedWeapons_viper
+    name: LOC_IMPROVISED_WEAPONS_VIPER
+    category: LOC_CATEGORY_FOREST
+    description: LOC_IMPROVISED_WEAPONS_VIPER_DESC
+  - id: improvisedWeapons_patchOfDirt
+    name: LOC_IMPROVISED_WEAPONS_PATCH_OF_DIRT
+    category: LOC_CATEGORY_FOREST
+    description: LOC_IMPROVISED_WEAPONS_PATCH_OF_DIRT_DESC

@@ -9,8 +9,8 @@
 namespace gm {
 
 const ConditionInfo kConditions[6] = {
-    {"Exhausted", "STR"}, {"Angry", "INT"}, {"Sickly", "CON"},
-    {"Scared", "WIL"},    {"Dazed", "AGL"}, {"Disheartened", "CHA"},
+    {"Exhausted", "strength"}, {"Angry", "intelligence"}, {"Sickly", "constitution"},
+    {"Scared", "willpower"},   {"Dazed", "agility"},      {"Disheartened", "charisma"},
 };
 
 int Encounter::add(Combatant c) {
@@ -19,12 +19,6 @@ int Encounter::add(Combatant c) {
     c.uid = nextUid_++;
     combatants.push_back(std::move(c));
     return static_cast<int>(combatants.size()) - 1;
-}
-
-int Encounter::indexOfUid(int uid) const {
-    for (size_t i = 0; i < combatants.size(); ++i)
-        if (combatants[i].uid == uid) return static_cast<int>(i);
-    return -1;
 }
 
 void Encounter::remove(int index) {

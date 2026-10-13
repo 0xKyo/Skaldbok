@@ -5,6 +5,7 @@
 // can be looked at, not changed); Open Session makes a closed one the active one again (and closes the other). The campaign, who plays it and its
 // session are one line of dropdowns and buttons.
 import { computed, inject, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { locale, t } from '../i18n.js';
 import MasterBoard from './MasterBoard.vue';
 
 defineProps({
@@ -38,12 +39,14 @@ onBeforeUnmount(() => document.removeEventListener('click', closePicker));
 watch(part, (p) => window.history.replaceState(window.history.state, '', `${window.location.pathname}${window.location.search}#master${p === 'campaigns' ? '/campaigns' : ''}`));
 
 const campaign = computed(() => campaigns.find(campaignId.value));
+const SHIFTS = [1, 2, 3, 4];                // a day of play: tapping the last filled circle empties it, any other fills up to itself
+const setShifts = (n) => campaigns.setShifts(campaign.value.id, (campaign.value.shifts ?? 0) === n ? n - 1 : n);
 const campaignSessions = computed(() => sessions.list.value.filter((s) => s.campaign === campaignId.value));
 const current = computed(() => campaignSessions.value.find((s) => s.id === sessionId.value) ?? null);
 const isActive = computed(() => !!current.value && current.value.id === sessions.active.value);
 const closed = computed(() => !!current.value?.ended);
 const members = computed(() => (campaign.value?.characters ?? []).map((id) => characters.value.find((c) => c.id === id)).filter(Boolean));
-const peopleLabel = computed(() => (members.value.length ? members.value.map((c) => c.name || c.id).join(', ') : 'Nobody yet'));
+const peopleLabel = computed(() => (members.value.length ? members.value.map((c) => c.name || c.id).join(', ') : t('Nobody yet')));
 
 // the campaign looked at is the one of the active session, or else the newest, until another is chosen; its session is the active one, or the newest
 watch([() => campaigns.list.value, () => sessions.active.value], () => {
@@ -59,7 +62,7 @@ watch([campaignId, sessionId], () => { confirming.value = ''; renaming.value = '
 // only the day matters, as in "Oct 2, 2026"
 const dayOf = (iso) => {
   const d = iso ? new Date(iso) : null;
-  return d && !Number.isNaN(d.getTime()) ? d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+  return d && !Number.isNaN(d.getTime()) ? d.toLocaleDateString(locale(), { month: 'short', day: 'numeric', year: 'numeric' }) : '';
 };
 const label = (s) => `${s.id === sessions.active.value ? '● ' : ''}${s.name} · ${dayOf(s.created)}`;
 
@@ -140,37 +143,44 @@ const openCurrent = async () => { await sessions.open(current.value.id); };
 
 <template>
   <div class="master" data-test="master">
-    <nav class="parts" aria-label="Master">
-      <button type="button" class="part" :class="{ active: part === 'screen' }" data-test="part-screen" @click="part = 'screen'">Master Screen</button>
-      <button type="button" class="part" :class="{ active: part === 'campaigns' }" data-test="part-campaigns" @click="part = 'campaigns'">Campaigns</button>
+    <nav class="parts" :aria-label="t('Master')">
+      <button type="button" class="part" :class="{ active: part === 'screen' }" data-test="part-screen" @click="part = 'screen'">{{ t('Master Screen') }}</button>
+      <button type="button" class="part" :class="{ active: part === 'campaigns' }" data-test="part-campaigns" @click="part = 'campaigns'">{{ t('Campaigns') }}</button>
+      <!-- the shifts of the day of the campaign being looked at: four circles that fill as they pass -->
+      <span v-if="campaign" class="shifts" data-test="shifts">
+        <span class="shifts-label">{{ t('Shifts') }}</span>
+        <button v-for="i in SHIFTS" :key="i" type="button" class="shift" :class="{ on: i <= (campaign.shifts ?? 0) }" :aria-pressed="i <= (campaign.shifts ?? 0)"
+                :aria-label="t('Shifts') + ' ' + i" data-test="shift" @click="setShifts(i)"></button>
+        <button type="button" class="shifts-reset" :title="t('Shifts back to 0, and the rests of the players given back')" data-test="shifts-reset" @click="campaigns.resetShifts(campaign.id)">{{ t('Reset') }}</button>
+      </span>
     </nav>
 
     <MasterBoard v-if="part === 'screen'" :token="token" />
 
     <template v-else>
       <p v-if="sessions.error.value || campaigns.error.value" class="error" data-test="sessions-error">
-        {{ campaigns.error.value || sessions.error.value }} <button type="button" class="btn" @click="campaigns.refresh(); sessions.refresh()">Try again</button>
+        {{ campaigns.error.value || sessions.error.value }} <button type="button" class="btn" @click="campaigns.refresh(); sessions.refresh()">{{ t('Try again') }}</button>
       </p>
 
       <!-- everything on one line: the campaign, who plays it, its session, and what can be done -->
       <div class="bar" data-test="campaign-bar">
         <template v-if="campaigns.list.value.length">
           <span class="group" data-test="campaign-group">
-            <input v-if="renaming === 'campaign'" ref="nameInput" v-model="campaignDraft" class="pick name" maxlength="80" aria-label="Campaign name" data-test="campaign-name"
+            <input v-if="renaming === 'campaign'" ref="nameInput" v-model="campaignDraft" class="pick name" maxlength="80" :aria-label="t('Campaign name')" data-test="campaign-name"
                    @keydown.enter.prevent="finishRename()" @keydown.esc.prevent="finishRename(false)" @blur="finishRename()" />
-            <select v-else v-model="campaignId" class="pick" aria-label="Campaign" data-test="campaign-pick">
+            <select v-else v-model="campaignId" class="pick" :aria-label="t('Campaign')" data-test="campaign-pick">
               <option v-for="c in campaigns.list.value" :key="c.id" :value="c.id">{{ c.name }}</option>
             </select>
-            <button type="button" class="icon" title="Rename the campaign" aria-label="Rename the campaign" data-test="rename-campaign" @mousedown.prevent @click="startRename('campaign')">✎</button>
-            <button type="button" class="icon danger" title="Delete the campaign" aria-label="Delete the campaign" data-test="delete-campaign" @click="deleteCampaign">✕</button>
+            <button type="button" class="icon" :title="t('Rename the campaign')" :aria-label="t('Rename the campaign')" data-test="rename-campaign" @mousedown.prevent @click="startRename('campaign')">✎</button>
+            <button type="button" class="icon danger" :title="t('Delete the campaign')" :aria-label="t('Delete the campaign')" data-test="delete-campaign" @click="deleteCampaign">✕</button>
           </span>
 
           <div ref="picker" class="dropdown" data-test="characters-dropdown">
             <button type="button" class="drop-btn" :aria-expanded="pickerOpen" data-test="characters-button" @click="pickerOpen = !pickerOpen">
-              <span class="drop-label">Characters</span> <span class="drop-value" data-test="characters-summary">{{ peopleLabel }}</span> ▾
+              <span class="drop-label">{{ t('Characters') }}</span> <span class="drop-value" data-test="characters-summary">{{ peopleLabel }}</span> ▾
             </button>
-            <div v-if="pickerOpen" class="drop-panel" role="listbox" aria-label="Characters of the campaign" data-test="characters-panel">
-              <p v-if="!characters.length" class="muted small">There are no characters yet.</p>
+            <div v-if="pickerOpen" class="drop-panel" role="listbox" :aria-label="t('Characters of the campaign')" data-test="characters-panel">
+              <p v-if="!characters.length" class="muted small">{{ t('There are no characters yet.') }}</p>
               <label v-for="c in characters" :key="c.id" class="check-row" data-test="character-row">
                 <input type="checkbox" :checked="campaign.characters.includes(c.id)" @change="toggleCharacter(c.id)" />
                 <span>{{ c.name || c.id }}<span v-if="c.kin || c.profession" class="muted small"> · {{ c.kin }} {{ c.profession }}</span></span>
@@ -180,56 +190,62 @@ const openCurrent = async () => { await sessions.open(current.value.id); };
 
           <span class="group" data-test="sessions-bar">
             <template v-if="campaignSessions.length">
-              <input v-if="renaming === 'session'" ref="nameInput" v-model="nameDraft" class="pick name" maxlength="80" aria-label="Session name" data-test="session-name"
+              <input v-if="renaming === 'session'" ref="nameInput" v-model="nameDraft" class="pick name" maxlength="80" :aria-label="t('Session name')" data-test="session-name"
                      @keydown.enter.prevent="finishRename()" @keydown.esc.prevent="finishRename(false)" @blur="finishRename()" />
-              <select v-else v-model="sessionId" class="pick" aria-label="Session" data-test="session-pick">
+              <select v-else v-model="sessionId" class="pick" :aria-label="t('Session')" data-test="session-pick">
                 <option v-for="s in campaignSessions" :key="s.id" :value="s.id">{{ label(s) }}</option>
               </select>
-              <button type="button" class="icon" title="Rename the session" aria-label="Rename the session" data-test="rename-session" @mousedown.prevent @click="startRename('session')">✎</button>
-              <button type="button" class="icon danger" title="Delete the session" aria-label="Delete the session" data-test="delete-session" @click="deleteCurrent">✕</button>
+              <button type="button" class="icon" :title="t('Rename the session')" :aria-label="t('Rename the session')" data-test="rename-session" @mousedown.prevent @click="startRename('session')">✎</button>
+              <button type="button" class="icon danger" :title="t('Delete the session')" :aria-label="t('Delete the session')" data-test="delete-session" @click="deleteCurrent">✕</button>
               <span class="state" data-test="session-dates">
-                <span v-if="isActive" class="badge on">Active</span><span v-else class="badge">Closed</span>
+                <span v-if="isActive" class="badge on">{{ t('Active') }}</span><span v-else class="badge">{{ t('Closed') }}</span>
               </span>
             </template>
-            <span v-else class="muted nosessions" data-test="no-sessions">No sessions yet.</span>
+            <span v-else class="muted nosessions" data-test="no-sessions">{{ t('No sessions yet.') }}</span>
           </span>
         </template>
-        <span v-else class="muted" data-test="no-campaigns">No campaigns yet.</span>
+        <span v-else class="muted" data-test="no-campaigns">{{ t('No campaigns yet.') }}</span>
 
         <span class="actions">
-          <button v-if="current && isActive" type="button" class="btn danger" data-test="end-session" @click="endCurrent">End Session</button>
-          <button v-else-if="current && closed" type="button" class="btn" data-test="open-session" @click="openCurrent">Open Session</button>
-          <button v-if="campaign" type="button" class="btn primary" data-test="new-session" @click="startNew">+ Session</button>
-          <button type="button" class="btn primary" data-test="new-campaign" @click="newCampaign">+ Campaign</button>
+          <button v-if="current && isActive" type="button" class="btn danger" data-test="end-session" @click="endCurrent">{{ t('End Session') }}</button>
+          <button v-else-if="current && closed" type="button" class="btn" data-test="open-session" @click="openCurrent">{{ t('Open Session') }}</button>
+          <button v-if="campaign" type="button" class="btn primary" data-test="new-session" @click="startNew">{{ t('+ Session') }}</button>
+          <button type="button" class="btn primary" data-test="new-campaign" @click="newCampaign">{{ t('+ Campaign') }}</button>
         </span>
       </div>
 
       <!-- what is being asked (a line of its own, so that the one above does not move) -->
       <p v-if="confirming" class="confirm" data-test="confirm">
-        <template v-if="confirming === 'end'"><span data-test="end-confirm">End “{{ current.name }}”? It is saved with its date.</span>
-          <button type="button" class="btn danger sure" data-test="end-yes" @click="endCurrent">End</button></template>
-        <template v-else-if="confirming === 'delete'"><span data-test="delete-confirm">Delete the session “{{ current.name }}” for good, with everything on it?</span>
-          <button type="button" class="btn danger sure" data-test="delete-yes" @click="deleteCurrent">Delete</button></template>
-        <template v-else-if="confirming === 'new'"><span data-test="new-confirm">This ends the active session first.</span>
-          <button type="button" class="btn primary sure" data-test="new-yes" @click="startNew">Start a new one</button></template>
-        <template v-else-if="confirming === 'delete-campaign'"><span data-test="delete-campaign-confirm">Delete the campaign “{{ campaign.name }}” and its {{ campaign.sessions }} session{{ campaign.sessions === 1 ? '' : 's' }} for good?</span>
-          <button type="button" class="btn danger sure" data-test="delete-campaign-yes" @click="deleteCampaign">Delete</button></template>
-        <button type="button" class="btn" data-test="confirm-cancel" @click="confirming = ''">Cancel</button>
+        <template v-if="confirming === 'end'"><span data-test="end-confirm">{{ t('End “{name}”? It is saved with its date.', { name: current.name }) }}</span>
+          <button type="button" class="btn danger sure" data-test="end-yes" @click="endCurrent">{{ t('End') }}</button></template>
+        <template v-else-if="confirming === 'delete'"><span data-test="delete-confirm">{{ t('Delete the session “{name}” for good, with everything on it?', { name: current.name }) }}</span>
+          <button type="button" class="btn danger sure" data-test="delete-yes" @click="deleteCurrent">{{ t('Delete') }}</button></template>
+        <template v-else-if="confirming === 'new'"><span data-test="new-confirm">{{ t('This ends the active session first.') }}</span>
+          <button type="button" class="btn primary sure" data-test="new-yes" @click="startNew">{{ t('Start a new one') }}</button></template>
+        <template v-else-if="confirming === 'delete-campaign'"><span data-test="delete-campaign-confirm">{{ campaign.sessions === 1 ? t('Delete the campaign “{name}” and its 1 session for good?', { name: campaign.name }) : t('Delete the campaign “{name}” and its {n} sessions for good?', { name: campaign.name, n: campaign.sessions }) }}</span>
+          <button type="button" class="btn danger sure" data-test="delete-campaign-yes" @click="deleteCampaign">{{ t('Delete') }}</button></template>
+        <button type="button" class="btn" data-test="confirm-cancel" @click="confirming = ''">{{ t('Cancel') }}</button>
       </p>
 
       <MasterBoard v-if="campaign && current" :key="current.id" :board="sessions.boardFor(current.id)" :token="token" in-session />
       <p v-else-if="!campaign" class="empty-sessions muted" data-test="campaigns-empty">
-        A campaign is what you play: it has the characters that play it and a session for each game. Start one with “+ Campaign”, assign its characters, and then start its sessions.
+        {{ t('A campaign is what you play: it has the characters that play it and a session for each game. Start one with “+ Campaign”, assign its characters, and then start its sessions.') }}
       </p>
       <p v-else class="empty-sessions muted" data-test="sessions-empty">
-        A session is a board for one game: what happened, what they found. Start one with “+ Session”, then send things to it from the Master Screen with the → on each card.
+        {{ t('A session is a board for one game: what happened, what they found. Start one with “+ Session”, then send things to it from the Master Screen with the → on each card.') }}
       </p>
     </template>
   </div>
 </template>
 
 <style scoped>
-.parts { display: flex; gap: 6px; margin: 0 0 8px; }
+.parts { display: flex; align-items: center; gap: 6px; margin: 0 0 8px; }
+.shifts { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; }
+.shifts-label { font-size: 0.85rem; font-weight: 700; color: var(--green-dark); margin-right: 2px; }
+.shift { width: 1.15rem; height: 1.15rem; padding: 0; border-radius: 50%; border: 2px solid var(--green-dark); background: transparent; cursor: pointer; }
+.shift.on { background: var(--green-dark); }
+.shifts-reset { margin-left: 4px; padding: 2px 10px; border: 1px solid var(--green-dark); border-radius: 12px; background: none; color: var(--green-dark); font: inherit; font-size: 0.75rem; font-weight: 600; cursor: pointer; }
+.shifts-reset:hover { background: var(--parchment); }
 .part { padding: 4px 18px; border: 1px solid var(--green-dark); border-radius: 20px; background: none; color: var(--green-dark); font: inherit; font-size: 0.85rem; font-weight: 600; cursor: pointer; }
 .part:hover { background: var(--parchment); }
 .part.active { background: var(--green-dark); color: #f3ead2; }

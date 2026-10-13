@@ -43,5 +43,5 @@ export function adopt(draft, base, server) {
   return next;
 }
 
-/** Which of the sheet's rule breaks concern this key ("attr:STR", "hp", "encumbrance"...). */
+/** Which of the sheet's rule breaks concern this key ("attr:strength", "hp", "encumbrance"...). */
 export const issueFor = (issues, key) => (issues ?? []).find((i) => i.key === key);

@@ -1,47 +1,61 @@
 kind: injury
-category: "Severe Injuries: Injury"
+category: LOC_CATEGORY_SEVERE_INJURIES_INJURY
 rollable:
   - "Severe Injuries: Injury"
 entities:
-  - name: Broken nose
+  - id: injuries_brokenNose
+    name: LOC_INJURIES_BROKEN_NOSE
     fields:
-      EFFECT: "You get a bane on all AWARENESS rolls. Healing time: D6 days."
-  - name: Scarred face
+      LOC_LABEL_EFFECT: LOC_INJURIES_BROKEN_NOSE_FIELDS_EFFECT
+  - id: injuries_scarredFace
+    name: LOC_INJURIES_SCARRED_FACE
     fields:
-      EFFECT: "Bane on all PERFORMANCE and PERSUASION rolls. Healing time: 2D6 days."
-  - name: Teeth knocked out
+      LOC_LABEL_EFFECT: LOC_INJURIES_SCARRED_FACE_FIELDS_EFFECT
+  - id: injuries_teethKnockedOut
+    name: LOC_INJURIES_TEETH_KNOCKED_OUT
     fields:
-      EFFECT: Your PERFORMANCE and PERSUASION skills levels are permanently reduced by 2 ( to a minimum of 3).
-  - name: Broken ribs
+      LOC_LABEL_EFFECT: LOC_INJURIES_TEETH_KNOCKED_OUT_FIELDS_EFFECT
+  - id: injuries_brokenRibs
+    name: LOC_INJURIES_BROKEN_RIBS
     fields:
-      EFFECT: "Bane on all skills based on STR or AGL. Healing time: D6 days."
-  - name: Concussion
+      LOC_LABEL_EFFECT: LOC_INJURIES_BROKEN_RIBS_FIELDS_EFFECT
+  - id: injuries_concussion
+    name: LOC_INJURIES_CONCUSSION
     fields:
-      EFFECT: "Bane on all skills based on INT. Healing time: D6 days."
-  - name: Deep wounds
+      LOC_LABEL_EFFECT: LOC_INJURIES_CONCUSSION_FIELDS_EFFECT
+  - id: injuries_deepWounds
+    name: LOC_INJURIES_DEEP_WOUNDS
     fields:
-      EFFECT: "Bane on all skills based on STR or AGL, and every roll against such skill inflicts D6 points of damage. Healing time: 2D6 days."
-  - name: Broken leg
+      LOC_LABEL_EFFECT: LOC_INJURIES_DEEP_WOUNDS_FIELDS_EFFECT
+  - id: injuries_brokenLeg
+    name: LOC_INJURIES_BROKEN_LEG
     fields:
-      EFFECT: "Your movement rate is halved. Healing time: 3D6 days."
-  - name: Broken arm
+      LOC_LABEL_EFFECT: LOC_INJURIES_BROKEN_LEG_FIELDS_EFFECT
+  - id: injuries_brokenArm
+    name: LOC_INJURIES_BROKEN_ARM
     fields:
-      EFFECT: "You cannot use two-handed weapon, nor dual wield, and get a bane on all other actions normally using both arms, such as climbing. Healing time: 3D6 days."
-  - name: Severed toe
+      LOC_LABEL_EFFECT: LOC_INJURIES_BROKEN_ARM_FIELDS_EFFECT
+  - id: injuries_severedToe
+    name: LOC_INJURIES_SEVERED_TOE
     fields:
-      EFFECT: Movement rate permanently reduced by 2 (to a minimum of 4).
-  - name: Severed finger
+      LOC_LABEL_EFFECT: LOC_INJURIES_SEVERED_TOE_FIELDS_EFFECT
+  - id: injuries_severedFinger
+    name: LOC_INJURIES_SEVERED_FINGER
     fields:
-      EFFECT: Your skill levels in all weapon skills are permanently reduced by 1 (to a minimum of 3).
-  - name: Gouged eye
+      LOC_LABEL_EFFECT: LOC_INJURIES_SEVERED_FINGER_FIELDS_EFFECT
+  - id: injuries_gougedEye
+    name: LOC_INJURIES_GOUGED_EYE
     fields:
-      EFFECT: Your skill level in SPOT HIDDEN is permanently reduced by 2 (to a minimum of 3).
-  - name: Nightmares
+      LOC_LABEL_EFFECT: LOC_INJURIES_GOUGED_EYE_FIELDS_EFFECT
+  - id: injuries_nightmares
+    name: LOC_INJURIES_NIGHTMARES
     fields:
-      EFFECT: "Roll to resist fear each shift you sleep. If you fail, the shift doesn’t count as slept. Healing time: 2D6 days."
-  - name: Changed personality
+      LOC_LABEL_EFFECT: LOC_INJURIES_NIGHTMARES_FIELDS_EFFECT
+  - id: injuries_changedPersonality
+    name: LOC_INJURIES_CHANGED_PERSONALITY
     fields:
-      EFFECT: Randomly generate a new weakness (optional rule).
-  - name: Amnesia
+      LOC_LABEL_EFFECT: LOC_INJURIES_CHANGED_PERSONALITY_FIELDS_EFFECT
+  - id: injuries_amnesia
+    name: LOC_INJURIES_AMNESIA
     fields:
-      EFFECT: "You cannot remember who you or the other player characters are. The effect must be roleplayed. Healing time: D6 days."
+      LOC_LABEL_EFFECT: LOC_INJURIES_AMNESIA_FIELDS_EFFECT

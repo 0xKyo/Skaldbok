@@ -36,9 +36,6 @@ public:
     static constexpr size_t kMaxText = 4000;
 
     void setPrefDir(const std::string& prefDir);             // "<prefDir>chat/"
-    // How long a conversation read from disk is trusted before the folder is looked at again (the app draws every frame; the
-    // server, which is asked once per request, keeps 0). Writes made through this store always show at once.
-    void setFreshMs(unsigned ms) { freshMs_ = ms; }
 
     // The GM writes to some characters (a broadcast when `broadcast`, with `to` naming who it went to). The picture is a file.
     bool sendFromGm(std::span<const std::string> characterIds, bool broadcast, const std::string& to, const std::string& text,
@@ -61,7 +58,6 @@ public:
 private:
     struct Cached {
         size_t signature = 0;
-        unsigned long long checkedAt = 0;
         Thread thread;
     };
 
@@ -78,7 +74,6 @@ private:
     mutable std::map<std::string, Cached> cache_;
     std::map<std::string, size_t> signatures_;
     bool primed_ = false;
-    unsigned freshMs_ = 0;
 };
 
 }  // namespace gm

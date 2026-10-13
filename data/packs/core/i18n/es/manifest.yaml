@@ -1,0 +1,14 @@
+# Spanish of manifest.yaml: the books in the English order, with their Spanish titles and PDFs (the pack id is kept). The page numbering
+# stays the English one: the data cites pages of the English PDFs, and the Spanish books print the same numbers on the same contents.
+name: Dragonbane básico
+description: "Los libros de Dragonbane: sus reglas y tablas generales (la aventura incluida) y las criaturas, hechizos, capacidades, habilidades, razas, profesiones y equipo."
+sources:
+  - title: "Dragonbane: Libro de reglas"
+    short: Reglas
+    file: References/es/DragonbaneRulebook.pdf
+  - title: "Dragonbane: Bestiario"
+    short: Bestiario
+    file: References/es/DragonbaneBestiary.pdf
+  - title: "Aventura de Dragonbane: El Valle Brumoso"
+    short: Aventura
+    file: References/es/AdventureMistyVale.pdf

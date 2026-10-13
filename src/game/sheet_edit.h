@@ -8,6 +8,7 @@
 // approves it (it becomes normal) or rejects it (it stays flagged until the player fixes it by hand).
 #pragma once
 
+#include <functional>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -39,7 +40,7 @@ std::string describe(const json& before, const json& after);
 // ---- rules
 
 struct Issue {
-    std::string key;                      // "hp", "attr:STR", "skill:Axes", "encumbrance", "hpmax"...
+    std::string key;                      // "hp", "attr:strength", "skill:Axes", "encumbrance", "hpmax"...
     std::string message;
     std::string value;                    // what is wrong, so a ruling applies to exactly this and not to a worse case later
 };
@@ -47,8 +48,10 @@ struct OpenIssue : Issue {
     std::string status;                   // pending | rejected
 };
 
-std::vector<Issue> rulesIssues(const Character& c);
-std::vector<OpenIssue> openIssues(const Character& c);      // the issues nobody approved
+// What an attribute is called in the messages (English, id -> "Strength"); without it, the id with a capital letter.
+using AttributeName = std::function<std::string(const std::string&)>;
+std::vector<Issue> rulesIssues(const Character& c, const AttributeName& attributeName = nullptr);
+std::vector<OpenIssue> openIssues(const Character& c, const AttributeName& attributeName = nullptr);      // the issues nobody approved
 void prune(Character& c);                                    // rulings that no longer apply are forgotten
 bool review(Character& c, const std::string& key, bool approve);
 

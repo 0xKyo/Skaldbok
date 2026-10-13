@@ -11,7 +11,7 @@ const routes = {
 };
 
 // the page itself is not under test: it only says what it was asked to show
-const stubs = { ReferencePanel: { props: ['state'], template: '<div class="panel" data-test="panel">{{ state.current && state.current.label }}|{{ state.query }}|{{ state.only }}|{{ state.jump && state.jump.key }}</div>' } };
+const stubs = { ReferencePanel: { props: ['state'], template: '<div class="panel" data-test="panel">{{ state.current && state.current.label }}|{{ state.query }}|{{ state.jump && state.jump.key }}</div>' } };
 let urls;
 
 beforeEach(() => {
@@ -42,7 +42,6 @@ const type = async (w, text) => {
 describe('the search of the Reference', () => {
   it('is one for everything: it lists matches from every category, each with the category it is in', async () => {
     const { w } = await mountIt();
-    expect(w.find('[data-test=ref-only]').exists()).toBe(false);                   // nothing is open: there is no "only in"
     await type(w, 'fire');
     const hits = w.findAll('[data-test=ref-hit]').map((h) => h.text());
     expect(hits).toHaveLength(3);
@@ -60,16 +59,16 @@ describe('the search of the Reference', () => {
     expect(w.get('[data-test=ref-none]').text()).toContain('zzzz');
   });
 
-  it('a result opens its page on that entry, with the search kept on that page', async () => {
+  it('a result opens its page on that entry and the search is done', async () => {
     const { w, state } = await mountIt();
     await type(w, 'fire');
     await w.findAll('[data-test=ref-hit]').find((h) => h.text().includes('Fireball')).trigger('click');
     await flushPromises();
     expect(state.current.type).toBe('spells');
     expect(state.jump.key).toBe('core/spell/fireball');
-    expect(w.get('[data-test=panel]').text()).toContain('Spells|fire|true');
-    await w.findAll('[data-test=ref-hit]');                                          // (the page replaced the list)
+    expect(state.query).toBe('');
     expect(w.find('[data-test=ref-results]').exists()).toBe(false);
+    expect(w.get('[data-test=panel]').text()).toContain('Spells');
   });
 
   it('a result of a rules chapter opens that rule', async () => {
@@ -80,21 +79,13 @@ describe('the search of the Reference', () => {
     expect(state.jump.key).toBe('combat/initiative');
   });
 
-  it('with a category open, "Only in <category>" is checked and the page gets the search; unchecked, the matches are listed from everywhere', async () => {
+  it('the matches are listed from every category even with one open', async () => {
     const { w, state } = await mountIt();
     state.select(state.items.find((i) => i.type === 'spells'));
     await flushPromises();
-    expect(w.get('[data-test=ref-only-label]').text()).toBe('Only in Spells');
-    expect(w.get('[data-test=ref-only]').element.checked).toBe(true);
     await type(w, 'fire');
-    expect(w.find('[data-test=ref-results]').exists()).toBe(false);
-    expect(w.get('[data-test=panel]').text()).toContain('Spells|fire|true');
-    await w.get('[data-test=ref-only]').setValue(false);
-    await vi.advanceTimersByTimeAsync(400);
-    await flushPromises();
     expect(w.findAll('[data-test=ref-hit]').length).toBeGreaterThan(1);
-    await w.get('[data-test=ref-only]').setValue(true);
-    expect(w.find('[data-test=ref-results]').exists()).toBe(false);
+    expect(w.find('[data-test=panel]').exists()).toBe(false);
   });
 
   it('an empty search shows the page as usual and asks for nothing', async () => {

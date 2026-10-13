@@ -147,10 +147,8 @@ bool MessageStore::sendFromPlayer(const std::string& characterId, const std::str
 const Thread& MessageStore::thread(const std::string& characterId) const {
     if (dir_.empty() || !fs::safeId(characterId) || characterId == "media") return kEmpty;
     Cached& slot = cache_[characterId];
-    if (freshMs_ > 0 && slot.signature != 0 && SDL_GetTicks() - slot.checkedAt < freshMs_) return slot.thread;
     const size_t sig = signature(characterId);
     if (sig == 0) return kEmpty;
-    slot.checkedAt = SDL_GetTicks();
     if (slot.signature == sig) return slot.thread;
     Thread t;
     for (const std::string& name : fs::listDir(folder(characterId))) {

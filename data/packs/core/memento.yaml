@@ -1,24 +1,45 @@
 kind: memento
+category: LOC_CATEGORY_MEMENTO
 rollable:
   - Memento
 entities:
-  - name: Your trusty old shoes
-  - name: A simple silver medallion
-  - name: A letter from an old friend or relative
-  - name: A ragged old journal
-  - name: A bracelet passed down in your family
-  - name: A wooden figurine you got as a child
-  - name: A strangely shaped stone
-  - name: A copper coin from a treasure sought by your mother or father
-  - name: An old pewter tankard
-  - name: A horn taken as a trophy from a monster
-  - name: A fang taken as a trophy from a beast
-  - name: A couple of simple dice made of bone
-  - name: A locket containing a lock of hair
-  - name: An ornate key
-  - name: A hand-drawn map you inherited
-  - name: A ring with an inscription
-  - name: A bone whistle
-  - name: Your mother’s or father’s ragged old hat
-  - name: A griffin feather
-  - name: A beautifully carved pipe
+  - id: memento_yourTrustyOldShoes
+    name: LOC_MEMENTO_YOUR_TRUSTY_OLD_SHOES
+  - id: memento_aSimpleSilverMedallion
+    name: LOC_MEMENTO_A_SIMPLE_SILVER_MEDALLION
+  - id: memento_aLetterFromAnOldFriendOrRelative
+    name: LOC_MEMENTO_A_LETTER_FROM_AN_OLD_FRIEND_OR_RELATIVE
+  - id: memento_aRaggedOldJournal
+    name: LOC_MEMENTO_A_RAGGED_OLD_JOURNAL
+  - id: memento_aBraceletPassedDownInYourFamily
+    name: LOC_MEMENTO_A_BRACELET_PASSED_DOWN_IN_YOUR_FAMILY
+  - id: memento_aWoodenFigurineYouGotAsAChild
+    name: LOC_MEMENTO_A_WOODEN_FIGURINE_YOU_GOT_AS_A_CHILD
+  - id: memento_aStrangelyShapedStone
+    name: LOC_MEMENTO_A_STRANGELY_SHAPED_STONE
+  - id: memento_aCopperCoinFromATreasureSoughtByYourMotherOrFather
+    name: LOC_MEMENTO_A_COPPER_COIN_FROM_A_TREASURE_SOUGHT_BY_YOUR_MOTHER_OR_F
+  - id: memento_anOldPewterTankard
+    name: LOC_MEMENTO_AN_OLD_PEWTER_TANKARD
+  - id: memento_aHornTakenAsATrophyFromAMonster
+    name: LOC_MEMENTO_A_HORN_TAKEN_AS_A_TROPHY_FROM_A_MONSTER
+  - id: memento_aFangTakenAsATrophyFromABeast
+    name: LOC_MEMENTO_A_FANG_TAKEN_AS_A_TROPHY_FROM_A_BEAST
+  - id: memento_aCoupleOfSimpleDiceMadeOfBone
+    name: LOC_MEMENTO_A_COUPLE_OF_SIMPLE_DICE_MADE_OF_BONE
+  - id: memento_aLocketContainingALockOfHair
+    name: LOC_MEMENTO_A_LOCKET_CONTAINING_A_LOCK_OF_HAIR
+  - id: memento_anOrnateKey
+    name: LOC_MEMENTO_AN_ORNATE_KEY
+  - id: memento_aHandDrawnMapYouInherited
+    name: LOC_MEMENTO_A_HAND_DRAWN_MAP_YOU_INHERITED
+  - id: memento_aRingWithAnInscription
+    name: LOC_MEMENTO_A_RING_WITH_AN_INSCRIPTION
+  - id: memento_aBoneWhistle
+    name: LOC_MEMENTO_A_BONE_WHISTLE
+  - id: memento_yourMotherSOrFatherSRaggedOldHat
+    name: LOC_MEMENTO_YOUR_MOTHER_S_OR_FATHER_S_RAGGED_OLD_HAT
+  - id: memento_aGriffinFeather
+    name: LOC_MEMENTO_A_GRIFFIN_FEATHER
+  - id: memento_aBeautifullyCarvedPipe
+    name: LOC_MEMENTO_A_BEAUTIFULLY_CARVED_PIPE

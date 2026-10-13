@@ -9,6 +9,7 @@ import BoardPinBody from './BoardPinBody.vue';
 import { MAX_ZOOM, MIN_ZOOM, NOTE_COLORS } from '../board.js';
 import { pictureForBoard } from '../lib/pictures.js';
 import { apiSend } from '../api.js';
+import { t } from '../i18n.js';
 
 const props = defineProps({
   board: { type: Object, default: null },         // the board to show (the Screen's, if not given)
@@ -56,8 +57,8 @@ function edge(i, toward) {
   const dx = toward.x - c.x;
   const dy = toward.y - c.y;
   if (!dx && !dy) return c;
-  const t = Math.min(dx ? i.w / 2 / Math.abs(dx) : Infinity, dy ? i.h / 2 / Math.abs(dy) : Infinity);
-  return { x: c.x + dx * t, y: c.y + dy * t };
+  const k = Math.min(dx ? i.w / 2 / Math.abs(dx) : Infinity, dy ? i.h / 2 / Math.abs(dy) : Infinity);
+  return { x: c.x + dx * k, y: c.y + dy * k };
 }
 
 const lines = computed(() => board.arrows.value.flatMap((a) => {
@@ -273,7 +274,7 @@ async function addPicture(file, at = null) {
     const kept = await apiSend('POST', '/gm/board/images', props.token, { image: base64 });
     const w = 320;
     const h = width && height ? Math.max(120, Math.round((w * height) / width) + 28) : 250;
-    const id = board.addImage({ id: kept.id }, { title: file.name || 'a picture', w, h });
+    const id = board.addImage({ id: kept.id }, { title: file.name || t('a picture'), w, h });
     if (id && at) {
       const item = itemOf(id);
       item.x = Math.round(at.x - w / 2);
@@ -281,7 +282,7 @@ async function addPicture(file, at = null) {
     }
     if (id) selectedItem.value = id;
   } catch (e) {
-    board.say(e?.message || 'Could not add the picture.');
+    board.say(e?.message || t('Could not add the picture.'));
   }
 }
 
@@ -313,7 +314,7 @@ function pickArrow(id) {
   selectedItem.value = '';
 }
 const sendToSession = (item) => sessions.send(item);
-const titleOf = (item) => (item.kind === 'pin' ? item.pin.title : item.kind === 'image' ? item.title || 'Picture' : 'Note');
+const titleOf = (item) => (item.kind === 'pin' ? item.pin.title : item.kind === 'image' ? item.title || t('Picture') : t('Note'));
 const iconOf = (item) => (item.kind === 'pin' ? ICONS[item.pin.type] ?? '📌' : item.kind === 'image' ? '🖼' : '');
 </script>
 
@@ -321,7 +322,7 @@ const iconOf = (item) => (item.kind === 'pin' ? ICONS[item.pin.type] ?? '📌' :
   <div ref="slot" class="board-slot"></div>
   <section class="board-full" :class="{ full }" :style="full ? {} : { height: `${height}px` }" data-test="board">
     <p v-if="board.loadError.value" class="error board-error" data-test="board-error">
-      {{ board.loadError.value }} <button type="button" class="tool" @click="board.load()">Try again</button>
+      {{ board.loadError.value }} <button type="button" class="tool" @click="board.load()">{{ t('Try again') }}</button>
     </p>
 
     <div ref="root" class="canvas" :class="{ closed: ro }" :style="gridStyle" tabindex="0" data-test="canvas"
@@ -329,28 +330,28 @@ const iconOf = (item) => (item.kind === 'pin' ? ICONS[item.pin.type] ?? '📌' :
          @dragover.prevent @drop="onDrop">
       <div class="toolbar" data-test="toolbar" @pointerdown.stop @dblclick.stop>
         <span v-if="!ro" class="tool-group">
-          <button type="button" class="tool" data-test="add-note" @click="addNote('yellow')">+ Note</button>
-          <button v-for="c in NOTE_COLORS.slice(1, 4)" :key="c" type="button" class="dot" :class="c" :title="`A ${c} note`" :aria-label="`A ${c} note`" @click="addNote(c)"></button>
-          <button type="button" class="tool" title="Add a picture (or paste or drop one)" data-test="add-image" @click="fileInput.click()">+ Image</button>
+          <button type="button" class="tool" data-test="add-note" @click="addNote('yellow')">{{ t('+ Note') }}</button>
+          <button v-for="c in NOTE_COLORS.slice(1, 4)" :key="c" type="button" class="dot" :class="c" :title="t(`A ${c} note`)" :aria-label="t(`A ${c} note`)" @click="addNote(c)"></button>
+          <button type="button" class="tool" :title="t('Add a picture (or paste or drop one)')" data-test="add-image" @click="fileInput.click()">{{ t('+ Image') }}</button>
           <input ref="fileInput" type="file" accept="image/*" hidden data-test="image-input" @change="onFileChosen" />
         </span>
         <span class="tool-group">
-          <button type="button" class="tool round" aria-label="Zoom out" title="Zoom out" data-test="zoom-out" :disabled="board.view.value.zoom <= MIN_ZOOM" @click="zoomBy(1 / 1.25)">−</button>
-          <button type="button" class="tool" title="Back to 100%" data-test="zoom-reset" @click="resetZoom">{{ percent }}</button>
-          <button type="button" class="tool round" aria-label="Zoom in" title="Zoom in" data-test="zoom-in" :disabled="board.view.value.zoom >= MAX_ZOOM" @click="zoomBy(1.25)">+</button>
-          <button type="button" class="tool" title="Show everything" data-test="fit" @click="board.fit()">Fit</button>
+          <button type="button" class="tool round" :aria-label="t('Zoom out')" :title="t('Zoom out')" data-test="zoom-out" :disabled="board.view.value.zoom <= MIN_ZOOM" @click="zoomBy(1 / 1.25)">−</button>
+          <button type="button" class="tool" :title="t('Back to 100%')" data-test="zoom-reset" @click="resetZoom">{{ percent }}</button>
+          <button type="button" class="tool round" :aria-label="t('Zoom in')" :title="t('Zoom in')" data-test="zoom-in" :disabled="board.view.value.zoom >= MAX_ZOOM" @click="zoomBy(1.25)">+</button>
+          <button type="button" class="tool" :title="t('Show everything')" data-test="fit" @click="board.fit()">{{ t('Fit') }}</button>
         </span>
         <span v-if="arrowSelected && !ro" class="tool-group" data-test="arrow-tools">
-          <input v-model="arrowSelected.label" class="label-input" placeholder="Name the arrow…" maxlength="60" aria-label="Arrow label" data-test="arrow-label" />
-          <button type="button" class="tool danger" data-test="arrow-delete" @click="board.removeArrow(arrowSelected.id); selectedArrow = ''">Delete arrow</button>
+          <input v-model="arrowSelected.label" class="label-input" :placeholder="t('Name the arrow…')" maxlength="60" :aria-label="t('Arrow label')" data-test="arrow-label" />
+          <button type="button" class="tool danger" data-test="arrow-delete" @click="board.removeArrow(arrowSelected.id); selectedArrow = ''">{{ t('Delete arrow') }}</button>
         </span>
         <span class="tool-group">
-          <button type="button" class="tool" :title="full ? 'Back to the app (Esc)' : 'The board over the whole window'" data-test="full" @click="toggleFull">{{ full ? '⤡ Exit full screen' : '⤢ Full screen' }}</button>
+          <button type="button" class="tool" :title="full ? t('Back to the app (Esc)') : t('The board over the whole window')" data-test="full" @click="toggleFull">{{ full ? t('⤡ Exit full screen') : t('⤢ Full screen') }}</button>
         </span>
         <span v-if="canSend" class="session-chip" :class="{ none: !sessions.active.value }" data-test="session-chip">
-          {{ sessions.activeSession() ? `→ ${campaigns?.find(sessions.activeSession().campaign)?.name ?? 'Campaign'} · ${sessions.activeSession().name}` : 'No active session' }}
+          {{ sessions.activeSession() ? `→ ${campaigns?.find(sessions.activeSession().campaign)?.name ?? t('Campaign')} · ${sessions.activeSession().name}` : t('No active session') }}
         </span>
-        <span v-if="ro" class="session-chip closed" data-test="closed-note">Closed session: open it to change it</span>
+        <span v-if="ro" class="session-chip closed" data-test="closed-note">{{ t('Closed session: open it to change it') }}</span>
         <span v-if="board.status.value" class="status" data-test="board-status">{{ board.status.value }}</span>
       </div>
 
@@ -374,25 +375,25 @@ const iconOf = (item) => (item.kind === 'pin' ? ICONS[item.pin.type] ?? '📌' :
              @pointerdown.stop="selectedItem = item.id; selectedArrow = ''; board.bringToFront(item.id)">
           <div class="item-head" :class="{ fixed: ro }" data-test="item-head" @pointerdown="startDrag($event, item)">
             <span class="title" :title="titleOf(item)">{{ iconOf(item) }} {{ titleOf(item) }}</span>
-            <button v-if="canSend" type="button" class="send" :disabled="!sessions.active.value" :title="sessions.active.value ? 'Send a copy to the active session' : 'There is no active session'"
-                    aria-label="Send to the active session" data-test="send" @pointerdown.stop @click="sendToSession(item)">→</button>
-            <button v-if="!ro" type="button" class="close" aria-label="Remove from the board" title="Remove" data-test="item-remove" @pointerdown.stop @click="removeItem(item)">×</button>
+            <button v-if="canSend" type="button" class="send" :disabled="!sessions.active.value" :title="sessions.active.value ? t('Send a copy to the active session') : t('There is no active session')"
+                    :aria-label="t('Send to the active session')" data-test="send" @pointerdown.stop @click="sendToSession(item)">→</button>
+            <button v-if="!ro" type="button" class="close" :aria-label="t('Remove from the board')" :title="t('Remove')" data-test="item-remove" @pointerdown.stop @click="removeItem(item)">×</button>
           </div>
           <div class="item-body" @pointerdown.stop>
-            <textarea v-if="item.kind === 'note'" v-model="item.text" class="note-text" :readonly="ro" placeholder="Write here…" aria-label="Note" data-test="note-text"></textarea>
+            <textarea v-if="item.kind === 'note'" v-model="item.text" class="note-text" :readonly="ro" :placeholder="t('Write here…')" :aria-label="t('Note')" data-test="note-text"></textarea>
             <BoardImage v-else-if="item.kind === 'image'" :token="token" :image="item.image" :alt="item.title" />
             <BoardPinBody v-else :pin="item.pin" />
           </div>
-          <span v-if="!ro" class="link-handle" title="Drag onto another item to draw an arrow" data-test="link-handle" @pointerdown.stop.prevent="startLink($event, item)">➜</span>
+          <span v-if="!ro" class="link-handle" :title="t('Drag onto another item to draw an arrow')" data-test="link-handle" @pointerdown.stop.prevent="startLink($event, item)">➜</span>
           <span v-if="!ro" class="resize" data-test="resize" @pointerdown.stop.prevent="startResize($event, item)"></span>
         </div>
       </div>
 
       <p v-if="!board.items.value.length && board.loaded.value" class="empty" data-test="empty">
-        <template v-if="ro"><b>This session is empty.</b></template>
+        <template v-if="ro"><b>{{ t('This session is empty.') }}</b></template>
         <template v-else>
-          <b>{{ inSession ? 'This session is empty.' : 'Your board is empty.' }}</b><br />
-          Pin things with the 📌 button (rules, tables, NPCs, creatures, adventure pages, pictures), add notes with “+ Note” or by double-clicking, paste or drop a picture, and join them with arrows.
+          <b>{{ inSession ? t('This session is empty.') : t('Your board is empty.') }}</b><br />
+          {{ t('Pin things with the 📌 button (rules, tables, NPCs, creatures, adventure pages, pictures), add notes with “+ Note” or by double-clicking, paste or drop a picture, and join them with arrows.') }}
         </template>
       </p>
     </div>

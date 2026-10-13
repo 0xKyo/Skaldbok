@@ -9,7 +9,7 @@ const catalog = {
   ],
   professions: [
     {
-      key: 'core/profession/bard', title: 'Bard', keyAttribute: 'CHA', schools: [], nicknames: ['the Loud'], body: 'Sings.', fields: [],
+      key: 'core/profession/bard', title: 'Bard', keyAttribute: 'charisma', schools: [], nicknames: ['the Loud'], body: 'Sings.', fields: [],
       skills: ['Acrobatics', 'Bluffing', 'Languages', 'Myths & Legends', 'Performance', 'Persuasion', 'Sleight of Hand'],
       skillsBySchool: {}, heroic: [{ name: 'Musician', summary: 'Plays.', fields: [], body: '' }],
       magic: { spells: 0, tricks: 0, rank: 0 },
@@ -25,11 +25,11 @@ const catalog = {
     { id: 'adult', label: 'Adult', summary: 'a', trainedSkills: 10, attrMod: [0, 0, 0, 0, 0, 0] },
     { id: 'old', label: 'Old', summary: 'o', trainedSkills: 12, attrMod: [-1, -1, -1, 0, 0, 0] },
   ],
-  attributes: ['STR', 'CON', 'AGL', 'INT', 'WIL', 'CHA'].map((short) => ({ short, long: short })),
+  attributes: ['strength', 'constitution', 'agility', 'intelligence', 'willpower', 'charisma'].map((id) => ({ id, label: id.slice(0, 3).toUpperCase(), long: id })),
   baseChance: [0, 3, 3, 3, 3, 3, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 7, 7, 7],
   professionSkills: 6,
-  skillAttributes: { Acrobatics: 'AGL', Bluffing: 'CHA', Axes: 'STR', Awareness: 'INT', Bushcraft: 'INT', Swimming: 'AGL' },
-  selectableSkills: [['Axes', 'STR'], ['Awareness', 'INT'], ['Bushcraft', 'INT'], ['Swimming', 'AGL']].map(([title, attribute]) => ({ title, attribute, summary: '' })),
+  skillAttributes: { Acrobatics: 'agility', Bluffing: 'charisma', Axes: 'strength', Awareness: 'intelligence', Bushcraft: 'intelligence', Swimming: 'agility' },
+  selectableSkills: [['Axes', 'strength'], ['Awareness', 'intelligence'], ['Bushcraft', 'intelligence'], ['Swimming', 'agility']].map(([title, attribute]) => ({ title, attribute, summary: '' })),
   heroicAbilities: [{ name: 'Musician', summary: '', fields: [], body: '' }],
   spells: [],
   tables: { kin: [], profession: [], weakness: [], memento: [], appearance: [{ title: 'Appearance', dice: 'D6', faces: ['Scarred'] }] },
@@ -53,7 +53,7 @@ beforeEach(() => {
       return ok({
         problems: body.name ? [] : ['Give the character a name.'],
         attributes: [10, 10, 10, 10, 10, 10],
-        derived: { hp: 10, wp: 10, movement: 10, damageStr: '', damageAgl: '', encumbrance: 5 },
+        derived: { hp: 10, wp: 10, movement: 10, damageBonus: [{ key: 'strength', short: 'STR', value: '' }, { key: 'agility', short: 'AGL', value: 'D4' }], encumbrance: 5 },
         summary: `Sheet of ${body.name}`,
       });
     }
@@ -199,21 +199,29 @@ describe('CharacterCreator', () => {
     expect(sent.customGear).toEqual([{ key: 'core/weapon/sword', count: 2 }, { key: 'core/gear/rope', count: 1 }, { key: 'core/gear/lodging', count: 1 }]);
   });
 
-  it('keeps what is typed as a score and only flags it: red when out of range, no Next until 3 to 18', async () => {
+  it('checks a score once it is written: red when out of range, no Next until 3 to 18', async () => {
     const w = await mountIt();
     for (let i = 0; i < 3; i += 1) await nextBtn(w).trigger('click');      // kin, profession, age
     await w.get('[data-test=roll-all]').trigger('click');
     const first = w.findAll('[data-test=score]')[0];
-    await first.setValue('1');                                             // on the way to typing 16
+    const write = async (text, finish = true) => {
+      first.element.value = text;
+      await first.trigger('input');
+      if (finish) await first.trigger('change');
+    };
+    await write('1', false);                                               // on the way to typing 16
+    expect(first.element.value).toBe('1');
+    expect(first.classes()).not.toContain('bad');                          // nothing is said while they type
+    await write('1');                                                      // and now they are done
     expect(first.element.value).toBe('1');                                 // not raised to 3
     expect(first.classes()).toContain('bad');
     expect(w.find('[data-test=score-error]').exists()).toBe(true);
     expect(nextBtn(w).attributes('disabled')).toBeDefined();
-    await first.setValue('16');
+    await write('16');
     expect(first.element.value).toBe('16');
     expect(first.classes()).not.toContain('bad');
     expect(nextBtn(w).attributes('disabled')).toBeUndefined();
-    await first.setValue('19');
+    await write('19');
     expect(first.classes()).toContain('bad');
     expect(nextBtn(w).attributes('disabled')).toBeDefined();
   });

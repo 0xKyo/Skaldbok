@@ -87,10 +87,10 @@ describe('apiSend', () => {
 describe('apiGet', () => {
   const answer = (status, body) => vi.fn(async () => ({ ok: status < 400, status, json: async () => body }));
 
-  it('sends the token as a Bearer header, never in the URL', async () => {
+  it('sends the token as a Bearer header, never in the URL, and says the language of the page', async () => {
     const f = answer(200, { hello: 1 });
     expect(await apiGet('/me', 'tok', f)).toEqual({ hello: 1 });
-    expect(f).toHaveBeenCalledWith('/api/me', expect.objectContaining({ headers: { Authorization: 'Bearer tok' } }));
+    expect(f).toHaveBeenCalledWith('/api/me', expect.objectContaining({ headers: { Authorization: 'Bearer tok', 'X-Skaldbok-Lang': 'en' } }));
     expect(f.mock.calls[0][0]).not.toContain('tok');
   });
 

@@ -1,0 +1,7 @@
+kind: grip
+hidden: true
+entities:
+  - id: grip_1h
+    name: LOC_GRIP_1H
+  - id: grip_2h
+    name: LOC_GRIP_2H

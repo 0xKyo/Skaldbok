@@ -29,12 +29,14 @@ include(cmake/Dependencies.cmake)
 # only this; nothing in here may include from src/ui or src/web.
 add_library(gm_core STATIC
   src/parsing/content.cpp
+  src/parsing/i18n.cpp
   src/parsing/packs.cpp
   src/parsing/fsutil.cpp
   src/game/model.cpp
   src/game/settings.cpp
   src/game/dice.cpp
   src/game/encounter.cpp
+  src/game/attributes.cpp
   src/game/character.cpp
   src/game/changelog.cpp
   src/game/sheet_edit.cpp
@@ -98,6 +100,7 @@ add_library(gm_web STATIC
   src/web/web_config.cpp
   src/web/web_access.cpp
   src/web/web_views.cpp
+  src/web/web_names.cpp
   src/web/web_creation.cpp
   src/web/web_adventures.cpp
   src/web/web_board.cpp

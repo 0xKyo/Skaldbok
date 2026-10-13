@@ -1,1103 +1,1602 @@
 weapons:
-  - name: Sling
+  - id: weapon_sling
+    name: LOC_WEAPON_SLING
     kind: ranged
-    grip: 1H
+    grip: grip_1h
     str_req: —
-    range: "20"
+    range: 20
     damage: D8
     durability: —
-    cost: 1 silver
-    supply: Common
-    features: Tiny item
+    cost_gold: 0
+    cost_silver: 1
+    cost_copper: 0
+    supply: supply_common
+    features: size_tiny
     damage_types:
-      - Bludgeoning
-  - name: Short Bow
+      - damageTypes_bludgeoning
+  - id: weapon_shortBow
+    name: LOC_WEAPON_SHORT_BOW
     kind: ranged
-    grip: 2H
-    str_req: "7"
-    range: "30"
+    grip: grip_2h
+    str_req: 7
+    range: 30
     damage: D10
-    durability: "3"
-    cost: 25 gold
-    supply: Common
-    features: Requires quiver
+    durability: 3
+    cost_gold: 25
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
+    features: feature_requiresQuiver
     damage_types:
-      - Piercing
-  - name: Longbow
+      - damageTypes_piercing
+  - id: weapon_longbow
+    name: LOC_WEAPON_LONGBOW
     kind: ranged
-    grip: 2H
-    str_req: "13"
-    range: "100"
+    grip: grip_2h
+    str_req: 13
+    range: 100
     damage: D12
-    durability: "6"
-    cost: 50 gold
-    supply: Uncommon
-    features: Requires quiver
+    durability: 6
+    cost_gold: 50
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
+    features: feature_requiresQuiver
     damage_types:
-      - Piercing
-  - name: Crossbow, Light
+      - damageTypes_piercing
+  - id: weapon_crossbowLight
+    name: LOC_WEAPON_CROSSBOW_LIGHT
     kind: ranged
-    grip: 2H
-    str_req: "7"
-    range: "40"
+    grip: grip_2h
+    str_req: 7
+    range: 40
     damage: 2D6
-    durability: "6"
-    cost: 75 gold
-    supply: Uncommon
-    features: Requires quiver, no damage bonus
+    durability: 6
+    cost_gold: 75
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
+    features:
+      - feature_requiresQuiver
+      - feature_noDamageBonus
     damage_types:
-      - Piercing
-  - name: Crossbow, Heavy
+      - damageTypes_piercing
+  - id: weapon_crossbowHeavy
+    name: LOC_WEAPON_CROSSBOW_HEAVY
     kind: ranged
-    grip: 2H
-    str_req: "13"
-    range: "60"
+    grip: grip_2h
+    str_req: 13
+    range: 60
     damage: 2D8
-    durability: "9"
-    cost: 200 gold
-    supply: Rare
-    features: Requires quiver, no damage bonus
+    durability: 9
+    cost_gold: 200
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_rare
+    features:
+      - feature_requiresQuiver
+      - feature_noDamageBonus
     damage_types:
-      - Piercing
-  - name: Crossbow, Hand
+      - damageTypes_piercing
+  - id: weapon_crossbowHand
+    name: LOC_WEAPON_CROSSBOW_HAND
     kind: ranged
-    grip: 1H
-    str_req: "7"
-    range: "30"
+    grip: grip_1h
+    str_req: 7
+    range: 30
     damage: 2D6
-    durability: "6"
-    cost: 90 gold
-    supply: Rare
-    features: Requires quiver, no damage bonus
+    durability: 6
+    cost_gold: 90
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_rare
+    features:
+      - feature_requiresQuiver
+      - feature_noDamageBonus
     damage_types:
-      - Piercing
-  - name: Unarmed
+      - damageTypes_piercing
+  - id: weapon_unarmed
+    name: LOC_WEAPON_UNARMED
     grip: —
     str_req: —
-    range: "2"
+    range: 2
     damage: D6
     durability: —
-    cost: —
+    cost_gold: 0
+    cost_silver: 0
+    cost_copper: 0
     supply: —
     damage_types:
-      - Bludgeoning
-  - name: Blunt Object, Light
-    grip: 1H
+      - damageTypes_bludgeoning
+  - id: weapon_bluntObjectLight
+    name: LOC_WEAPON_BLUNT_OBJECT_LIGHT
+    grip: grip_1h
     str_req: —
-    range: STR
+    range: LOC_RANGE_STR
     damage: D8
-    durability: "3"
-    cost: —
+    durability: 3
+    cost_gold: 0
+    cost_silver: 0
+    cost_copper: 0
     supply: —
-    features: Can be thrown
+    features: feature_canBeThrown
     damage_types:
-      - Bludgeoning
-  - name: Blunt Object, Heavy
-    grip: 2H
-    str_req: "16"
-    range: "2"
+      - damageTypes_bludgeoning
+  - id: weapon_bluntObjectHeavy
+    name: LOC_WEAPON_BLUNT_OBJECT_HEAVY
+    grip: grip_2h
+    str_req: 16
+    range: 2
     damage: 2D8
-    durability: "3"
-    cost: —
+    durability: 3
+    cost_gold: 0
+    cost_silver: 0
+    cost_copper: 0
     supply: —
     damage_types:
-      - Bludgeoning
-  - name: Knife
-    grip: 1H
+      - damageTypes_bludgeoning
+  - id: weapon_knife
+    name: LOC_WEAPON_KNIFE
+    grip: grip_1h
     str_req: —
-    range: STR
+    range: LOC_RANGE_STR
     damage: D8
-    durability: "6"
-    cost: 5 silver
-    supply: Common
-    features: Subtle, can be thrown
+    durability: 6
+    cost_gold: 0
+    cost_silver: 5
+    cost_copper: 0
+    supply: supply_common
+    features:
+      - feature_subtle
+      - feature_canBeThrown
     damage_types:
-      - Piercing
-  - name: Dagger
-    grip: 1H
+      - damageTypes_piercing
+  - id: weapon_dagger
+    name: LOC_WEAPON_DAGGER
+    grip: grip_1h
     str_req: —
-    range: STR
+    range: LOC_RANGE_STR
     damage: D8
-    durability: "9"
-    cost: 1 gold
-    supply: Common
-    features: Subtle, can be thrown
+    durability: 9
+    cost_gold: 1
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
+    features:
+      - feature_subtle
+      - feature_canBeThrown
     damage_types:
-      - Piercing
-      - Slashing
-  - name: Parrying Dagger
-    grip: 1H
+      - damageTypes_piercing
+      - damageTypes_slashing
+  - id: weapon_parryingDagger
+    name: LOC_WEAPON_PARRYING_DAGGER
+    grip: grip_1h
     str_req: —
-    range: "2"
+    range: 2
     damage: D6
-    durability: "15"
-    cost: 2 gold
-    supply: Uncommon
-    features: Subtle
+    durability: 15
+    cost_gold: 2
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
+    features: feature_subtle
     damage_types:
-      - Piercing
-      - Slashing
-  - name: Short Sword
-    grip: 1H
-    str_req: "7"
-    range: "2"
+      - damageTypes_piercing
+      - damageTypes_slashing
+  - id: weapon_shortSword
+    name: LOC_WEAPON_SHORT_SWORD
+    grip: grip_1h
+    str_req: 7
+    range: 2
     damage: D10
-    durability: "12"
-    cost: 8 gold
-    supply: Common
+    durability: 12
+    cost_gold: 8
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
     damage_types:
-      - Piercing
-      - Slashing
-  - name: Broadsword
-    grip: 1H
-    str_req: "10"
-    range: "2"
+      - damageTypes_piercing
+      - damageTypes_slashing
+  - id: weapon_broadsword
+    name: LOC_WEAPON_BROADSWORD
+    grip: grip_1h
+    str_req: 10
+    range: 2
     damage: 2D6
-    durability: "15"
-    cost: 12 gold
-    supply: Common
+    durability: 15
+    cost_gold: 12
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
     damage_types:
-      - Piercing
-      - Slashing
-  - name: Longsword
-    grip: 1H
-    str_req: "13"
-    range: "2"
+      - damageTypes_piercing
+      - damageTypes_slashing
+  - id: weapon_longsword
+    name: LOC_WEAPON_LONGSWORD
+    grip: grip_1h
+    str_req: 13
+    range: 2
     damage: 2D8
-    durability: "15"
-    cost: 25 gold
-    supply: Uncommon
+    durability: 15
+    cost_gold: 25
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
     damage_types:
-      - Piercing
-      - Slashing
-  - name: Greatsword
-    grip: 2H
-    str_req: "16"
-    range: "2"
+      - damageTypes_piercing
+      - damageTypes_slashing
+  - id: weapon_greatsword
+    name: LOC_WEAPON_GREATSWORD
+    grip: grip_2h
+    str_req: 16
+    range: 2
     damage: 2D10
-    durability: "15"
-    cost: 50 gold
-    supply: Rare
+    durability: 15
+    cost_gold: 50
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_rare
     damage_types:
-      - Piercing
-      - Slashing
-  - name: Scimitar
-    grip: 1H
-    str_req: "10"
-    range: "2"
+      - damageTypes_piercing
+      - damageTypes_slashing
+  - id: weapon_scimitar
+    name: LOC_WEAPON_SCIMITAR
+    grip: grip_1h
+    str_req: 10
+    range: 2
     damage: 2D6
-    durability: "12"
-    cost: 10 gold
-    supply: Uncommon
-    features: Toppling
+    durability: 12
+    cost_gold: 10
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
+    features: feature_toppling
     damage_types:
-      - Slashing
-  - name: Handaxe
-    grip: 1H
-    str_req: "7"
-    range: STR
+      - damageTypes_slashing
+  - id: weapon_handaxe
+    name: LOC_WEAPON_HANDAXE
+    grip: grip_1h
+    str_req: 7
+    range: LOC_RANGE_STR
     damage: 2D6
-    durability: "9"
-    cost: 2 gold
-    supply: Common
-    features: Toppling, can be thrown
+    durability: 9
+    cost_gold: 2
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
+    features:
+      - feature_toppling
+      - feature_canBeThrown
     damage_types:
-      - Slashing
-  - name: Battleaxe
-    grip: 1H
-    str_req: "13"
-    range: "2"
+      - damageTypes_slashing
+  - id: weapon_battleaxe
+    name: LOC_WEAPON_BATTLEAXE
+    grip: grip_1h
+    str_req: 13
+    range: 2
     damage: 2D8
-    durability: "9"
-    cost: 10 gold
-    supply: Uncommon
-    features: Toppling
+    durability: 9
+    cost_gold: 10
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
+    features: feature_toppling
     damage_types:
-      - Slashing
-  - name: Two-Handed Axe
-    grip: 2H
-    str_req: "16"
-    range: "2"
+      - damageTypes_slashing
+  - id: weapon_twoHandedAxe
+    name: LOC_WEAPON_TWO_HANDED_AXE
+    grip: grip_2h
+    str_req: 16
+    range: 2
     damage: 2D10
-    durability: "9"
-    cost: 25 gold
-    supply: Uncommon
-    features: Toppling
+    durability: 9
+    cost_gold: 25
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
+    features: feature_toppling
     damage_types:
-      - Slashing
-  - name: Mace
-    grip: 1H
-    str_req: "7"
-    range: "2"
+      - damageTypes_slashing
+  - id: weapon_mace
+    name: LOC_WEAPON_MACE
+    grip: grip_1h
+    str_req: 7
+    range: 2
     damage: 2D4
-    durability: "12"
-    cost: 8 gold
-    supply: Common
+    durability: 12
+    cost_gold: 8
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
     damage_types:
-      - Bludgeoning
-  - name: Morningstar
-    grip: 1H
-    str_req: "13"
-    range: "2"
+      - damageTypes_bludgeoning
+  - id: weapon_morningstar
+    name: LOC_WEAPON_MORNINGSTAR
+    grip: grip_1h
+    str_req: 13
+    range: 2
     damage: 2D8
-    durability: "12"
-    cost: 14 gold
-    supply: Uncommon
+    durability: 12
+    cost_gold: 14
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
     damage_types:
-      - Bludgeoning
-  - name: Flail
-    grip: 1H
-    str_req: "13"
-    range: "2"
+      - damageTypes_bludgeoning
+  - id: weapon_flail
+    name: LOC_WEAPON_FLAIL
+    grip: grip_1h
+    str_req: 13
+    range: 2
     damage: 2D8
     durability: —
-    cost: 16 gold
-    supply: Uncommon
-    features: Toppling, cannot be used for parrying
+    cost_gold: 16
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
+    features:
+      - feature_toppling
+      - feature_cannotParry
     damage_types:
-      - Bludgeoning
-  - name: Warhammer, Light
-    grip: 1H
-    str_req: "10"
-    range: "2"
+      - damageTypes_bludgeoning
+  - id: weapon_warhammerLight
+    name: LOC_WEAPON_WARHAMMER_LIGHT
+    grip: grip_1h
+    str_req: 10
+    range: 2
     damage: 2D6
-    durability: "12"
-    cost: 10 gold
-    supply: Uncommon
-    features: Toppling
+    durability: 12
+    cost_gold: 10
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
+    features: feature_toppling
     damage_types:
-      - Bludgeoning
-  - name: Warhammer, Heavy
-    grip: 2H
-    str_req: "16"
-    range: "2"
+      - damageTypes_bludgeoning
+  - id: weapon_warhammerHeavy
+    name: LOC_WEAPON_WARHAMMER_HEAVY
+    grip: grip_2h
+    str_req: 16
+    range: 2
     damage: 2D10
-    durability: "12"
-    cost: 20 gold
-    supply: Uncommon
-    features: Toppling
+    durability: 12
+    cost_gold: 20
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
+    features: feature_toppling
     damage_types:
-      - Bludgeoning
-  - name: Wooden Club, Small
-    grip: 1H
-    str_req: "7"
-    range: "2"
+      - damageTypes_bludgeoning
+  - id: weapon_woodenClubSmall
+    name: LOC_WEAPON_WOODEN_CLUB_SMALL
+    grip: grip_1h
+    str_req: 7
+    range: 2
     damage: D8
-    durability: "9"
-    cost: 1 silver
-    supply: Common
+    durability: 9
+    cost_gold: 0
+    cost_silver: 1
+    cost_copper: 0
+    supply: supply_common
     damage_types:
-      - Bludgeoning
-  - name: Wooden Club, Large
-    grip: 2H
-    str_req: "16"
-    range: "2"
+      - damageTypes_bludgeoning
+  - id: weapon_woodenClubLarge
+    name: LOC_WEAPON_WOODEN_CLUB_LARGE
+    grip: grip_2h
+    str_req: 16
+    range: 2
     damage: 2D8
-    durability: "12"
-    cost: 2 silver
-    supply: Common
+    durability: 12
+    cost_gold: 0
+    cost_silver: 2
+    cost_copper: 0
+    supply: supply_common
     damage_types:
-      - Bludgeoning
-  - name: Staff
-    grip: 2H
-    str_req: "7"
-    range: "2"
+      - damageTypes_bludgeoning
+  - id: weapon_staff
+    name: LOC_WEAPON_STAFF
+    grip: grip_2h
+    str_req: 7
+    range: 2
     damage: D8
-    durability: "9"
-    cost: 2 silver
-    supply: Common
-    features: Toppling
+    durability: 9
+    cost_gold: 0
+    cost_silver: 2
+    cost_copper: 0
+    supply: supply_common
+    features: feature_toppling
     damage_types:
-      - Bludgeoning
-  - name: Short Spear
-    grip: 1H
-    str_req: "7"
-    range: STR×2
+      - damageTypes_bludgeoning
+  - id: weapon_shortSpear
+    name: LOC_WEAPON_SHORT_SPEAR
+    grip: grip_1h
+    str_req: 7
+    range: LOC_RANGE_STR_2
     damage: D10
-    durability: "9"
-    cost: 5 silver
-    supply: Common
-    features: Can be thrown
+    durability: 9
+    cost_gold: 0
+    cost_silver: 5
+    cost_copper: 0
+    supply: supply_common
+    features: feature_canBeThrown
     damage_types:
-      - Piercing
-  - name: Long Spear
-    grip: 2H
-    str_req: "10"
-    range: "4"
+      - damageTypes_piercing
+  - id: weapon_longSpear
+    name: LOC_WEAPON_LONG_SPEAR
+    grip: grip_2h
+    str_req: 10
+    range: 4
     damage: 2D8
-    durability: "9"
-    cost: 1 gold
-    supply: Common
-    features: Long
+    durability: 9
+    cost_gold: 1
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
+    features: feature_long
     damage_types:
-      - Piercing
-  - name: Lance
-    grip: 1H
-    str_req: "13"
-    range: "4"
+      - damageTypes_piercing
+  - id: weapon_lance
+    name: LOC_WEAPON_LANCE
+    grip: grip_1h
+    str_req: 13
+    range: 4
     damage: 2D10
-    durability: "12"
-    cost: 12 gold
-    supply: Rare
-    features: Long, requires combat trained mount
+    durability: 12
+    cost_gold: 12
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_rare
+    features:
+      - feature_long
+      - feature_requiresCombatTrainedMount
     damage_types:
-      - Piercing
-  - name: Halberd
-    grip: 2H
-    str_req: "13"
-    range: "4"
+      - damageTypes_piercing
+  - id: weapon_halberd
+    name: LOC_WEAPON_HALBERD
+    grip: grip_2h
+    str_req: 13
+    range: 4
     damage: 2D8
-    durability: "12"
-    cost: 20 gold
-    supply: Rare
-    features: Long, toppling
+    durability: 12
+    cost_gold: 20
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_rare
+    features:
+      - feature_long
+      - feature_toppling
     damage_types:
-      - Piercing
-      - Slashing
-  - name: Trident
-    grip: 1H
-    str_req: "10"
-    range: STR
+      - damageTypes_piercing
+      - damageTypes_slashing
+  - id: weapon_trident
+    name: LOC_WEAPON_TRIDENT
+    grip: grip_1h
+    str_req: 10
+    range: LOC_RANGE_STR
     damage: 2D6
-    durability: "9"
-    cost: 5 gold
-    supply: Uncommon
-    features: Toppling, can be thrown
+    durability: 9
+    cost_gold: 5
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
+    features:
+      - feature_toppling
+      - feature_canBeThrown
     damage_types:
-      - Piercing
-  - name: Shield, Small
-    grip: 1H
-    str_req: "7"
-    range: "2"
+      - damageTypes_piercing
+  - id: weapon_shieldSmall
+    name: LOC_WEAPON_SHIELD_SMALL
+    grip: grip_1h
+    str_req: 7
+    range: 2
     damage: D8
-    durability: "15"
-    cost: 4 gold
-    supply: Common
+    durability: 15
+    cost_gold: 4
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
     damage_types:
-      - Bludgeoning
-  - name: Shield, Large
-    grip: 1H
-    str_req: "13"
-    range: "2"
+      - damageTypes_bludgeoning
+  - id: weapon_shieldLarge
+    name: LOC_WEAPON_SHIELD_LARGE
+    grip: grip_1h
+    str_req: 13
+    range: 2
     damage: D8
-    durability: "18"
-    cost: 12 gold
-    supply: Common
+    durability: 18
+    cost_gold: 12
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
     damage_types:
-      - Bludgeoning
-  - name: Mastercrafted
-    cost: ×10
-    features: Reduces STR requirement by 3, increases durability by 3
+      - damageTypes_bludgeoning
+  - id: weapon_mastercrafted
+    name: LOC_WEAPON_MASTERCRAFTED
+    cost_gold: 0
+    cost_silver: 0
+    cost_copper: 0
+    cost_note: LOC_COST_NOTE_10
+    features: feature_reducesStrRequirement
 armor:
-  - name: Leather
-    armor_rating: "1"
+  - id: armor_leather
+    name: LOC_ARMOR_LEATHER
+    armor_rating: 1
     armor_bonuses:
-      - damage_type: Bludgeoning
+      - damage_type: damageTypes_bludgeoning
         bonus: 2
-    cost: 2 gold
-    supply: Common
-  - name: Studded Leather
-    armor_rating: "2"
+    cost_gold: 2
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
+  - id: armor_studdedLeather
+    name: LOC_ARMOR_STUDDED_LEATHER
+    armor_rating: 2
     armor_bonuses:
-      - damage_type: Bludgeoning
-        bonus: 2
-    banes:
-      - Sneaking
-    cost: 10 gold
-    supply: Uncommon
-  - name: Chainmail
-    armor_rating: "4"
-    armor_bonuses:
-      - damage_type: Slashing
+      - damage_type: damageTypes_bludgeoning
         bonus: 2
     banes:
-      - Evade
-      - Sneaking
-    cost: 50 gold
-    supply: Uncommon
-  - name: Plate Armor
-    armor_rating: "6"
+      - skills_sneaking
+    cost_gold: 10
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
+  - id: armor_chainmail
+    name: LOC_ARMOR_CHAINMAIL
+    armor_rating: 4
+    armor_bonuses:
+      - damage_type: damageTypes_slashing
+        bonus: 2
     banes:
-      - Acrobatics
-      - Evade
-      - Sneaking
-    cost: 500 gold
-    supply: Rare
-  - name: Open Helmet
+      - skills_evade
+      - skills_sneaking
+    cost_gold: 50
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
+  - id: armor_plateArmor
+    name: LOC_ARMOR_PLATE_ARMOR
+    armor_rating: 6
+    banes:
+      - skills_acrobatics
+      - skills_evade
+      - skills_sneaking
+    cost_gold: 500
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_rare
+  - id: armor_openHelmet
+    name: LOC_ARMOR_OPEN_HELMET
     slot: helmet
     armor_rating: "+1"
     banes:
-      - Awareness
-    cost: 12 gold
-    supply: Uncommon
-  - name: Great Helm
+      - skills_awareness
+    cost_gold: 12
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
+  - id: armor_greatHelm
+    name: LOC_ARMOR_GREAT_HELM
     slot: helmet
     armor_rating: "+2"
     banes:
-      - Awareness
-      - Ranged attacks
-    cost: 100 gold
-    supply: Rare
+      - skills_awareness
+      - LOC_BANES_RANGED_ATTACKS
+    cost_gold: 100
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_rare
 gear:
-  - name: Boots
-    category: Clothes
-    cost: 2 gold
-    supply: Uncommon
-    effect: Protects against some journey mishaps.
-  - name: Cloak
-    category: Clothes
-    cost: 8 silver
-    supply: Uncommon
-    effect: Protects against some journey mishaps.
-  - name: Fine Garments
-    category: Clothes
-    cost: 10 gold
-    supply: Uncommon
-    effect: Boon on CHA-based skills when the GM finds it reasonable.
-  - name: Fur
-    category: Clothes
-    cost: 1 gold
-    supply: Uncommon
-    effect: Boon on BUSHCRAFT for resisting cold.
-  - name: Rags
-    category: Clothes
-    cost: 5 copper
-    supply: Common
-    effect: Bane on CHA-based skills when the GM finds it reasonable.
-  - name: Simple Clothes
-    category: Clothes
-    cost: 5 silver
-    supply: Common
-    effect: Required to avoid a bane on CHA-based skills.
-  - name: Bagpipe
-    category: Musical Instruments
-    cost: 30 gold
-    supply: Uncommon
+  - id: gear_boots
+    name: LOC_GEAR_BOOTS
+    category: LOC_CATEGORY_CLOTHES
+    cost_gold: 2
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
+    effect: LOC_GEAR_BOOTS_EFFECT
+  - id: gear_cloak
+    name: LOC_GEAR_CLOAK
+    category: LOC_CATEGORY_CLOTHES
+    cost_gold: 0
+    cost_silver: 8
+    cost_copper: 0
+    supply: supply_uncommon
+    effect: LOC_GEAR_CLOAK_EFFECT
+  - id: gear_fineGarments
+    name: LOC_GEAR_FINE_GARMENTS
+    category: LOC_CATEGORY_CLOTHES
+    cost_gold: 10
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
+    effect: LOC_GEAR_FINE_GARMENTS_EFFECT
+  - id: gear_fur
+    name: LOC_GEAR_FUR
+    category: LOC_CATEGORY_CLOTHES
+    cost_gold: 1
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
+    effect: LOC_GEAR_FUR_EFFECT
+  - id: gear_rags
+    name: LOC_GEAR_RAGS
+    category: LOC_CATEGORY_CLOTHES
+    cost_gold: 0
+    cost_silver: 0
+    cost_copper: 5
+    supply: supply_common
+    effect: LOC_GEAR_RAGS_EFFECT
+  - id: gear_simpleClothes
+    name: LOC_GEAR_SIMPLE_CLOTHES
+    category: LOC_CATEGORY_CLOTHES
+    cost_gold: 0
+    cost_silver: 5
+    cost_copper: 0
+    supply: supply_common
+    effect: LOC_GEAR_SIMPLE_CLOTHES_EFFECT
+  - id: gear_bagpipe
+    name: LOC_GEAR_BAGPIPE
+    category: LOC_CATEGORY_MUSICAL_INSTRUMENTS
+    cost_gold: 30
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
     weight: "1"
-    effect: Reduces the WP cost of the Musician ability to 1 and increases range to 50 meters.
-  - name: Drum
-    category: Musical Instruments
-    cost: 4 gold
-    supply: Common
+    effect: LOC_GEAR_BAGPIPE_EFFECT
+  - id: gear_drum
+    name: LOC_GEAR_DRUM
+    category: LOC_CATEGORY_MUSICAL_INSTRUMENTS
+    cost_gold: 4
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
     weight: "1"
-    effect: Increases the range of the Musician ability to 20 meters.
-  - name: Flute
-    category: Musical Instruments
-    cost: 2 gold
-    supply: Common
+    effect: LOC_GEAR_DRUM_EFFECT
+  - id: gear_flute
+    name: LOC_GEAR_FLUTE
+    category: LOC_CATEGORY_MUSICAL_INSTRUMENTS
+    cost_gold: 2
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
     weight: "1"
-    effect: Reduces the WP cost of the Musician ability to 2.
-  - name: Harp
-    category: Musical Instruments
-    cost: 8 gold
-    supply: Uncommon
+    effect: LOC_GEAR_FLUTE_EFFECT
+  - id: gear_harp
+    name: LOC_GEAR_HARP
+    category: LOC_CATEGORY_MUSICAL_INSTRUMENTS
+    cost_gold: 8
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
     weight: "2"
-    effect: Reduces the WP cost of the Musician ability to 1.
-  - name: Horn
-    category: Musical Instruments
-    cost: 6 gold
-    supply: Common
+    effect: LOC_GEAR_HARP_EFFECT
+  - id: gear_horn
+    name: LOC_GEAR_HORN
+    category: LOC_CATEGORY_MUSICAL_INSTRUMENTS
+    cost_gold: 6
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
     weight: "1"
-    effect: Increases the range of the Musician ability to 100 meters.
-  - name: Lyre
-    category: Musical Instruments
-    cost: 20 gold
-    supply: Uncommon
+    effect: LOC_GEAR_HORN_EFFECT
+  - id: gear_lyre
+    name: LOC_GEAR_LYRE
+    category: LOC_CATEGORY_MUSICAL_INSTRUMENTS
+    cost_gold: 20
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
     weight: "1"
-    effect: Reduces the WP cost of the Musician ability to 1.
-  - name: Abacus
-    category: Trade Goods
-    cost: 2 gold
-    supply: Common
+    effect: LOC_GEAR_LYRE_EFFECT
+  - id: gear_abacus
+    name: LOC_GEAR_ABACUS
+    category: LOC_CATEGORY_TRADE_GOODS
+    cost_gold: 2
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
     weight: "1"
-    effect: Boon on INT rolls for solving mathematical problems.
-  - name: Blanket
-    category: Trade Goods
-    cost: 5 silver
-    supply: Common
+    effect: LOC_GEAR_ABACUS_EFFECT
+  - id: gear_blanket
+    name: LOC_GEAR_BLANKET
+    category: LOC_CATEGORY_TRADE_GOODS
+    cost_gold: 0
+    cost_silver: 5
+    cost_copper: 0
+    supply: supply_common
     weight: "1"
-    effect: Required to avoid a bane on rolls to avoid the effects of cold.
-  - name: Chess Set
-    category: Trade Goods
-    cost: 1 gold
-    supply: Common
+    effect: LOC_GEAR_BLANKET_EFFECT
+  - id: gear_chessSet
+    name: LOC_GEAR_CHESS_SET
+    category: LOC_CATEGORY_TRADE_GOODS
+    cost_gold: 1
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
     weight: "1"
-    effect: Opposed roll for INT determines who wins.
-  - name: Dice
-    category: Trade Goods
-    cost: 1 silver
-    supply: Common
+    effect: LOC_GEAR_CHESS_SET_EFFECT
+  - id: gear_dice
+    name: LOC_GEAR_DICE
+    category: LOC_CATEGORY_TRADE_GOODS
+    cost_gold: 0
+    cost_silver: 1
+    cost_copper: 0
+    supply: supply_common
     weight: —
-    effect: Chance determines who wins.
-  - name: Field Kitchen
-    category: Trade Goods
-    cost: 4 gold
-    supply: Common
+    effect: LOC_GEAR_DICE_EFFECT
+  - id: gear_fieldKitchen
+    name: LOC_GEAR_FIELD_KITCHEN
+    category: LOC_CATEGORY_TRADE_GOODS
+    cost_gold: 4
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
     weight: "2"
-    effect: Boon on BUSHCRAFT rolls for cooking.
-  - name: Field Ration
-    category: Trade Goods
-    cost: 1 silver
-    supply: Common
+    effect: LOC_GEAR_FIELD_KITCHEN_EFFECT
+  - id: gear_fieldRation
+    name: LOC_GEAR_FIELD_RATION
+    category: LOC_CATEGORY_TRADE_GOODS
+    cost_gold: 0
+    cost_silver: 1
+    cost_copper: 0
+    supply: supply_common
     weight: 1/4
-    effect: One ration must be consumed per day, otherwise you become hungry.
-  - name: Grappling Hook
-    category: Trade Goods
-    cost: 3 gold
-    supply: Common
+    effect: LOC_GEAR_FIELD_RATION_EFFECT
+  - id: gear_grapplingHook
+    name: LOC_GEAR_GRAPPLING_HOOK
+    category: LOC_CATEGORY_TRADE_GOODS
+    cost_gold: 3
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
     weight: "1"
-    effect: Can be used to secure a rope. Can be thrown and secured with an ACROBATICS roll up to STR meters (STR × 2 with a bane).
-  - name: Lockpicks, Advanced
-    category: Trade Goods
-    cost: 20 gold
-    supply: Rare
+    effect: LOC_GEAR_GRAPPLING_HOOK_EFFECT
+  - id: gear_lockpicksAdvanced
+    name: LOC_GEAR_LOCKPICKS_ADVANCED
+    category: LOC_CATEGORY_TRADE_GOODS
+    cost_gold: 20
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_rare
     weight: "1"
-    effect: Boon on SLEIGHT OF HAND rolls for picking locks.
-  - name: Lockpicks, Simple
-    category: Trade Goods
-    cost: 1 gold
-    supply: Uncommon
+    effect: LOC_GEAR_LOCKPICKS_ADVANCED_EFFECT
+  - id: gear_lockpicksSimple
+    name: LOC_GEAR_LOCKPICKS_SIMPLE
+    category: LOC_CATEGORY_TRADE_GOODS
+    cost_gold: 1
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
     weight: "1"
-    effect: Required to avoid a bane on SLEIGHT OF HAND rolls for picking locks.
-  - name: Magnifying Glass
-    category: Trade Goods
-    cost: 30 gold
-    supply: Uncommon
+    effect: LOC_GEAR_LOCKPICKS_SIMPLE_EFFECT
+  - id: gear_magnifyingGlass
+    name: LOC_GEAR_MAGNIFYING_GLASS
+    category: LOC_CATEGORY_TRADE_GOODS
+    cost_gold: 30
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
     weight: "1"
-    effect: Boon to SPOT HIDDEN rolls.
-  - name: Map
-    category: Trade Goods
-    cost: 5 gold
-    supply: Uncommon
+    effect: LOC_GEAR_MAGNIFYING_GLASS_EFFECT
+  - id: gear_map
+    name: LOC_GEAR_MAP
+    category: LOC_CATEGORY_TRADE_GOODS
+    cost_gold: 5
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
     weight: —
-    effect: Required to avoid a bane on BUSHCRAFT rolls for leading the way during journeys.
-  - name: Marbles
-    category: Trade Goods
-    cost: 1 gold
-    supply: Common
+    effect: LOC_GEAR_MAP_EFFECT
+  - id: gear_marbles
+    name: LOC_GEAR_MARBLES
+    category: LOC_CATEGORY_TRADE_GOODS
+    cost_gold: 1
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
     weight: "1"
-    effect: Can be thrown at a humanoid enemy within 10 meters, as an action. Next turn the enemy must make an EVADE roll (not an action) in order to move.
-  - name: Padlock
-    category: Trade Goods
-    cost: 10 gold
-    supply: Common
+    effect: LOC_GEAR_MARBLES_EFFECT
+  - id: gear_padlock
+    name: LOC_GEAR_PADLOCK
+    category: LOC_CATEGORY_TRADE_GOODS
+    cost_gold: 10
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
     weight: —
-    effect: Locks a door or chest. Can take 20 points of damage, armor rating 5.
-  - name: Perfume (10 doses)
-    category: Trade Goods
-    cost: 5 gold
-    supply: Common
+    effect: LOC_GEAR_PADLOCK_EFFECT
+  - id: gear_perfume_10Doses
+    name: LOC_GEAR_PERFUME_10_DOSES
+    category: LOC_CATEGORY_TRADE_GOODS
+    cost_gold: 5
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
     weight: "1"
-    effect: Boon on CHA-based skill rolls when the GM finds it reasonable.
-  - name: Playing Cards
-    category: Trade Goods
-    cost: 5 silver
-    supply: Uncommon
+    effect: LOC_GEAR_PERFUME_10_DOSES_EFFECT
+  - id: gear_playingCards
+    name: LOC_GEAR_PLAYING_CARDS
+    category: LOC_CATEGORY_TRADE_GOODS
+    cost_gold: 0
+    cost_silver: 5
+    cost_copper: 0
+    supply: supply_uncommon
     weight: —
-    effect: Opposed roll for BLUFFING determines who wins.
-  - name: Quiver of Arrows, Iron Head
-    category: Trade Goods
-    cost: 2 gold
-    supply: Common
+    effect: LOC_GEAR_PLAYING_CARDS_EFFECT
+  - id: gear_quiverOfArrowsIronHead
+    name: LOC_GEAR_QUIVER_OF_ARROWS_IRON_HEAD
+    category: LOC_CATEGORY_TRADE_GOODS
+    cost_gold: 2
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
     weight: "1"
-    effect: Required to fire bows or crossbows.
-  - name: Quiver of Arrows, Wooden Head
-    category: Trade Goods
-    cost: 5 silver
-    supply: Common
+    effect: LOC_GEAR_QUIVER_OF_ARROWS_IRON_HEAD_EFFECT
+  - id: gear_quiverOfArrowsWoodenHead
+    name: LOC_GEAR_QUIVER_OF_ARROWS_WOODEN_HEAD
+    category: LOC_CATEGORY_TRADE_GOODS
+    cost_gold: 0
+    cost_silver: 5
+    cost_copper: 0
+    supply: supply_common
     weight: "1"
-    effect: Required to fire bows or crossbows. The effectiveness of armor is doubled.
-  - name: Rope, Hemp (10 meters)
-    category: Trade Goods
-    cost: 1 gold
-    supply: Common
+    effect: LOC_GEAR_QUIVER_OF_ARROWS_WOODEN_HEAD_EFFECT
+  - id: gear_ropeHemp_10Meters
+    name: LOC_GEAR_ROPE_HEMP_10_METERS
+    category: LOC_CATEGORY_TRADE_GOODS
+    cost_gold: 1
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
     weight: "1"
-    effect: Boon on ACROBATICS rolls for climbing, but the rope must be secured to something.
-  - name: Rope, Silk (10 meters)
-    category: Trade Goods
-    cost: 10 gold
-    supply: Uncommon
+    effect: LOC_GEAR_ROPE_HEMP_10_METERS_EFFECT
+  - id: gear_ropeSilk_10Meters
+    name: LOC_GEAR_ROPE_SILK_10_METERS
+    category: LOC_CATEGORY_TRADE_GOODS
+    cost_gold: 10
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
     weight: —
-    effect: Boon on ACROBATICS rolls for climbing, but the rope must be secured to something.
-  - name: Saddle
-    category: Trade Goods
-    cost: 10 gold
-    supply: Common
+    effect: LOC_GEAR_ROPE_SILK_10_METERS_EFFECT
+  - id: gear_saddle
+    name: LOC_GEAR_SADDLE
+    category: LOC_CATEGORY_TRADE_GOODS
+    cost_gold: 10
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
     weight: "1"
-    effect: Required to avoid a bane when fighting from horseback.
-  - name: Sleeping Fur
-    category: Trade Goods
-    cost: 1 gold
-    supply: Common
+    effect: LOC_GEAR_SADDLE_EFFECT
+  - id: gear_sleepingFur
+    name: LOC_GEAR_SLEEPING_FUR
+    category: LOC_CATEGORY_TRADE_GOODS
+    cost_gold: 1
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
     weight: "1"
-    effect: Required to avoid a bane on BUSHCRAFT rolls for making camp.
-  - name: Spyglass
-    category: Trade Goods
-    cost: 50 gold
-    supply: Rare
+    effect: LOC_GEAR_SLEEPING_FUR_EFFECT
+  - id: gear_spyglass
+    name: LOC_GEAR_SPYGLASS
+    category: LOC_CATEGORY_TRADE_GOODS
+    cost_gold: 50
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_rare
     weight: "1"
-    effect: Boon on BUSHCRAFT rolls for leading the way during journeys.
-  - name: Tent, Small
-    category: Trade Goods
-    cost: 2 gold
-    supply: Common
+    effect: LOC_GEAR_SPYGLASS_EFFECT
+  - id: gear_tentSmall
+    name: LOC_GEAR_TENT_SMALL
+    category: LOC_CATEGORY_TRADE_GOODS
+    cost_gold: 2
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
     weight: "2"
-    effect: Can accommodate up to two people. Grants a boon on BUSHCRAFT rolls for making camp. Only one person rolls, but others can help.
-  - name: Tent, Large
-    category: Trade Goods
-    cost: 4 gold
-    supply: Common
+    effect: LOC_GEAR_TENT_SMALL_EFFECT
+  - id: gear_tentLarge
+    name: LOC_GEAR_TENT_LARGE
+    category: LOC_CATEGORY_TRADE_GOODS
+    cost_gold: 4
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
     weight: "4"
-    effect: Can accommodate up to six people. Grants a boon on BUSHCRAFT rolls for making camp. Only one person rolls, but others can help.
-  - name: Whistle
-    category: Trade Goods
-    cost: 5 silver
-    supply: Common
+    effect: LOC_GEAR_TENT_LARGE_EFFECT
+  - id: gear_whistle
+    name: LOC_GEAR_WHISTLE
+    category: LOC_CATEGORY_TRADE_GOODS
+    cost_gold: 0
+    cost_silver: 5
+    cost_copper: 0
+    supply: supply_common
     weight: —
-    effect: Can be heard from up to 100 meters away.
-  - name: Amulet
-    category: Studies & Magic
-    cost: 3 gold
-    supply: Uncommon
+    effect: LOC_GEAR_WHISTLE_EFFECT
+  - id: gear_amulet
+    name: LOC_GEAR_AMULET
+    category: LOC_CATEGORY_STUDIES_MAGIC
+    cost_gold: 3
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
     weight: —
-    effect: Can be used as a focus for spells.
-  - name: Book
-    category: Studies & Magic
-    cost: 25 gold
-    supply: Uncommon
+    effect: LOC_GEAR_AMULET_EFFECT
+  - id: gear_book
+    name: LOC_GEAR_BOOK
+    category: LOC_CATEGORY_STUDIES_MAGIC
+    cost_gold: 25
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
     weight: "1"
-    effect: Boon on skill rolls in a specific subject. The cost varies depending on the subject.
-  - name: Brooch
-    category: Studies & Magic
-    cost: 5 gold
-    supply: Uncommon
+    effect: LOC_GEAR_BOOK_EFFECT
+  - id: gear_brooch
+    name: LOC_GEAR_BROOCH
+    category: LOC_CATEGORY_STUDIES_MAGIC
+    cost_gold: 5
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
     weight: —
-    effect: Can be used as a focus for spells.
-  - name: Chalk
-    category: Studies & Magic
-    cost: 1 copper
-    supply: Common
+    effect: LOC_GEAR_BROOCH_EFFECT
+  - id: gear_chalk
+    name: LOC_GEAR_CHALK
+    category: LOC_CATEGORY_STUDIES_MAGIC
+    cost_gold: 0
+    cost_silver: 0
+    cost_copper: 1
+    supply: supply_common
     weight: —
-    effect: Can be used as a focus for spells.
-  - name: Grimoire
-    category: Studies & Magic
-    cost: 50 gold
-    supply: Unique
+    effect: LOC_GEAR_CHALK_EFFECT
+  - id: gear_grimoire
+    name: LOC_GEAR_GRIMOIRE
+    category: LOC_CATEGORY_STUDIES_MAGIC
+    cost_gold: 50
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_unique
     weight: "1"
-    effect: The cost varies depending on the content and may be much higher.
-  - name: Hourglass
-    category: Studies & Magic
-    cost: 25 gold
-    supply: Rare
+    effect: LOC_GEAR_GRIMOIRE_EFFECT
+  - id: gear_hourglass
+    name: LOC_GEAR_HOURGLASS
+    category: LOC_CATEGORY_STUDIES_MAGIC
+    cost_gold: 25
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_rare
     weight: "1"
-    effect: Can be used as a focus for spells.
-  - name: Notebook
-    category: Studies & Magic
-    cost: 5 gold
-    supply: Common
+    effect: LOC_GEAR_HOURGLASS_EFFECT
+  - id: gear_notebook
+    name: LOC_GEAR_NOTEBOOK
+    category: LOC_CATEGORY_STUDIES_MAGIC
+    cost_gold: 5
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
     weight: "1"
-    effect: Empty, can be used as a grimoire.
-  - name: Orbuculum
-    category: Studies & Magic
-    cost: 18 gold
-    supply: Uncommon
+    effect: LOC_GEAR_NOTEBOOK_EFFECT
+  - id: gear_orbuculum
+    name: LOC_GEAR_ORBUCULUM
+    category: LOC_CATEGORY_STUDIES_MAGIC
+    cost_gold: 18
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
     weight: "1"
-    effect: Can be used as a focus for spells.
-  - name: Paper (sheet)
-    category: Studies & Magic
-    cost: 2 silver
-    supply: Uncommon
+    effect: LOC_GEAR_ORBUCULUM_EFFECT
+  - id: gear_paperSheet
+    name: LOC_GEAR_PAPER_SHEET
+    category: LOC_CATEGORY_STUDIES_MAGIC
+    cost_gold: 0
+    cost_silver: 2
+    cost_copper: 0
+    supply: supply_uncommon
     weight: —
-    effect: Can be used to write down spells.
-  - name: Parchment (sheet)
-    category: Studies & Magic
-    cost: 1 silver
-    supply: Common
+    effect: LOC_GEAR_PAPER_SHEET_EFFECT
+  - id: gear_parchmentSheet
+    name: LOC_GEAR_PARCHMENT_SHEET
+    category: LOC_CATEGORY_STUDIES_MAGIC
+    cost_gold: 0
+    cost_silver: 1
+    cost_copper: 0
+    supply: supply_common
     weight: —
-    effect: Can be used to write down spells.
-  - id: quill-and-ink
-    name: Quill & Ink
-    category: Studies & Magic
-    cost: 10 gold
-    supply: Uncommon
+    effect: LOC_GEAR_PARCHMENT_SHEET_EFFECT
+  - id: gear_quillAndInk
+    name: LOC_GEAR_QUILL_AND_INK
+    category: LOC_CATEGORY_STUDIES_MAGIC
+    cost_gold: 10
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
     weight: "1"
-    effect: Can be used to write down spells.
-  - name: Reliquary
-    category: Studies & Magic
-    cost: 5 gold
-    supply: Uncommon
+    effect: LOC_GEAR_QUILL_AND_INK_EFFECT
+  - id: gear_reliquary
+    name: LOC_GEAR_RELIQUARY
+    category: LOC_CATEGORY_STUDIES_MAGIC
+    cost_gold: 5
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
     weight: "1"
-    effect: Can be used as a focus for spells.
-  - name: Wand
-    category: Studies & Magic
-    cost: 10 gold
-    supply: Uncommon
+    effect: LOC_GEAR_RELIQUARY_EFFECT
+  - id: gear_wand
+    name: LOC_GEAR_WAND
+    category: LOC_CATEGORY_STUDIES_MAGIC
+    cost_gold: 10
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
     weight: "1"
-    effect: Can be used as a focus for spells.
-  - id: flint-and-tinder
-    name: Flint & Tinder
-    category: Light Sources
-    cost: 5 silver
-    supply: Common
+    effect: LOC_GEAR_WAND_EFFECT
+  - id: gear_flintAndTinder
+    name: LOC_GEAR_FLINT_AND_TINDER
+    category: LOC_CATEGORY_LIGHT_SOURCES
+    cost_gold: 0
+    cost_silver: 5
+    cost_copper: 0
+    supply: supply_common
     weight: —
-    effect: Required to light torches, candles, or lanterns, and to make a fire.
-  - name: Lamp Oil
-    category: Light Sources
-    cost: 3 silver
-    supply: Common
+    effect: LOC_GEAR_FLINT_AND_TINDER_EFFECT
+  - id: gear_lampOil
+    name: LOC_GEAR_LAMP_OIL
+    category: LOC_CATEGORY_LIGHT_SOURCES
+    cost_gold: 0
+    cost_silver: 3
+    cost_copper: 0
+    supply: supply_common
     weight: "1"
-    effect: Holds ten doses. Each dose keeps an oil lamp or lantern burning for up to one shift of time.
-  - name: Lantern
-    category: Light Sources
-    cost: 10 gold
-    supply: Common
+    effect: LOC_GEAR_LAMP_OIL_EFFECT
+  - id: gear_lantern
+    name: LOC_GEAR_LANTERN
+    category: LOC_CATEGORY_LIGHT_SOURCES
+    cost_gold: 10
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
     weight: "1"
-    effect: Illuminates a 10 meter radius. Burns for up to a shift of time, but roll D8 after each stretch of time. On 1 the lantern goes out and must be refilled and relit (action).
-  - name: Oil Lamp
-    category: Light Sources
-    cost: 1 gold
-    supply: Common
+    effect: LOC_GEAR_LANTERN_EFFECT
+  - id: gear_oilLamp
+    name: LOC_GEAR_OIL_LAMP
+    category: LOC_CATEGORY_LIGHT_SOURCES
+    cost_gold: 1
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
     weight: "1"
-    effect: Illuminates a 10 meter radius. Burns for up to a shift of time, but roll D6 after each stretch of time. On 1 the lamp goes out and must be refilled and relit (action).
-  - name: Tallow Candle
-    category: Light Sources
-    cost: 1 copper
-    supply: Common
+    effect: LOC_GEAR_OIL_LAMP_EFFECT
+  - id: gear_tallowCandle
+    name: LOC_GEAR_TALLOW_CANDLE
+    category: LOC_CATEGORY_LIGHT_SOURCES
+    cost_gold: 0
+    cost_silver: 0
+    cost_copper: 1
+    supply: supply_common
     weight: —
-    effect: Illuminates a 4 meter radius. Burns for up to a shift of time, but roll D4 after each stretch of time, or if the bearer attacks or is attacked. On 1 the candle goes out.
-  - name: Torch
-    category: Light Sources
-    cost: 5 copper
-    supply: Common
+    effect: LOC_GEAR_TALLOW_CANDLE_EFFECT
+  - id: gear_torch
+    name: LOC_GEAR_TORCH
+    category: LOC_CATEGORY_LIGHT_SOURCES
+    cost_gold: 0
+    cost_silver: 0
+    cost_copper: 5
+    supply: supply_common
     weight: "1"
-    effect: Illuminates a 10 meter radius. Burns for up to a shift of time, but roll D6 after each stretch of time, or if the torch is used as a weapon. On 1 the torch goes out.
-  - name: Crowbar
-    category: Tools
-    cost: 2 gold
-    supply: Common
+    effect: LOC_GEAR_TORCH_EFFECT
+  - id: gear_crowbar
+    name: LOC_GEAR_CROWBAR
+    category: LOC_CATEGORY_TOOLS
+    cost_gold: 2
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
     weight: "1"
-    effect: 2D6 damage against a door or wall, without risk of being damaged. Hits automatically.
-  - name: Hammer
-    category: Tools
-    cost: 1 gold
-    supply: Common
+    effect: LOC_GEAR_CROWBAR_EFFECT
+  - id: gear_hammer
+    name: LOC_GEAR_HAMMER
+    category: LOC_CATEGORY_TOOLS
+    cost_gold: 1
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
     weight: "1"
-    effect: 2D4 damage against a door or wall, without risk of being damaged. Hits automatically.
-  - id: needle-and-thread
-    name: Needle & Thread
-    category: Tools
-    cost: 3 silver
-    supply: Common
+    effect: LOC_GEAR_HAMMER_EFFECT
+  - id: gear_needleAndThread
+    name: LOC_GEAR_NEEDLE_AND_THREAD
+    category: LOC_CATEGORY_TOOLS
+    cost_gold: 0
+    cost_silver: 3
+    cost_copper: 0
+    supply: supply_common
     weight: —
-    effect: Mends clothes with a CRAFTING roll.
-  - name: Pickaxe
-    category: Tools
-    cost: 3 gold
-    supply: Common
+    effect: LOC_GEAR_NEEDLE_AND_THREAD_EFFECT
+  - id: gear_pickaxe
+    name: LOC_GEAR_PICKAXE
+    category: LOC_CATEGORY_TOOLS
+    cost_gold: 3
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
     weight: "1"
-    effect: 2D8 damage against a door or wall, without risk of being damaged. Hits automatically.
-  - name: Saw
-    category: Tools
-    cost: 5 gold
-    supply: Uncommon
+    effect: LOC_GEAR_PICKAXE_EFFECT
+  - id: gear_saw
+    name: LOC_GEAR_SAW
+    category: LOC_CATEGORY_TOOLS
+    cost_gold: 5
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
     weight: "1"
-    effect: Cuts metal or wood in one stretch.
-  - name: Shovel
-    category: Tools
-    cost: 2 gold
-    supply: Common
+    effect: LOC_GEAR_SAW_EFFECT
+  - id: gear_shovel
+    name: LOC_GEAR_SHOVEL
+    category: LOC_CATEGORY_TOOLS
+    cost_gold: 2
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
     weight: "1"
-    effect: Reduces the time spent digging by half.
-  - name: Sledgehammer
-    category: Tools
-    cost: 3 gold
-    supply: Common
+    effect: LOC_GEAR_SHOVEL_EFFECT
+  - id: gear_sledgehammer
+    name: LOC_GEAR_SLEDGEHAMMER
+    category: LOC_CATEGORY_TOOLS
+    cost_gold: 3
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
     weight: "2"
-    effect: 2D10 damage against a door or wall, without risk of being damaged. Hits automatically.
-  - name: Blacksmithing Tools
-    category: Tools
-    cost: 20 gold
-    supply: Uncommon
+    effect: LOC_GEAR_SLEDGEHAMMER_EFFECT
+  - id: gear_blacksmithingTools
+    name: LOC_GEAR_BLACKSMITHING_TOOLS
+    category: LOC_CATEGORY_TOOLS
+    cost_gold: 20
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
     weight: "1"
-    effect: Used for CRAFTING.
-  - name: Carpentry Tools
-    category: Tools
-    cost: 8 gold
-    supply: Uncommon
+    effect: LOC_GEAR_BLACKSMITHING_TOOLS_EFFECT
+  - id: gear_carpentryTools
+    name: LOC_GEAR_CARPENTRY_TOOLS
+    category: LOC_CATEGORY_TOOLS
+    cost_gold: 8
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
     weight: "1"
-    effect: Used for CRAFTING.
-  - name: Tanning Tools
-    category: Tools
-    cost: 5 gold
-    supply: Uncommon
+    effect: LOC_GEAR_CARPENTRY_TOOLS_EFFECT
+  - id: gear_tanningTools
+    name: LOC_GEAR_TANNING_TOOLS
+    category: LOC_CATEGORY_TOOLS
+    cost_gold: 5
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
     weight: "1"
-    effect: Used for CRAFTING.
-  - name: Backpack
-    category: Containers
-    cost: 3 gold
-    supply: Common
+    effect: LOC_GEAR_TANNING_TOOLS_EFFECT
+  - id: gear_backpack
+    name: LOC_GEAR_BACKPACK
+    category: LOC_CATEGORY_CONTAINERS
+    cost_gold: 3
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
     weight: —
-    effect: Increases carrying capacity by 2. A person can only use one backpack at a time.
-  - name: Barrel
-    category: Containers
-    cost: 2 gold
-    supply: Common
+    effect: LOC_GEAR_BACKPACK_EFFECT
+  - id: gear_barrel
+    name: LOC_GEAR_BARREL
+    category: LOC_CATEGORY_CONTAINERS
+    cost_gold: 2
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
     weight: "2"
-    effect: Holds up to 15 weight units. Can take 10 points of damage, armor rating 3.
-  - name: Basket
-    category: Containers
-    cost: 4 silver
-    supply: Common
+    effect: LOC_GEAR_BARREL_EFFECT
+  - id: gear_basket
+    name: LOC_GEAR_BASKET
+    category: LOC_CATEGORY_CONTAINERS
+    cost_gold: 0
+    cost_silver: 4
+    cost_copper: 0
+    supply: supply_common
     weight: "1"
-    effect: Holds up to 10 weight units.
-  - name: Bottle
-    category: Containers
-    cost: 1 gold
-    supply: Common
+    effect: LOC_GEAR_BASKET_EFFECT
+  - id: gear_bottle
+    name: LOC_GEAR_BOTTLE
+    category: LOC_CATEGORY_CONTAINERS
+    cost_gold: 1
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
     weight: "1"
-    effect: Contains 1 unit of liquid.
-  - name: Bucket
-    category: Containers
-    cost: 5 copper
-    supply: Common
+    effect: LOC_GEAR_BOTTLE_EFFECT
+  - id: gear_bucket
+    name: LOC_GEAR_BUCKET
+    category: LOC_CATEGORY_CONTAINERS
+    cost_gold: 0
+    cost_silver: 0
+    cost_copper: 5
+    supply: supply_common
     weight: "1"
-    effect: Contains up to 5 units of liquid.
-  - name: Chest
-    category: Containers
-    cost: 5 gold
-    supply: Common
+    effect: LOC_GEAR_BUCKET_EFFECT
+  - id: gear_chest
+    name: LOC_GEAR_CHEST
+    category: LOC_CATEGORY_CONTAINERS
+    cost_gold: 5
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
     weight: "3"
-    effect: Holds up to 20 weight units. Can take 25 points of damage, armor rating 5.
-  - name: Clay Jug
-    category: Containers
-    cost: 5 silver
-    supply: Common
+    effect: LOC_GEAR_CHEST_EFFECT
+  - id: gear_clayJug
+    name: LOC_GEAR_CLAY_JUG
+    category: LOC_CATEGORY_CONTAINERS
+    cost_gold: 0
+    cost_silver: 5
+    cost_copper: 0
+    supply: supply_common
     weight: "1"
-    effect: Contains 1 unit of liquid
-  - name: Saddle Bag
-    category: Containers
-    cost: 6 gold
-    supply: Common
+    effect: LOC_GEAR_CLAY_JUG_EFFECT
+  - id: gear_saddleBag
+    name: LOC_GEAR_SADDLE_BAG
+    category: LOC_CATEGORY_CONTAINERS
+    cost_gold: 6
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
     weight: —
-    effect: Increases an animal's carrying capacity by 2. An animal can carry no more than two saddle bags.
-  - name: Poison, Lethal (dose)
-    category: Medicine
-    cost: 2 gold × potency
-    supply: Uncommon
+    effect: LOC_GEAR_SADDLE_BAG_EFFECT
+  - id: gear_poisonLethalDose
+    name: LOC_GEAR_POISON_LETHAL_DOSE
+    category: LOC_CATEGORY_MEDICINE
+    cost_gold: 2
+    cost_silver: 0
+    cost_copper: 0
+    cost_note: LOC_COST_NOTE_POTENCY
+    supply: supply_uncommon
     weight: "1"
-    effect: See page 52.
-  - name: Poison, Paralyzing (dose)
-    category: Medicine
-    cost: 12 silver × potency
-    supply: Uncommon
+    effect: LOC_GEAR_POISON_LETHAL_DOSE_EFFECT
+  - id: gear_poisonParalyzingDose
+    name: LOC_GEAR_POISON_PARALYZING_DOSE
+    category: LOC_CATEGORY_MEDICINE
+    cost_gold: 0
+    cost_silver: 12
+    cost_copper: 0
+    cost_note: LOC_COST_NOTE_POTENCY
+    supply: supply_uncommon
     weight: "1"
-    effect: See page 53.
-  - name: Poison, Sleeping (dose)
-    category: Medicine
-    cost: 6 silver × potency
-    supply: Uncommon
+    effect: LOC_GEAR_POISON_PARALYZING_DOSE_EFFECT
+  - id: gear_poisonSleepingDose
+    name: LOC_GEAR_POISON_SLEEPING_DOSE
+    category: LOC_CATEGORY_MEDICINE
+    cost_gold: 0
+    cost_silver: 6
+    cost_copper: 0
+    cost_note: LOC_COST_NOTE_POTENCY
+    supply: supply_uncommon
     weight: "1"
-    effect: See page 53.
-  - name: Herbal Concoction (dose)
-    category: Medicine
-    cost: 1 gold
-    supply: Uncommon
+    effect: LOC_GEAR_POISON_SLEEPING_DOSE_EFFECT
+  - id: gear_herbalConcoctionDose
+    name: LOC_GEAR_HERBAL_CONCOCTION_DOSE
+    category: LOC_CATEGORY_MEDICINE
+    cost_gold: 1
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
     weight: "1"
-    effect: Boon on HEALING rolls for resisting disease.
-  - name: Healing Potion (dose)
-    category: Medicine
-    cost: 50 gold
-    supply: Rare
+    effect: LOC_GEAR_HERBAL_CONCOCTION_DOSE_EFFECT
+  - id: gear_healingPotionDose
+    name: LOC_GEAR_HEALING_POTION_DOSE
+    category: LOC_CATEGORY_MEDICINE
+    cost_gold: 50
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_rare
     weight: "1"
-    effect: Instantly heals 2D6 HP. Stronger potions heal more HP, but are more expensive.
-  - name: Bandages (10)
-    category: Medicine
-    cost: 5 silver
-    supply: Common
+    effect: LOC_GEAR_HEALING_POTION_DOSE_EFFECT
+  - id: gear_bandages_10
+    name: LOC_GEAR_BANDAGES_10
+    category: LOC_CATEGORY_MEDICINE
+    cost_gold: 0
+    cost_silver: 5
+    cost_copper: 0
+    supply: supply_common
     weight: "1"
-    effect: Required to avoid a bane on HEALING rolls for saving lives. Each attempt consumes a bandage.
-  - name: Surgical Instruments
-    category: Medicine
-    cost: 15 gold
-    supply: Uncommon
+    effect: LOC_GEAR_BANDAGES_10_EFFECT
+  - id: gear_surgicalInstruments
+    name: LOC_GEAR_SURGICAL_INSTRUMENTS
+    category: LOC_CATEGORY_MEDICINE
+    cost_gold: 15
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
     weight: "1"
-    effect: Boon on HEALING rolls for saving a life.
-  - name: Bath at an Inn
-    category: Services
-    cost: 6 copper
-    supply: Common
-    effect: Heals a condition of your choice in one stretch. Only one bath per day has this effect.
-  - name: Bodyguard
-    category: Services
-    cost: 2 gold/ day
-    supply: Uncommon
-    effect: Stats as a typical guard on page 105.
-  - name: Bowl of Stew
-    category: Services
-    cost: 5 copper
-    supply: Common
-    effect: Covers the daily need of food.
-  - name: Clothes Repair
-    category: Services
-    cost: 5 silver
-    supply: Common
-    effect: Eliminates the effect of torn clothes.
-  - name: Courier
-    category: Services
-    cost: 1 silver/ kilometer
-    supply: Common
-    effect: Delivers a message to the recipient.
-  - name: Feast
-    category: Services
-    cost: 2 gold
-    supply: Uncommon
-    effect: Covers the daily need of food.
-  - name: Goblet of Wine
-    category: Services
-    cost: 2 silver
-    supply: Uncommon
-    effect: After drinking two goblets in a single shift, each additional goblet causes a condition of your choice.
-  - name: Haircut
-    category: Services
-    cost: 2 silver
-    supply: Common
-    effect: Heals a chosen condition in one stretch. Can only be done once per week.
-  - name: Healing
-    category: Services
-    cost: 5 gold
-    supply: Uncommon
-    effect: HEALING rolls succeed automatically.
-  - name: Lodging at Inn, Separate Room
-    category: Services
-    cost: 5 silver
-    supply: Common
-    effect: A shift rest can be had without a BUSHCRAFT roll.
-  - name: Lodging at Inn, Dormitory
-    category: Services
-    cost: 1 silver
-    supply: Common
-    effect: A shift rest can be had without a BUSHCRAFT roll, but roll D4 each shift. On a 1 someone's snoring prevents anyone else in the room from sleeping.
-  - name: Lodging at Inn, Luxury Suite
-    category: Services
-    cost: 2 gold
-    supply: Uncommon
-    effect: A shift rest can be had without a BUSHCRAFT roll.
-  - name: Meal at an Inn
-    category: Services
-    cost: 3 silver
-    supply: Common
-    effect: Covers the daily need of food.
-  - name: Road Toll
-    category: Services
-    cost: 2 copper
-    supply: Common
-    effect: Allows passage.
-  - name: Stagecoach
-    category: Services
-    cost: 3 copper/ kilometer
-    supply: Common
-    effect: Transportation to a specified destination.
-  - name: Tankard of Mead
-    category: Services
-    cost: 4 copper
-    supply: Common
-    effect: After drinking three tankards in a single shift, each additional tankard causes a condition of your choice.
-  - name: Teacher
-    category: Services
-    cost: 5 gold/ shift or more
-    supply: Uncommon
-    effect: A shift of instruction grants an extra advancement roll.
-  - name: Bear Trap
-    category: Hunting & Fishing
-    cost: 3 gold
-    supply: Uncommon
+    effect: LOC_GEAR_SURGICAL_INSTRUMENTS_EFFECT
+  - id: gear_bathAtAnInn
+    name: LOC_GEAR_BATH_AT_AN_INN
+    category: LOC_CATEGORY_SERVICES
+    cost_gold: 0
+    cost_silver: 0
+    cost_copper: 6
+    supply: supply_common
+    effect: LOC_GEAR_BATH_AT_AN_INN_EFFECT
+  - id: gear_bodyguard
+    name: LOC_GEAR_BODYGUARD
+    category: LOC_CATEGORY_SERVICES
+    cost_gold: 2
+    cost_silver: 0
+    cost_copper: 0
+    cost_note: LOC_COST_NOTE_DAY
+    supply: supply_uncommon
+    effect: LOC_GEAR_BODYGUARD_EFFECT
+  - id: gear_bowlOfStew
+    name: LOC_GEAR_BOWL_OF_STEW
+    category: LOC_CATEGORY_SERVICES
+    cost_gold: 0
+    cost_silver: 0
+    cost_copper: 5
+    supply: supply_common
+    effect: LOC_GEAR_BOWL_OF_STEW_EFFECT
+  - id: gear_clothesRepair
+    name: LOC_GEAR_CLOTHES_REPAIR
+    category: LOC_CATEGORY_SERVICES
+    cost_gold: 0
+    cost_silver: 5
+    cost_copper: 0
+    supply: supply_common
+    effect: LOC_GEAR_CLOTHES_REPAIR_EFFECT
+  - id: gear_courier
+    name: LOC_GEAR_COURIER
+    category: LOC_CATEGORY_SERVICES
+    cost_gold: 0
+    cost_silver: 1
+    cost_copper: 0
+    cost_note: LOC_COST_NOTE_KILOMETER
+    supply: supply_common
+    effect: LOC_GEAR_COURIER_EFFECT
+  - id: gear_feast
+    name: LOC_GEAR_FEAST
+    category: LOC_CATEGORY_SERVICES
+    cost_gold: 2
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
+    effect: LOC_GEAR_FEAST_EFFECT
+  - id: gear_gobletOfWine
+    name: LOC_GEAR_GOBLET_OF_WINE
+    category: LOC_CATEGORY_SERVICES
+    cost_gold: 0
+    cost_silver: 2
+    cost_copper: 0
+    supply: supply_uncommon
+    effect: LOC_GEAR_GOBLET_OF_WINE_EFFECT
+  - id: gear_haircut
+    name: LOC_GEAR_HAIRCUT
+    category: LOC_CATEGORY_SERVICES
+    cost_gold: 0
+    cost_silver: 2
+    cost_copper: 0
+    supply: supply_common
+    effect: LOC_GEAR_HAIRCUT_EFFECT
+  - id: gear_healing
+    name: LOC_GEAR_HEALING
+    category: LOC_CATEGORY_SERVICES
+    cost_gold: 5
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
+    effect: LOC_GEAR_HEALING_EFFECT
+  - id: gear_lodgingAtInnSeparateRoom
+    name: LOC_GEAR_LODGING_AT_INN_SEPARATE_ROOM
+    category: LOC_CATEGORY_SERVICES
+    cost_gold: 0
+    cost_silver: 5
+    cost_copper: 0
+    supply: supply_common
+    effect: LOC_GEAR_LODGING_AT_INN_SEPARATE_ROOM_EFFECT
+  - id: gear_lodgingAtInnDormitory
+    name: LOC_GEAR_LODGING_AT_INN_DORMITORY
+    category: LOC_CATEGORY_SERVICES
+    cost_gold: 0
+    cost_silver: 1
+    cost_copper: 0
+    supply: supply_common
+    effect: LOC_GEAR_LODGING_AT_INN_DORMITORY_EFFECT
+  - id: gear_lodgingAtInnLuxurySuite
+    name: LOC_GEAR_LODGING_AT_INN_LUXURY_SUITE
+    category: LOC_CATEGORY_SERVICES
+    cost_gold: 2
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
+    effect: LOC_GEAR_LODGING_AT_INN_LUXURY_SUITE_EFFECT
+  - id: gear_mealAtAnInn
+    name: LOC_GEAR_MEAL_AT_AN_INN
+    category: LOC_CATEGORY_SERVICES
+    cost_gold: 0
+    cost_silver: 3
+    cost_copper: 0
+    supply: supply_common
+    effect: LOC_GEAR_MEAL_AT_AN_INN_EFFECT
+  - id: gear_roadToll
+    name: LOC_GEAR_ROAD_TOLL
+    category: LOC_CATEGORY_SERVICES
+    cost_gold: 0
+    cost_silver: 0
+    cost_copper: 2
+    supply: supply_common
+    effect: LOC_GEAR_ROAD_TOLL_EFFECT
+  - id: gear_stagecoach
+    name: LOC_GEAR_STAGECOACH
+    category: LOC_CATEGORY_SERVICES
+    cost_gold: 0
+    cost_silver: 0
+    cost_copper: 3
+    cost_note: LOC_COST_NOTE_KILOMETER
+    supply: supply_common
+    effect: LOC_GEAR_STAGECOACH_EFFECT
+  - id: gear_tankardOfMead
+    name: LOC_GEAR_TANKARD_OF_MEAD
+    category: LOC_CATEGORY_SERVICES
+    cost_gold: 0
+    cost_silver: 0
+    cost_copper: 4
+    supply: supply_common
+    effect: LOC_GEAR_TANKARD_OF_MEAD_EFFECT
+  - id: gear_teacher
+    name: LOC_GEAR_TEACHER
+    category: LOC_CATEGORY_SERVICES
+    cost_gold: 5
+    cost_silver: 0
+    cost_copper: 0
+    cost_note: LOC_COST_NOTE_SHIFT_OR_MORE
+    supply: supply_uncommon
+    effect: LOC_GEAR_TEACHER_EFFECT
+  - id: gear_bearTrap
+    name: LOC_GEAR_BEAR_TRAP
+    category: LOC_CATEGORY_HUNTING_FISHING
+    cost_gold: 3
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
     weight: "1"
-    effect: Can be used for hunting.
-  - name: Fishing Rod
-    category: Hunting & Fishing
-    cost: 8 silver
-    supply: Common
+    effect: LOC_GEAR_BEAR_TRAP_EFFECT
+  - id: gear_fishingRod
+    name: LOC_GEAR_FISHING_ROD
+    category: LOC_CATEGORY_HUNTING_FISHING
+    cost_gold: 0
+    cost_silver: 8
+    cost_copper: 0
+    supply: supply_common
     weight: "1"
-    effect: Gives D4 rations of food when fishing.
-  - name: Fishing Net
-    category: Hunting & Fishing
-    cost: 2 gold
-    supply: Common
+    effect: LOC_GEAR_FISHING_ROD_EFFECT
+  - id: gear_fishingNet
+    name: LOC_GEAR_FISHING_NET
+    category: LOC_CATEGORY_HUNTING_FISHING
+    cost_gold: 2
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
     weight: "2"
-    effect: Gives D6 rations of food when fishing.
-  - name: Snare
-    category: Hunting & Fishing
-    cost: 5 copper
-    supply: Common
+    effect: LOC_GEAR_FISHING_NET_EFFECT
+  - id: gear_snare
+    name: LOC_GEAR_SNARE
+    category: LOC_CATEGORY_HUNTING_FISHING
+    cost_gold: 0
+    cost_silver: 0
+    cost_copper: 5
+    supply: supply_common
     weight: "1"
-    effect: Can be used for hunting. Can only be used once.
-  - name: Canoe
-    category: Means of Travel
-    cost: 6 gold
-    supply: Common
-    effect: Can carry two people and 10 weight units
-  - name: Cart
-    category: Means of Travel
-    cost: 15 gold
-    supply: Common
-    effect: Pulled by one horse or donkey. Can carry two people and 50 weight units.
-  - name: Rowing Boat
-    category: Means of Travel
-    cost: 15 gold
-    supply: Common
-    effect: Can carry four people and 50 weight units
-  - name: Sailing Boat
-    category: Means of Travel
-    cost: 40 gold
-    supply: Uncommon
-    effect: Can carry six people and 100 weight units
-  - name: Wagon
-    category: Means of Travel
-    cost: 30 gold
-    supply: Common
-    effect: Pulled by two horses or donkeys. Can carry four people and 100 weight units.
-  - name: Chicken
-    category: Animals
-    cost: 4 silver
-    supply: Common
-    effect: Yields one ration of food when slaughtered. The meat should be cooked.
-  - name: Combat Trained Horse
-    category: Animals
-    cost: 400 gold
-    supply: Rare
-    effect: Can carry one rider and 10 weight units, or two riders
-  - name: Cow
-    category: Animals
-    cost: 10 gold
-    supply: Uncommon
-    effect: Yields D4 rations of food (milk) per day, and 2D10 rations of food when slaughtered. The meat should be cooked.
-  - name: Donkey
-    category: Animals
-    cost: 12 gold
-    supply: Common
-    effect: Can carry 10 weight units. Cannot be ridden.
-  - name: Guard Dog
-    category: Animals
-    cost: 15 gold
-    supply: Common
-    effect: Protects its owner. For stats, see page 99.
-  - name: Homing Pigeon in Cage
-    category: Animals
-    cost: 2 gold
-    supply: Uncommon
-    effect: Flies home to its dovecote when released, wherever it is
-  - name: Pig
-    category: Animals
-    cost: 2 gold
-    supply: Common
-    effect: Yields 2D6 rations of food when slaughtered. The meat should be cooked.
-  - name: Riding Horse
-    category: Animals
-    cost: 60 gold
-    supply: Uncommon
-    effect: Can carry one rider and 10 weight units, or two riders
-  - name: Sheep
-    category: Animals
-    cost: 3 gold
-    supply: Common
-    effect: Yields 2D4 rations of food when slaughtered. The meat should be cooked.
+    effect: LOC_GEAR_SNARE_EFFECT
+  - id: gear_canoe
+    name: LOC_GEAR_CANOE
+    category: LOC_CATEGORY_MEANS_OF_TRAVEL
+    cost_gold: 6
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
+    effect: LOC_GEAR_CANOE_EFFECT
+  - id: gear_cart
+    name: LOC_GEAR_CART
+    category: LOC_CATEGORY_MEANS_OF_TRAVEL
+    cost_gold: 15
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
+    effect: LOC_GEAR_CART_EFFECT
+  - id: gear_rowingBoat
+    name: LOC_GEAR_ROWING_BOAT
+    category: LOC_CATEGORY_MEANS_OF_TRAVEL
+    cost_gold: 15
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
+    effect: LOC_GEAR_ROWING_BOAT_EFFECT
+  - id: gear_sailingBoat
+    name: LOC_GEAR_SAILING_BOAT
+    category: LOC_CATEGORY_MEANS_OF_TRAVEL
+    cost_gold: 40
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
+    effect: LOC_GEAR_SAILING_BOAT_EFFECT
+  - id: gear_wagon
+    name: LOC_GEAR_WAGON
+    category: LOC_CATEGORY_MEANS_OF_TRAVEL
+    cost_gold: 30
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
+    effect: LOC_GEAR_WAGON_EFFECT
+  - id: gear_chicken
+    name: LOC_GEAR_CHICKEN
+    category: LOC_CATEGORY_ANIMALS
+    cost_gold: 0
+    cost_silver: 4
+    cost_copper: 0
+    supply: supply_common
+    effect: LOC_GEAR_CHICKEN_EFFECT
+  - id: gear_combatTrainedHorse
+    name: LOC_GEAR_COMBAT_TRAINED_HORSE
+    category: LOC_CATEGORY_ANIMALS
+    cost_gold: 400
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_rare
+    effect: LOC_GEAR_COMBAT_TRAINED_HORSE_EFFECT
+  - id: gear_cow
+    name: LOC_GEAR_COW
+    category: LOC_CATEGORY_ANIMALS
+    cost_gold: 10
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
+    effect: LOC_GEAR_COW_EFFECT
+  - id: gear_donkey
+    name: LOC_GEAR_DONKEY
+    category: LOC_CATEGORY_ANIMALS
+    cost_gold: 12
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
+    effect: LOC_GEAR_DONKEY_EFFECT
+  - id: gear_guardDog
+    name: LOC_GEAR_GUARD_DOG
+    category: LOC_CATEGORY_ANIMALS
+    cost_gold: 15
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
+    effect: LOC_GEAR_GUARD_DOG_EFFECT
+  - id: gear_homingPigeonInCage
+    name: LOC_GEAR_HOMING_PIGEON_IN_CAGE
+    category: LOC_CATEGORY_ANIMALS
+    cost_gold: 2
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
+    effect: LOC_GEAR_HOMING_PIGEON_IN_CAGE_EFFECT
+  - id: gear_pig
+    name: LOC_GEAR_PIG
+    category: LOC_CATEGORY_ANIMALS
+    cost_gold: 2
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
+    effect: LOC_GEAR_PIG_EFFECT
+  - id: gear_ridingHorse
+    name: LOC_GEAR_RIDING_HORSE
+    category: LOC_CATEGORY_ANIMALS
+    cost_gold: 60
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_uncommon
+    effect: LOC_GEAR_RIDING_HORSE_EFFECT
+  - id: gear_sheep
+    name: LOC_GEAR_SHEEP
+    category: LOC_CATEGORY_ANIMALS
+    cost_gold: 3
+    cost_silver: 0
+    cost_copper: 0
+    supply: supply_common
+    effect: LOC_GEAR_SHEEP_EFFECT

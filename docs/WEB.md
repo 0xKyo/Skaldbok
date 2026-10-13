@@ -24,9 +24,27 @@ Arriba, junto al nombre, hay dos botones **◀ ▶** (en la página del máster 
 
 **Encabezado del máster:** el nombre *Skaldbok* con la versión, las flechas y las pestañas van en **una sola línea** (ya no hay etiqueta "Game Master"); el encabezado queda fijo arriba al hacer scroll. Lo mismo en la página del jugador (sin el resumen del personaje).
 
+## Idioma (inglés / español)
+
+Cada persona elige el idioma **en su propio navegador** con el selector **EN · English / ES · Español** del encabezado (máster y
+jugadores por igual); la elección queda guardada en ese navegador y la página se recarga en el idioma nuevo. Mientras nadie eligió nada
+en ese navegador, la página habla **el idioma del máster**, el que está puesto en la app de escritorio (Settings › Language, guardado en
+`settings.json` de la carpeta del usuario, que el servidor lee al arrancar); `GET /api/health` (sin token) lo dice: `{"ok":true,"language":"es","languages":[{"id":"en","name":"English"},{"id":"es","name":"Español"}]}`.
+
+* La interfaz (botones, pestañas, mensajes) sale de `web/client/src/locales/<idioma>.js`; en español es rioplatense.
+* Todo lo que manda el servidor (reglas, fichas, criaturas, tablas, aventuras, mensajes de error) viene en el idioma que pide cada
+  request con la cabecera **`X-Skaldbok-Lang: es`** (o `?lang=es`). Lo traducido sale de las traducciones de los packs
+  (`i18n/<idioma>/`, ver HOMEBREW.md › Traducciones), con el texto de los libros en español.
+* **Nada guardado cambia con el idioma**: los personajes, el tablero, las notas y las sesiones guardan claves en inglés, así que un
+  jugador en español y el máster en inglés ven la misma ficha, cada uno en su idioma.
+* Las citas de libro y página nombran el libro en el idioma de la página («Reglas p. 52»); la página es la del libro impreso, que
+  coincide en inglés y en español.
+* Los dibujos de la aventura que tienen palabras (el mapa grande del valle, las cabeceras de capítulo) se piden en el idioma de la
+  página; los demás mapas no llevan texto y son los mismos.
+
 ## Cómo se ve cada categoría
 
-Todas las páginas de Reference (también Creatures, cuyo texto general del Bestiary es la pestaña **General Info**) tienen la misma estructura, de arriba a abajo: **pestañas** (solo si la entrada las tiene, como Gear o Skills), **intro** (el texto general de la categoría o el texto propio del capítulo, siempre desplegado) y la **lista con la descripción al lado**. No hay título encima. **La búsqueda es una sola, arriba de todo Reference** (ya no hay una por categoría): busca en **todas** las categorías (entradas de cada tipo, criaturas y el texto de los capítulos de reglas) y lista lo que encontró, cada resultado con la categoría en que está; al hacer clic abre esa entrada y deja la búsqueda puesta en esa categoría. Cuando hay una categoría abierta aparece la casilla **Only in <categoría>** (marcada por defecto): marcada, la búsqueda solo filtra esa categoría, como antes; desmarcada, vuelve a buscar en todo. En los capítulos de reglas el filtro se hace en el navegador por título, texto y contenido de las tablas; la respuesta de `GET /api/rules/<cap>` (y `/api/gm/rules/<cap>`) trae el texto de la raíz del capítulo como `intro`, y `GET /api/gm/creatures` trae el `intro` del Bestiary.
+Todas las páginas de Reference (también Creatures, cuyo texto general del Bestiary es la pestaña **General Info**) tienen la misma estructura, de arriba a abajo: **pestañas** (solo si la entrada las tiene, como Gear o Skills), **intro** (el texto general de la categoría o el texto propio del capítulo, siempre desplegado) y la **lista con la descripción al lado**. No hay título encima. **La búsqueda es una sola, arriba de todo Reference** (ya no hay una por categoría): busca en **todas** las categorías (entradas de cada tipo, criaturas y el texto de los capítulos de reglas) y lista lo que encontró, cada resultado con la categoría en que está; al hacer clic abre esa entrada. La búsqueda siempre es en todas las categorías (no hay filtro por categoría): al abrir un resultado, la búsqueda se borra. La respuesta de `GET /api/rules/<cap>` (y `/api/gm/rules/<cap>`) trae el texto de la raíz del capítulo como `intro`, y `GET /api/gm/creatures` trae el `intro` del Bestiary.
 
 Las tablas con dado (las categorías `rollable` de los yaml, o con `dice`) tienen un botón **Roll**: elige un resultado al azar y marca su fila.
 
@@ -231,7 +249,7 @@ Una dirección que empieza por `https://` en **Address players use** hace que la
 ## La hoja del jugador
 
 La pestaña **My character** sigue la primera hoja (la verde) de la hoja de personaje oficial y está pensada para el teléfono: nombre en el
-pergamino, las seis gemas de atributos con su condición (el rombo se enciende en rojo), PV y PW como círculos que se vacían, bonos y
+pergamino, las seis gemas de atributos con su condición (el rombo se enciende en rojo), PV y PW como círculos que empiezan vacíos y se van llenando a medida que se pierden puntos (todos del color crema de la caja del número), bonos y
 movimiento, habilidades en pergamino (rombo = marca de avance; las no entrenadas, en gris con su probabilidad base), habilidades y
 hechizos que se abren con su texto, armas, armadura y casco con su valor y su *Bane on*, inventario numerado, monedas, recuerdo y objetos
 diminutos. En pantallas anchas usa las tres columnas de la hoja impresa; en el teléfono, un solo carril en el orden en que se usa en la mesa.
@@ -246,6 +264,10 @@ petición, y otro jugador (o una ruta con `..`) recibe 404. La página baja la i
 permite `img-src blob:`). Un jugador nunca escribe a otro jugador: su única conversación es con el máster.
 
 ## Editar la hoja
+
+Las bonificaciones al daño y el movimiento van a la derecha de los atributos (en el teléfono, debajo de ellos, en la pestaña de atributos). Las casillas **Round Rest** (Descanso de ronda) y **Stretch Rest** (Descanso corto), a la derecha de PG y PV en la computadora, en un recuadro del tamaño de su texto: el jugador las tilda y destilda, y se guardan en `round_rest` / `stretch_rest` (`GET /api/me` trae `rest: {round, stretch}`). Cuando el Máster pasa al siguiente tramo largo (el contador **Shifts** de arriba de Master, cuatro círculos que se llenan, guardado en la campaña como `shifts` de 0 a 4 con `PUT /api/gm/campaigns/<id>`), el servidor las limpia en todos los personajes de esa campaña. El botón **Reiniciar** (Reset) junto a los círculos deja los tramos largos en 0 y también devuelve los descansos (`PUT` con `{"shifts": 0, "reset": true}`: aunque ya estuvieran en 0), y los jugadores lo ven en su próxima actualización.
+
+Con **0 PV** la barra de PV se reemplaza por las **tiradas de muerte**: tres casilleros de Éxito y tres de Fallo (tocar uno marca hasta él; tocar el último marcado lo vacía). Con tres éxitos vuelve la barra (sigue en 0) y con tres fallos aparece **Muerto** (con *Deshacer* para sacar el último fallo). Si los PV vuelven a subir de 0, las tiradas se reinician. Se guardan en `death_successes` / `death_failures` y `GET /api/me` trae `death: {successes, failures}`.
 
 `GET /api/me` trae, además de lo derivado, el `doc` (los campos editables tal cual están en el archivo), `issues` (lo que rompe las reglas y nadie aprobó, cada uno con
 `key`, `message` y `status` = `pending` o `rejected`), `locked` y `revision`. `PATCH /api/me` `{set: {...}}` cambia campos: los valores van enteros, salvo
@@ -291,6 +313,16 @@ Todas las rutas menos `/api/health` piden `Authorization: Bearer <token>`.
 | `GET /api/content/<tipo>?q=texto` | `spells`, `abilities`, `skills`, `kin`, `professions`, `weapons`, `armor`, `gear`; cada entrada tiene `key`, `kind`, `name`, `subtitle`, `fields`, `body`, `tables`, `homebrew`; `source` solo para homebrew. `tables` (y `intro.tables`, y `tables` de cada regla) son `{title, dice, columns[], rows[{roll, cells[]}]}`: las propias más las que el texto nombra con una línea `{{table: Nombre}}`, que el cliente dibuja en ese lugar |
 | `GET /api/creatures?q=texto`, `GET /api/creatures/<clave>`, `GET /api/creatures/<clave>/image`, `GET /api/npcs` | las criaturas del Bestiary (lista con etiquetas NPC / Animal / Monster, ficha completa e ilustración) y las listas del NPC Creator. `contentSummary` trae también el tipo `creatures` |
 | `GET /api/rules/<cap>` | capítulo de reglas YAML por clave (`combat`, `world`, …); devuelve `{key, title, rules[]}` con cada nodo `{key, title, body, sections, parentId}` |
+
+**En la hoja del jugador** cada hechizo es una tarjeta que se abre ahí mismo (sin salir de la hoja) y cuyo nombre lleva a su página en Reference; las aptitudes siguen siendo links.
+
+**Tarjetas incluidas.** Una carta o una regla que incluye a otra (`{{include: …}}` en su texto, como las aptitudes innatas de una raza) trae
+`includes: [{ref, key, kind, name, subtitle, fields[], body}]`; `ref` es lo que dice la línea del texto. El cliente dibuja cada una donde está la línea.
+Los campos de las cartas (`fields[].value`) pueden llevar links `[[nombre|clave]]`, como el texto.
+
+**Atributos por id.** `/api/me`, la edición (`PATCH /api/me` con `{"set": {...}}`) y el creador usan los ids (`strength`, `agility`...), no los códigos
+(`STR`...; los viejos se siguen aceptando). La abreviatura mostrada sale del idioma activo (`attributeShort`) y `derived.damageBonus` es una lista
+`[{key, value}]` (un elemento por atributo con bonificación de daño).
 
 La **Reference es idéntica para el máster y para los jugadores**: son las mismas rutas de solo lectura, con el token del jugador bajo `/api/…` y con el del máster bajo `/api/gm/…` (mismas respuestas). Lo que sigue siendo solo del máster es lo demás de `/api/gm/*`: personajes ajenos, chat, creador de personajes.
 

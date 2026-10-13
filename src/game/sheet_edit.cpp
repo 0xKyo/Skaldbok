@@ -11,7 +11,7 @@
 namespace gm::sheet {
 namespace {
 
-const std::set<std::string, std::less<>> kPlayerKeys = {"name",     "nickname", "age",       "weakness", "memento", "appearance", "notes",       "attributes", "hp",
+const std::set<std::string, std::less<>> kPlayerKeys = {"name",     "nickname", "age",       "weakness", "memento", "appearance", "notes",       "attributes", "hp", "death_successes", "death_failures", "round_rest", "stretch_rest",
                                                         "wp",       "hp_bonus", "wp_bonus",  "conditions", "skills", "abilities",  "spells",      "weapons",
                                                         "armor",    "helmet",   "inventory", "tiny_items", "coins"};
 const std::set<std::string, std::less<>> kMeta = {"format", "id", "revision", "created_at", "updated_at"};
@@ -24,6 +24,13 @@ bool isInt(const json& v, long long lo, long long hi) {
 }
 
 bool isText(const json& v, size_t max) { return v.is_string() && v.get_ref<const std::string&>().size() <= max; }
+
+// An attribute id as a file writes it: lowercase letters, digits, - and _ (with `several`, / between them: a skill of two attributes).
+// Which attributes exist is the content's business, not the sheet's: a sheet may name one this program does not know.
+bool isIdentifier(const std::string& id, bool several = false) {
+    return !id.empty() && id.size() <= 80 &&
+           std::ranges::all_of(id, [&](unsigned char c) { return std::islower(c) || std::isdigit(c) || c == '-' || c == '_' || (several && c == '/'); });
+}
 
 std::string validateItem(const json& v, const char* what) {
     if (!v.is_object()) return std::string(what) + " must be an object";
@@ -53,11 +60,13 @@ std::string validate(const std::string& key, const json& v) {
     if (const auto t = texts.find(key); t != texts.end()) return isText(v, t->second) ? "" : key + " must be text of at most " + std::to_string(t->second) + " letters";
     if (key == "age") return v.is_string() && (v == "young" || v == "adult" || v == "old") ? "" : "age must be young, adult or old";
     if (key == "hp" || key == "wp") return isInt(v, -99, 999) ? "" : key + " must be a whole number";
+    if (key == "round_rest" || key == "stretch_rest") return v.is_boolean() ? "" : key + " must be true or false";
+    if (key == "death_successes" || key == "death_failures") return isInt(v, 0, 3) ? "" : key + " must be 0 to 3";
     if (key == "hp_bonus" || key == "wp_bonus") return isInt(v, -99, 99) ? "" : key + " must be a whole number";
     if (key == "attributes") {
         if (!v.is_object()) return "attributes must be an object";
         for (auto it = v.begin(); it != v.end(); ++it)
-            if (attrIndex(it.key()) < 0 || !isInt(it.value(), 0, 99)) return "attributes has a bad value for " + it.key();
+            if (!isIdentifier(it.key()) || !isInt(it.value(), 0, 99)) return "attributes has a bad value for " + it.key();
         return {};
     }
     if (key == "coins") {
@@ -79,7 +88,7 @@ std::string validate(const std::string& key, const json& v) {
         for (const json& s : v) {
             if (!s.is_object() || !s.contains("name") || !isText(s["name"], 60) || s["name"].get_ref<const std::string&>().empty()) return "a skill needs a name";
             if (s.contains("key") && !isText(s["key"], 120)) return "a skill has a bad key";
-            if (s.contains("attribute") && (!s["attribute"].is_string() || (s["attribute"] != "" && attrIndex(s["attribute"].get<std::string>()) < 0))) return "a skill has a bad attribute";
+            if (s.contains("attribute") && (!s["attribute"].is_string() || (s["attribute"] != "" && !isIdentifier(s["attribute"].get<std::string>(), true)))) return "a skill has a bad attribute";
             if (s.contains("level") && !isInt(s["level"], 0, 99)) return "a skill level must be a whole number";
             if ((s.contains("trained") && !s["trained"].is_boolean()) || (s.contains("marked") && !s["marked"].is_boolean())) return "a skill has a bad flag";
         }
@@ -116,7 +125,7 @@ std::string validate(const std::string& key, const json& v) {
 
 const char* labelOf(const std::string& key) {
     static const std::map<std::string, const char*, std::less<>> labels = {
-        {"hp", "HP"}, {"wp", "WP"}, {"hp_bonus", "max HP bonus"}, {"wp_bonus", "max WP bonus"}, {"name", "name"}, {"nickname", "nickname"}, {"age", "age"},
+        {"hp", "HP"}, {"wp", "WP"}, {"round_rest", "Round Rest"}, {"stretch_rest", "Stretch Rest"}, {"death_successes", "death roll successes"}, {"death_failures", "death roll failures"}, {"hp_bonus", "max HP bonus"}, {"wp_bonus", "max WP bonus"}, {"name", "name"}, {"nickname", "nickname"}, {"age", "age"},
         {"weakness", "weakness"}, {"memento", "memento"}, {"appearance", "appearance"}, {"notes", "notes"}, {"armor", "armor"}, {"helmet", "helmet"}, {"kin", "kin"}, {"profession", "profession"}, {"school", "school of magic"}};
     const auto it = labels.find(key);
     return it == labels.end() ? key.c_str() : it->second;
@@ -150,7 +159,7 @@ std::string describeKey(const std::string& key, const json& before, const json& 
         std::string out;
         for (auto it = after.begin(); it != after.end(); ++it) {
             std::string name = it.key();
-            if (key == "coins") name[0] = static_cast<char>(std::toupper(static_cast<unsigned char>(name[0])));
+            if (!name.empty()) name[0] = static_cast<char>(std::toupper(static_cast<unsigned char>(name[0])));      // "Gold", "Strength"
             joinInto(out, name + " " + (before.contains(it.key()) ? text(before[it.key()]) : "?") + " → " + text(it.value()));
         }
         return out;
@@ -206,9 +215,11 @@ std::string describeKey(const std::string& key, const json& before, const json& 
 
 bool playerMayEdit(std::string_view key) { return kPlayerKeys.contains(key); }
 
-Applied applySet(json& doc, const json& set, bool asPlayer) {
+Applied applySet(json& doc, const json& changes, bool asPlayer) {
     Applied result;
-    if (!set.is_object()) return {false, "the changes must be an object", {}};
+    if (!changes.is_object()) return {false, "the changes must be an object", {}};
+    json set = changes;
+    Character::migrateJson(set);                    // a page that still names the attributes by their old codes ("STR") is understood
     for (auto it = set.begin(); it != set.end(); ++it) {
         if (asPlayer && !playerMayEdit(it.key())) return {false, "you cannot change " + it.key(), {}};
         if (const std::string problem = validate(it.key(), it.value()); !problem.empty()) return {false, problem, {}};
@@ -291,15 +302,20 @@ bool hasAbility(const Character& c, const char* lowerName) {
 }
 }  // namespace
 
-std::vector<Issue> rulesIssues(const Character& c) {
+std::vector<Issue> rulesIssues(const Character& c, const AttributeName& attributeName) {
     std::vector<Issue> out;
+    const auto nameOf = [&](std::string id) {
+        if (attributeName) return attributeName(id);
+        if (!id.empty()) id[0] = static_cast<char>(std::toupper(static_cast<unsigned char>(id[0])));
+        return id;
+    };
     if (c.hp > maxHp(c)) out.push_back({"hp", "Hit points are above the maximum (" + std::to_string(c.hp) + " of " + std::to_string(maxHp(c)) + ")", std::to_string(c.hp) + "/" + std::to_string(maxHp(c))});
     if (c.wp > maxWp(c)) out.push_back({"wp", "Willpower points are above the maximum (" + std::to_string(c.wp) + " of " + std::to_string(maxWp(c)) + ")", std::to_string(c.wp) + "/" + std::to_string(maxWp(c))});
     if (c.hpBonus != 0 && !hasAbility(c, "robust")) out.push_back({"hpmax", "Maximum HP is changed by " + std::to_string(c.hpBonus) + " without the Robust ability", std::to_string(c.hpBonus)});
     if (c.wpBonus != 0 && !hasAbility(c, "focused")) out.push_back({"wpmax", "Maximum WP is changed by " + std::to_string(c.wpBonus) + " without the Focused ability", std::to_string(c.wpBonus)});
-    for (int i = 0; i < kAttrCount; ++i)
-        if (c.attr[i] < 3 || c.attr[i] > 18)
-            out.push_back({std::string("attr:") + kAttrShort[i], std::string(kAttrLong[i]) + " " + std::to_string(c.attr[i]) + " is outside the 3 to 18 of the rules", std::to_string(c.attr[i])});
+    for (const auto& [id, score] : c.attr.items())
+        if (score < 3 || score > 18)
+            out.push_back({"attr:" + id, nameOf(id) + " " + std::to_string(score) + " is outside the 3 to 18 of the rules", std::to_string(score)});
     for (const SkillEntry& s : c.skills)
         if (s.level > 18) out.push_back({"skill:" + s.ref.name, s.ref.name + " at " + std::to_string(s.level) + " is above the maximum of 18", std::to_string(s.level)});
     if (carriedItems(c) > encumbranceLimit(c))
@@ -307,9 +323,9 @@ std::vector<Issue> rulesIssues(const Character& c) {
     return out;
 }
 
-std::vector<OpenIssue> openIssues(const Character& c) {
+std::vector<OpenIssue> openIssues(const Character& c, const AttributeName& attributeName) {
     std::vector<OpenIssue> out;
-    for (const Issue& issue : rulesIssues(c)) {
+    for (const Issue& issue : rulesIssues(c, attributeName)) {
         const auto ruling = c.reviews.find(issue.key);
         const bool judged = ruling != c.reviews.end() && ruling->second.value == issue.value;
         if (judged && ruling->second.status == "approved") continue;
@@ -345,6 +361,7 @@ EditResult editFile(const std::string& path, const std::string& characterId, con
         r.error = "That character does not exist any more.";
         return r;
     }
+    Character::migrateJson(doc);                    // a file written before attributes had ids is brought up to date as it is edited
     if (asPlayer && jsonBool(doc, "locked")) {
         r.status = 423;
         r.error = "Your GM has locked your sheet.";

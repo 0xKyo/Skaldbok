@@ -1,7 +1,7 @@
 professions:
   - name: Skald
     description: Skalds carry the sagas of the north in their heads and their axes on their belts. They sing the dead into the halls of their ancestors and the living into battle.
-    key_attribute: CHA
+    key_attribute: charisma
     skills:
       - Performance
       - Persuasion

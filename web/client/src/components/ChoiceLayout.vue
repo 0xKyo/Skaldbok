@@ -2,9 +2,9 @@
 // A choice made the way the Reference shows a category: the options as a list on the left, and the chosen one's data on the right
 // (fields, text and its tables, from the same content the Reference reads). The extra controls of a step go in the slot, under the data.
 import { computed } from 'vue';
-import DataTable from './DataTable.vue';
+import { t } from '../i18n.js';
 import RuleText from './RuleText.vue';
-import { textBlocks } from '../lib/ruletables.js';
+import TextBlocks from './TextBlocks.vue';
 
 const props = defineProps({
   rows: { type: Array, required: true },            // [{key, title, sub}]
@@ -19,7 +19,7 @@ const heading = computed(() => shown.value?.name ?? shown.value?.title ?? '');
 
 <template>
   <div class="choice-layout" data-test="choice-layout">
-    <nav class="rules-list" aria-label="Options">
+    <nav class="rules-list" :aria-label="t('Options')">
       <button v-for="r in rows" :key="r.key" type="button" class="rules-row" :class="{ active: modelValue === r.key }" data-test="choice-row" @click="emit('update:modelValue', r.key)">
         <span class="rules-row-name">{{ r.title }}</span>
         <span v-if="r.sub" class="rules-row-sub">{{ r.sub }}</span>
@@ -30,28 +30,22 @@ const heading = computed(() => shown.value?.name ?? shown.value?.title ?? '');
       <div class="rules-detail-head">
         <h2 class="rules-detail-name">{{ heading }}</h2>
         <div class="chips" style="margin-top: 4px;">
-          <span v-if="shown.pack" class="chip" :class="{ homebrew: shown.homebrew }">Source · {{ shown.pack }}</span>
+          <span v-if="shown.pack" class="chip" :class="{ homebrew: shown.homebrew }">{{ t('Source') }} · {{ shown.pack }}</span>
           <span v-if="shown.subtitle" class="chip">{{ shown.subtitle }}</span>
         </div>
       </div>
+      <slot name="before" />
       <dl v-if="shown.fields?.length" class="fields" style="margin: 10px 0;">
-        <template v-for="f in shown.fields" :key="f.label"><dt>{{ f.label }}</dt><dd>{{ f.value }}</dd></template>
+        <template v-for="f in shown.fields" :key="f.label"><dt>{{ f.label }}</dt><dd><RuleText :text="f.value" /></dd></template>
       </dl>
-      <template v-for="(b, i) in textBlocks(shown.body ?? '', shown.tables ?? [])" :key="i">
-        <DataTable v-if="b.table" :table="b.table" />
-        <ul v-else-if="b.list" class="rule-list"><li v-for="(it, k) in b.list" :key="k"><RuleText :text="it" /></li></ul>
-        <p v-else style="margin: 0 0 0.6em;"><RuleText :text="b.text" /></p>
-      </template>
+      <TextBlocks :text="shown.body ?? ''" :tables="shown.tables ?? []" :includes="shown.includes ?? []" />
       <template v-for="(s, si) in shown.sections ?? []" :key="si">
         <h3 class="rules-section-title">{{ s.title }}</h3>
-        <template v-for="(b, pi) in textBlocks(s.body, shown.tables ?? [])" :key="pi">
-          <DataTable v-if="b.table" :table="b.table" />
-          <p v-else-if="!b.list" style="margin: 0 0 0.6em;"><RuleText :text="b.text" /></p>
-        </template>
+        <TextBlocks :text="s.body" :tables="shown.tables ?? []" />
       </template>
       <slot />
     </article>
-    <p v-else class="muted pick-one">Pick one from the list.</p>
+    <p v-else class="muted pick-one">{{ t('Pick one from the list.') }}</p>
   </div>
 </template>
 

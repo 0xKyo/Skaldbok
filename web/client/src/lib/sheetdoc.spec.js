@@ -4,7 +4,7 @@ import { adopt, clone, diffDoc, issueFor } from './sheetdoc.js';
 const doc = () => ({
   hp: 10,
   notes: 'a',
-  attributes: { STR: 15, CON: 13 },
+  attributes: { strength: 15, constitution: 13 },
   coins: { gold: 0, silver: 3, copper: 0 },
   inventory: [{ name: 'Torch' }],
   armor: null,
@@ -18,13 +18,13 @@ describe('diffDoc', () => {
   it('holds whole values, except attributes and coins, which go key by key', () => {
     const draft = doc();
     draft.hp = 7;
-    draft.attributes.STR = 16;
+    draft.attributes.strength = 16;
     draft.coins.gold = 2;
     draft.inventory.push({ name: 'Rope' });
     draft.armor = { name: 'Leather' };
     expect(diffDoc(doc(), draft)).toEqual({
       hp: 7,
-      attributes: { STR: 16 },
+      attributes: { strength: 16 },
       coins: { gold: 2 },
       inventory: [{ name: 'Torch' }, { name: 'Rope' }],
       armor: { name: 'Leather' },
@@ -45,24 +45,24 @@ describe('adopt', () => {
     const base = doc();
     const server = doc();
     server.hp = 4;
-    server.attributes.CON = 14;
+    server.attributes.constitution = 14;
     const next = adopt(clone(base), base, server);
     expect(next.hp).toBe(4);
-    expect(next.attributes).toEqual({ STR: 15, CON: 14 });
+    expect(next.attributes).toEqual({ strength: 15, constitution: 14 });
   });
 
   it('keeps what the player is in the middle of, and takes the rest', () => {
     const base = doc();
     const draft = doc();
     draft.hp = 9; // the player changed this
-    draft.attributes.STR = 16; // and this
+    draft.attributes.strength = 16; // and this
     const server = doc();
     server.hp = 4; // the GM changed HP too: the player's edit stays, it is sent next
-    server.attributes.CON = 14; // a different attribute: taken in
+    server.attributes.constitution = 14; // a different attribute: taken in
     server.notes = 'from the GM';
     const next = adopt(draft, base, server);
     expect(next.hp).toBe(9);
-    expect(next.attributes).toEqual({ STR: 16, CON: 14 });
+    expect(next.attributes).toEqual({ strength: 16, constitution: 14 });
     expect(next.notes).toBe('from the GM');
   });
 

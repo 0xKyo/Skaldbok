@@ -1,11 +1,13 @@
 // The Core content pack, homebrew packs (loading, validation, importing, homerules) and search.
 // Needs data/packs/core (the book pack, kept out of git because the books are copyrighted).
 #include <algorithm>
+#include <functional>
 #include <set>
 #include <string>
 #include <vector>
 
 #include "parsing/content.h"
+#include "parsing/i18n.h"
 #include "game/dice.h"
 #include "parsing/packs.h"
 #include "testutil.h"
@@ -128,7 +130,12 @@ int main(int argc, char** argv) {
             typed += !w.list("damage_types").empty();
             for (const std::string& t : w.list("damage_types")) everyTypeKnown &= known.count(t) == 1;
         }
-        const Entry* sling = find(core, Kind::Weapon, "Sling");
+        const DataTable* hunting = core.tableByName("Hunting");
+    std::string rations;
+    if (hunting)
+        for (const TableRow& r : hunting->rows) rations += r.cells.back() + ";";
+    check(hunting && hunting->columns.size() == 3 && hunting->columns[2] == "RATIONS" && rations == "1;1;D3;D4;2D6;2D8;", "the rations of a hunt are an amount and a die (core_dice_D6): 1, D3, 2D6... said from the rule: " + rations);
+    const Entry* sling = find(core, Kind::Weapon, "Sling");
         const Entry* broadsword = find(core, Kind::Weapon, "Broadsword");
         check(everyTypeKnown && typed == 35 && sling && sling->list("damage_types") == std::vector<std::string>{"Bludgeoning"} && broadsword &&
                   broadsword->list("damage_types") == (std::vector<std::string>{"Piercing", "Slashing"}),
@@ -172,12 +179,46 @@ int main(int argc, char** argv) {
         for (const Field& f : worg->blocks[0].fields)
             if (f.label == "HP") hp = f.value;
     check(worg && worg->attacks.size() == 6 && hp == "24", "The Worg Rider (Adventure): 6 attacks, HP exactly 24");
+    const Monster* demon = monsterOf(core, "Demon", "rulebook");
+    std::string demonFields;
+    if (demon && !demon->blocks.empty())
+        for (const Field& f : demon->blocks[0].fields) demonFields += f.label + "=" + f.value + ";";
+    check(demonFields == "Ferocity=2;Size=Large;Movement=16;Armor=4;HP=64;", "a stat block's rules are numbers and ids (core_hp, core_size...), said with the word of each rule: " + demonFields);
     check(monsterOf(core, "Goblin", "rulebook") && monsterOf(core, "Goblin", "bestiary"), "Goblin exists in the Rulebook and in the Bestiary");
-    check(centaur && core.creatureVersions("Goblin", monsterOf(core, "Goblin", "rulebook")->id).size() == 1, "the other version of a creature is found");
 
     const Entry* human = find(core, Kind::Kin, "Human");
     check(human && human->prop("movement") == "10" && human->list("names").size() == 6, "Human: movement 10 and six names");
-    check(human && human->body.contains("Adaptive"), "the kin card includes its innate ability");
+    const Entry* adaptive = find(core, Kind::Ability, "Adaptive");
+    check(human && adaptive && human->body.contains("{{include: " + adaptive->key + "}}") && core.resolveCard(adaptive->key) == adaptive && core.resolveCard("ability_adaptive") == adaptive &&
+              core.resolveCard("Adaptive") == adaptive,
+          "the kin page includes its innate ability as a card (found by key, id or name)");
+    const auto fieldOf = [](const Entry* e, const std::string& label) {
+        if (e)
+            for (const Field& f : e->fields)
+                if (f.label == label) return f.value;
+        return std::string("(none)");
+    };
+    check(fieldOf(find(core, Kind::Ability, "Assassin"), "Requirement") == "[[Knives|core/skill/knives]] 12" &&
+              fieldOf(find(core, Kind::Ability, "Double Slash"), "Requirement") == "[[Axes|core/skill/axes]] or [[Swords|core/skill/swords]] 12" &&
+              fieldOf(find(core, Kind::Ability, "Berserker"), "Requirement") == "Any melee weapon skill 12" && fieldOf(find(core, Kind::Ability, "Battle Cry"), "Requirement") == "(none)",
+          "an ability's requirement is a skill by id plus a rank: a link to the skill and its rank, words only for the \"any\" kinds");
+    check(find(core, Kind::Ability, "Adaptive")->prop("kin") == "Human" && find(core, Kind::Ability, "Adaptive")->subtitle == "Innate ability · Human" &&
+              find(core, Kind::Spell, "Birdsong")->prop("school") == "Animism",
+          "an ability's kin and a spell's school are named by id and show their names");
+    check(fieldOf(find(core, Kind::Spell, "Fire Blast"), "Prerequisite") == "[[Fireball|core/spell/fireball]]" &&
+              fieldOf(find(core, Kind::Spell, "Firestorm"), "Prerequisite") == "[[Fire Blast|core/spell/fire-blast]] and [[Whirlwind|core/spell/whirlwind]]" &&
+              fieldOf(find(core, Kind::Spell, "Magic Shield"), "Prerequisite") == "[[Protector|core/spell/protector]] or [[Dispel|core/spell/dispel]]",
+          "a spell's prerequisite names spells (all of them, or any of them) and links to them");
+    const Entry* sling = find(core, Kind::Weapon, "Sling");
+    check(sling && fieldOf(sling, "Cost") == "1 silver" && sling->prop("cost") == "1 silver" && fieldOf(sling, "Grip") == "1H" && fieldOf(sling, "Supply") == "Common" && fieldOf(sling, "Features") == "Tiny item" &&
+              sling->prop("grip") == "1H" && sling->prop("range") == "20",
+          "a weapon's cost is coins, its grip and supply are ids, its features are ids: the words are made from the rules");
+    check(fieldOf(find(core, Kind::Weapon, "Short Bow"), "Features") == "Requires quiver" && fieldOf(find(core, Kind::Gear, "Poison, Lethal (dose)"), "Cost") == "2 gold × potency" &&
+              fieldOf(find(core, Kind::Weapon, "Mastercrafted"), "Cost") == "×10",
+          "features are said by their names, and a cost note follows the coins (or stands alone)");
+    const Entry* sword = find(core, Kind::Weapon, "Longsword");
+    check(sword && !sword->list("damage_types").empty() && sword->list("damage_types")[0] != "damageTypes_slashing" && fieldOf(sword, "Damage type").contains("Slashing"),
+          "a weapon names its damage types by id: the sheet's rules get their English names");
     check(human && human->tables.size() == 1 && human->tables[0].title == "Human: First Name" && human->tables[0].dice == "D6" && human->tables[0].rows.size() == 6 &&
               !human->tables[0].browse && human->tables[0].id == 0 && human->tables[0].rule == 0,
           "a kin card holds its own table of first names (not one of the rules' tables)");
@@ -201,7 +242,7 @@ int main(int argc, char** argv) {
               fighter->list("starting_gear")[0] == fighter->tables[0].rows[0].cells[0] && fighter->list("nicknames")[0] == fighter->tables[1].rows[0].cells[0],
           "a profession card holds its own Gear and Nickname tables (the die has as many sides as there are gear sets); the lists the creator uses come from them");
     const Entry* axes = find(core, Kind::Skill, "Axes");
-    check(axes && axes->prop("attribute") == "STR" && find(core, Kind::Skill, "Bows")->prop("attribute") == "AGL", "weapon skills know their attribute");
+    check(axes && axes->prop("attribute") == "strength" && find(core, Kind::Skill, "Bows")->prop("attribute") == "agility", "weapon skills know their attribute");
     const Entry* fetch = find(core, Kind::Spell, "Fetch");
     check(fetch && fetch->prop("trick") == "1" && fetch->prop("school") == "General Magic", "Fetch is a General Magic trick");
 
@@ -301,8 +342,8 @@ int main(int argc, char** argv) {
                   "Language is not a rule of its own any more: its text and \"see\" are part of Kin");
             // eight steps that used to have clickable children are now one page each: a table (or props, for Age) and/or named sections
             const RuleNode* age = step("creation-age");
-            check(age && age->prop("young_trained_skills") == "6" && age->prop("young_bonus_skills") == "2" && age->prop("young_attribute_mods") == "{\"AGL\":1,\"CON\":1}" &&
-                      age->prop("old_attribute_mods") == "{\"STR\":-2,\"AGL\":-2,\"CON\":-2,\"INT\":1,\"WIL\":1}" && core.tableByName("Age") && age->body.contains("{{table: Age}}") &&
+            check(age && age->prop("young_trained_skills") == "6" && age->prop("young_bonus_skills") == "2" && age->prop("young_attribute_mods") == "{\"agility\":1,\"constitution\":1}" &&
+                      age->prop("old_attribute_mods") == "{\"strength\":-2,\"agility\":-2,\"constitution\":-2,\"intelligence\":1,\"willpower\":1}" && core.tableByName("Age") && age->body.contains("{{table: Age}}") &&
                       age->sections.empty(),
                   "Age has no children: a table like the book's (in age.yaml, shown by its marker), the numbers kept as data on the rule itself");
             auto sectionNames = [](const RuleNode& n) {
@@ -368,8 +409,9 @@ int main(int argc, char** argv) {
         const SourceInfo* src = frost ? s.source(frost->sourceId) : nullptr;
         check(src && src->homebrew && src->label == "Homebrew · Frostmarch" && src->packId == "frostmarch", "the source is kept: \"Homebrew · Frostmarch\"");
         check(frost && frost->key == "frostmarch/kin/frostborn" && frost->prop("movement") == "9", "homebrew keys are namespaced by pack");
-        check(frost && frost->body.contains("Winter's Hide") && frost->body.contains("long winter"),
-              "paragraph lists are joined, innate ability text is appended");
+        const Entry* hide = find(s, Kind::Ability, "Winter's Hide");
+        check(frost && hide && frost->body.contains("{{include: " + hide->key + "}}") && frost->body.contains("long winter"),
+              "paragraph lists are joined, the innate ability is included as a card");
         check(frost && !frost->ref.valid() && frost->pageNote == "p.12", "homebrew has no PDF link, only a page note");
         const Entry* skald = find(s, Kind::Profession, "Skald");
         check(skald && skald->list("heroic_abilities") == std::vector<std::string>{"Icebreaker", "Musician"} && skald->list("skills").size() == 8,
@@ -1056,6 +1098,93 @@ int main(int argc, char** argv) {
         check(packSignature({PackSpec{coreDir, true, true}, PackSpec{dir, false, false}}) != withArt, "and switching the pack off");
         check(packSignature({PackSpec{coreDir, true, true}}) != withArt, "and the pack going away");
         removeTree(root);
+    }
+
+    // ------------------------------------------------------------------- translations (i18n.h): the books read in Spanish
+    {
+        check(i18n::normalize("es-AR") == "es" && i18n::normalize("fr") == "en", "a language the app has, else English");
+        const i18n::Texts csv = i18n::parseCsv("\xEF\xBB\xBF" "key,text\r\nA,Plain\r\nB,\"With, comma and \"\"quotes\"\"\"\r\nC,\"Two\nlines\"\r\n\r\n,orphan\r\nD\r\nA,Again\r\n#E,note\r\n");
+        check(csv.size() == 4 && csv.at("A") == "Again" && csv.at("B") == "With, comma and \"quotes\"" && csv.at("C") == "Two\nlines" && csv.at("D").empty() && !csv.count("key") && !csv.count("#E"),
+              "a localization file is a CSV: a BOM, a header, quotes, commas and line breaks inside a text, the last row of a key wins, rows without a key are skipped");
+        // the overlay: objects key by key, a list matched by "en" or "id", "fields" replaced, a renamed name keeps its English
+        json base = json::parse(R"({"name":"Frost","category":"Magic","items":[{"name":"A","x":1},{"id":"b","x":2}],"fields":{"HP":"10","Armor":"2"}})");
+        i18n::mergeOverlay(base, json::parse(R"({"name":"Congelar","category":"Magia","items":[{"id":"b","x":3},{"en":"A","name":"Á"}],"fields":{"PG":"10"}})"));
+        check(base["name"] == "Congelar" && base["_key"] == "Frost" && base["_category_key"] == "Magic", "a translated name and category keep their English");
+        check(base["items"][0]["name"] == "Á" && base["items"][0]["_key"] == "A" && base["items"][0]["x"] == 1 && base["items"][1]["x"] == 3,
+              "a list of objects is matched by its English name or its id, not by position");
+        check(base["fields"].size() == 1 && base["fields"].contains("PG"), "a creature's fields are replaced whole");
+
+        ContentStore es;
+        es.load({PackSpec{coreDir, true, true}}, "es", &core);
+        check(es.language() == "es" && es.packs()[0].loaded && es.packs()[0].error.empty(), "Core loads in Spanish: " + es.packs()[0].error);
+        check(es.packs()[0].name == "Dragonbane básico", "the pack's name comes from its translated manifest");
+        for (const Kind k : {Kind::Spell, Kind::Skill, Kind::Kin, Kind::Profession, Kind::Ability})
+            check(es.count(k) == core.count(k), std::string("as many cards of each kind in Spanish as in English (kind ") + std::to_string(static_cast<int>(k)) + ")");
+        check(es.monsters().size() == core.monsters().size(), "and as many creatures");
+        bool sameKeys = true, translated = false;
+        for (const Entry& e : core.entries(Kind::Spell)) {
+            const Entry* other = sameEntry(es, e);
+            sameKeys &= other != nullptr;
+            translated |= other && other->title != e.title;
+        }
+        for (const Monster& m : core.monsters()) sameKeys &= sameMonster(es, m) != nullptr;
+        check(sameKeys, "every card and creature keeps its English key in Spanish (saved characters and encounters still find them)");
+        check(translated, "and their names are in Spanish");
+        const Entry* frost = core.findByName(Kind::Spell, "Frost");
+        const Entry* congelar = frost ? sameEntry(es, *frost) : nullptr;
+        check(congelar && congelar->title == "Congelar", "Frost is Congelar");
+
+        // the attributes: ids in the data, words from the localization files (i18n/<lang>.csv), the rulebook's tables made from them
+        const auto row = [](const DataTable* t, size_t i) { return t && i < t->rows.size() ? t->rows[i].cells : std::vector<std::string>(); };
+        const std::string dash = "\xE2\x80\x93", em = "\xE2\x80\x94";
+        const DataTable *enAttrs = core.tableByName("Attributes"), *enMove = core.tableByName("Movement modifier"), *enBonus = core.tableByName("Damage Bonus"), *enChance = core.tableByName("Base Chance");
+        check(enAttrs && enAttrs->columns == std::vector<std::string>{"ATTRIBUTE", "ABBREVIATION", "DESCRIPTION"} && row(enAttrs, 0) == std::vector<std::string>{"Strength", "STR", "Raw muscle power."} &&
+                  enAttrs->rows.size() == 6 && enAttrs->key == "core/table/attributes",
+              "the table of attributes is made from the data: the columns, a row for each, and its key as before");
+        check(enMove && enMove->columns == std::vector<std::string>{"ATTRIBUTE / RANGE", "MODIFIER"} && enMove->rows.size() == 4 && row(enMove, 0) == std::vector<std::string>{"AGL 1" + dash + "6", dash + "4"} &&
+                  row(enMove, 3) == std::vector<std::string>{"AGL 16" + dash + "18", "+4"},
+              "the movement modifier table: a label for each range (with the attribute's short form in it) and the value, signed");
+        check(enBonus && enBonus->columns == std::vector<std::string>{"STR/AGL", "DAMAGE BONUS"} && row(enBonus, 0) == std::vector<std::string>{"\xE2\x89\xA4" "12", em} &&
+                  row(enBonus, 1) == std::vector<std::string>{"13" + dash + "16", "+D4"} && row(enBonus, 2) == std::vector<std::string>{"17+", "+D6"},
+              "the damage bonus table: the header lists the attributes it is for, none is a dash");
+        check(enChance && enChance->columns == std::vector<std::string>{"ATTRIBUTE", "BASE CHANCE"} && enChance->rows.size() == 5 && row(enChance, 4) == std::vector<std::string>{"16" + dash + "18", "7"},
+              "the base chance table");
+        const DataTable *esAttrs = es.tableByName("Atributos"), *esMove = es.tableByName("Modificador de movimiento"), *esBonus = es.tableByName("Bonificador al daño"), *esChance = es.tableByName("Nivel inicial");
+        check(esAttrs && esAttrs->columns == std::vector<std::string>{"ATRIBUTO", "ABREVIATURA", "DESCRIPCIÓN"} && row(esAttrs, 0) == std::vector<std::string>{"Fuerza", "FUE", "Potencia muscular pura."} &&
+                  esAttrs->key == enAttrs->key && es.tableByName("Attributes") == esAttrs,
+              "the same tables in Spanish: their words from es.csv, the key and the English name (what links use) unchanged");
+        check(esMove && esMove->columns == std::vector<std::string>{"ATRIBUTO / ALCANCE", "MODIFICADOR"} && row(esMove, 0) == std::vector<std::string>{"AGI 1" + dash + "6", dash + "4"} &&
+                  esBonus && esBonus->columns == std::vector<std::string>{"FUE/AGI", "BONIFICADOR AL DAÑO"} && row(esBonus, 0) == std::vector<std::string>{"12 o menos", em} &&
+                  row(esBonus, 2) == std::vector<std::string>{"17 o más", "+D6"} && esChance && row(esChance, 0) == std::vector<std::string>{"1 a 5", "3"},
+              "(the movement, damage bonus and base chance tables, with the abbreviations of the language)");
+        check(es.attributeAbbr("willpower") == "VOL" && es.attributeName("willpower") == "Voluntad" && es.attributes().attributes().size() == 6 && core.text("LOC_NOT_THERE") == "LOC_NOT_THERE",
+              "an attribute's words in each language; a key nobody wrote shows itself");
+        const Entry* axes = core.findByName(Kind::Skill, "Axes");
+        const Entry* axesEs = axes ? sameEntry(es, *axes) : nullptr;
+        bool cardShows = false;
+        if (axesEs)
+            for (const Field& f : axesEs->fields) cardShows |= f.value == "FUE";
+        check(axes && axes->prop("attribute") == "strength" && cardShows, "a skill stores its attribute by id and its card shows the short form of the language");
+        const Entry* weapons = core.findByName(Kind::Skill, "Weapon Skills");
+        check(weapons && weapons->prop("attribute").empty() && weapons->list("attributes") == std::vector<std::string>{"strength", "agility"}, "a skill of several attributes lists them and has none of its own");
+
+        // the adventure: every part of the translation is a part of the English book, the English ids untouched
+        const std::string vale = dataDir + "/packs/mistyvale";
+        if (test::exists(vale + "/i18n/es/adventure.yaml")) {
+            const auto en = i18n::loadLocalized(vale, "adventure.yaml", "en"), sp = i18n::loadLocalized(vale, "adventure.yaml", "es");
+            check(en && sp && (*sp)["title"] == "El Valle Brumoso" && (*en)["title"] == "The Misty Vale", "the adventure's title in each language");
+            std::set<std::string> enIds, spIds;
+            std::function<void(const json&, std::set<std::string>&)> walk = [&](const json& nodes, std::set<std::string>& ids) {
+                for (const json& n : nodes) {
+                    ids.insert(n.value("id", ""));
+                    if (n.contains("sections")) walk(n["sections"], ids);
+                }
+            };
+            walk((*en)["chapters"], enIds);
+            walk((*sp)["chapters"], spIds);
+            check(enIds == spIds && enIds.size() > 300, "the Spanish adventure has the same parts, with the same ids, as the English");
+            check((*sp)["chapters"][0]["page"] == (*en)["chapters"][0]["page"], "and keeps the English page numbers");
+        }
     }
 
     return test::finish();

@@ -7,12 +7,14 @@
 #include <SDL3/SDL.h>
 #include <imgui.h>
 
+#include "parsing/i18n.h"
 #include "ui/ui_common.h"
 
 namespace gm {
 namespace {
 
 using namespace ui;
+using i18n::tr;
 
 double nowSeconds() { return static_cast<double>(SDL_GetTicks()) / 1000.0; }
 
@@ -44,6 +46,8 @@ App::App(SDL_Window* window, SDL_Renderer* renderer, Paths paths) : window_(wind
         settings_.open(prefDir + "settings.yaml");
     }
     packs_ = std::make_unique<PackManager>(paths_.coreDir(), paths_.userPacksDir());
+    i18n::loadCatalogs(paths_.dataDir);
+    i18n::setCurrent(settings_.language);                  // the GM's language: this window's, and the web pages' until a player picks one
 
     setupStyle();
     loadContent();
@@ -67,15 +71,15 @@ void App::reloadContent() {
     if (fromDisk) {
         for (const PackInfo& p : content_.packs())
             if (!p.error.empty()) {
-                notify("Pack " + (p.name.empty() ? p.dir : p.name) + ": " + p.error.substr(0, 140));
+                notify(tr("Pack") + " " + (p.name.empty() ? p.dir : p.name) + ": " + p.error.substr(0, 140));
                 return;
             }
-        notify("Content reloaded");
+        notify(tr("Content reloaded"));
     }
 }
 
 void App::notify(const std::string& text) {
-    toast_ = text;
+    toast_ = tr(text);
     toastUntil_ = nowSeconds() + 3.5;
 }
 

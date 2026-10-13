@@ -48,6 +48,8 @@ export function fakeServer({ withScreen = true } = {}) {
         if (method === 'PUT') {
           if ('name' in body) { if (!body.name.trim()) return fail(400, 'A campaign needs a name.'); c.name = body.name; }
           if ('characters' in body) c.characters = [...new Set(body.characters)];
+          if ('shifts' in body) c.shifts = body.shifts;
+          if (body.reset) server.resets = (server.resets ?? 0) + 1;
           return ok(campaignList());
         }
         if (method === 'DELETE') {

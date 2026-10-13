@@ -91,6 +91,9 @@ private:
     bool tooManyWrites(const std::string& characterId, long long now);
     void refresh(long long now);
     void reloadContentIfChanged();
+    // The content in the language of the request being answered (i18n::current()): the English one, or its translation, read the first
+    // time it is asked for. The English one (content_) is what the rules work with; this one is what is shown.
+    const ContentStore& shown();
     bool moveTinyToList(const std::string& id);
     bool blocked(const std::string& ip, long long now);
     void failed(const std::string& ip, long long now);
@@ -99,7 +102,10 @@ private:
     Clock clock_;
     std::string error_;
     std::mutex mutex_;
-    ContentStore content_;
+    ContentStore content_;                               // in English: what the sheets and the creator are worked out with
+    std::map<std::string, std::unique_ptr<ContentStore>> localized_;    // the same packs read in another language, by language
+    std::vector<PackSpec> specs_;                        // the packs content_ was read from
+    std::string language_ = "en";                        // the GM's language (settings): what a page that says none is answered in
     Dice dice_;                                          // for the creator: gear dice the browser did not roll
     std::unique_ptr<PackManager> packs_;
     std::string contentSignature_;

@@ -1,21 +1,24 @@
 kind: type
-category: Rest Types
+category: LOC_CATEGORY_REST_TYPES
 entities:
-  - name: Round Rest
+  - id: rest_roundRest
+    name: LOC_REST_ROUND_REST
     fields:
-      HP RECOVERED: —
-      WP RECOVERED: D6
-      CONDITIONS HEALED: —
-      NOTES: Once per shift
-  - name: Stretch Rest
+      LOC_LABEL_HP_RECOVERED: —
+      LOC_LABEL_WP_RECOVERED: D6
+      LOC_LABEL_CONDITIONS_HEALED: —
+      LOC_LABEL_NOTES: LOC_VALUE_ONCE_PER_SHIFT
+  - id: rest_stretchRest
+    name: LOC_REST_STRETCH_REST
     fields:
-      HP RECOVERED: D6 (2D6 with HEALING)
-      WP RECOVERED: D6
-      CONDITIONS HEALED: 1 condition of choice
-      NOTES: Once per shift; caregiver cannot rest
-  - name: Shift Rest
+      LOC_LABEL_HP_RECOVERED: LOC_VALUE_D6_2D6_WITH_HEALING
+      LOC_LABEL_WP_RECOVERED: D6
+      LOC_LABEL_CONDITIONS_HEALED: LOC_VALUE_1_CONDITION_OF_CHOICE
+      LOC_LABEL_NOTES: LOC_VALUE_ONCE_PER_SHIFT_CAREGIVER_CANNOT_REST
+  - id: rest_shiftRest
+    name: LOC_REST_SHIFT_REST
     fields:
-      HP RECOVERED: All
-      WP RECOVERED: All
-      CONDITIONS HEALED: All
-      NOTES: Safe location; no enemies nearby
+      LOC_LABEL_HP_RECOVERED: LOC_VALUE_ALL
+      LOC_LABEL_WP_RECOVERED: LOC_VALUE_ALL
+      LOC_LABEL_CONDITIONS_HEALED: LOC_VALUE_ALL
+      LOC_LABEL_NOTES: LOC_VALUE_SAFE_LOCATION_NO_ENEMIES_NEARBY

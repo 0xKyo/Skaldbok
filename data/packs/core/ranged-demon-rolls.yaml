@@ -1,17 +1,23 @@
 kind: effect
-category: Demon Roll in Ranged Combat
+category: LOC_CATEGORY_DEMON_ROLL_IN_RANGED_COMBAT
 rollable:
   - Demon Roll in Ranged Combat
 entities:
-  - name: You drop your weapon at your feet
-    description: Picking it up is an action.
-  - name: You run out of arrows and must get more before you can use the weapon again
-    description: Re-roll for sling or throwing weapons.
-  - name: You hit a valuable or important item nearby
-    description: The GM decides what it is.
-  - name: You break your weapon
-    description: Any use of the weapon gets a bane until it is repaired by an artisan.
-  - name: You accidentally hit a random player character or friendly NPC
-    description: Roll for damage as usual, including damage bonus.
-  - name: You hit yourself by mistake
-    description: Roll for damage as usual, but without damage bonus.
+  - id: rangedDemonRolls_youDropYourWeaponAtYourFeet
+    name: LOC_RANGED_DEMON_ROLLS_YOU_DROP_YOUR_WEAPON_AT_YOUR_FEET
+    description: LOC_RANGED_DEMON_ROLLS_YOU_DROP_YOUR_WEAPON_AT_YOUR_FEET_DESC
+  - id: rangedDemonRolls_youRunOutOfArrowsAndMustGetMoreBeforeYouCanUseTheWeaponAgain
+    name: LOC_RANGED_DEMON_ROLLS_YOU_RUN_OUT_OF_ARROWS_AND_MUST_GET_MORE_BEFORE_YOU_CAN_U
+    description: LOC_RANGED_DEMON_ROLLS_YOU_RUN_OUT_OF_ARROWS_AND_MUST_GET_MORE_BEFORE_YOU_CAN_U_DESC
+  - id: rangedDemonRolls_youHitAValuableOrImportantItemNearby
+    name: LOC_RANGED_DEMON_ROLLS_YOU_HIT_A_VALUABLE_OR_IMPORTANT_ITEM_NEARBY
+    description: LOC_RANGED_DEMON_ROLLS_YOU_HIT_A_VALUABLE_OR_IMPORTANT_ITEM_NEARBY_DESC
+  - id: rangedDemonRolls_youBreakYourWeapon
+    name: LOC_RANGED_DEMON_ROLLS_YOU_BREAK_YOUR_WEAPON
+    description: LOC_RANGED_DEMON_ROLLS_YOU_BREAK_YOUR_WEAPON_DESC
+  - id: rangedDemonRolls_youAccidentallyHitARandomPlayerCharacterOrFriendlyNpc
+    name: LOC_RANGED_DEMON_ROLLS_YOU_ACCIDENTALLY_HIT_A_RANDOM_PLAYER_CHARACTER_OR_FRIEND
+    description: LOC_RANGED_DEMON_ROLLS_YOU_ACCIDENTALLY_HIT_A_RANDOM_PLAYER_CHARACTER_OR_FRIEND_DESC
+  - id: rangedDemonRolls_youHitYourselfByMistake
+    name: LOC_RANGED_DEMON_ROLLS_YOU_HIT_YOURSELF_BY_MISTAKE
+    description: LOC_RANGED_DEMON_ROLLS_YOU_HIT_YOURSELF_BY_MISTAKE_DESC
